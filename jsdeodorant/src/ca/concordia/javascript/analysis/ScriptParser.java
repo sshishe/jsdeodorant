@@ -10,7 +10,7 @@ import com.google.javascript.jscomp.parsing.Config.LanguageMode;
 import com.google.javascript.jscomp.parsing.parser.Parser;
 import com.google.javascript.jscomp.parsing.parser.trees.*;
 
-public class ScriptAnalyzer {
+public class ScriptParser {
 	private final ExtendedCompiler compiler;
 
 	private List<String> messages;
@@ -19,7 +19,7 @@ public class ScriptAnalyzer {
 		return messages;
 	}
 
-	public ScriptAnalyzer(ExtendedCompiler compiler) {
+	public ScriptParser(ExtendedCompiler compiler) {
 		this.compiler = compiler;
 	}
 
@@ -47,10 +47,11 @@ public class ScriptAnalyzer {
 			com.google.javascript.jscomp.parsing.parser.Parser.Config es6config = new com.google.javascript.jscomp.parsing.parser.Parser.Config(
 					mode(LanguageMode.ECMASCRIPT6));
 
-			Parser p = new Parser(es6config, es6ErrorReporter,
+			Parser parser = new Parser(es6config, es6ErrorReporter,
 					sourceFileForParser);
-			ProgramTree tree = p.parseProgram();
-			return tree;
+
+			return parser.parseProgram();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

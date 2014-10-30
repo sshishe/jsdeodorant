@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis.abstraction;
+package ca.concordia.javascript.analysis.decomposition;
 
 public enum ExpressionType {
 	THIS,

@@ -3,12 +3,13 @@ package ca.concordia.javascript.refactoring;
 import java.util.List;
 
 import ca.concordia.javascript.analysis.ExtendedCompiler;
-import ca.concordia.javascript.analysis.ScriptAnalyzer;
+import ca.concordia.javascript.analysis.ScriptParser;
 
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.SourceFile;
+import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ProgramTree;
 
 public class RefactoringEngine {
@@ -35,8 +36,10 @@ public class RefactoringEngine {
 
 	public List<String> run() {
 		compiler.compile(externs, inputs, compilerOptions);
-		ScriptAnalyzer scriptAnalyzer = new ScriptAnalyzer(compiler);
+		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		ProgramTree tree = scriptAnalyzer.parse(inputs.get(0));
+
+		ParseTree callExpression = tree.asFunctionDeclaration();
 
 		scriptAnalyzer.analyze();
 		return scriptAnalyzer.getMessages();
