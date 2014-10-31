@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+import com.google.common.base.MoreObjects;
 
 public class CompositeStatement extends AbstractStatement {
 

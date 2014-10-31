@@ -217,9 +217,6 @@ public class FunctionBody {
 		else if (statement instanceof TryStatementTree) {
 			TryStatementTree tryStatement = statement.asTryStatement();
 			TryStatement child = new TryStatement(tryStatement, parent);
-			if (tryStatement.catchBlock != null) {
-				processStatement(tryStatement.catchBlock, child);
-			}
 			parent.addStatement(child);
 
 			processStatement(tryStatement.body, child);

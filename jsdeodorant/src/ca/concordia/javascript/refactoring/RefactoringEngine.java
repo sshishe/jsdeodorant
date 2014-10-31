@@ -7,6 +7,7 @@ import ca.concordia.javascript.analysis.ScriptParser;
 import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.decomposition.FunctionBody;
+import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;
@@ -42,7 +43,23 @@ public class RefactoringEngine {
 	public List<String> run() {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
+
+		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
+
 		ProgramTree programTree = scriptAnalyzer.parse(inputs.get(0));
+
+		List<ParseTree> literalExpressions = expressionExtractor
+				.getLiteralExpressions(programTree);
+
+		List<ParseTree> variableDeclarations = expressionExtractor
+				.getVariableDeclarationExpressions(programTree);
+
+		List<ParseTree> identifiers = expressionExtractor
+				.getIdentifierExpressions(programTree);
+
+		List<ParseTree> callExpressions = expressionExtractor
+				.getCallExpressions(programTree);
+
 		Program program = new Program();
 		for (ParseTree sourceElement : programTree.sourceElements) {
 			if (sourceElement instanceof FunctionDeclarationTree) {
@@ -53,7 +70,6 @@ public class RefactoringEngine {
 
 			}
 		}
-
 		scriptAnalyzer.analyze();
 		return scriptAnalyzer.getMessages();
 	}

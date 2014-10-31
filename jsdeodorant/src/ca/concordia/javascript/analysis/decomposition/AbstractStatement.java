@@ -22,5 +22,4 @@ public abstract class AbstractStatement extends SourceElement {
 	protected StatementType getType() {
 		return type;
 	}
-
 }
