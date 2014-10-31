@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis;
+package ca.concordia.javascript.analysis.util;
 
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.parsing.Config;
@@ -12,7 +12,7 @@ public class Es6ErrorReporter extends
 	private boolean errorSeen = false;
 	private SourceFile source;
 
-	Es6ErrorReporter(ErrorReporter reporter, SourceFile source, Config config) {
+	public Es6ErrorReporter(ErrorReporter reporter, SourceFile source, Config config) {
 		this.reporter = reporter;
 		this.source = source;
 	}

@@ -3,6 +3,8 @@ package ca.concordia.javascript.analysis;
 import java.io.IOException;
 import java.util.List;
 
+import ca.concordia.javascript.analysis.util.Es6ErrorReporter;
+
 import com.google.javascript.jscomp.NodeTraversal;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.rhino.Node;

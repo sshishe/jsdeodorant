@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis;
+package ca.concordia.javascript.analysis.util;
 
 /*
  * Copyright 2009 The Closure Compiler Authors.
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  * 
  * @author nicksantos@google.com (Nick Santos)
  */
-class RhinoErrorReporter {
+public class RhinoErrorReporter {
 
 	static final DiagnosticType PARSE_ERROR = DiagnosticType.error(
 			"JSC_PARSE_ERROR", "Parse error. {0}");
