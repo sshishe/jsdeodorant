@@ -4,10 +4,8 @@ import ca.concordia.javascript.analysis.decomposition.FunctionBody;
 
 public class FunctionDeclaration extends SourceElement {
 
-	
-	private FunctionBody body; 
-	
-	protected String name;
+	private FunctionBody body;
+	private String name;
 
 	public void setName(String name) {
 		this.name = name;
@@ -15,5 +13,13 @@ public class FunctionDeclaration extends SourceElement {
 
 	public String getName() {
 		return name;
+	}
+
+	public FunctionBody getBody() {
+		return body;
+	}
+
+	public void setBody(FunctionBody body) {
+		this.body = body;
 	}
 }

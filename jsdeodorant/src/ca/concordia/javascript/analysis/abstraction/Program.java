@@ -10,4 +10,8 @@ public class Program {
 	public Program() {
 		sourceElements = new ArrayList<>();
 	}
+
+	public void addSourceElement(SourceElement source) {
+		sourceElements.add(source);
+	}
 }

@@ -11,10 +11,11 @@ public enum StatementType {
 	FOR_OF,
 	WITH,
 	SWITCH,
+	CASE_CLAUSE, 
+	DEFAULT_CLAUSE, 
 	TRY,
-	CATCH, //
-	LABElED,
-	LET,
+	CATCH, 
+	LABELLED,
 	// Statements without body
 	VARIABLE,
 	EMPTY,
@@ -22,8 +23,6 @@ public enum StatementType {
 	BREAK,
 	CONTINUE,
 	RETURN,
-	CASE_CLAUSE, //
-	DEFAULT_CLAUSE, //
 	THROW,
 	DEBUGGER;
 	

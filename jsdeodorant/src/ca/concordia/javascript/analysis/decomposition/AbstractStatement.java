@@ -12,6 +12,15 @@ public abstract class AbstractStatement extends SourceElement {
 			CompositeStatement parent) {
 		// super(parent);
 		this.type = type;
-		this.statement = null;// ASTInformationGenerator.generateASTInformation(statement);
+		this.statement = statement;
 	}
+	
+	public ParseTree getStatement() {
+		return statement;
+	}
+
+	protected StatementType getType() {
+		return type;
+	}
+
 }

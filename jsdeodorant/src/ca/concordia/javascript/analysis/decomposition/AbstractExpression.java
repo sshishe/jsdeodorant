@@ -7,14 +7,11 @@ public class AbstractExpression extends AbstractFunctionFragment {
 	private ParseTree expression;
 
 	protected AbstractExpression(ParseTree expression) {
-		//super(null);
 		this.expression = expression;
 		processExpression(expression);
 	}
 
-	protected AbstractExpression(ParseTree expression,
-			CompositeStatement parent) {
-		//super(parent);
+	protected AbstractExpression(ParseTree expression, CompositeStatement parent) {
 		this.expression = expression;
 		processExpression(expression);
 	}
@@ -22,5 +19,9 @@ public class AbstractExpression extends AbstractFunctionFragment {
 	private void processExpression(ParseTree expression) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public String toString() {
+		return expression.toString();
 	}
 }
