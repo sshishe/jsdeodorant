@@ -60,6 +60,9 @@ public class RefactoringEngine {
 		List<ParseTree> callExpressions = expressionExtractor
 				.getCallExpressions(programTree);
 
+		List<ParseTree> newExpressions = expressionExtractor
+				.getNewExpressions(programTree);
+
 		Program program = new Program();
 		for (ParseTree sourceElement : programTree.sourceElements) {
 			if (sourceElement instanceof FunctionDeclarationTree) {

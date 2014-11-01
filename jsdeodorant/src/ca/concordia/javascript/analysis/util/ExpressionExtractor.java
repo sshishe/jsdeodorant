@@ -101,6 +101,11 @@ public class ExpressionExtractor {
 		instanceChecker = new InstanceOfCallExpression();
 		return getExpressions(element);
 	}
+	
+	public List<ParseTree> getNewExpressions(ParseTree element) {
+		instanceChecker = new InstanceOfNewExpression();
+		return getExpressions(element);
+	}
 
 	private List<ParseTree> getExpressions(ParseTree element) {
 		List<ParseTree> expressionList = new ArrayList<ParseTree>();
