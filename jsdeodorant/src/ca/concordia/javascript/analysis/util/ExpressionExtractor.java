@@ -102,6 +102,11 @@ public class ExpressionExtractor {
 		return getExpressions(element);
 	}
 
+	public List<ParseTree> getObjectLiteralExpressions(ParseTree element) {
+		instanceChecker = new InstanceOfObjectLiteralExpression();
+		return getExpressions(element);
+	}
+	
 	public List<ParseTree> getNewExpressions(ParseTree element) {
 		instanceChecker = new InstanceOfNewExpression();
 		return getExpressions(element);
@@ -116,6 +121,28 @@ public class ExpressionExtractor {
 		instanceChecker = new InstanceOfBinaryOperator();
 		return getExpressions(element);
 	}
+	
+	public List<ParseTree> getPostfixExpressions(ParseTree element) {
+		instanceChecker = new InstanceOfPostfixExpression();
+		return getExpressions(element);
+	}
+	
+	public List<ParseTree> getArrayPatterns(ParseTree element) {
+		instanceChecker = new InstanceOfArrayPattern();
+		return getExpressions(element);
+	}
+	
+	public List<ParseTree> getCommaExpressions(ParseTree element) {
+		instanceChecker = new InstanceOfCommaExpression();
+		return getExpressions(element);
+	}
+	
+	public List<ParseTree> getArrayLiteralExpressions(ParseTree element) {
+		instanceChecker = new InstanceOfArrayLiteralExpression();
+		return getExpressions(element);
+	}
+	
+	
 
 	private List<ParseTree> getExpressions(ParseTree element) {
 		List<ParseTree> expressionList = new ArrayList<ParseTree>();

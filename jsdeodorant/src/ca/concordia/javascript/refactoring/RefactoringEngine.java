@@ -60,6 +60,9 @@ public class RefactoringEngine {
 		List<ParseTree> callExpressions = expressionExtractor
 				.getCallExpressions(programTree);
 
+		List<ParseTree> objectLiteralExpressions = expressionExtractor
+				.getObjectLiteralExpressions(programTree);
+
 		List<ParseTree> newExpressions = expressionExtractor
 				.getNewExpressions(programTree);
 
@@ -68,6 +71,19 @@ public class RefactoringEngine {
 
 		List<ParseTree> binaryOperators = expressionExtractor
 				.getBinaryOperators(programTree);
+
+		List<ParseTree> postfixExpressions = expressionExtractor
+				.getPostfixExpressions(programTree);
+		
+		List<ParseTree> arrayPattern = expressionExtractor
+				.getArrayPatterns(programTree);
+		
+		List<ParseTree> commaExpressions = expressionExtractor
+				.getCommaExpressions(programTree);
+		
+
+		List<ParseTree> arrayLiteralExpressions = expressionExtractor
+				.getArrayLiteralExpressions(programTree);
 
 		Program program = new Program();
 		for (ParseTree sourceElement : programTree.sourceElements) {
