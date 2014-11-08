@@ -7,11 +7,13 @@ public class AbstractExpression extends AbstractFunctionFragment {
 	private ParseTree expression;
 
 	protected AbstractExpression(ParseTree expression) {
+		super(null);
 		this.expression = expression;
 		processExpression(expression);
 	}
 
 	protected AbstractExpression(ParseTree expression, CompositeStatement parent) {
+		super(parent);
 		this.expression = expression;
 		processExpression(expression);
 	}

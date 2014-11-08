@@ -101,9 +101,19 @@ public class ExpressionExtractor {
 		instanceChecker = new InstanceOfCallExpression();
 		return getExpressions(element);
 	}
-	
+
 	public List<ParseTree> getNewExpressions(ParseTree element) {
 		instanceChecker = new InstanceOfNewExpression();
+		return getExpressions(element);
+	}
+
+	public List<ParseTree> getAssignmentRestExpressions(ParseTree element) {
+		instanceChecker = new InstanceOfAssignmentRestExpression();
+		return getExpressions(element);
+	}
+
+	public List<ParseTree> getBinaryOperators(ParseTree element) {
+		instanceChecker = new InstanceOfBinaryOperator();
 		return getExpressions(element);
 	}
 

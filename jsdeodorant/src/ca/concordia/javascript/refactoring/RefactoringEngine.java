@@ -63,6 +63,12 @@ public class RefactoringEngine {
 		List<ParseTree> newExpressions = expressionExtractor
 				.getNewExpressions(programTree);
 
+		List<ParseTree> assignmentRestExpressions = expressionExtractor
+				.getAssignmentRestExpressions(programTree);
+
+		List<ParseTree> binaryOperators = expressionExtractor
+				.getBinaryOperators(programTree);
+
 		Program program = new Program();
 		for (ParseTree sourceElement : programTree.sourceElements) {
 			if (sourceElement instanceof FunctionDeclarationTree) {
@@ -70,9 +76,9 @@ public class RefactoringEngine {
 						.asFunctionDeclaration();
 
 				program.addSourceElement(processFunctionDeclaration(functionDeclaration));
-
 			}
 		}
+
 		scriptAnalyzer.analyze();
 		return scriptAnalyzer.getMessages();
 	}

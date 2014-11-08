@@ -28,14 +28,9 @@ import com.google.javascript.jscomp.parsing.parser.trees.WithStatementTree;
 
 public class FunctionBody {
 
-	/**
-	 * 
-	 */
+
 	private CompositeStatement bodyBlock;
 
-	/**
-	 * 
-	 */
 	private AbstractExpression bodyExpression;
 
 	public FunctionBody(BlockTree blockTree) {

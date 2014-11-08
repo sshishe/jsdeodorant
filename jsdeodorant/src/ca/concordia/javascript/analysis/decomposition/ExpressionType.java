@@ -15,13 +15,5 @@ public enum ExpressionType {
 	CONDITIONAL,
 	NEW,
 	CALL,
-	MEMBER,
-	// Spider Monkey specific expressions
-	YIELD,
-	COMPREHENSION,
-	GENERATOR,
-	GRAPH,
-	GRAPHINDEX,
-	LET,
-	
+	MEMBER
 }
