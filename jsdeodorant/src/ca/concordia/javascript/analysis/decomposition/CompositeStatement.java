@@ -3,19 +3,28 @@ package ca.concordia.javascript.analysis.decomposition;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
-import com.google.common.base.MoreObjects;
+import ca.concordia.javascript.analysis.abstraction.SourceContainer;
+import ca.concordia.javascript.analysis.abstraction.SourceElement;
 
-public class CompositeStatement extends AbstractStatement {
+import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+
+public class CompositeStatement extends AbstractStatement implements
+		SourceContainer {
 
 	private List<AbstractStatement> statementList;
 	private List<AbstractExpression> expressionList;
 
 	public CompositeStatement(ParseTree statement, StatementType type,
-			CompositeStatement parent) {
+			SourceContainer parent) {
 		super(statement, type, parent);
 		statementList = new ArrayList<>();
 		expressionList = new ArrayList<>();
+	}
+
+	@Override
+	public void addElement(SourceElement element) {
+		if (element instanceof AbstractStatement)
+			addStatement((AbstractStatement) element);
 	}
 
 	public void addStatement(AbstractStatement statement) {
@@ -48,4 +57,5 @@ public class CompositeStatement extends AbstractStatement {
 		sb.append("\n");
 		return sb.toString();
 	}
+
 }

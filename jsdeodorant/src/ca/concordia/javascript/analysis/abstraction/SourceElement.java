@@ -1,5 +1,5 @@
 package ca.concordia.javascript.analysis.abstraction;
 
-public abstract class SourceElement {
+public interface SourceElement {
 
 }

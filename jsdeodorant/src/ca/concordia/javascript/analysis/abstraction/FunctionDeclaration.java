@@ -2,7 +2,7 @@ package ca.concordia.javascript.analysis.abstraction;
 
 import ca.concordia.javascript.analysis.decomposition.FunctionBody;
 
-public class FunctionDeclaration extends SourceElement {
+public class FunctionDeclaration implements SourceElement {
 
 	private FunctionBody body;
 	private String name;

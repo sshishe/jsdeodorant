@@ -6,6 +6,7 @@ import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.analysis.ScriptParser;
 import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.Program;
+import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.decomposition.FunctionBody;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
@@ -74,13 +75,12 @@ public class RefactoringEngine {
 
 		List<ParseTree> postfixExpressions = expressionExtractor
 				.getPostfixExpressions(programTree);
-		
+
 		List<ParseTree> arrayPattern = expressionExtractor
 				.getArrayPatterns(programTree);
-		
+
 		List<ParseTree> commaExpressions = expressionExtractor
 				.getCommaExpressions(programTree);
-		
 
 		List<ParseTree> arrayLiteralExpressions = expressionExtractor
 				.getArrayLiteralExpressions(programTree);
@@ -92,6 +92,8 @@ public class RefactoringEngine {
 						.asFunctionDeclaration();
 
 				program.addSourceElement(processFunctionDeclaration(functionDeclaration));
+			} else if (sourceElement instanceof ParseTree) {
+				StatementProcessor.processStatement(sourceElement, program);
 			}
 		}
 
