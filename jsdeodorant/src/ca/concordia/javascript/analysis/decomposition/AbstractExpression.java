@@ -23,6 +23,11 @@ public class AbstractExpression extends AbstractFunctionFragment {
 				.getCallExpressions(expression);
 
 		processFunctionInvocations(functionInvocations);
+
+		List<ParseTree> functionDeclarations = expressionExtractor
+				.getFunctionDeclarations(expression);
+
+		processFunctionDeclarations(functionDeclarations);
 	}
 
 	public String toString() {

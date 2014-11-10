@@ -4,17 +4,15 @@ import java.util.List;
 
 import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.analysis.ScriptParser;
-import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
-import ca.concordia.javascript.analysis.decomposition.FunctionBody;
+import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.SourceFile;
-import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ProgramTree;
@@ -91,7 +89,7 @@ public class RefactoringEngine {
 				FunctionDeclarationTree functionDeclaration = sourceElement
 						.asFunctionDeclaration();
 
-				program.addSourceElement(processFunctionDeclaration(functionDeclaration));
+				program.addSourceElement(AbstractFunctionFragment.processFunctionDeclaration(functionDeclaration));
 			} else if (sourceElement instanceof ParseTree) {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
@@ -101,24 +99,4 @@ public class RefactoringEngine {
 		return scriptAnalyzer.getMessages();
 	}
 
-	private FunctionDeclaration processFunctionDeclaration(
-			FunctionDeclarationTree functionDeclarationTree) {
-		FunctionDeclaration functionDeclaration = new FunctionDeclaration();
-		functionDeclaration.setName(functionDeclarationTree.name.value);
-
-		ParseTree functionBodyTree = functionDeclarationTree.functionBody;
-
-		if (functionBodyTree instanceof BlockTree) {
-			BlockTree blockTree = functionBodyTree.asBlock();
-			FunctionBody functionBody = new FunctionBody(blockTree);
-			functionDeclaration.setBody(functionBody);
-		}
-
-		// If the body is not BlockTree it will be an expression
-		else {
-
-		}
-
-		return functionDeclaration;
-	}
 }

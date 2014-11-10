@@ -11,6 +11,8 @@ public class FunctionInvocation {
 
 	public FunctionInvocation(String memberName, AbstractExpression operand,
 			List<AbstractExpression> arguments) {
-
+		this.memberName = memberName;
+		this.operand = operand;
+		this.arguments = arguments;
 	}
 }

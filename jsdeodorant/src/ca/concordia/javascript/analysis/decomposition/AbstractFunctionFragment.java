@@ -3,11 +3,13 @@ package ca.concordia.javascript.analysis.decomposition;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
+import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
+import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.GlobalVariableDeclaration;
 import ca.concordia.javascript.analysis.abstraction.LocalVariableDeclaration;
@@ -16,12 +18,14 @@ import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 public abstract class AbstractFunctionFragment {
 	private SourceContainer parent;
 	private List<FunctionInvocation> functionInvocationList;
+	private List<FunctionDeclaration> functionDeclarationList;
 	private List<LocalVariableDeclaration> localVariableDeclarationList;
 	private List<GlobalVariableDeclaration> globalVariableDeclarationList;
 
 	protected AbstractFunctionFragment(SourceContainer parent) {
 		this.parent = parent;
 		functionInvocationList = new ArrayList<>();
+		functionDeclarationList = new ArrayList<>();
 		localVariableDeclarationList = new ArrayList<>();
 		globalVariableDeclarationList = new ArrayList<>();
 	}
@@ -37,13 +41,11 @@ public abstract class AbstractFunctionFragment {
 			if (callExpression.operand instanceof MemberExpressionTree) {
 				MemberExpressionTree operand = (MemberExpressionTree) callExpression.operand;
 
-				List<AbstractExpression> arguments = null;
+				List<AbstractExpression> arguments = new ArrayList<>();
 				if (callExpression.arguments != null) {
-					arguments = new ArrayList<>();
 					for (ParseTree argument : callExpression.arguments.arguments) {
 						arguments.add(new AbstractExpression(argument));
 					}
-
 				}
 				addFunctionInvocation(new FunctionInvocation(
 						operand.memberName.value, new AbstractExpression(
@@ -59,5 +61,42 @@ public abstract class AbstractFunctionFragment {
 			CompositeStatement compositeStatement = (CompositeStatement) parent;
 			compositeStatement.addFunctionInvocation(functionInvocation);
 		}
+	}
+
+	protected void processFunctionDeclarations(List<ParseTree> functionDeclarations) {
+		for(ParseTree functionDeclaration : functionDeclarations) {
+			FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree) functionDeclaration;
+			addFunctionDeclaration(processFunctionDeclaration(functionDeclarationTree));
+		}
+	}
+
+	protected void addFunctionDeclaration(FunctionDeclaration functionDeclaration) {
+		functionDeclarationList.add(functionDeclaration);
+		if (parent != null && parent instanceof CompositeStatement) {
+			CompositeStatement compositeStatement = (CompositeStatement) parent;
+			compositeStatement.addFunctionDeclaration(functionDeclaration);
+		}
+	}
+
+	public static FunctionDeclaration processFunctionDeclaration(
+			FunctionDeclarationTree functionDeclarationTree) {
+		FunctionDeclaration functionDeclaration = new FunctionDeclaration();
+		if(functionDeclarationTree.name != null)
+			functionDeclaration.setName(functionDeclarationTree.name.value);
+
+		ParseTree functionBodyTree = functionDeclarationTree.functionBody;
+
+		if (functionBodyTree instanceof BlockTree) {
+			BlockTree blockTree = functionBodyTree.asBlock();
+			FunctionBody functionBody = new FunctionBody(blockTree);
+			functionDeclaration.setBody(functionBody);
+		}
+
+		// If the body is not BlockTree it will be an expression
+		else {
+
+		}
+
+		return functionDeclaration;
 	}
 }

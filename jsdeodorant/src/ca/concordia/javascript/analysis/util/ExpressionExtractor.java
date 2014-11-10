@@ -142,7 +142,10 @@ public class ExpressionExtractor {
 		return getExpressions(element);
 	}
 	
-	
+	public List<ParseTree> getFunctionDeclarations(ParseTree element) {
+		instanceChecker = new InstanceOfFunctionDeclaration();
+		return getExpressions(element);
+	}
 
 	private List<ParseTree> getExpressions(ParseTree element) {
 		List<ParseTree> expressionList = new ArrayList<ParseTree>();
@@ -334,6 +337,8 @@ public class ExpressionExtractor {
 					.addAll(getExpressions(functionDeclarationStatement.formalParameterList));
 			expressionList
 					.addAll(getExpressions(functionDeclarationStatement.functionBody));
+			if (instanceChecker.instanceOf(functionDeclarationStatement))
+				expressionList.add(functionDeclarationStatement);
 		}
 
 		else if (element instanceof FormalParameterListTree) {
