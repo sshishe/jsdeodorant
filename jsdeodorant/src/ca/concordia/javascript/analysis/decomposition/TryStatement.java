@@ -11,7 +11,6 @@ public class TryStatement extends CompositeStatement {
 
 	public TryStatement(ParseTree statement, SourceContainer parent) {
 		super(statement, StatementType.TRY, parent);
-
 	}
 
 	public void setCatchClause(CompositeStatement catchClause) {

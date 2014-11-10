@@ -13,8 +13,15 @@ public class Statement extends AbstractStatement {
 			SourceContainer parent) {
 		super(statement, type, parent);
 		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
+
 		List<ParseTree> variableDeclarations = expressionExtractor
 				.getVariableDeclarationExpressions(statement);
+
+		List<ParseTree> functionInvocations = expressionExtractor
+				.getCallExpressions(statement);
+
+		processFunctionInvocations(functionInvocations);
+
 	}
 
 	public String toString() {
