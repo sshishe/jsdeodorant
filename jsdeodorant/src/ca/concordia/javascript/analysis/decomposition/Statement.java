@@ -8,25 +8,33 @@ import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 public class Statement extends AbstractStatement {
-
 	public Statement(ParseTree statement, StatementType type,
 			SourceContainer parent) {
 		super(statement, type, parent);
 		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
 
-		List<ParseTree> functionInvocations = expressionExtractor
-				.getCallExpressions(statement);
+		processFunctionInvocations(expressionExtractor
+				.getCallExpressions(statement));
 
-		processFunctionInvocations(functionInvocations);
+		processFunctionDeclarations(expressionExtractor
+				.getFunctionDeclarations(statement));
 
-		List<ParseTree> functionDeclarations = expressionExtractor
-				.getFunctionDeclarations(statement);
+		// used by arrayCreations and objectCreations
+		List<ParseTree> newExpressions = expressionExtractor
+				.getNewExpressions(statement);
 
-		processFunctionDeclarations(functionDeclarations);
+		List<ParseTree> objectCreations = expressionExtractor
+				.getObjectLiteralExpressions(statement);
+		objectCreations.addAll(newExpressions);
+		processObjectCreations(objectCreations);
+
+		List<ParseTree> arrayCreations = expressionExtractor
+				.getArrayLiteralExpressions(statement);
+		objectCreations.addAll(newExpressions);
+		processArrayCreations(arrayCreations);
 	}
 
 	public String toString() {
 		return getStatement().toString();
 	}
-
 }

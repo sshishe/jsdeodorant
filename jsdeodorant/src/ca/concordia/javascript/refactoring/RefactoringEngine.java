@@ -83,13 +83,17 @@ public class RefactoringEngine {
 		List<ParseTree> arrayLiteralExpressions = expressionExtractor
 				.getArrayLiteralExpressions(programTree);
 
+		List<ParseTree> functionDeclarationExpression = expressionExtractor
+				.getFunctionDeclarations(programTree);
+
 		Program program = new Program();
 		for (ParseTree sourceElement : programTree.sourceElements) {
 			if (sourceElement instanceof FunctionDeclarationTree) {
 				FunctionDeclarationTree functionDeclaration = sourceElement
 						.asFunctionDeclaration();
 
-				program.addSourceElement(AbstractFunctionFragment.processFunctionDeclaration(functionDeclaration));
+				program.addSourceElement(AbstractFunctionFragment
+						.processFunctionDeclaration(functionDeclaration));
 			} else if (sourceElement instanceof ParseTree) {
 				StatementProcessor.processStatement(sourceElement, program);
 			}

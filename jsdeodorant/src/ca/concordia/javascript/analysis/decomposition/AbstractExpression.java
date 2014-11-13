@@ -19,15 +19,26 @@ public class AbstractExpression extends AbstractFunctionFragment {
 		super(parent);
 		this.expression = expression;
 		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
-		List<ParseTree> functionInvocations = expressionExtractor
-				.getCallExpressions(expression);
 
-		processFunctionInvocations(functionInvocations);
+		processFunctionInvocations(expressionExtractor
+				.getCallExpressions(expression));
 
-		List<ParseTree> functionDeclarations = expressionExtractor
-				.getFunctionDeclarations(expression);
+		processFunctionDeclarations(expressionExtractor
+				.getFunctionDeclarations(expression));
 
-		processFunctionDeclarations(functionDeclarations);
+		// used by arrayCreations and objectCreations
+		List<ParseTree> newExpressions = expressionExtractor
+				.getNewExpressions(expression);
+
+		List<ParseTree> objectCreations = expressionExtractor
+				.getObjectLiteralExpressions(expression);
+		objectCreations.addAll(newExpressions);
+		processObjectCreations(objectCreations);
+
+		List<ParseTree> arrayCreations = expressionExtractor
+				.getArrayLiteralExpressions(expression);
+		objectCreations.addAll(newExpressions);
+		processArrayCreations(arrayCreations);
 	}
 
 	public String toString() {
