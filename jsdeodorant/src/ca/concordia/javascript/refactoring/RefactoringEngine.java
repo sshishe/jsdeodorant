@@ -7,7 +7,6 @@ import ca.concordia.javascript.analysis.ScriptParser;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
-import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;

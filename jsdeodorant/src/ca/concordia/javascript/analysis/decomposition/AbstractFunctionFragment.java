@@ -1,7 +1,9 @@
 package ca.concordia.javascript.analysis.decomposition;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
@@ -13,6 +15,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 
 import ca.concordia.javascript.analysis.abstraction.ArrayCreation;
 import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
@@ -59,9 +62,10 @@ public abstract class AbstractFunctionFragment {
 						arguments.add(new AbstractExpression(argument));
 					}
 				}
-				addFunctionInvocation(new FunctionInvocation(
-						operand.memberName.value, new AbstractExpression(
-								operand), arguments));
+				String memberNameValue = operand.memberName.value;
+				FunctionInvocation functionInvocationObject = new FunctionInvocation(
+						memberNameValue, new AbstractExpression(operand), arguments);
+				addFunctionInvocation(functionInvocationObject);
 			}
 
 		}
@@ -114,7 +118,16 @@ public abstract class AbstractFunctionFragment {
 		for (ParseTree expression : objectLiteralExpressions) {
 			ObjectLiteralExpressionTree objectLiteral = (ObjectLiteralExpressionTree) expression;
 			ImmutableList<ParseTree> nameAndValues = objectLiteral.propertyNameAndValues;
-			ObjectLiteralCreation objectLiteralCreation = new ObjectLiteralCreation();
+			Map<String, AbstractExpression> propertyMap = new LinkedHashMap<>();
+			for (ParseTree argument : nameAndValues) {
+				if(argument instanceof PropertyNameAssignmentTree) {
+					PropertyNameAssignmentTree propertyNameAssignment = (PropertyNameAssignmentTree) argument;
+					String name = propertyNameAssignment.name.asIdentifier().value;
+					ParseTree value = propertyNameAssignment.value;
+					propertyMap.put(name, new AbstractExpression(value));
+				}
+			}
+			ObjectLiteralCreation objectLiteralCreation = new ObjectLiteralCreation(propertyMap);
 			addCreation(objectLiteralCreation);
 		}
 	}
@@ -123,7 +136,11 @@ public abstract class AbstractFunctionFragment {
 		for (ParseTree expression : arrayLiteralExpressions) {
 			ArrayLiteralExpressionTree arrayLiteral = (ArrayLiteralExpressionTree) expression;
 			ImmutableList<ParseTree> elements = arrayLiteral.elements;
-			ArrayLiteralCreation arrayLiteralCreation = new ArrayLiteralCreation();
+			List<AbstractExpression> arguments = new ArrayList<>();
+			for (ParseTree argument : elements) {
+				arguments.add(new AbstractExpression(argument));
+			}
+			ArrayLiteralCreation arrayLiteralCreation = new ArrayLiteralCreation(arguments);
 			addCreation(arrayLiteralCreation);
 		}
 	}
