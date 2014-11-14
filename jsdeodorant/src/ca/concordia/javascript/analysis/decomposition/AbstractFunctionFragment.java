@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.LiteralToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
+import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
@@ -20,7 +21,6 @@ import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpression
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 
-import ca.concordia.javascript.analysis.abstraction.ArrayCreation;
 import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.Creation;
 import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
@@ -104,16 +104,13 @@ public abstract class AbstractFunctionFragment {
 			NewExpressionTree newExpression = (NewExpressionTree) expression;
 			IdentifierExpressionTree identifierExpression = (IdentifierExpressionTree) newExpression.operand;
 			String identifierTokenValue = identifierExpression.identifierToken.value;
-			if (identifierTokenValue.equals(ReservedIdentifierToken.Array.toString())) {
-				ArrayCreation arrayCreation = new ArrayCreation();
-				// TODO set necessary properties
-				addCreation(arrayCreation);
+			ArgumentListTree argumentList = newExpression.arguments;
+			List<AbstractExpression> arguments = new ArrayList<>();
+			for (ParseTree argument : argumentList.arguments) {
+				arguments.add(new AbstractExpression(argument));
 			}
-			else if (!ReservedIdentifierToken.contains(identifierTokenValue)) {
-				ObjectCreation objectCreation = new ObjectCreation(identifierTokenValue);
-				// TODO set necessary properties
-				addCreation(objectCreation);
-			}
+			ObjectCreation objectCreation = new ObjectCreation(identifierTokenValue, arguments);
+			addCreation(objectCreation);
 		}
 	}
 
