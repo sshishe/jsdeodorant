@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
+import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
+import com.google.javascript.jscomp.parsing.parser.LiteralToken;
+import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
@@ -120,9 +123,17 @@ public abstract class AbstractFunctionFragment {
 			ImmutableList<ParseTree> nameAndValues = objectLiteral.propertyNameAndValues;
 			Map<String, AbstractExpression> propertyMap = new LinkedHashMap<>();
 			for (ParseTree argument : nameAndValues) {
-				if(argument instanceof PropertyNameAssignmentTree) {
+				if (argument instanceof PropertyNameAssignmentTree) {
+					// TODO handle nested properties
 					PropertyNameAssignmentTree propertyNameAssignment = (PropertyNameAssignmentTree) argument;
-					String name = propertyNameAssignment.name.asIdentifier().value;
+					Token token = propertyNameAssignment.name;
+					String name = null;
+					if (token instanceof IdentifierToken) {
+						name = token.asIdentifier().value;
+					}
+					else if (token instanceof LiteralToken) {
+						name = token.asLiteral().value;
+					}
 					ParseTree value = propertyNameAssignment.value;
 					propertyMap.put(name, new AbstractExpression(value));
 				}
