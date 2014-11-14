@@ -43,10 +43,10 @@ public class RefactoringEngine {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 
-		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
-
 		ProgramTree programTree = scriptAnalyzer.parse(inputs.get(0));
 
+		/*
+		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
 		List<ParseTree> literalExpressions = expressionExtractor
 				.getLiteralExpressions(programTree);
 
@@ -83,8 +83,9 @@ public class RefactoringEngine {
 		List<ParseTree> arrayLiteralExpressions = expressionExtractor
 				.getArrayLiteralExpressions(programTree);
 
-		List<ParseTree> functionDeclarationExpression = expressionExtractor
+		List<ParseTree> functionDeclarations = expressionExtractor
 				.getFunctionDeclarations(programTree);
+		*/
 
 		Program program = new Program();
 		for (ParseTree sourceElement : programTree.sourceElements) {

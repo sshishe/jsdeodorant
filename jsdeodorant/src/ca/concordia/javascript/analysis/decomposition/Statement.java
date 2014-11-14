@@ -20,18 +20,14 @@ public class Statement extends AbstractStatement {
 				.getFunctionDeclarations(statement));
 
 		// used by arrayCreations and objectCreations
-		List<ParseTree> newExpressions = expressionExtractor
-				.getNewExpressions(statement);
+		processNewExpressions(expressionExtractor
+				.getNewExpressions(statement));
 
-		List<ParseTree> objectCreations = expressionExtractor
-				.getObjectLiteralExpressions(statement);
-		objectCreations.addAll(newExpressions);
-		processObjectCreations(objectCreations);
+		processObjectLiteralExpressions(expressionExtractor
+				.getObjectLiteralExpressions(statement));
 
-		List<ParseTree> arrayCreations = expressionExtractor
-				.getArrayLiteralExpressions(statement);
-		objectCreations.addAll(newExpressions);
-		processArrayCreations(arrayCreations);
+		processArrayLiteralExpressions(expressionExtractor
+				.getArrayLiteralExpressions(statement));
 	}
 
 	public String toString() {

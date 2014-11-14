@@ -27,18 +27,14 @@ public class AbstractExpression extends AbstractFunctionFragment {
 				.getFunctionDeclarations(expression));
 
 		// used by arrayCreations and objectCreations
-		List<ParseTree> newExpressions = expressionExtractor
-				.getNewExpressions(expression);
+		processNewExpressions(expressionExtractor
+				.getNewExpressions(expression));
 
-		List<ParseTree> objectCreations = expressionExtractor
-				.getObjectLiteralExpressions(expression);
-		objectCreations.addAll(newExpressions);
-		processObjectCreations(objectCreations);
+		processObjectLiteralExpressions(expressionExtractor
+				.getObjectLiteralExpressions(expression));
 
-		List<ParseTree> arrayCreations = expressionExtractor
-				.getArrayLiteralExpressions(expression);
-		objectCreations.addAll(newExpressions);
-		processArrayCreations(arrayCreations);
+		processArrayLiteralExpressions(expressionExtractor
+				.getArrayLiteralExpressions(expression));
 	}
 
 	public String toString() {

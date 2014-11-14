@@ -3,6 +3,7 @@ package ca.concordia.javascript.analysis.decomposition;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
@@ -12,15 +13,16 @@ import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
-import com.google.javascript.jscomp.parsing.parser.trees.ParseTreeType;
 
 import ca.concordia.javascript.analysis.abstraction.ArrayCreation;
+import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.Creation;
 import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.GlobalVariableDeclaration;
 import ca.concordia.javascript.analysis.abstraction.LocalVariableDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
+import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 
 public abstract class AbstractFunctionFragment {
@@ -90,41 +92,39 @@ public abstract class AbstractFunctionFragment {
 		}
 	}
 
-	protected void processArrayCreations(List<ParseTree> arrayCreations) {
-		for (ParseTree arrayCreation : arrayCreations) {
-			if (arrayCreation instanceof ArrayLiteralExpressionTree) {
-				ArrayCreation creationInsances = new ArrayCreation();
+	protected void processNewExpressions(List<ParseTree> newExpressions) {
+		for (ParseTree expression : newExpressions) {
+			NewExpressionTree newExpression = (NewExpressionTree) expression;
+			IdentifierExpressionTree identifierExpression = (IdentifierExpressionTree) newExpression.operand;
+			String identifierTokenValue = identifierExpression.identifierToken.value;
+			if (identifierTokenValue.equals(ReservedIdentifierToken.Array.toString())) {
+				ArrayCreation arrayCreation = new ArrayCreation();
 				// TODO set necessary properties
-				addCreation(creationInsances);
-			} else if (arrayCreation instanceof NewExpressionTree) {
-				NewExpressionTree newArrayCreationExpression = (NewExpressionTree) arrayCreation;
-				IdentifierExpressionTree identifierExpression = (IdentifierExpressionTree) newArrayCreationExpression.operand;
-				if (identifierExpression.identifierToken.value
-						.equals(ReservedIdentifierToken.Array.toString())) {
-					ArrayCreation creationInsances = new ArrayCreation();
-					// TODO set necessary properties
-					addCreation(creationInsances);
-				}
+				addCreation(arrayCreation);
+			}
+			else if (!ReservedIdentifierToken.contains(identifierTokenValue)) {
+				ObjectCreation objectCreation = new ObjectCreation(identifierTokenValue);
+				// TODO set necessary properties
+				addCreation(objectCreation);
 			}
 		}
 	}
 
-	protected void processObjectCreations(List<ParseTree> objectCreations) {
-		for (ParseTree arrayCreation : objectCreations) {
-			if (arrayCreation instanceof ObjectLiteralExpressionTree) {
-				ArrayCreation creationInsances = new ArrayCreation();
-				// TODO set necessary properties
-				addCreation(creationInsances);
-			} else if (arrayCreation instanceof NewExpressionTree) {
-				NewExpressionTree newArrayCreationExpression = (NewExpressionTree) arrayCreation;
-				IdentifierExpressionTree identifierExpression = (IdentifierExpressionTree) newArrayCreationExpression.operand;
-				if (!ReservedIdentifierToken
-						.contains(identifierExpression.identifierToken.value)) {
-					ObjectCreation creationInsances = new ObjectCreation();
-					// TODO set necessary properties
-					addCreation(creationInsances);
-				}
-			}
+	protected void processObjectLiteralExpressions(List<ParseTree> objectLiteralExpressions) {
+		for (ParseTree expression : objectLiteralExpressions) {
+			ObjectLiteralExpressionTree objectLiteral = (ObjectLiteralExpressionTree) expression;
+			ImmutableList<ParseTree> nameAndValues = objectLiteral.propertyNameAndValues;
+			ObjectLiteralCreation objectLiteralCreation = new ObjectLiteralCreation();
+			addCreation(objectLiteralCreation);
+		}
+	}
+
+	protected void processArrayLiteralExpressions(List<ParseTree> arrayLiteralExpressions) {
+		for (ParseTree expression : arrayLiteralExpressions) {
+			ArrayLiteralExpressionTree arrayLiteral = (ArrayLiteralExpressionTree) expression;
+			ImmutableList<ParseTree> elements = arrayLiteral.elements;
+			ArrayLiteralCreation arrayLiteralCreation = new ArrayLiteralCreation();
+			addCreation(arrayLiteralCreation);
 		}
 	}
 
