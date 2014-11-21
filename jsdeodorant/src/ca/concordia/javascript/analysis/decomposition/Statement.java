@@ -1,7 +1,5 @@
 package ca.concordia.javascript.analysis.decomposition;
 
-import java.util.List;
-
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
@@ -19,9 +17,7 @@ public class Statement extends AbstractStatement {
 		processFunctionDeclarations(expressionExtractor
 				.getFunctionDeclarations(statement));
 
-		// used by arrayCreations and objectCreations
-		processNewExpressions(expressionExtractor
-				.getNewExpressions(statement));
+		processNewExpressions(expressionExtractor.getNewExpressions(statement));
 
 		processObjectLiteralExpressions(expressionExtractor
 				.getObjectLiteralExpressions(statement));

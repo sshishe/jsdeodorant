@@ -1,7 +1,5 @@
 package ca.concordia.javascript.analysis.decomposition;
 
-import java.util.List;
-
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
@@ -26,7 +24,6 @@ public class AbstractExpression extends AbstractFunctionFragment {
 		processFunctionDeclarations(expressionExtractor
 				.getFunctionDeclarations(expression));
 
-		// used by arrayCreations and objectCreations
 		processNewExpressions(expressionExtractor
 				.getNewExpressions(expression));
 

@@ -13,6 +13,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
@@ -30,6 +31,7 @@ import ca.concordia.javascript.analysis.abstraction.LocalVariableDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
+import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration.Kind;
 
 public abstract class AbstractFunctionFragment {
 	private SourceContainer parent;
@@ -52,6 +54,39 @@ public abstract class AbstractFunctionFragment {
 		return this.parent;
 	}
 
+	public static FunctionDeclaration processFunctionDeclaration(
+			FunctionDeclarationTree functionDeclarationTree) {
+		FunctionDeclaration functionDeclaration = new FunctionDeclaration();
+		if (functionDeclarationTree.name != null)
+			functionDeclaration.setName(functionDeclarationTree.name.value);
+
+		functionDeclaration.setKind(Kind.valueOf(functionDeclarationTree.kind
+				.toString()));
+
+		if (functionDeclarationTree.formalParameterList != null) {
+			FormalParameterListTree formalParametersList = functionDeclarationTree.formalParameterList
+					.asFormalParameterList();
+			for (ParseTree parameter : formalParametersList.parameters)
+				functionDeclaration.addParameter(new AbstractExpression(
+						parameter));
+		}
+
+		ParseTree functionBodyTree = functionDeclarationTree.functionBody;
+
+		if (functionBodyTree instanceof BlockTree) {
+			BlockTree blockTree = functionBodyTree.asBlock();
+			FunctionBody functionBody = new FunctionBody(blockTree);
+			functionDeclaration.setBody(functionBody);
+		}
+
+		// If the body is not BlockTree it will be an expression
+		else {
+
+		}
+
+		return functionDeclaration;
+	}
+
 	protected void processFunctionInvocations(
 			List<ParseTree> functionInvocations) {
 		for (ParseTree functionInvocation : functionInvocations) {
@@ -67,7 +102,8 @@ public abstract class AbstractFunctionFragment {
 				}
 				String memberNameValue = operand.memberName.value;
 				FunctionInvocation functionInvocationObject = new FunctionInvocation(
-						memberNameValue, new AbstractExpression(operand), arguments);
+						memberNameValue, new AbstractExpression(operand),
+						arguments);
 				addFunctionInvocation(functionInvocationObject);
 			}
 
@@ -109,12 +145,14 @@ public abstract class AbstractFunctionFragment {
 			for (ParseTree argument : argumentList.arguments) {
 				arguments.add(new AbstractExpression(argument));
 			}
-			ObjectCreation objectCreation = new ObjectCreation(identifierTokenValue, arguments);
+			ObjectCreation objectCreation = new ObjectCreation(
+					identifierTokenValue, arguments);
 			addCreation(objectCreation);
 		}
 	}
 
-	protected void processObjectLiteralExpressions(List<ParseTree> objectLiteralExpressions) {
+	protected void processObjectLiteralExpressions(
+			List<ParseTree> objectLiteralExpressions) {
 		for (ParseTree expression : objectLiteralExpressions) {
 			ObjectLiteralExpressionTree objectLiteral = (ObjectLiteralExpressionTree) expression;
 			ImmutableList<ParseTree> nameAndValues = objectLiteral.propertyNameAndValues;
@@ -127,20 +165,21 @@ public abstract class AbstractFunctionFragment {
 					String name = null;
 					if (token instanceof IdentifierToken) {
 						name = token.asIdentifier().value;
-					}
-					else if (token instanceof LiteralToken) {
+					} else if (token instanceof LiteralToken) {
 						name = token.asLiteral().value;
 					}
 					ParseTree value = propertyNameAssignment.value;
 					propertyMap.put(name, new AbstractExpression(value));
 				}
 			}
-			ObjectLiteralCreation objectLiteralCreation = new ObjectLiteralCreation(propertyMap);
+			ObjectLiteralCreation objectLiteralCreation = new ObjectLiteralCreation(
+					propertyMap);
 			addCreation(objectLiteralCreation);
 		}
 	}
 
-	protected void processArrayLiteralExpressions(List<ParseTree> arrayLiteralExpressions) {
+	protected void processArrayLiteralExpressions(
+			List<ParseTree> arrayLiteralExpressions) {
 		for (ParseTree expression : arrayLiteralExpressions) {
 			ArrayLiteralExpressionTree arrayLiteral = (ArrayLiteralExpressionTree) expression;
 			ImmutableList<ParseTree> elements = arrayLiteral.elements;
@@ -148,7 +187,8 @@ public abstract class AbstractFunctionFragment {
 			for (ParseTree argument : elements) {
 				arguments.add(new AbstractExpression(argument));
 			}
-			ArrayLiteralCreation arrayLiteralCreation = new ArrayLiteralCreation(arguments);
+			ArrayLiteralCreation arrayLiteralCreation = new ArrayLiteralCreation(
+					arguments);
 			addCreation(arrayLiteralCreation);
 		}
 	}
@@ -159,27 +199,5 @@ public abstract class AbstractFunctionFragment {
 			CompositeStatement compositeStatement = (CompositeStatement) parent;
 			compositeStatement.addCreation(creation);
 		}
-	}
-
-	public static FunctionDeclaration processFunctionDeclaration(
-			FunctionDeclarationTree functionDeclarationTree) {
-		FunctionDeclaration functionDeclaration = new FunctionDeclaration();
-		if (functionDeclarationTree.name != null)
-			functionDeclaration.setName(functionDeclarationTree.name.value);
-
-		ParseTree functionBodyTree = functionDeclarationTree.functionBody;
-
-		if (functionBodyTree instanceof BlockTree) {
-			BlockTree blockTree = functionBodyTree.asBlock();
-			FunctionBody functionBody = new FunctionBody(blockTree);
-			functionDeclaration.setBody(functionBody);
-		}
-
-		// If the body is not BlockTree it will be an expression
-		else {
-
-		}
-
-		return functionDeclaration;
 	}
 }
