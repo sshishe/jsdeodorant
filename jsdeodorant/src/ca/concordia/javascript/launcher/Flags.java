@@ -28,17 +28,15 @@ public class Flags {
 	@Option(name = "-print_model", hidden = true, usage = "Prints abstract model")
 	private boolean printModel = false;
 
-	@Option(name = "-directory", usage = "Directory path for javascript project")
-	private void setDirectory(String path) {
-		System.out.print(path);
-	}
-	
+//	@Option(name = "-directory", usage = "Directory path for javascript project")
+//	private void setDirectory(String path) {
+//		System.out.print(path);
+//	}
+//	
 	@Option(name = "-print_flowgraph", hidden = true, usage = "Prints flow graph")
 	private boolean printFlowGraph = false;
 
-
-
-	//@Option(name = "--js", usage = "The JavaScript filenames, From Google Closure Flags class")
+	@Option(name = "--js", usage = "The JavaScript filenames, From Google Closure Flags class")
 	private List<String> js = new ArrayList<>();
 
 	//@Option(name = "--externs", usage = "List of externs files to use in the compilation.")
