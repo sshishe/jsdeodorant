@@ -4,7 +4,11 @@ import java.util.List;
 
 import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.analysis.ScriptParser;
+import ca.concordia.javascript.analysis.abstraction.Creation;
+import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
+import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
+import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
@@ -47,7 +51,6 @@ public class RefactoringEngine {
 		for (SourceFile sourceFile : inputs) {
 			ProgramTree programTree = scriptAnalyzer.parse(sourceFile);
 			for (ParseTree sourceElement : programTree.sourceElements) {
-
 				// ExpressionExtractor expressionExtractor = new
 				// ExpressionExtractor();
 				// List<ParseTree> literalExpressions = expressionExtractor
@@ -102,7 +105,26 @@ public class RefactoringEngine {
 			}
 		}
 
+		for (ObjectCreation objectCreation : program.getObjectCreations()) {
+			for (FunctionDeclaration functionDeclaration : program
+					.getFunctionDeclarations()) {
+				if (objectCreation.getClassName().equals(
+						functionDeclaration.getName()))
+					if (objectCreation.getArguments().size() == functionDeclaration
+							.getParameters().size()) {
+						objectCreation
+								.setFunctionDeclaration(functionDeclaration);
+						System.out.println("The created object name is: "
+								+ objectCreation.getClassName()
+								+ " The function declaration name is: "
+								+ functionDeclaration.getName()
+								+ " and the number of params are:"
+								+ functionDeclaration.getParameters().size());
+					}
+			}
+
+		}
+
 		return scriptAnalyzer.getMessages();
 	}
-
 }

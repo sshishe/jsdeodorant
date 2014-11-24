@@ -50,10 +50,6 @@ public abstract class AbstractFunctionFragment {
 		globalVariableDeclarationList = new ArrayList<>();
 	}
 
-	public SourceContainer getParent() {
-		return this.parent;
-	}
-
 	public static FunctionDeclaration processFunctionDeclaration(
 			FunctionDeclarationTree functionDeclarationTree) {
 		FunctionDeclaration functionDeclaration = new FunctionDeclaration();
@@ -211,4 +207,17 @@ public abstract class AbstractFunctionFragment {
 			compositeStatement.addCreation(creation);
 		}
 	}
+
+	public SourceContainer getParent() {
+		return this.parent;
+	}
+
+	public List<Creation> getCreations() {
+		return creationList;
+	}
+
+	public List<FunctionDeclaration> getFuntionDeclarations() {
+		return functionDeclarationList;
+	}
+
 }
