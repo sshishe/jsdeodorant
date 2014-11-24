@@ -138,8 +138,19 @@ public abstract class AbstractFunctionFragment {
 	protected void processNewExpressions(List<ParseTree> newExpressions) {
 		for (ParseTree expression : newExpressions) {
 			NewExpressionTree newExpression = (NewExpressionTree) expression;
-			IdentifierExpressionTree identifierExpression = (IdentifierExpressionTree) newExpression.operand;
-			String identifierTokenValue = identifierExpression.identifierToken.value;
+			String identifierTokenValue = null;
+
+			if (newExpression.operand instanceof IdentifierExpressionTree)
+				identifierTokenValue = newExpression.operand
+						.asIdentifierExpression().identifierToken.value;
+			else if (newExpression.operand instanceof MemberExpressionTree)
+				// TODO check if we need to find the type of memberName i.e. the
+				// type of "x"
+				// in x.Child("Something") where x could be an instance of
+				// another class
+				identifierTokenValue = newExpression.operand
+						.asMemberExpression().memberName.value;
+
 			ArgumentListTree argumentList = newExpression.arguments;
 			List<AbstractExpression> arguments = new ArrayList<>();
 			for (ParseTree argument : argumentList.arguments) {
