@@ -7,6 +7,7 @@ import ca.concordia.javascript.analysis.ScriptParser;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
+import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;
@@ -41,65 +42,66 @@ public class RefactoringEngine {
 	public List<String> run() {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
-
-		ProgramTree programTree = scriptAnalyzer.parse(inputs.get(0));
-
-		/*
-		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
-		List<ParseTree> literalExpressions = expressionExtractor
-				.getLiteralExpressions(programTree);
-
-		List<ParseTree> variableDeclarations = expressionExtractor
-				.getVariableDeclarationExpressions(programTree);
-
-		List<ParseTree> identifiers = expressionExtractor
-				.getIdentifierExpressions(programTree);
-
-		List<ParseTree> callExpressions = expressionExtractor
-				.getCallExpressions(programTree);
-
-		List<ParseTree> objectLiteralExpressions = expressionExtractor
-				.getObjectLiteralExpressions(programTree);
-
-		List<ParseTree> newExpressions = expressionExtractor
-				.getNewExpressions(programTree);
-
-		List<ParseTree> assignmentRestExpressions = expressionExtractor
-				.getAssignmentRestExpressions(programTree);
-
-		List<ParseTree> binaryOperators = expressionExtractor
-				.getBinaryOperators(programTree);
-
-		List<ParseTree> postfixExpressions = expressionExtractor
-				.getPostfixExpressions(programTree);
-
-		List<ParseTree> arrayPattern = expressionExtractor
-				.getArrayPatterns(programTree);
-
-		List<ParseTree> commaExpressions = expressionExtractor
-				.getCommaExpressions(programTree);
-
-		List<ParseTree> arrayLiteralExpressions = expressionExtractor
-				.getArrayLiteralExpressions(programTree);
-
-		List<ParseTree> functionDeclarations = expressionExtractor
-				.getFunctionDeclarations(programTree);
-		*/
-
 		Program program = new Program();
-		for (ParseTree sourceElement : programTree.sourceElements) {
-			if (sourceElement instanceof FunctionDeclarationTree) {
-				FunctionDeclarationTree functionDeclaration = sourceElement
-						.asFunctionDeclaration();
 
-				program.addSourceElement(AbstractFunctionFragment
-						.processFunctionDeclaration(functionDeclaration));
-			} else if (sourceElement instanceof ParseTree) {
-				StatementProcessor.processStatement(sourceElement, program);
+		for (SourceFile sourceFile : inputs) {
+			ProgramTree programTree = scriptAnalyzer.parse(sourceFile);
+			for (ParseTree sourceElement : programTree.sourceElements) {
+
+				// ExpressionExtractor expressionExtractor = new
+				// ExpressionExtractor();
+				// List<ParseTree> literalExpressions = expressionExtractor
+				// .getLiteralExpressions(programTree);
+				//
+				// List<ParseTree> variableDeclarations = expressionExtractor
+				// .getVariableDeclarationExpressions(programTree);
+				//
+				// List<ParseTree> identifiers = expressionExtractor
+				// .getIdentifierExpressions(programTree);
+				//
+				// List<ParseTree> callExpressions = expressionExtractor
+				// .getCallExpressions(programTree);
+				//
+				// List<ParseTree> objectLiteralExpressions =
+				// expressionExtractor
+				// .getObjectLiteralExpressions(programTree);
+				//
+				// List<ParseTree> newExpressions = expressionExtractor
+				// .getNewExpressions(programTree);
+				//
+				// List<ParseTree> assignmentRestExpressions =
+				// expressionExtractor
+				// .getAssignmentRestExpressions(programTree);
+				//
+				// List<ParseTree> binaryOperators = expressionExtractor
+				// .getBinaryOperators(programTree);
+				//
+				// List<ParseTree> postfixExpressions = expressionExtractor
+				// .getPostfixExpressions(programTree);
+				//
+				// List<ParseTree> arrayPattern = expressionExtractor
+				// .getArrayPatterns(programTree);
+				//
+				// List<ParseTree> commaExpressions = expressionExtractor
+				// .getCommaExpressions(programTree);
+				//
+				// List<ParseTree> arrayLiteralExpressions = expressionExtractor
+				// .getArrayLiteralExpressions(programTree);
+				//
+				// List<ParseTree> functionDeclarations = expressionExtractor
+				// .getFunctionDeclarations(programTree);
+
+				if (sourceElement instanceof FunctionDeclarationTree) {
+					FunctionDeclarationTree functionDeclaration = sourceElement
+							.asFunctionDeclaration();
+					program.addSourceElement(AbstractFunctionFragment
+							.processFunctionDeclaration(functionDeclaration));
+				} else if (sourceElement instanceof ParseTree) {
+					StatementProcessor.processStatement(sourceElement, program);
+				}
 			}
 		}
 
-		scriptAnalyzer.analyze();
 		return scriptAnalyzer.getMessages();
 	}
 

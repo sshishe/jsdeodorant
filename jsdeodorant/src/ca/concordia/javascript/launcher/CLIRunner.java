@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.spi.OptionHandler;
 
 import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.refactoring.RefactoringEngine;
@@ -62,11 +63,11 @@ public class CLIRunner extends CommandLineRunner {
 	public static void initializeCommandLine(String[] args)
 			throws CmdLineException, IOException {
 		flags = new Flags();
-		Collection<String> closureSpecificArgs = flags.getClosureArgs(args);
 		flags.parse(args);
 
-		CLIRunner runner = new CLIRunner(
-				closureSpecificArgs.toArray(new String[0]));
+		// instantiate CLIRRunner with no argument
+		CLIRunner runner = new CLIRunner(new String[0]);
+
 		runner.performParsingCommandLine();
 	}
 
@@ -88,10 +89,7 @@ public class CLIRunner extends CommandLineRunner {
 					externs.build());
 			refactoringEngine.run();
 		}
-
-		if (shouldRunCompiler()) {
-			run();
-		}
+		System.exit(0);
 	}
 
 	public void addExternsFromFile(List<String> externs) {
