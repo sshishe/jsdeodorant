@@ -1,11 +1,9 @@
 package ca.concordia.javascript.launcher;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.spi.OptionHandler;
 
 import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.refactoring.RefactoringEngine;

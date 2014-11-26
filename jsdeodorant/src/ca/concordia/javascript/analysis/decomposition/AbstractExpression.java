@@ -36,7 +36,12 @@ public class AbstractExpression extends AbstractFunctionFragment {
 				.getArrayLiteralExpressions(expression));
 	}
 
+	public ParseTree getExpression() {
+		return expression;
+	}
+	
 	public String toString() {
 		return expression.toString();
 	}
+
 }

@@ -52,4 +52,20 @@ public class Program implements SourceContainer {
 		}
 		return functionDeclarations;
 	}
+
+	public List<AnonymousFunctionDeclaration> getAnonymousFunctionDeclarations() {
+		List<AnonymousFunctionDeclaration> anonymousFunctionDeclarations = new ArrayList<>();
+		for (SourceElement sourceElement : sourceElements) {
+			if (sourceElement instanceof AbstractFunctionFragment) {
+				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
+				for (AnonymousFunctionDeclaration functionDeclaration : abstractFunctionFragment
+						.getAnonymousFuntionDeclarations())
+					anonymousFunctionDeclarations.add(functionDeclaration);
+				//TODO check if AnonymousFunctionDeclaration can be in the root of program
+			} else if (sourceElement instanceof AnonymousFunctionDeclaration)
+				anonymousFunctionDeclarations
+						.add((AnonymousFunctionDeclaration) sourceElement);
+		}
+		return anonymousFunctionDeclarations;
+	}
 }

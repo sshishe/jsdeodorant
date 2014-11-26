@@ -253,4 +253,8 @@ public abstract class AbstractFunctionFragment {
 		return functionDeclarationList;
 	}
 
+	public List<AnonymousFunctionDeclaration> getAnonymousFuntionDeclarations() {
+		return anonymousFunctionDeclarationList;
+	}
+
 }

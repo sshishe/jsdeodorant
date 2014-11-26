@@ -5,7 +5,7 @@ import java.util.List;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 
 public class ObjectCreation extends Creation {
-	private FunctionDeclaration functionDeclaration;
+	private SourceElement functionDeclaration;
 	private String className;
 	private List<AbstractExpression> arguments;
 
@@ -14,11 +14,11 @@ public class ObjectCreation extends Creation {
 		this.arguments = arguments;
 	}
 
-	public FunctionDeclaration getFunctionDeclaration() {
+	public SourceElement getFunctionDeclaration() {
 		return functionDeclaration;
 	}
 
-	public void setFunctionDeclaration(FunctionDeclaration functionDeclaration) {
+	public void setFunctionDeclaration(SourceElement functionDeclaration) {
 		this.functionDeclaration = functionDeclaration;
 	}
 

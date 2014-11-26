@@ -2,21 +2,14 @@ package ca.concordia.javascript.launcher;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.kohsuke.args4j.spi.OptionHandler;
 
-import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
+
 import com.google.common.io.Files;
 
 public class Flags {
@@ -80,8 +73,7 @@ public class Flags {
 		try {
 			parser.parseArgument(args);
 		} catch (CmdLineException e) {
-			// Happens because of Closure commands
+			e.printStackTrace();
 		}
-
 	}
 }
