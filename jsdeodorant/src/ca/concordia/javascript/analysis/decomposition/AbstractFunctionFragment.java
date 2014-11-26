@@ -33,7 +33,7 @@ import ca.concordia.javascript.analysis.abstraction.LocalVariableDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
-import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration.Kind;
+import ca.concordia.javascript.analysis.abstraction.Function.Kind;
 
 public abstract class AbstractFunctionFragment {
 	private SourceContainer parent;

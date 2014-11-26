@@ -49,8 +49,7 @@ public class CompositePostProcessor {
 				if (objectCreation.getClassName() != null)
 					if (objectCreation.getClassName().equals(tokenName))
 						if (objectCreation.getArguments().size() == anonymousFunctionDeclaration
-								.getFunctionDeclaration().getParameters()
-								.size()) {
+								.getParameters().size()) {
 							objectCreation
 									.setFunctionDeclaration(anonymousFunctionDeclaration);
 							StringBuilder matchedLog = new StringBuilder(
@@ -59,7 +58,6 @@ public class CompositePostProcessor {
 									.append(tokenName)
 									.append(",")
 									.append(anonymousFunctionDeclaration
-											.getFunctionDeclaration()
 											.getParameters().size())
 									.append(",").append("EXPRESSION");
 							CSVFileWriter.writeToFile("log.csv", matchedLog

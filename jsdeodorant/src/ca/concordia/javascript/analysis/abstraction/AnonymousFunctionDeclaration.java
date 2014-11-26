@@ -2,21 +2,18 @@ package ca.concordia.javascript.analysis.abstraction;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 
-public class AnonymousFunctionDeclaration implements SourceElement {
+public class AnonymousFunctionDeclaration extends Function {
 	private AbstractExpression leftOperand;
-	private FunctionDeclaration functionDeclaration;
 
 	public AnonymousFunctionDeclaration(AbstractExpression leftOperand,
 			FunctionDeclaration functionDeclaration) {
 		this.leftOperand = leftOperand;
-		this.functionDeclaration = functionDeclaration;
+		this.setKind(functionDeclaration.getKind());
+		this.setParameters(functionDeclaration.getParameters());
+		this.setBody(functionDeclaration.getBody());
 	}
 
 	public AbstractExpression getLeftOperand() {
 		return leftOperand;
-	}
-
-	public FunctionDeclaration getFunctionDeclaration() {
-		return functionDeclaration;
 	}
 }
