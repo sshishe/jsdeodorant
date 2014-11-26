@@ -182,9 +182,11 @@ public abstract class AbstractFunctionFragment {
 
 			ArgumentListTree argumentList = newExpression.arguments;
 			List<AbstractExpression> arguments = new ArrayList<>();
-			for (ParseTree argument : argumentList.arguments) {
-				arguments.add(new AbstractExpression(argument));
-			}
+			if (newExpression.arguments != null)
+				for (ParseTree argument : argumentList.arguments) {
+					arguments.add(new AbstractExpression(argument));
+				}
+
 			ObjectCreation objectCreation = new ObjectCreation(
 					identifierTokenValue, arguments);
 			addCreation(objectCreation);

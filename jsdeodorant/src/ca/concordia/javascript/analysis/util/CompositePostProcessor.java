@@ -10,24 +10,32 @@ import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 
 public class CompositePostProcessor {
-
 	public static void processFunctionDeclarations(Program program) {
+		String fileHeader = "Invocation Type, DeclarationType, Number of Params, FunctionType";
+		CSVFileWriter.writeToFile("log.csv", fileHeader.split(","));
 		for (ObjectCreation objectCreation : program.getObjectCreations()) {
 			for (FunctionDeclaration functionDeclaration : program
 					.getFunctionDeclarations()) {
-				if (objectCreation.getClassName().equals(
-						functionDeclaration.getName()))
-					if (objectCreation.getArguments().size() == functionDeclaration
-							.getParameters().size()) {
-						objectCreation
-								.setFunctionDeclaration(functionDeclaration);
-						System.out.println("The created type is: "
-								+ objectCreation.getClassName()
-								+ " The function declaration name is: "
-								+ functionDeclaration.getName()
-								+ " and the number of params are: "
-								+ functionDeclaration.getParameters().size());
-					}
+				if (objectCreation.getClassName() != null)
+					if (objectCreation.getClassName().equals(
+							functionDeclaration.getName()))
+						if (objectCreation.getArguments().size() == functionDeclaration
+								.getParameters().size()) {
+							objectCreation
+									.setFunctionDeclaration(functionDeclaration);
+							StringBuilder matchedLog = new StringBuilder(
+									objectCreation.getClassName())
+									.append(",")
+									.append(functionDeclaration.getName())
+									.append(",")
+									.append(functionDeclaration.getParameters()
+											.size()).append(",")
+									.append("DECLARATION");
+
+							CSVFileWriter.writeToFile("log.csv", matchedLog
+									.toString().split(","));
+							System.out.println(matchedLog);
+						}
 			}
 			for (AnonymousFunctionDeclaration anonymousFunctionDeclaration : program
 					.getAnonymousFunctionDeclarations()) {
@@ -38,21 +46,26 @@ public class CompositePostProcessor {
 					tokenName = expression.asIdentifierExpression().identifierToken.value;
 				else if (expression instanceof MemberExpressionTree)
 					tokenName = expression.asMemberExpression().memberName.value;
-				if (objectCreation.getClassName().equals(tokenName))
-					if (objectCreation.getArguments().size() == anonymousFunctionDeclaration
-							.getFunctionDeclaration().getParameters().size()) {
-						objectCreation
-								.setFunctionDeclaration(anonymousFunctionDeclaration);
-						System.out
-								.println("The created type is: "
-										+ objectCreation.getClassName()
-										+ " The property name that anonymous function expression assigned is: "
-										+ tokenName
-										+ " and the number of params are: "
-										+ anonymousFunctionDeclaration
-												.getFunctionDeclaration()
-												.getParameters().size());
-					}
+				if (objectCreation.getClassName() != null)
+					if (objectCreation.getClassName().equals(tokenName))
+						if (objectCreation.getArguments().size() == anonymousFunctionDeclaration
+								.getFunctionDeclaration().getParameters()
+								.size()) {
+							objectCreation
+									.setFunctionDeclaration(anonymousFunctionDeclaration);
+							StringBuilder matchedLog = new StringBuilder(
+									objectCreation.getClassName())
+									.append(",")
+									.append(tokenName)
+									.append(",")
+									.append(anonymousFunctionDeclaration
+											.getFunctionDeclaration()
+											.getParameters().size())
+									.append(",").append("EXPRESSION");
+							CSVFileWriter.writeToFile("log.csv", matchedLog
+									.toString().split(","));
+							System.out.println(matchedLog);
+						}
 			}
 		}
 	}
