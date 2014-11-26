@@ -17,6 +17,9 @@ public class Statement extends AbstractStatement {
 		processFunctionDeclarations(expressionExtractor
 				.getFunctionDeclarations(statement));
 
+		processAnonymousFunctionDeclarations(expressionExtractor
+				.getBinaryOperators(statement));
+
 		processNewExpressions(expressionExtractor.getNewExpressions(statement));
 
 		processObjectLiteralExpressions(expressionExtractor

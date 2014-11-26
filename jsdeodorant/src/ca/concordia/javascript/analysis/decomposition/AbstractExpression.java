@@ -24,8 +24,10 @@ public class AbstractExpression extends AbstractFunctionFragment {
 		processFunctionDeclarations(expressionExtractor
 				.getFunctionDeclarations(expression));
 
-		processNewExpressions(expressionExtractor
-				.getNewExpressions(expression));
+		processAnonymousFunctionDeclarations(expressionExtractor
+				.getBinaryOperators(expression));
+
+		processNewExpressions(expressionExtractor.getNewExpressions(expression));
 
 		processObjectLiteralExpressions(expressionExtractor
 				.getObjectLiteralExpressions(expression));

@@ -11,6 +11,7 @@ import com.google.javascript.jscomp.parsing.parser.LiteralToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
@@ -22,6 +23,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpression
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 
+import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.Creation;
 import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
@@ -38,6 +40,7 @@ public abstract class AbstractFunctionFragment {
 	private List<Creation> creationList;
 	private List<FunctionInvocation> functionInvocationList;
 	private List<FunctionDeclaration> functionDeclarationList;
+	private List<AnonymousFunctionDeclaration> anonymousFunctionDeclarationList;
 	private List<LocalVariableDeclaration> localVariableDeclarationList;
 	private List<GlobalVariableDeclaration> globalVariableDeclarationList;
 
@@ -46,6 +49,7 @@ public abstract class AbstractFunctionFragment {
 		creationList = new ArrayList<>();
 		functionInvocationList = new ArrayList<>();
 		functionDeclarationList = new ArrayList<>();
+		anonymousFunctionDeclarationList = new ArrayList<>();
 		localVariableDeclarationList = new ArrayList<>();
 		globalVariableDeclarationList = new ArrayList<>();
 	}
@@ -117,9 +121,38 @@ public abstract class AbstractFunctionFragment {
 	protected void processFunctionDeclarations(
 			List<ParseTree> functionDeclarations) {
 		for (ParseTree functionDeclaration : functionDeclarations) {
-			FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree) functionDeclaration;
+			FunctionDeclarationTree functionDeclarationTree = functionDeclaration
+					.asFunctionDeclaration();
 			addFunctionDeclaration(processFunctionDeclaration(functionDeclarationTree));
 		}
+	}
+
+	protected void processAnonymousFunctionDeclarations(
+			List<ParseTree> anonymousFunctionDeclarations) {
+		for (ParseTree anonymousFunctionDeclaration : anonymousFunctionDeclarations)
+			if (anonymousFunctionDeclaration instanceof BinaryOperatorTree) {
+				BinaryOperatorTree binaryOperatorTree = anonymousFunctionDeclaration
+						.asBinaryOperator();
+				if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
+					AnonymousFunctionDeclaration anonymousFunctionDeclarationObject = new AnonymousFunctionDeclaration(
+							new AbstractExpression(binaryOperatorTree.left),
+							processFunctionDeclaration(binaryOperatorTree.right
+									.asFunctionDeclaration()));
+					addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject);
+				}
+			}
+	}
+
+	public void addAnonymousFunctionDeclaration(
+			AnonymousFunctionDeclaration anonymousFunctionDeclarationObject) {
+		anonymousFunctionDeclarationList
+				.add(anonymousFunctionDeclarationObject);
+		if (parent != null && parent instanceof CompositeStatement) {
+			CompositeStatement compositeStatement = (CompositeStatement) parent;
+			compositeStatement
+					.addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject);
+		}
+
 	}
 
 	protected void addFunctionDeclaration(
