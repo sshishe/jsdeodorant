@@ -40,7 +40,7 @@ public class CompositePostProcessor {
 					tokenName = expression.asMemberExpression().memberName.value;
 				if (objectCreation.getClassName().equals(tokenName))
 					if (objectCreation.getArguments().size() == anonymousFunctionDeclaration
-							.getFunctionDeclaration().getParameters().size()) {
+							.getParameters().size()) {
 						objectCreation
 								.setFunctionDeclaration(anonymousFunctionDeclaration);
 						System.out
@@ -50,7 +50,6 @@ public class CompositePostProcessor {
 										+ tokenName
 										+ " and the number of params are: "
 										+ anonymousFunctionDeclaration
-												.getFunctionDeclaration()
 												.getParameters().size());
 					}
 			}
