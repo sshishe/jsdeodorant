@@ -12,6 +12,7 @@ public abstract class Function {
 		DECLARATION, EXPRESSION, MEMBER, ARROW
 	}
 
+	
 	protected FunctionBody body;
 	protected Kind kind;
 	protected List<AbstractExpression> parameters;
@@ -48,4 +49,6 @@ public abstract class Function {
 		this.kind = kind;
 	}
 	//pull up common attributes from FunctionDeclaration and AnonymousFunctionDeclaration
+
+	public abstract String getName();
 }
