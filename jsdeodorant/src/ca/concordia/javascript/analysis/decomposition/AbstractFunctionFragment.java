@@ -184,6 +184,10 @@ public abstract class AbstractFunctionFragment {
 				// another class
 				identifierTokenValue = newExpression.operand
 						.asMemberExpression().memberName.value;
+			else
+				System.out
+						.println("The missing type that we should handle for the operand of New expression is:"
+								+ newExpression.operand.getClass() +" "+ newExpression.location);
 
 			ArgumentListTree argumentList = newExpression.arguments;
 			List<AbstractExpression> arguments = new ArrayList<>();
