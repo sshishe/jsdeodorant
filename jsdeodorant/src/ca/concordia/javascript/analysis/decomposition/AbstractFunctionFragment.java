@@ -172,6 +172,11 @@ public abstract class AbstractFunctionFragment {
 			if (newExpression.operand instanceof IdentifierExpressionTree)
 				identifierTokenValue = newExpression.operand
 						.asIdentifierExpression().identifierToken.value;
+
+			// TODO support MemberLookupExpressionTrees i.e: var xhr = new
+			// goog.global['XMLHttpRequest']();
+			// and also support for ParenExpressionTree i.e: var col = new
+			// (Backbone.Collection.extend({ model: Model }))();
 			else if (newExpression.operand instanceof MemberExpressionTree)
 				// TODO check if we need to find the type of memberName i.e. the
 				// type of "x"
@@ -189,6 +194,7 @@ public abstract class AbstractFunctionFragment {
 
 			ObjectCreation objectCreation = new ObjectCreation(
 					identifierTokenValue, arguments);
+
 			addCreation(objectCreation);
 		}
 	}
