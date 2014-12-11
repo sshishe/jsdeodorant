@@ -6,6 +6,7 @@ import java.util.List;
 import org.kohsuke.args4j.CmdLineException;
 
 import ca.concordia.javascript.analysis.ExtendedCompiler;
+import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.refactoring.RefactoringEngine;
 
 import com.google.common.base.Function;
@@ -85,7 +86,25 @@ public class CLIRunner extends CommandLineRunner {
 			RefactoringEngine refactoringEngine = new RefactoringEngine(
 					createExtendedCompiler(), createOptions(), inputs.build(),
 					externs.build());
-			refactoringEngine.run();
+			Program program = refactoringEngine.run();
+			
+			System.out.println("Object Creations using new keyword:"
+					+ program.getObjectCreations().size());
+			System.out.println("Array Creations using new keyword:"
+					+ program.getArrayCreations().size());
+			System.out.println("Array Literal Creations: "
+					+ program.getArrayLiteralCreations().size());
+			System.out.println("Object Literal Creations: "
+					+ program.getObjectLiteralCreations().size());
+
+			// for (Creation creation : program.getObjectCreations()) {
+			// if (creation instanceof ObjectCreation)
+			// System.out.println("Object Creation");
+			// if (creation instanceof ArrayLiteralCreation)
+			// System.out.println("Array Literal Creation");
+			// if (creation instanceof ObjectLiteralCreation)
+			// System.out.println("Object Literal Creation");
+			// }
 		}
 		System.exit(0);
 	}

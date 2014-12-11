@@ -39,7 +39,7 @@ public class RefactoringEngine {
 
 	}
 
-	public List<String> run() {
+	public Program run() {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		Program program = new Program();
@@ -103,7 +103,7 @@ public class RefactoringEngine {
 
 		CompositePostProcessor.processFunctionDeclarations(program);
 
-		return scriptAnalyzer.getMessages();
+		return program;
 	}
 
 }
