@@ -32,11 +32,78 @@ public class Program implements SourceContainer {
 				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
 				for (Creation creation : abstractFunctionFragment
 						.getCreations())
-					if (creation instanceof ObjectCreation)
-						objectCreations.add((ObjectCreation) creation);
+					if (creation instanceof ObjectCreation) {
+						ObjectCreation objectCreation = (ObjectCreation) creation;
+						// TODO remove the following condition after adding
+						// support for MemberLookupExpressionTree and
+						// ParenExpressionTree
+						if (objectCreation.getClassName() == null) {
+							objectCreations.add(objectCreation);
+							continue;
+						}
+						if (!objectCreation.getClassName().equalsIgnoreCase(
+								"Array"))
+							objectCreations.add(objectCreation);
+					}
 			}
 		}
 		return objectCreations;
+	}
+
+	public List<ObjectCreation> getArrayCreations() {
+		List<ObjectCreation> objectCreations = new ArrayList<>();
+		for (SourceElement sourceElement : sourceElements) {
+			if (sourceElement instanceof AbstractFunctionFragment) {
+				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
+				for (Creation creation : abstractFunctionFragment
+						.getCreations())
+					if (creation instanceof ObjectCreation) {
+						ObjectCreation objectCreation = (ObjectCreation) creation;
+
+						// TODO remove the following condition after adding
+						// support for MemberLookupExpressionTree and
+						// ParenExpressionTree
+						if (objectCreation.getClassName() == null) {
+							objectCreations.add(objectCreation);
+							continue;
+						}
+						if (objectCreation.getClassName().equalsIgnoreCase(
+								"Array"))
+							objectCreations.add(objectCreation);
+					}
+			}
+		}
+		return objectCreations;
+	}
+
+	public List<ArrayLiteralCreation> getArrayLiteralCreations() {
+		List<ArrayLiteralCreation> arrayLiteralCreations = new ArrayList<>();
+		for (SourceElement sourceElement : sourceElements) {
+			if (sourceElement instanceof AbstractFunctionFragment) {
+				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
+				for (Creation creation : abstractFunctionFragment
+						.getCreations())
+					if (creation instanceof ArrayLiteralCreation)
+						arrayLiteralCreations
+								.add((ArrayLiteralCreation) creation);
+			}
+		}
+		return arrayLiteralCreations;
+	}
+
+	public List<ObjectLiteralCreation> getObjectLiteralCreations() {
+		List<ObjectLiteralCreation> arrayLiteralCreations = new ArrayList<>();
+		for (SourceElement sourceElement : sourceElements) {
+			if (sourceElement instanceof AbstractFunctionFragment) {
+				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
+				for (Creation creation : abstractFunctionFragment
+						.getCreations())
+					if (creation instanceof ObjectLiteralCreation)
+						arrayLiteralCreations
+								.add((ObjectLiteralCreation) creation);
+			}
+		}
+		return arrayLiteralCreations;
 	}
 
 	public List<FunctionDeclaration> getFunctionDeclarations() {
@@ -61,7 +128,8 @@ public class Program implements SourceContainer {
 				for (AnonymousFunctionDeclaration functionDeclaration : abstractFunctionFragment
 						.getAnonymousFuntionDeclarations())
 					anonymousFunctionDeclarations.add(functionDeclaration);
-				//TODO check if AnonymousFunctionDeclaration can be in the root of program
+				// TODO check if AnonymousFunctionDeclaration can be in the root
+				// of program
 			} else if (sourceElement instanceof AnonymousFunctionDeclaration)
 				anonymousFunctionDeclarations
 						.add((AnonymousFunctionDeclaration) sourceElement);
