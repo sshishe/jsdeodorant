@@ -86,16 +86,16 @@ public class CLIRunner extends CommandLineRunner {
 			RefactoringEngine refactoringEngine = new RefactoringEngine(
 					createExtendedCompiler(), createOptions(), inputs.build(),
 					externs.build());
-			Program program = refactoringEngine.run();
-			
-			System.out.println("Object Creations using new keyword:"
-					+ program.getObjectCreations().size());
-			System.out.println("Array Creations using new keyword:"
-					+ program.getArrayCreations().size());
-			System.out.println("Array Literal Creations: "
-					+ program.getArrayLiteralCreations().size());
-			System.out.println("Object Literal Creations: "
-					+ program.getObjectLiteralCreations().size());
+			 refactoringEngine.run();
+			 //Program program =
+//			System.out.println("Object Creations using new keyword:"
+//					+ program.getObjectCreations().size());
+//			System.out.println("Array Creations using new keyword:"
+//					+ program.getArrayCreations().size());
+//			System.out.println("Array Literal Creations: "
+//					+ program.getArrayLiteralCreations().size());
+//			System.out.println("Object Literal Creations: "
+//					+ program.getObjectLiteralCreations().size());
 
 			// for (Creation creation : program.getObjectCreations()) {
 			// if (creation instanceof ObjectCreation)
