@@ -13,11 +13,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.SourceFile;
+import com.google.javascript.jscomp.WarningLevel;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ProgramTree;
 
 public class RefactoringEngine {
+	private Program program;
 	private final ExtendedCompiler compiler;
 	private final CompilerOptions compilerOptions;
 	private final ImmutableList<SourceFile> inputs;
@@ -33,6 +35,8 @@ public class RefactoringEngine {
 		this.compilerOptions.setIdeMode(false);
 		CompilationLevel.WHITESPACE_ONLY
 				.setOptionsForCompilationLevel(this.compilerOptions);
+		WarningLevel warningLevel=WarningLevel.QUIET;
+		warningLevel.setOptionsForWarningLevel(this.compilerOptions);
 
 		this.inputs = inputs;
 		this.externs = externs;
@@ -42,7 +46,7 @@ public class RefactoringEngine {
 	public List<String> run() {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
-		Program program = new Program();
+		program = new Program();
 
 		for (SourceFile sourceFile : inputs) {
 			ProgramTree programTree = scriptAnalyzer.parse(sourceFile);
@@ -104,6 +108,10 @@ public class RefactoringEngine {
 		CompositePostProcessor.processFunctionDeclarations(program);
 
 		return scriptAnalyzer.getMessages();
+	}
+
+	public Program getProgram() {
+		return program;
 	}
 
 }
