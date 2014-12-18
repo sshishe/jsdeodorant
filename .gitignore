@@ -38,3 +38,6 @@ local.properties
 
 *.csv
 RemoteSystemsTempFiles
+
+# Log files
+*.log
