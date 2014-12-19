@@ -28,19 +28,17 @@ public class RefactoringEngine {
 	public RefactoringEngine(ExtendedCompiler compiler,
 			CompilerOptions compilerOptions, ImmutableList<SourceFile> inputs,
 			ImmutableList<SourceFile> externs) {
-
 		this.compiler = compiler;
 
 		this.compilerOptions = compilerOptions;
 		this.compilerOptions.setIdeMode(false);
 		CompilationLevel.WHITESPACE_ONLY
 				.setOptionsForCompilationLevel(this.compilerOptions);
-		WarningLevel warningLevel=WarningLevel.QUIET;
+		WarningLevel warningLevel = WarningLevel.QUIET;
 		warningLevel.setOptionsForWarningLevel(this.compilerOptions);
 
 		this.inputs = inputs;
 		this.externs = externs;
-
 	}
 
 	public List<String> run() {
