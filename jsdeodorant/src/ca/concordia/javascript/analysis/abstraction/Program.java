@@ -3,9 +3,13 @@ package ca.concordia.javascript.analysis.abstraction;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
+import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 
 public class Program implements SourceContainer {
+	private static final Logger log = Logger.getLogger(Program.class.getName());
 	private List<SourceElement> sourceElements;
 
 	public Program() {
@@ -14,6 +18,12 @@ public class Program implements SourceContainer {
 
 	public void addSourceElement(SourceElement source) {
 		sourceElements.add(source);
+		if (source instanceof AbstractStatement)
+			log.debug(String.format("add %s to source program",
+					((AbstractStatement) source).getStatement().toString()));
+		else if (source instanceof FunctionDeclaration)
+			log.debug(String.format("add %s function to program",
+					((FunctionDeclaration) source).getName()));
 	}
 
 	@Override

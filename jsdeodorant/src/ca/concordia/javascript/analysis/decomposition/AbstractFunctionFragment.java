@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.LiteralToken;
@@ -36,6 +38,8 @@ import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.Function.Kind;
 
 public abstract class AbstractFunctionFragment {
+	private static final Logger log = Logger
+			.getLogger(AbstractFunctionFragment.class.getName());
 	private SourceContainer parent;
 	private List<Creation> creationList;
 	private List<FunctionInvocation> functionInvocationList;
@@ -185,9 +189,10 @@ public abstract class AbstractFunctionFragment {
 				identifierTokenValue = newExpression.operand
 						.asMemberExpression().memberName.value;
 			else
-				System.out
-						.println("The missing type that we should handle for the operand of New expression is:"
-								+ newExpression.operand.getClass() +" "+ newExpression.location);
+				log.warn("The missing type that we should handle for the operand of New expression is:"
+						+ newExpression.operand.getClass()
+						+ " "
+						+ newExpression.location);
 
 			ArgumentListTree argumentList = newExpression.arguments;
 			List<AbstractExpression> arguments = new ArrayList<>();

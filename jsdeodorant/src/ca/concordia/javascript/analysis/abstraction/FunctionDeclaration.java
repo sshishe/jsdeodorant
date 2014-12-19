@@ -1,14 +1,14 @@
 package ca.concordia.javascript.analysis.abstraction;
 
 public class FunctionDeclaration extends Function implements SourceElement {
-private String name;
+	private String name;
 	private boolean isStatic;
 	private boolean isGenerator;
 
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -29,6 +29,4 @@ private String name;
 	public void setGenerator(boolean isGenerator) {
 		this.isGenerator = isGenerator;
 	}
-
-
 }
