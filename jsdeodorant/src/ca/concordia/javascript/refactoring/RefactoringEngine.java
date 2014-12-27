@@ -1,9 +1,15 @@
 package ca.concordia.javascript.refactoring;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.analysis.ScriptParser;
+import ca.concordia.javascript.analysis.abstraction.Function;
+import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
@@ -19,6 +25,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ProgramTree;
 
 public class RefactoringEngine {
+	static Logger log = Logger.getLogger(RefactoringEngine.class.getName());
 	private Program program;
 	private final ExtendedCompiler compiler;
 	private final CompilerOptions compilerOptions;
@@ -104,6 +111,24 @@ public class RefactoringEngine {
 		}
 
 		CompositePostProcessor.processFunctionDeclarations(program);
+
+		Set<Function> classes = new HashSet<>();
+		for (ObjectCreation creation : program.getObjectCreations()) {
+			String className = creation.getClassName();
+			if (!classes.contains(creation.getFunctionDeclaration())) {
+				if (creation.getFunctionDeclaration() != null) {
+					classes.add(creation.getFunctionDeclaration());
+//					log.info(className
+//							+ " "
+//							+ creation.getFunctionDeclaration()
+//									.getFunctionDeclarationTree().location
+//							+ " and the creation happens at:"
+//							+ creation.getNewExpressionTree().location);
+				}
+			}
+		}
+
+		log.info("Number of classes:" + classes.size());
 
 		return scriptAnalyzer.getMessages();
 	}

@@ -37,9 +37,7 @@ public class CLIRunner extends CommandLineRunner {
 		try {
 			CLIRunner.initializeCommandLine(args);
 
-			// instantiate CLIRRunner with no argument
-			CLIRunner runner = new CLIRunner(new String[0]);
-
+			CLIRunner runner = new CLIRunner();
 			runner.performActions();
 
 		} catch (CmdLineException | IOException e) {
@@ -99,7 +97,7 @@ public class CLIRunner extends CommandLineRunner {
 	}
 
 	@Override
-	protected CompilerOptions createOptions() {
+	public CompilerOptions createOptions() {
 		compilerOptions = super.createOptions();
 		return compilerOptions;
 	}
@@ -112,6 +110,10 @@ public class CLIRunner extends CommandLineRunner {
 
 	public ExtendedCompiler createExtendedCompiler() {
 		return new ExtendedCompiler(getErrorPrintStream());
+	}
+
+	public CLIRunner() {
+		this(new String[0]);
 	}
 
 	protected CLIRunner(String[] args) {

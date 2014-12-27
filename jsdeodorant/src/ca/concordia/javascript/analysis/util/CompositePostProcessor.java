@@ -1,6 +1,9 @@
 package ca.concordia.javascript.analysis.util;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.Function;
@@ -8,22 +11,52 @@ import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 
 public class CompositePostProcessor {
+	static Logger log = Logger
+			.getLogger(CompositePostProcessor.class.getName());
+	static Set<String> allClassNames = new HashSet<>();
+	static Set<String> matchedClassNames = new HashSet<>();
+
 	public static void processFunctionDeclarations(Program program) {
 		String fileHeader = "Invocation Type, DeclarationType, Number of Params, FunctionType";
 		CSVFileWriter.writeToFile("log.csv", fileHeader.split(","));
-		System.out.println("The number of creations in post processing: "
-				+ program.getObjectCreations().size());
 		for (ObjectCreation objectCreation : program.getObjectCreations()) {
-			if (!findFunctionDeclaration(program, objectCreation))
-				findAnonymousFunctionDeclaration(program, objectCreation);
+			allClassNames.add(objectCreation.getClassName());
+			if (!findPredefinedClasses(program, objectCreation))
+				if (!findFunctionDeclaration(program, objectCreation))
+					if (!findAnonymousFunctionDeclaration(program, objectCreation))
+					{
+						StringBuilder unmatchedLog = new StringBuilder(
+								objectCreation.getClassName()).append(",")
+								.append(objectCreation.getClassName()).append(",")
+								.append(objectCreation.getArguments().size()).append(",")
+								.append("MATCHNOTFOUND");
+						CSVFileWriter.writeToFile("log.csv",
+								unmatchedLog.toString().split(","));
+					}
 		}
+	}
+
+	private static boolean findPredefinedClasses(Program program,
+			ObjectCreation objectCreation) {
+		if (PredefinedJSClasses.contains(objectCreation.getClassName())) {
+			matchedClassNames.add(objectCreation.getClassName());
+			StringBuilder matchedLog = new StringBuilder(
+					objectCreation.getClassName()).append(",")
+					.append(objectCreation.getClassName()).append(",")
+					.append(objectCreation.getArguments().size()).append(",")
+					.append("PREDEFINED");
+			CSVFileWriter.writeToFile("log.csv",
+					matchedLog.toString().split(","));
+			return true;
+
+		}
+		return false;
 	}
 
 	private static boolean findAnonymousFunctionDeclaration(Program program,
 			ObjectCreation objectCreation) {
 		for (AnonymousFunctionDeclaration anonymousFunctionDeclaration : program
 				.getAnonymousFunctionDeclarations()) {
-
 			if (objectCreation.getClassName() != null)
 				if (objectCreation.getClassName().equals(
 						anonymousFunctionDeclaration.getName()))
@@ -31,7 +64,7 @@ public class CompositePostProcessor {
 							.getParameters().size()) {
 						objectCreation
 								.setFunctionDeclaration(anonymousFunctionDeclaration);
-
+						matchedClassNames.add(objectCreation.getClassName());
 						StringBuilder matchedLog = new StringBuilder(
 								objectCreation.getClassName())
 								.append(",")
@@ -58,7 +91,7 @@ public class CompositePostProcessor {
 							.getParameters().size()) {
 						objectCreation
 								.setFunctionDeclaration(functionDeclaration);
-
+						matchedClassNames.add(objectCreation.getClassName());
 						StringBuilder matchedLog = new StringBuilder(
 								objectCreation.getClassName())
 								.append(",")

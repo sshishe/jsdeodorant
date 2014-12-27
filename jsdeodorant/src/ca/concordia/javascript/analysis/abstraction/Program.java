@@ -73,10 +73,10 @@ public class Program implements SourceContainer {
 						// TODO remove the following condition after adding
 						// support for MemberLookupExpressionTree and
 						// ParenExpressionTree
-						if (objectCreation.getClassName() == null) {
-							objectCreations.add(objectCreation);
-							continue;
-						}
+						// if (objectCreation.getClassName() == null) {
+						// objectCreations.add(objectCreation);
+						// continue;
+						// }
 						if (objectCreation.getClassName().equalsIgnoreCase(
 								"Array"))
 							objectCreations.add(objectCreation);
