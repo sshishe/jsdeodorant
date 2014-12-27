@@ -41,3 +41,5 @@ RemoteSystemsTempFiles
 
 # Log files
 *.log
+
+.DS_Store
