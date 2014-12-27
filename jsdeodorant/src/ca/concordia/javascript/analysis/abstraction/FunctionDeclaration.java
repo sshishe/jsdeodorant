@@ -1,6 +1,9 @@
 package ca.concordia.javascript.analysis.abstraction;
 
+import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+
 public class FunctionDeclaration extends Function implements SourceElement {
+	private FunctionDeclarationTree functionDeclaration;
 	private String name;
 	private boolean isStatic;
 	private boolean isGenerator;
@@ -28,5 +31,13 @@ public class FunctionDeclaration extends Function implements SourceElement {
 
 	public void setGenerator(boolean isGenerator) {
 		this.isGenerator = isGenerator;
+	}
+
+	public FunctionDeclarationTree getFunctionDeclarationTree() {
+		return functionDeclaration;
+	}
+
+	public void setFunctionDeclarationTree(FunctionDeclarationTree functionDeclaration) {
+		this.functionDeclaration = functionDeclaration;
 	}
 }

@@ -1,5 +1,6 @@
 package ca.concordia.javascript.analysis.abstraction;
 
+import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
@@ -7,6 +8,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 
 public class AnonymousFunctionDeclaration extends Function {
+	private FunctionDeclarationTree functionDeclaration;
 	private AbstractExpression leftOperand;
 
 	public AnonymousFunctionDeclaration(AbstractExpression leftOperand,
@@ -19,6 +21,14 @@ public class AnonymousFunctionDeclaration extends Function {
 
 	public AbstractExpression getLeftOperand() {
 		return leftOperand;
+	}
+	
+	public FunctionDeclarationTree getFunctionDeclarationTree() {
+		return functionDeclaration;
+	}
+
+	public void setFunctionDeclarationTree(FunctionDeclarationTree functionDeclaration) {
+		this.functionDeclaration = functionDeclaration;
 	}
 
 	@Override

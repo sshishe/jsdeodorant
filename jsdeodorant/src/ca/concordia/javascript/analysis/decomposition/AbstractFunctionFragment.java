@@ -61,6 +61,9 @@ public abstract class AbstractFunctionFragment {
 	public static FunctionDeclaration processFunctionDeclaration(
 			FunctionDeclarationTree functionDeclarationTree) {
 		FunctionDeclaration functionDeclaration = new FunctionDeclaration();
+		if (functionDeclarationTree==null)
+			System.out.println("here");
+		functionDeclaration.setFunctionDeclarationTree(functionDeclarationTree);
 		if (functionDeclarationTree.name != null)
 			functionDeclaration.setName(functionDeclarationTree.name.value);
 
@@ -85,7 +88,7 @@ public abstract class AbstractFunctionFragment {
 
 		// If the body is not BlockTree it will be an expression
 		else {
-
+			log.warn("Unsupported expression");
 		}
 
 		return functionDeclaration;
@@ -138,10 +141,12 @@ public abstract class AbstractFunctionFragment {
 				BinaryOperatorTree binaryOperatorTree = anonymousFunctionDeclaration
 						.asBinaryOperator();
 				if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
+					FunctionDeclarationTree functionDeclarationTree = binaryOperatorTree.right
+							.asFunctionDeclaration();
 					AnonymousFunctionDeclaration anonymousFunctionDeclarationObject = new AnonymousFunctionDeclaration(
 							new AbstractExpression(binaryOperatorTree.left),
-							processFunctionDeclaration(binaryOperatorTree.right
-									.asFunctionDeclaration()));
+							processFunctionDeclaration(functionDeclarationTree));
+					anonymousFunctionDeclarationObject.setFunctionDeclarationTree(functionDeclarationTree);
 					addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject);
 				}
 			}
@@ -201,7 +206,7 @@ public abstract class AbstractFunctionFragment {
 					arguments.add(new AbstractExpression(argument));
 				}
 
-			ObjectCreation objectCreation = new ObjectCreation(
+			ObjectCreation objectCreation = new ObjectCreation(newExpression,
 					identifierTokenValue, arguments);
 
 			addCreation(objectCreation);

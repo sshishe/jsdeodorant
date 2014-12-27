@@ -3,6 +3,9 @@ package ca.concordia.javascript.analysis.abstraction;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionBody;
 
@@ -51,4 +54,6 @@ public abstract class Function {
 	//pull up common attributes from FunctionDeclaration and AnonymousFunctionDeclaration
 
 	public abstract String getName();
+	public abstract FunctionDeclarationTree getFunctionDeclarationTree();
+	public abstract void setFunctionDeclarationTree(FunctionDeclarationTree functionDeclaration);
 }
