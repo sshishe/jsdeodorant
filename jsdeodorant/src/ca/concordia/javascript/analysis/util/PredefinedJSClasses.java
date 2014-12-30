@@ -56,7 +56,8 @@ public enum PredefinedJSClasses {
 	Textarea,
 	TypeError,
 	URIError,
-	window;
+	window,
+	Worker;
 	
 	public static boolean contains(String token) {
 		for (PredefinedJSClasses c : PredefinedJSClasses.values()) {
