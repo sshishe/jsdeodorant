@@ -25,14 +25,19 @@ public class ExperimentOutput {
 
 	public void uniqueClassDeclarationNumber() {
 		Set<Function> classes = new HashSet<>();
+		log.info("Name and location of class declarations:");
 		for (ObjectCreation creation : program.getObjectCreations()) {
 			if (!classes.contains(creation.getClassDeclaration())) {
 				if (creation.getClassDeclaration() != null) {
 					classes.add(creation.getClassDeclaration());
+					log.info(creation.getClassName()
+							+ " "
+							+ creation.getClassDeclaration()
+									.getFunctionDeclarationTree().location);
 				}
 			}
 		}
-		log.info("Number of classes:" + classes.size());
+		log.info("Number of unique classes:" + classes.size());
 	}
 
 	public void writeToFile() {
