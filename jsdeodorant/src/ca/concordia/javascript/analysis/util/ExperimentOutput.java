@@ -19,7 +19,7 @@ public class ExperimentOutput {
 	public ExperimentOutput(Program program) {
 		this.program = program;
 		csvWriter = new CSVFileWriter("log.csv");
-		String fileHeader = "Invocation Type, DeclarationType, Number of Params, FunctionType";
+		String fileHeader = "Invocation Type, DeclarationType, Number of Params, FunctionType,Invocation Location";
 		csvWriter.writeToFile(fileHeader.split(","));
 	}
 
@@ -32,9 +32,7 @@ public class ExperimentOutput {
 				}
 			}
 		}
-
 		log.info("Number of classes:" + classes.size());
-
 	}
 
 	public void writeToFile() {
@@ -47,16 +45,24 @@ public class ExperimentOutput {
 						.append(",")
 						.append(objectCreation.getArguments().size())
 						.append(",")
-						.append(objectCreation.getClassDeclarationType());
+						.append(objectCreation.getClassDeclarationType())
+						.append(",")
+						.append(objectCreation.getNewExpressionTree().location
+								.toString().replace(",", "-"));
 				csvWriter.writeToFile(unmatchedLog.toString().split(","));
 			} else if (objectCreation.getClassDeclarationType() == ClassDeclarationType.PREDEFINED) {
 				matchedClassNames.add(objectCreation.getClassName());
 				StringBuilder matchedLog = new StringBuilder(
-						objectCreation.getClassName()).append(",")
-						.append(objectCreation.getClassName()).append(",")
+						objectCreation.getClassName())
+						.append(",")
+						.append(objectCreation.getClassName())
+						.append(",")
 						.append(objectCreation.getArguments().size())
 						.append(",")
-						.append(objectCreation.getClassDeclarationType());
+						.append(objectCreation.getClassDeclarationType())
+						.append(",")
+						.append(objectCreation.getNewExpressionTree().location
+								.toString().replace(",", "-"));
 				csvWriter.writeToFile(matchedLog.toString().split(","));
 			} else if (objectCreation.getClassDeclarationType() == ClassDeclarationType.ANONYMOUS) {
 				matchedClassNames.add(objectCreation.getClassName());
@@ -66,8 +72,12 @@ public class ExperimentOutput {
 						.append(objectCreation.getClassDeclaration().getName())
 						.append(",")
 						.append(objectCreation.getClassDeclaration()
-								.getParameters().size()).append(",")
-						.append(objectCreation.getClassDeclarationType());
+								.getParameters().size())
+						.append(",")
+						.append(objectCreation.getClassDeclarationType())
+						.append(",")
+						.append(objectCreation.getNewExpressionTree().location
+								.toString().replace(",", "-"));
 				csvWriter.writeToFile(matchedLog.toString().split(","));
 			} else if (objectCreation.getClassDeclarationType() == ClassDeclarationType.DECLARATION) {
 				matchedClassNames.add(objectCreation.getClassName());
@@ -77,8 +87,12 @@ public class ExperimentOutput {
 						.append(objectCreation.getClassDeclaration().getName())
 						.append(",")
 						.append(objectCreation.getClassDeclaration()
-								.getParameters().size()).append(",")
-						.append(objectCreation.getClassDeclarationType());
+								.getParameters().size())
+						.append(",")
+						.append(objectCreation.getClassDeclarationType())
+						.append(",")
+						.append(objectCreation.getNewExpressionTree().location
+								.toString().replace(",", "-"));
 				csvWriter.writeToFile(matchedLog.toString().split(","));
 			} else
 				log.warn("Add the new type to experiment output");
