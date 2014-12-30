@@ -15,10 +15,15 @@ public class CompositePostProcessor {
 			.getLogger(CompositePostProcessor.class.getName());
 	static Set<String> allClassNames = new HashSet<>();
 	static Set<String> matchedClassNames = new HashSet<>();
+	static CSVFileWriter csvWriter;
+
+	static {
+		csvWriter = new CSVFileWriter("log.csv");
+		String fileHeader = "Invocation Type, DeclarationType, Number of Params, FunctionType";
+		csvWriter.writeToFile(fileHeader.split(","));
+	}
 
 	public static void processFunctionDeclarations(Program program) {
-		String fileHeader = "Invocation Type, DeclarationType, Number of Params, FunctionType";
-		CSVFileWriter.writeToFile("log.csv", fileHeader.split(","));
 		for (ObjectCreation objectCreation : program.getObjectCreations()) {
 			allClassNames.add(objectCreation.getClassName());
 			if (!findPredefinedClasses(program, objectCreation))
@@ -32,8 +37,8 @@ public class CompositePostProcessor {
 										",", "-")).append(",")
 								.append(objectCreation.getArguments().size())
 								.append(",").append("MATCHNOTFOUND");
-						CSVFileWriter.writeToFile("log.csv", unmatchedLog
-								.toString().split(","));
+						csvWriter.writeToFile(unmatchedLog.toString()
+								.split(","));
 					}
 		}
 	}
@@ -47,8 +52,7 @@ public class CompositePostProcessor {
 					.append(objectCreation.getClassName()).append(",")
 					.append(objectCreation.getArguments().size()).append(",")
 					.append("PREDEFINED");
-			CSVFileWriter.writeToFile("log.csv",
-					matchedLog.toString().split(","));
+			csvWriter.writeToFile(matchedLog.toString().split(","));
 			return true;
 
 		}
@@ -75,8 +79,7 @@ public class CompositePostProcessor {
 								.append(anonymousFunctionDeclaration
 										.getParameters().size()).append(",")
 								.append("EXPRESSION");
-						CSVFileWriter.writeToFile("log.csv", matchedLog
-								.toString().split(","));
+						csvWriter.writeToFile(matchedLog.toString().split(","));
 						return true;
 					}
 		}
@@ -103,8 +106,7 @@ public class CompositePostProcessor {
 										.size()).append(",")
 								.append("DECLARATION");
 
-						CSVFileWriter.writeToFile("log.csv", matchedLog
-								.toString().split(","));
+						csvWriter.writeToFile(matchedLog.toString().split(","));
 						return true;
 					}
 		}

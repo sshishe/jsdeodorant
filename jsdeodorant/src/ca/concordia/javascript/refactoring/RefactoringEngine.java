@@ -132,5 +132,4 @@ public class RefactoringEngine {
 	public Program getProgram() {
 		return program;
 	}
-
 }
