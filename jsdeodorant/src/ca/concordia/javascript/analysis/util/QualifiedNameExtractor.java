@@ -2,8 +2,6 @@ package ca.concordia.javascript.analysis.util;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
-
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;

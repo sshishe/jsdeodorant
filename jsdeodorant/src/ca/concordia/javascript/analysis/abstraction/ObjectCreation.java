@@ -9,14 +9,15 @@ import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
 public class ObjectCreation extends Creation {
 	private NewExpressionTree newExpressionTree;
-	private Function functionDeclaration;
+	private Function classDeclaration;
+	private ClassDeclarationType classDeclarationType;
 	private AbstractExpression operandOfNew;
 	private List<AbstractExpression> arguments;
 
-	public ObjectCreation(){
-		
+	public ObjectCreation() {
+
 	}
-	
+
 	/**
 	 * 
 	 * @param newExpressionTree
@@ -32,12 +33,19 @@ public class ObjectCreation extends Creation {
 		this.arguments = arguments;
 	}
 
-	public Function getFunctionDeclaration() {
-		return functionDeclaration;
+	public Function getClassDeclaration() {
+		return classDeclaration;
 	}
 
-	public void setFunctionDeclaration(Function functionDeclaration) {
-		this.functionDeclaration = functionDeclaration;
+	public void setClassDeclaration(ClassDeclarationType classDeclarationType) {
+		setClassDeclaration(classDeclarationType, null);
+	}
+
+	public void setClassDeclaration(
+			ClassDeclarationType classDeclarationType,
+			Function functionDeclaration) {
+		this.classDeclarationType = classDeclarationType;
+		this.classDeclaration = functionDeclaration;
 	}
 
 	public AbstractExpression getOperandOfNew() {
@@ -67,5 +75,9 @@ public class ObjectCreation extends Creation {
 
 	public void setArguments(List<AbstractExpression> arguments) {
 		this.arguments = arguments;
+	}
+
+	public ClassDeclarationType getClassDeclarationType() {
+		return classDeclarationType;
 	}
 }

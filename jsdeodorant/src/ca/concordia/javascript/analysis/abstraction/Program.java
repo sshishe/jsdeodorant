@@ -5,9 +5,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.base.Strings;
-
-import ca.concordia.javascript.analysis.abstraction.Function.Kind;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 import ca.concordia.javascript.analysis.util.PredefinedJSClasses;

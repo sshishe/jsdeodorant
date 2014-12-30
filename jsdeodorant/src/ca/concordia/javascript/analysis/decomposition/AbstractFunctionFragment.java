@@ -30,6 +30,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree
 
 import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
+import ca.concordia.javascript.analysis.abstraction.ClassDeclarationType;
 import ca.concordia.javascript.analysis.abstraction.Creation;
 import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
@@ -39,7 +40,6 @@ import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.Function.Kind;
-import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
 public abstract class AbstractFunctionFragment {
 	private static final Logger log = Logger
@@ -226,6 +226,7 @@ public abstract class AbstractFunctionFragment {
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asMemberLookupExpression());
 			else if (newExpression.operand instanceof FunctionDeclarationTree) {
+				// i.e new function() {};
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asFunctionDeclaration());
 				AnonymousFunctionDeclaration anonymousFunctionDeclaration = new AnonymousFunctionDeclaration(
@@ -235,8 +236,9 @@ public abstract class AbstractFunctionFragment {
 				anonymousFunctionDeclaration
 						.setFunctionDeclarationTree(newExpression.operand
 								.asFunctionDeclaration());
-				objectCreation
-						.setFunctionDeclaration(anonymousFunctionDeclaration);
+				objectCreation.setClassDeclaration(
+						ClassDeclarationType.ANONYMOUS,
+						anonymousFunctionDeclaration);
 
 			} else
 				log.warn("The missing type that we should handle for the operand of New expression is:"

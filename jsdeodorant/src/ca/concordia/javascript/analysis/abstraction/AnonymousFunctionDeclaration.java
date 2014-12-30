@@ -1,9 +1,6 @@
 package ca.concordia.javascript.analysis.abstraction;
 
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
-import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;

@@ -61,7 +61,7 @@ public enum PredefinedJSClasses {
 	
 	public static boolean contains(String token) {
 		for (PredefinedJSClasses c : PredefinedJSClasses.values()) {
-			if (c.name().equalsIgnoreCase(token)) {
+			if (c.name().equals(token)) {
 				return true;
 			}
 		}
