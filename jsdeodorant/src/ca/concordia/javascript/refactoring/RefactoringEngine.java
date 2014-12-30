@@ -8,12 +8,15 @@ import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.analysis.ScriptParser;
+import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.Function;
+import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.util.CompositePostProcessor;
+import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;
@@ -114,16 +117,9 @@ public class RefactoringEngine {
 
 		Set<Function> classes = new HashSet<>();
 		for (ObjectCreation creation : program.getObjectCreations()) {
-			String className = creation.getClassName();
 			if (!classes.contains(creation.getFunctionDeclaration())) {
 				if (creation.getFunctionDeclaration() != null) {
 					classes.add(creation.getFunctionDeclaration());
-//					log.info(className
-//							+ " "
-//							+ creation.getFunctionDeclaration()
-//									.getFunctionDeclarationTree().location
-//							+ " and the creation happens at:"
-//							+ creation.getNewExpressionTree().location);
 				}
 			}
 		}

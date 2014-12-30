@@ -20,10 +20,13 @@ import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.MemberLookupExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
+import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 
 import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
@@ -36,6 +39,7 @@ import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.Function.Kind;
+import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
 public abstract class AbstractFunctionFragment {
 	private static final Logger log = Logger
@@ -61,9 +65,9 @@ public abstract class AbstractFunctionFragment {
 	public static FunctionDeclaration processFunctionDeclaration(
 			FunctionDeclarationTree functionDeclarationTree) {
 		FunctionDeclaration functionDeclaration = new FunctionDeclaration();
-		if (functionDeclarationTree==null)
-			System.out.println("here");
+
 		functionDeclaration.setFunctionDeclarationTree(functionDeclarationTree);
+
 		if (functionDeclarationTree.name != null)
 			functionDeclaration.setName(functionDeclarationTree.name.value);
 
@@ -130,7 +134,10 @@ public abstract class AbstractFunctionFragment {
 		for (ParseTree functionDeclaration : functionDeclarations) {
 			FunctionDeclarationTree functionDeclarationTree = functionDeclaration
 					.asFunctionDeclaration();
-			addFunctionDeclaration(processFunctionDeclaration(functionDeclarationTree));
+			// if (functionDeclarationTree.kind ==
+			// FunctionDeclarationTree.Kind.DECLARATION)
+			if (functionDeclarationTree.name != null)
+				addFunctionDeclaration(processFunctionDeclaration(functionDeclarationTree));
 		}
 	}
 
@@ -146,9 +153,26 @@ public abstract class AbstractFunctionFragment {
 					AnonymousFunctionDeclaration anonymousFunctionDeclarationObject = new AnonymousFunctionDeclaration(
 							new AbstractExpression(binaryOperatorTree.left),
 							processFunctionDeclaration(functionDeclarationTree));
-					anonymousFunctionDeclarationObject.setFunctionDeclarationTree(functionDeclarationTree);
+					anonymousFunctionDeclarationObject
+							.setFunctionDeclarationTree(functionDeclarationTree);
 					addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject);
 				}
+			} else if (anonymousFunctionDeclaration instanceof VariableDeclarationTree) {
+
+				VariableDeclarationTree variableDeclarationTree = anonymousFunctionDeclaration
+						.asVariableDeclaration();
+				if (variableDeclarationTree.initializer instanceof FunctionDeclarationTree) {
+					FunctionDeclarationTree functionDeclarationTree = variableDeclarationTree.initializer
+							.asFunctionDeclaration();
+					AnonymousFunctionDeclaration anonymousFunctionDeclarationObject = new AnonymousFunctionDeclaration(
+							new AbstractExpression(
+									variableDeclarationTree.lvalue),
+							processFunctionDeclaration(functionDeclarationTree));
+					anonymousFunctionDeclarationObject
+							.setFunctionDeclarationTree(functionDeclarationTree);
+					addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject);
+				}
+
 			}
 	}
 
@@ -175,12 +199,13 @@ public abstract class AbstractFunctionFragment {
 
 	protected void processNewExpressions(List<ParseTree> newExpressions) {
 		for (ParseTree expression : newExpressions) {
+			ObjectCreation objectCreation = new ObjectCreation();
 			NewExpressionTree newExpression = (NewExpressionTree) expression;
-			String identifierTokenValue = null;
+			AbstractExpression operandOfNew = null;
 
 			if (newExpression.operand instanceof IdentifierExpressionTree)
-				identifierTokenValue = newExpression.operand
-						.asIdentifierExpression().identifierToken.value;
+				operandOfNew = new AbstractExpression(
+						newExpression.operand.asIdentifierExpression());
 
 			// TODO support MemberLookupExpressionTrees i.e: var xhr = new
 			// goog.global['XMLHttpRequest']();
@@ -191,9 +216,29 @@ public abstract class AbstractFunctionFragment {
 				// type of "x"
 				// in x.Child("Something") where x could be an instance of
 				// another class
-				identifierTokenValue = newExpression.operand
-						.asMemberExpression().memberName.value;
-			else
+				operandOfNew = new AbstractExpression(
+						newExpression.operand.asMemberExpression());
+
+			else if (newExpression.operand instanceof ParenExpressionTree)
+				operandOfNew = new AbstractExpression(
+						newExpression.operand.asParenExpression());
+			else if (newExpression.operand instanceof MemberLookupExpressionTree)
+				operandOfNew = new AbstractExpression(
+						newExpression.operand.asMemberLookupExpression());
+			else if (newExpression.operand instanceof FunctionDeclarationTree) {
+				operandOfNew = new AbstractExpression(
+						newExpression.operand.asFunctionDeclaration());
+				AnonymousFunctionDeclaration anonymousFunctionDeclaration = new AnonymousFunctionDeclaration(
+						null,
+						processFunctionDeclaration(newExpression.operand
+								.asFunctionDeclaration()));
+				anonymousFunctionDeclaration
+						.setFunctionDeclarationTree(newExpression.operand
+								.asFunctionDeclaration());
+				objectCreation
+						.setFunctionDeclaration(anonymousFunctionDeclaration);
+
+			} else
 				log.warn("The missing type that we should handle for the operand of New expression is:"
 						+ newExpression.operand.getClass()
 						+ " "
@@ -206,9 +251,9 @@ public abstract class AbstractFunctionFragment {
 					arguments.add(new AbstractExpression(argument));
 				}
 
-			ObjectCreation objectCreation = new ObjectCreation(newExpression,
-					identifierTokenValue, arguments);
-
+			objectCreation.setNewExpressionTree(newExpression);
+			objectCreation.setOperandOfNew(operandOfNew);
+			objectCreation.setArguments(arguments);
 			addCreation(objectCreation);
 		}
 	}

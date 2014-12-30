@@ -5,17 +5,30 @@ import java.util.List;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
+import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
 public class ObjectCreation extends Creation {
 	private NewExpressionTree newExpressionTree;
 	private Function functionDeclaration;
-	private String className;
+	private AbstractExpression operandOfNew;
 	private List<AbstractExpression> arguments;
 
+	public ObjectCreation(){
+		
+	}
+	
+	/**
+	 * 
+	 * @param newExpressionTree
+	 * @param operandOfNew
+	 *            the name of class that would instantiate
+	 * @param arguments
+	 *            passed to constructor
+	 */
 	public ObjectCreation(NewExpressionTree newExpressionTree,
-			String className, List<AbstractExpression> arguments) {
+			AbstractExpression operandOfNew, List<AbstractExpression> arguments) {
 		this.newExpressionTree = newExpressionTree;
-		this.className = className;
+		this.operandOfNew = operandOfNew;
 		this.arguments = arguments;
 	}
 
@@ -27,8 +40,13 @@ public class ObjectCreation extends Creation {
 		this.functionDeclaration = functionDeclaration;
 	}
 
+	public AbstractExpression getOperandOfNew() {
+		return operandOfNew;
+	}
+
 	public String getClassName() {
-		return className;
+		return QualifiedNameExtractor.getQualifiedName(operandOfNew
+				.getExpression());
 	}
 
 	public List<AbstractExpression> getArguments() {
@@ -41,5 +59,13 @@ public class ObjectCreation extends Creation {
 
 	public void setNewExpressionTree(NewExpressionTree newExpressionTree) {
 		this.newExpressionTree = newExpressionTree;
+	}
+
+	public void setOperandOfNew(AbstractExpression operandOfNew) {
+		this.operandOfNew = operandOfNew;
+	}
+
+	public void setArguments(List<AbstractExpression> arguments) {
+		this.arguments = arguments;
 	}
 }

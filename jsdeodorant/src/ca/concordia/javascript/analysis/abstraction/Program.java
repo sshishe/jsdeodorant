@@ -5,8 +5,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Strings;
+
+import ca.concordia.javascript.analysis.abstraction.Function.Kind;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
+import ca.concordia.javascript.analysis.util.PredefinedJSClasses;
 
 public class Program implements SourceContainer {
 	private static final Logger log = Logger.getLogger(Program.class.getName());
@@ -47,12 +51,15 @@ public class Program implements SourceContainer {
 						// TODO remove the following condition after adding
 						// support for MemberLookupExpressionTree and
 						// ParenExpressionTree
-						if (objectCreation.getClassName() == null) {
-							objectCreations.add(objectCreation);
-							continue;
-						}
-						if (!objectCreation.getClassName().equalsIgnoreCase(
-								"Array"))
+						// if (objectCreation.getClassName() == null) {
+						// objectCreations.add(objectCreation);
+						// continue;
+						// }
+						if (!objectCreation
+								.getOperandOfNew()
+								.toString()
+								.equalsIgnoreCase(
+										PredefinedJSClasses.Array.toString()))
 							objectCreations.add(objectCreation);
 					}
 			}
@@ -77,8 +84,11 @@ public class Program implements SourceContainer {
 						// objectCreations.add(objectCreation);
 						// continue;
 						// }
-						if (objectCreation.getClassName().equalsIgnoreCase(
-								"Array"))
+						if (objectCreation
+								.getOperandOfNew()
+								.toString()
+								.equalsIgnoreCase(
+										PredefinedJSClasses.Array.toString()))
 							objectCreations.add(objectCreation);
 					}
 			}
@@ -124,8 +134,10 @@ public class Program implements SourceContainer {
 				for (FunctionDeclaration functionDeclaration : abstractFunctionFragment
 						.getFuntionDeclarations())
 					functionDeclarations.add(functionDeclaration);
-			} else if (sourceElement instanceof FunctionDeclaration)
-				functionDeclarations.add((FunctionDeclaration) sourceElement);
+			} else if (sourceElement instanceof FunctionDeclaration) {
+				FunctionDeclaration functionDeclaration = (FunctionDeclaration) sourceElement;
+				functionDeclarations.add(functionDeclaration);
+			}
 		}
 		return functionDeclarations;
 	}

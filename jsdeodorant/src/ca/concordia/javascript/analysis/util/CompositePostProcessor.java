@@ -23,15 +23,17 @@ public class CompositePostProcessor {
 			allClassNames.add(objectCreation.getClassName());
 			if (!findPredefinedClasses(program, objectCreation))
 				if (!findFunctionDeclaration(program, objectCreation))
-					if (!findAnonymousFunctionDeclaration(program, objectCreation))
-					{
+					if (!findAnonymousFunctionDeclaration(program,
+							objectCreation)) {
 						StringBuilder unmatchedLog = new StringBuilder(
-								objectCreation.getClassName()).append(",")
-								.append(objectCreation.getClassName()).append(",")
-								.append(objectCreation.getArguments().size()).append(",")
-								.append("MATCHNOTFOUND");
-						CSVFileWriter.writeToFile("log.csv",
-								unmatchedLog.toString().split(","));
+								objectCreation.getClassName().replace(",", "-"))
+								.append(",")
+								.append(objectCreation.getClassName().replace(
+										",", "-")).append(",")
+								.append(objectCreation.getArguments().size())
+								.append(",").append("MATCHNOTFOUND");
+						CSVFileWriter.writeToFile("log.csv", unmatchedLog
+								.toString().split(","));
 					}
 		}
 	}

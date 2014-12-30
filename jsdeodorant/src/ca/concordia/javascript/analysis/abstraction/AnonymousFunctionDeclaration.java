@@ -6,8 +6,9 @@ import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
+import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
-public class AnonymousFunctionDeclaration extends Function {
+public class AnonymousFunctionDeclaration extends Function implements SourceElement {
 	private FunctionDeclarationTree functionDeclaration;
 	private AbstractExpression leftOperand;
 
@@ -22,23 +23,19 @@ public class AnonymousFunctionDeclaration extends Function {
 	public AbstractExpression getLeftOperand() {
 		return leftOperand;
 	}
-	
+
 	public FunctionDeclarationTree getFunctionDeclarationTree() {
 		return functionDeclaration;
 	}
 
-	public void setFunctionDeclarationTree(FunctionDeclarationTree functionDeclaration) {
+	public void setFunctionDeclarationTree(
+			FunctionDeclarationTree functionDeclaration) {
 		this.functionDeclaration = functionDeclaration;
 	}
 
 	@Override
 	public String getName() {
-		ParseTree expression = this.leftOperand.getExpression();
-		if (expression instanceof IdentifierExpressionTree)
-			return expression.asIdentifierExpression().identifierToken.value;
-		else if (expression instanceof MemberExpressionTree)
-			return expression.asMemberExpression().memberName.value;
-		else
-			return "";
+		return QualifiedNameExtractor.getQualifiedName(this.leftOperand
+				.getExpression());
 	}
 }

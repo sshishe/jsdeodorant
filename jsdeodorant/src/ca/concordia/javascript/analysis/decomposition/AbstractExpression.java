@@ -25,7 +25,7 @@ public class AbstractExpression extends AbstractFunctionFragment {
 				.getFunctionDeclarations(expression));
 
 		processAnonymousFunctionDeclarations(expressionExtractor
-				.getBinaryOperators(expression));
+				.getAnonymousFunctionExpression(expression));
 
 		processNewExpressions(expressionExtractor.getNewExpressions(expression));
 
