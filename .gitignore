@@ -35,6 +35,7 @@ local.properties
  
 /ca.concordia.jsdeodorant.launcher/target/
 /ca.concordia.jsdeodorant.core/target/
+jsdeodorant/log
 
 *.csv
 RemoteSystemsTempFiles
@@ -43,3 +44,4 @@ RemoteSystemsTempFiles
 *.log
 
 .DS_Store
+
