@@ -7,8 +7,10 @@ import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberLookupExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 
 public class QualifiedNameExtractor {
 	private static final Logger log = Logger
@@ -17,8 +19,13 @@ public class QualifiedNameExtractor {
 	public static String getQualifiedName(ParseTree expression) {
 		if (expression instanceof IdentifierExpressionTree)
 			return expression.asIdentifierExpression().identifierToken.value;
-		else if (expression instanceof MemberExpressionTree)
-			return expression.asMemberExpression().memberName.value;
+		else if (expression instanceof ThisExpressionTree)
+			return "this";
+		else if (expression instanceof NewExpressionTree) {
+			return getQualifiedName(expression.asNewExpression().operand);
+		} else if (expression instanceof MemberExpressionTree)
+			return getQualifiedName(expression.asMemberExpression().operand)
+					+ "." + expression.asMemberExpression().memberName.value;
 		else if (expression instanceof MemberLookupExpressionTree)
 			return getQualifiedName(expression.asMemberLookupExpression().operand);
 		else if (expression instanceof ParenExpressionTree)

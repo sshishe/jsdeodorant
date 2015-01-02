@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
+import com.google.javascript.jscomp.newtypes.QualifiedName;
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.LiteralToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
@@ -40,6 +41,7 @@ import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.Function.Kind;
+import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
 public abstract class AbstractFunctionFragment {
 	private static final Logger log = Logger
@@ -102,22 +104,18 @@ public abstract class AbstractFunctionFragment {
 			List<ParseTree> functionInvocations) {
 		for (ParseTree functionInvocation : functionInvocations) {
 			CallExpressionTree callExpression = (CallExpressionTree) functionInvocation;
-			if (callExpression.operand instanceof MemberExpressionTree) {
-				MemberExpressionTree operand = (MemberExpressionTree) callExpression.operand;
-
-				List<AbstractExpression> arguments = new ArrayList<>();
-				if (callExpression.arguments != null) {
-					for (ParseTree argument : callExpression.arguments.arguments) {
-						arguments.add(new AbstractExpression(argument));
-					}
+			List<AbstractExpression> arguments = new ArrayList<>();
+			if (callExpression.arguments != null) {
+				for (ParseTree argument : callExpression.arguments.arguments) {
+					arguments.add(new AbstractExpression(argument));
 				}
-				String memberNameValue = operand.memberName.value;
-				FunctionInvocation functionInvocationObject = new FunctionInvocation(
-						memberNameValue, new AbstractExpression(operand),
-						arguments);
-				addFunctionInvocation(functionInvocationObject);
 			}
-
+			String functionName = QualifiedNameExtractor
+					.getQualifiedName(callExpression.operand);
+			FunctionInvocation functionInvocationObject = new FunctionInvocation(
+					functionName,
+					new AbstractExpression(callExpression.operand), arguments);
+			addFunctionInvocation(functionInvocationObject);
 		}
 	}
 
@@ -326,4 +324,7 @@ public abstract class AbstractFunctionFragment {
 		return anonymousFunctionDeclarationList;
 	}
 
+	public List<FunctionInvocation> getFunctionInvocationList() {
+		return functionInvocationList;
+	}
 }

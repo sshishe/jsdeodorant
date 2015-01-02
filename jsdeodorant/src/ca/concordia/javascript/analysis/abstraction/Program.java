@@ -155,4 +155,20 @@ public class Program implements SourceContainer {
 		}
 		return anonymousFunctionDeclarations;
 	}
+
+	public List<FunctionInvocation> getFunctionInvocations() {
+		List<FunctionInvocation> functionInvocations = new ArrayList<>();
+		for (SourceElement sourceElement : sourceElements) {
+			if (sourceElement instanceof AbstractFunctionFragment) {
+				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
+				for (FunctionInvocation functionInvocation : abstractFunctionFragment
+						.getFunctionInvocationList())
+					functionInvocations.add(functionInvocation);
+				// TODO check if AnonymousFunctionDeclaration can be in the root
+				// of program
+			} else if (sourceElement instanceof FunctionInvocation)
+				functionInvocations.add((FunctionInvocation) sourceElement);
+		}
+		return functionInvocations;
+	}
 }

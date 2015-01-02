@@ -30,10 +30,10 @@ public class ExperimentOutput {
 			if (!classes.contains(creation.getClassDeclaration())) {
 				if (creation.getClassDeclaration() != null) {
 					classes.add(creation.getClassDeclaration());
-					log.info(creation.getClassName()
-							+ " "
-							+ creation.getClassDeclaration()
-									.getFunctionDeclarationTree().location);
+//					log.info(creation.getClassName()
+//							+ " "
+//							+ creation.getClassDeclaration()
+//									.getFunctionDeclarationTree().location);
 				}
 			}
 		}
