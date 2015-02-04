@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>com.google.javascript</groupId>
 			<artifactId>closure-compiler</artifactId>
-			<version>v20141120</version>
+			<version>v20141215</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -50,13 +50,6 @@
 			<artifactId>opencsv</artifactId>
 			<version>2.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-			<version>2.13.0-rc0</version>
-		</dependency>
-
-
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
