@@ -27,6 +27,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpression
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 
 import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration;
@@ -238,6 +239,9 @@ public abstract class AbstractFunctionFragment {
 						ClassDeclarationType.ANONYMOUS,
 						anonymousFunctionDeclaration);
 
+			} else if (newExpression.operand instanceof ThisExpressionTree) {
+				operandOfNew = new AbstractExpression(
+						newExpression.operand.asThisExpression());
 			} else
 				log.warn("The missing type that we should handle for the operand of New expression is:"
 						+ newExpression.operand.getClass()
