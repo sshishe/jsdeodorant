@@ -1,5 +1,6 @@
 package ca.concordia.javascript.analysis.decomposition;
 
+import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
@@ -13,7 +14,7 @@ public class AbstractExpression extends AbstractFunctionFragment {
 		this.expression = expression;
 	}
 
-	public AbstractExpression(ParseTree expression, CompositeStatement parent) {
+	public AbstractExpression(ParseTree expression, SourceContainer parent) {
 		super(parent);
 		this.expression = expression;
 		ExpressionExtractor expressionExtractor = new ExpressionExtractor();

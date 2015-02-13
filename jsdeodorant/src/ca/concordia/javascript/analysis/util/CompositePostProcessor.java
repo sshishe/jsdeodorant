@@ -2,7 +2,6 @@ package ca.concordia.javascript.analysis.util;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ClassDeclarationType;
 import ca.concordia.javascript.analysis.abstraction.Function;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
@@ -27,8 +26,7 @@ public class CompositePostProcessor {
 	private static boolean findPredefinedClasses(Program program,
 			ObjectCreation objectCreation) {
 		if (PredefinedJSClasses.contains(objectCreation.getClassName())) {
-			objectCreation
-					.setClassDeclaration(ClassDeclarationType.PREDEFINED);
+			objectCreation.setClassDeclaration(ClassDeclarationType.PREDEFINED);
 			return true;
 		}
 		return false;
@@ -36,7 +34,7 @@ public class CompositePostProcessor {
 
 	private static boolean findAnonymousFunctionDeclaration(Program program,
 			ObjectCreation objectCreation) {
-		for (AnonymousFunctionDeclaration anonymousFunctionDeclaration : program
+		for (Function anonymousFunctionDeclaration : program
 				.getAnonymousFunctionDeclarations()) {
 			if (objectCreation.getClassName() != null)
 				if (objectCreation.getClassName().equals(

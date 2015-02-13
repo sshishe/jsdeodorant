@@ -8,6 +8,7 @@ import ca.concordia.javascript.analysis.decomposition.StatementType;
 import ca.concordia.javascript.analysis.decomposition.TryStatement;
 
 import com.google.common.collect.ImmutableList;
+import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BreakStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CaseClauseTree;
