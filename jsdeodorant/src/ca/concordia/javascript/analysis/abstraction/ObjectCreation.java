@@ -2,20 +2,25 @@ package ca.concordia.javascript.analysis.abstraction;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
+import ca.concordia.javascript.analysis.util.SourceHelper;
 
 public class ObjectCreation extends Creation {
+	static Logger log = Logger.getLogger(ObjectCreation.class.getName());
 	private NewExpressionTree newExpressionTree;
 	private Function classDeclaration;
 	private ClassDeclarationType classDeclarationType;
 	private AbstractExpression operandOfNew;
 	private List<AbstractExpression> arguments;
+	private QualifiedName qualifiedName;
 
-	public ObjectCreation() {
-
+	public ObjectCreation(NewExpressionTree newExpressionTree) {
+		this.newExpressionTree = newExpressionTree;
 	}
 
 	/**
@@ -41,8 +46,7 @@ public class ObjectCreation extends Creation {
 		setClassDeclaration(classDeclarationType, null);
 	}
 
-	public void setClassDeclaration(
-			ClassDeclarationType classDeclarationType,
+	public void setClassDeclaration(ClassDeclarationType classDeclarationType,
 			Function functionDeclaration) {
 		this.classDeclarationType = classDeclarationType;
 		this.classDeclaration = functionDeclaration;
@@ -53,8 +57,8 @@ public class ObjectCreation extends Creation {
 	}
 
 	public String getClassName() {
-		return QualifiedNameExtractor.getQualifiedName(operandOfNew
-				.getExpression());
+		return QualifiedNameExtractor.getQualifiedName(
+				operandOfNew.getExpression()).toString();
 	}
 
 	public List<AbstractExpression> getArguments() {
@@ -79,5 +83,17 @@ public class ObjectCreation extends Creation {
 
 	public ClassDeclarationType getClassDeclarationType() {
 		return classDeclarationType;
+	}
+
+	public QualifiedName getNamespace() {
+		return qualifiedName;
+	}
+
+	public void setNamespace(QualifiedName namespace) {
+		this.qualifiedName = namespace;
+	}
+
+	public String toString() {
+		return SourceHelper.extract(newExpressionTree);
 	}
 }
