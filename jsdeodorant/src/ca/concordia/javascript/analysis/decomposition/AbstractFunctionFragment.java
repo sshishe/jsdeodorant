@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
-import com.google.javascript.jscomp.newtypes.QualifiedName;
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.LiteralToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
@@ -34,10 +33,9 @@ import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration
 import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.ClassDeclarationType;
 import ca.concordia.javascript.analysis.abstraction.Creation;
+import ca.concordia.javascript.analysis.abstraction.Function;
 import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
-import ca.concordia.javascript.analysis.abstraction.GlobalVariableDeclaration;
-import ca.concordia.javascript.analysis.abstraction.LocalVariableDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
@@ -52,8 +50,6 @@ public abstract class AbstractFunctionFragment {
 	private List<FunctionInvocation> functionInvocationList;
 	private List<FunctionDeclaration> functionDeclarationList;
 	private List<AnonymousFunctionDeclaration> anonymousFunctionDeclarationList;
-	private List<LocalVariableDeclaration> localVariableDeclarationList;
-	private List<GlobalVariableDeclaration> globalVariableDeclarationList;
 
 	protected AbstractFunctionFragment(SourceContainer parent) {
 		this.parent = parent;
@@ -61,8 +57,6 @@ public abstract class AbstractFunctionFragment {
 		functionInvocationList = new ArrayList<>();
 		functionDeclarationList = new ArrayList<>();
 		anonymousFunctionDeclarationList = new ArrayList<>();
-		localVariableDeclarationList = new ArrayList<>();
-		globalVariableDeclarationList = new ArrayList<>();
 	}
 
 	public static FunctionDeclaration processFunctionDeclaration(
@@ -111,11 +105,12 @@ public abstract class AbstractFunctionFragment {
 					arguments.add(new AbstractExpression(argument));
 				}
 			}
-			String functionName = QualifiedNameExtractor
-					.getQualifiedName(callExpression.operand);
-			FunctionInvocation functionInvocationObject = new FunctionInvocation(
-					functionName,
-					new AbstractExpression(callExpression.operand), arguments);
+			String functionName = QualifiedNameExtractor.getQualifiedName(
+					callExpression.operand).toString();
+
+			FunctionInvocation functionInvocationObject = new FunctionInvocation(callExpression,
+					functionName, new AbstractExpression(
+							callExpression.operand), arguments);
 			addFunctionInvocation(functionInvocationObject);
 		}
 	}
@@ -136,7 +131,8 @@ public abstract class AbstractFunctionFragment {
 			// if (functionDeclarationTree.kind ==
 			// FunctionDeclarationTree.Kind.DECLARATION)
 			if (functionDeclarationTree.name != null)
-				addFunctionDeclaration(processFunctionDeclaration(functionDeclarationTree));
+				addFunctionDeclaration(processFunctionDeclaration(
+						functionDeclarationTree));
 		}
 	}
 
@@ -150,8 +146,8 @@ public abstract class AbstractFunctionFragment {
 					FunctionDeclarationTree functionDeclarationTree = binaryOperatorTree.right
 							.asFunctionDeclaration();
 					AnonymousFunctionDeclaration anonymousFunctionDeclarationObject = new AnonymousFunctionDeclaration(
-							new AbstractExpression(binaryOperatorTree.left),
-							processFunctionDeclaration(functionDeclarationTree));
+							new AbstractExpression(binaryOperatorTree.left), processFunctionDeclaration(
+									functionDeclarationTree));
 					anonymousFunctionDeclarationObject
 							.setFunctionDeclarationTree(functionDeclarationTree);
 					addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject);
@@ -198,8 +194,8 @@ public abstract class AbstractFunctionFragment {
 
 	protected void processNewExpressions(List<ParseTree> newExpressions) {
 		for (ParseTree expression : newExpressions) {
-			ObjectCreation objectCreation = new ObjectCreation();
 			NewExpressionTree newExpression = (NewExpressionTree) expression;
+			ObjectCreation objectCreation = new ObjectCreation(newExpression);
 			AbstractExpression operandOfNew = null;
 
 			if (newExpression.operand instanceof IdentifierExpressionTree)
@@ -228,10 +224,9 @@ public abstract class AbstractFunctionFragment {
 				// i.e new function() {};
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asFunctionDeclaration());
-				AnonymousFunctionDeclaration anonymousFunctionDeclaration = new AnonymousFunctionDeclaration(
-						null,
-						processFunctionDeclaration(newExpression.operand
-								.asFunctionDeclaration()));
+				Function anonymousFunctionDeclaration = new AnonymousFunctionDeclaration(
+						null, processFunctionDeclaration(
+								newExpression.operand.asFunctionDeclaration()));
 				anonymousFunctionDeclaration
 						.setFunctionDeclarationTree(newExpression.operand
 								.asFunctionDeclaration());
