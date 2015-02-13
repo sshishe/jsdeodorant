@@ -5,8 +5,8 @@ import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
-public class AnonymousFunctionDeclaration extends Function implements SourceElement {
-	private FunctionDeclarationTree functionDeclaration;
+public class AnonymousFunctionDeclaration extends Function implements
+		SourceElement {
 	private AbstractExpression leftOperand;
 
 	public AnonymousFunctionDeclaration(AbstractExpression leftOperand,
@@ -32,7 +32,7 @@ public class AnonymousFunctionDeclaration extends Function implements SourceElem
 
 	@Override
 	public String getName() {
-		return QualifiedNameExtractor.getQualifiedName(this.leftOperand
-				.getExpression());
+		return QualifiedNameExtractor.getQualifiedName(
+				this.leftOperand.getExpression()).toString();
 	}
 }

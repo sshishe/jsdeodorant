@@ -1,9 +1,9 @@
 package ca.concordia.javascript.analysis.abstraction;
 
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.util.SourcePosition;
 
 public class FunctionDeclaration extends Function implements SourceElement {
-	private FunctionDeclarationTree functionDeclaration;
 	private String name;
 	private boolean isStatic;
 	private boolean isGenerator;

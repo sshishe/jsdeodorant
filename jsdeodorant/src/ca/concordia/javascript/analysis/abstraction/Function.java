@@ -7,6 +7,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionBody;
+import ca.concordia.javascript.analysis.util.SourceHelper;
 
 public abstract class Function {
 
@@ -14,11 +15,11 @@ public abstract class Function {
 		DECLARATION, EXPRESSION, MEMBER, ARROW
 	}
 
-	
 	protected FunctionBody body;
 	protected Kind kind;
 	protected List<AbstractExpression> parameters;
-	
+	protected FunctionDeclarationTree functionDeclaration;
+
 	public Function() {
 		parameters = new ArrayList<>();
 	}
@@ -50,9 +51,19 @@ public abstract class Function {
 	public void setKind(Kind kind) {
 		this.kind = kind;
 	}
-	//pull up common attributes from FunctionDeclaration and AnonymousFunctionDeclaration
+
+	@Override
+	public String toString() {
+		return SourceHelper.extract(functionDeclaration);
+	}
+
+	// pull up common attributes from FunctionDeclaration and
+	// AnonymousFunctionDeclaration
 
 	public abstract String getName();
+
 	public abstract FunctionDeclarationTree getFunctionDeclarationTree();
-	public abstract void setFunctionDeclarationTree(FunctionDeclarationTree functionDeclaration);
+
+	public abstract void setFunctionDeclarationTree(
+			FunctionDeclarationTree functionDeclaration);
 }
