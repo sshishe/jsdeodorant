@@ -122,7 +122,7 @@ public class ExpressionExtractor {
 		return getExpressions(element);
 	}
 
-	public List<ParseTree> getAnonymousFunctionExpression(ParseTree element) {
+	public List<ParseTree> getAnonymousFunctionExpressions(ParseTree element) {
 		instanceChecker = new InstanceOfAnonymousFunctionExpression();
 		return getExpressions(element);
 	}

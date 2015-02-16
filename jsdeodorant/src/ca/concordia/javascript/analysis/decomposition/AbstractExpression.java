@@ -2,6 +2,7 @@ package ca.concordia.javascript.analysis.decomposition;
 
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
+import ca.concordia.javascript.analysis.util.SourceHelper;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
@@ -26,7 +27,7 @@ public class AbstractExpression extends AbstractFunctionFragment {
 				.getFunctionDeclarations(expression));
 
 		processAnonymousFunctionDeclarations(expressionExtractor
-				.getAnonymousFunctionExpression(expression));
+				.getAnonymousFunctionExpressions(expression));
 
 		processNewExpressions(expressionExtractor.getNewExpressions(expression));
 
@@ -42,7 +43,7 @@ public class AbstractExpression extends AbstractFunctionFragment {
 	}
 	
 	public String toString() {
-		return expression.toString();
+		return SourceHelper.extract(expression);
 	}
 
 }

@@ -43,7 +43,7 @@ public class CompositeStatement extends AbstractStatement implements
 		return expressionList;
 	}
 
-	public String toString() {
+	/*public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getType().toString());
 		if (expressionList.size() > 0) {
@@ -56,6 +56,6 @@ public class CompositeStatement extends AbstractStatement implements
 		}
 		sb.append("\n");
 		return sb.toString();
-	}
+	}*/
 
 }

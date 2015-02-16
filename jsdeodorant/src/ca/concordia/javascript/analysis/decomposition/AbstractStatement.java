@@ -2,6 +2,7 @@ package ca.concordia.javascript.analysis.decomposition;
 
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
+import ca.concordia.javascript.analysis.util.SourceHelper;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
@@ -23,5 +24,9 @@ public abstract class AbstractStatement extends AbstractFunctionFragment
 
 	protected StatementType getType() {
 		return type;
+	}
+
+	public String toString() {
+		return SourceHelper.extract(statement);
 	}
 }

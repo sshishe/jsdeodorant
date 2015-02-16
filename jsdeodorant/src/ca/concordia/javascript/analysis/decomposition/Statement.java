@@ -19,7 +19,7 @@ public class Statement extends AbstractStatement {
 				.getFunctionDeclarations(statement));
 
 		processAnonymousFunctionDeclarations(expressionExtractor
-				.getAnonymousFunctionExpression(statement));
+				.getAnonymousFunctionExpressions(statement));
 
 		processNewExpressions(expressionExtractor.getNewExpressions(statement));
 
