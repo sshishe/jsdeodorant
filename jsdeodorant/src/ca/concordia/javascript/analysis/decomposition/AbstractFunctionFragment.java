@@ -59,7 +59,7 @@ public abstract class AbstractFunctionFragment {
 		anonymousFunctionDeclarationList = new ArrayList<>();
 	}
 
-	public static FunctionDeclaration processFunctionDeclaration(
+	/*public static FunctionDeclaration processFunctionDeclaration(
 			FunctionDeclarationTree functionDeclarationTree) {
 		FunctionDeclaration functionDeclaration = new FunctionDeclaration();
 
@@ -93,7 +93,7 @@ public abstract class AbstractFunctionFragment {
 		}
 
 		return functionDeclaration;
-	}
+	}*/
 
 	protected void processFunctionInvocations(
 			List<ParseTree> functionInvocations) {
@@ -123,7 +123,7 @@ public abstract class AbstractFunctionFragment {
 		}
 	}
 
-	protected void processFunctionDeclarations(
+	/*protected void processFunctionDeclarations(
 			List<ParseTree> functionDeclarations) {
 		for (ParseTree functionDeclaration : functionDeclarations) {
 			FunctionDeclarationTree functionDeclarationTree = functionDeclaration
@@ -169,7 +169,7 @@ public abstract class AbstractFunctionFragment {
 				}
 
 			}
-	}
+	}*/
 
 	public void addAnonymousFunctionDeclaration(
 			AnonymousFunctionDeclaration anonymousFunctionDeclarationObject) {
@@ -220,7 +220,8 @@ public abstract class AbstractFunctionFragment {
 			else if (newExpression.operand instanceof MemberLookupExpressionTree)
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asMemberLookupExpression());
-			else if (newExpression.operand instanceof FunctionDeclarationTree) {
+			//TODO handle the following case in StatementProcessor
+			/*else if (newExpression.operand instanceof FunctionDeclarationTree) {
 				// i.e new function() {};
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asFunctionDeclaration());
@@ -234,7 +235,7 @@ public abstract class AbstractFunctionFragment {
 						ClassDeclarationType.ANONYMOUS,
 						anonymousFunctionDeclaration);
 
-			} else if (newExpression.operand instanceof ThisExpressionTree) {
+			}*/ else if (newExpression.operand instanceof ThisExpressionTree) {
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asThisExpression());
 			} else

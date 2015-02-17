@@ -15,11 +15,11 @@ public class Statement extends AbstractStatement {
 		processFunctionInvocations(expressionExtractor
 				.getCallExpressions(statement));
 
-		processFunctionDeclarations(expressionExtractor
+		/*processFunctionDeclarations(expressionExtractor
 				.getFunctionDeclarations(statement));
 
 		processAnonymousFunctionDeclarations(expressionExtractor
-				.getAnonymousFunctionExpressions(statement));
+				.getAnonymousFunctionExpressions(statement));*/
 
 		processNewExpressions(expressionExtractor.getNewExpressions(statement));
 

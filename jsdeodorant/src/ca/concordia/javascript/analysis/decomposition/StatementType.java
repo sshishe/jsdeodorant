@@ -16,6 +16,7 @@ public enum StatementType {
 	TRY,
 	CATCH, 
 	LABELLED,
+	FUNCTION_DECLARATION,
 	// Statements without body
 	VARIABLE,
 	EMPTY,

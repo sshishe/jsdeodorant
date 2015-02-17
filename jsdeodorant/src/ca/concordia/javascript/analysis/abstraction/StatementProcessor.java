@@ -1,16 +1,19 @@
 package ca.concordia.javascript.analysis.abstraction;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
+import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 import ca.concordia.javascript.analysis.decomposition.CompositeStatement;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationStatement;
 import ca.concordia.javascript.analysis.decomposition.LabelledStatement;
 import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.decomposition.StatementType;
 import ca.concordia.javascript.analysis.decomposition.TryStatement;
 
 import com.google.common.collect.ImmutableList;
-import com.google.javascript.jscomp.SourceFile;
+import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BreakStatementTree;
+import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CaseClauseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CatchTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ContinueStatementTree;
@@ -23,13 +26,17 @@ import com.google.javascript.jscomp.parsing.parser.trees.FinallyTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ForInStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ForOfStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ForStatementTree;
+import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IfStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ReturnStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.SwitchStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThrowStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.TryStatementTree;
+import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationListTree;
+import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.WhileStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.WithStatementTree;
@@ -47,6 +54,15 @@ public class StatementProcessor {
 			for (ParseTree blockStatement : statements) {
 				processStatement(blockStatement, child);
 			}
+		}
+
+		else if (statement instanceof FunctionDeclarationTree) {
+			FunctionDeclarationTree functionDeclarationTree = statement
+					.asFunctionDeclaration();
+			FunctionDeclarationStatement child = new FunctionDeclarationStatement(
+					functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
+			parent.addElement(child);
+			processStatement(functionDeclarationTree.functionBody, child);
 		}
 
 		else if (statement instanceof IfStatementTree) {
@@ -253,10 +269,27 @@ public class StatementProcessor {
 			VariableStatementTree variableStatement = statement
 					.asVariableStatement();
 
-			Statement child = new Statement(variableStatement,
-					StatementType.VARIABLE, parent);
+			AbstractStatement child = null;
+			VariableDeclarationListTree listTree = variableStatement.declarations;
+			for (VariableDeclarationTree variableDeclarationTree : listTree.declarations) {
+				if (variableDeclarationTree.initializer instanceof FunctionDeclarationTree) {
+					FunctionDeclarationTree functionDeclarationTree = variableDeclarationTree.initializer
+							.asFunctionDeclaration();
+					child = new FunctionDeclarationStatement(
+							functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
+					((FunctionDeclarationStatement)child).setExpressionContainingFunctionDeclaration(
+							new AbstractExpression(variableDeclarationTree));
+					break;
+				}
+			}
+			if (child == null)
+				child = new Statement(variableStatement, StatementType.VARIABLE, parent);
 
 			parent.addElement(child);
+			if (child instanceof FunctionDeclarationStatement) {
+				FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree) child.getStatement();
+				processStatement(functionDeclarationTree.functionBody, (FunctionDeclarationStatement)child);
+			}
 		}
 
 		else if (statement instanceof EmptyStatementTree) {
@@ -272,10 +305,41 @@ public class StatementProcessor {
 			ExpressionStatementTree expressionStatement = statement
 					.asExpressionStatement();
 
-			Statement child = new Statement(expressionStatement,
-					StatementType.EXPRESSION, parent);
+			AbstractStatement child = null;
+			if (expressionStatement.expression instanceof BinaryOperatorTree) {
+				BinaryOperatorTree binaryOperatorTree = expressionStatement.expression
+						.asBinaryOperator();
+				if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
+					FunctionDeclarationTree functionDeclarationTree = binaryOperatorTree.right
+							.asFunctionDeclaration();
+					child = new FunctionDeclarationStatement(
+							functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
+					((FunctionDeclarationStatement)child).setExpressionContainingFunctionDeclaration(
+							new AbstractExpression(expressionStatement.expression));
+				}
+			}
+			else if (expressionStatement.expression instanceof CallExpressionTree) {
+				CallExpressionTree callExpressionTree = expressionStatement.expression.asCallExpression();
+				if (callExpressionTree.operand instanceof ParenExpressionTree) {
+					ParenExpressionTree parenExpressionTree = callExpressionTree.operand.asParenExpression();
+					if (parenExpressionTree.expression instanceof FunctionDeclarationTree) {
+						FunctionDeclarationTree functionDeclarationTree = parenExpressionTree.expression
+								.asFunctionDeclaration();
+						child = new FunctionDeclarationStatement(
+								functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
+						((FunctionDeclarationStatement)child).setExpressionContainingFunctionDeclaration(
+								new AbstractExpression(expressionStatement.expression));
+					}
+				}
+			}
+			if (child == null)
+				child = new Statement(expressionStatement, StatementType.EXPRESSION, parent);
 
 			parent.addElement(child);
+			if (child instanceof FunctionDeclarationStatement) {
+				FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree) child.getStatement();
+				processStatement(functionDeclarationTree.functionBody, (FunctionDeclarationStatement)child);
+			}
 		}
 
 		else if (statement instanceof BreakStatementTree) {
@@ -294,6 +358,7 @@ public class StatementProcessor {
 			Statement child = new Statement(continueStatement,
 					StatementType.CONTINUE, parent);
 
+			parent.addElement(child);
 		}
 
 		else if (statement instanceof ReturnStatementTree) {

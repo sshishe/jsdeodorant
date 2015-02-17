@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
-import ca.concordia.javascript.analysis.decomposition.FunctionBody;
 import ca.concordia.javascript.analysis.util.SourceHelper;
 
 public abstract class Function {
@@ -15,21 +14,12 @@ public abstract class Function {
 		DECLARATION, EXPRESSION, MEMBER, ARROW
 	}
 
-	protected FunctionBody body;
 	protected Kind kind;
 	protected List<AbstractExpression> parameters;
 	protected FunctionDeclarationTree functionDeclaration;
 
 	public Function() {
 		parameters = new ArrayList<>();
-	}
-
-	public FunctionBody getBody() {
-		return body;
-	}
-
-	public void setBody(FunctionBody body) {
-		this.body = body;
 	}
 
 	public List<AbstractExpression> getParameters() {

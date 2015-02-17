@@ -14,7 +14,7 @@ public class AnonymousFunctionDeclaration extends Function implements
 		this.leftOperand = leftOperand;
 		this.setKind(functionDeclaration.getKind());
 		this.setParameters(functionDeclaration.getParameters());
-		this.setBody(functionDeclaration.getBody());
+		//this.setBody(functionDeclaration.getBody());
 	}
 
 	public AbstractExpression getLeftOperand() {
