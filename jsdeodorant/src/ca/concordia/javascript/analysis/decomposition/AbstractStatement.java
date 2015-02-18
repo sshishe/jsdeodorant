@@ -1,5 +1,7 @@
 package ca.concordia.javascript.analysis.decomposition;
 
+import java.util.List;
+
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.util.SourceHelper;
@@ -25,6 +27,8 @@ public abstract class AbstractStatement extends AbstractFunctionFragment
 	protected StatementType getType() {
 		return type;
 	}
+
+	public abstract List<FunctionDeclaration> getFunctionDeclarations();
 
 	public String toString() {
 		return SourceHelper.extract(statement);

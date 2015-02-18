@@ -6,9 +6,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.ClassDeclarationType;
-import ca.concordia.javascript.analysis.abstraction.Function;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 
 public class ExperimentOutput {
 	static Logger log = Logger.getLogger(ExperimentOutput.class.getName());
@@ -24,7 +24,7 @@ public class ExperimentOutput {
 	}
 
 	public void uniqueClassDeclarationNumber() {
-		Set<Function> classes = new HashSet<>();
+		Set<FunctionDeclaration> classes = new HashSet<>();
 		log.info("Name and location of class declarations:");
 		for (ObjectCreation creation : program.getObjectCreations()) {
 			if (!classes.contains(creation.getClassDeclaration())) {

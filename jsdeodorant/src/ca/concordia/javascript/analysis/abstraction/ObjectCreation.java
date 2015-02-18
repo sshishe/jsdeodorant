@@ -7,13 +7,14 @@ import org.apache.log4j.Logger;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 import ca.concordia.javascript.analysis.util.SourceHelper;
 
 public class ObjectCreation extends Creation {
 	static Logger log = Logger.getLogger(ObjectCreation.class.getName());
 	private NewExpressionTree newExpressionTree;
-	private Function classDeclaration;
+	private FunctionDeclaration classDeclaration;
 	private ClassDeclarationType classDeclarationType;
 	private AbstractExpression operandOfNew;
 	private List<AbstractExpression> arguments;
@@ -38,7 +39,7 @@ public class ObjectCreation extends Creation {
 		this.arguments = arguments;
 	}
 
-	public Function getClassDeclaration() {
+	public FunctionDeclaration getClassDeclaration() {
 		return classDeclaration;
 	}
 
@@ -47,7 +48,7 @@ public class ObjectCreation extends Creation {
 	}
 
 	public void setClassDeclaration(ClassDeclarationType classDeclarationType,
-			Function functionDeclaration) {
+			FunctionDeclaration functionDeclaration) {
 		this.classDeclarationType = classDeclarationType;
 		this.classDeclaration = functionDeclaration;
 	}

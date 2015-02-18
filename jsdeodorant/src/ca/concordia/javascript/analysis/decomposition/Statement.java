@@ -1,5 +1,8 @@
 package ca.concordia.javascript.analysis.decomposition;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 import ca.concordia.javascript.analysis.util.SourceHelper;
@@ -15,12 +18,6 @@ public class Statement extends AbstractStatement {
 		processFunctionInvocations(expressionExtractor
 				.getCallExpressions(statement));
 
-		/*processFunctionDeclarations(expressionExtractor
-				.getFunctionDeclarations(statement));
-
-		processAnonymousFunctionDeclarations(expressionExtractor
-				.getAnonymousFunctionExpressions(statement));*/
-
 		processNewExpressions(expressionExtractor.getNewExpressions(statement));
 
 		processObjectLiteralExpressions(expressionExtractor
@@ -28,6 +25,18 @@ public class Statement extends AbstractStatement {
 
 		processArrayLiteralExpressions(expressionExtractor
 				.getArrayLiteralExpressions(statement));
+	}
+	
+	@Override
+	public List<FunctionDeclaration> getFunctionDeclarations() {
+		List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
+		List<FunctionDeclarationExpression> functionDeclarationExpressions =
+				this.getFuntionDeclarationExpressions();
+		functionDeclarations.addAll(functionDeclarationExpressions);
+		for (FunctionDeclarationExpression expression : functionDeclarationExpressions) {
+			functionDeclarations.addAll(expression.getFunctionDeclarations());
+		}
+		return functionDeclarations;
 	}
 
 	public String toString() {

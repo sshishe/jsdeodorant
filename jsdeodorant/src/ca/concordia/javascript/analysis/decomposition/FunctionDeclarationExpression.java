@@ -4,20 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
+import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 
 import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
-public class FunctionDeclarationStatement extends CompositeStatement implements FunctionDeclaration {
+public class FunctionDeclarationExpression extends AbstractExpression implements SourceContainer, FunctionDeclaration {
+
 	private String name;
 	private FunctionKind kind;
 	private List<AbstractExpression> parameters;
+	private List<AbstractStatement> statementList;
 
-	public FunctionDeclarationStatement(FunctionDeclarationTree functionDeclarationTree,
+	public FunctionDeclarationExpression(FunctionDeclarationTree functionDeclarationTree,
 			SourceContainer parent) {
-		super(functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
+		super(functionDeclarationTree, parent);
+		this.statementList = new ArrayList<>();
 		this.parameters = new ArrayList<>();
 		if (functionDeclarationTree.name != null)
 			this.name = functionDeclarationTree.name.value;
@@ -32,6 +36,20 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 				this.addParameter(new AbstractExpression(parameter));
 		}
 		StatementProcessor.processStatement(functionDeclarationTree.functionBody, this);
+	}
+
+	@Override
+	public void addElement(SourceElement element) {
+		if (element instanceof AbstractStatement)
+			addStatement((AbstractStatement) element);
+	}
+
+	public void addStatement(AbstractStatement statement) {
+		statementList.add(statement);
+	}
+
+	public List<AbstractStatement> getStatements() {
+		return statementList;
 	}
 
 	public String getName() {
@@ -51,7 +69,14 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 	}
 
 	public FunctionDeclarationTree getFunctionDeclarationTree() {
-		return (FunctionDeclarationTree)getStatement();
+		return (FunctionDeclarationTree)getExpression();
 	}
 
+	public List<FunctionDeclaration> getFunctionDeclarations() {
+		List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
+		for (AbstractStatement statement : statementList) {
+			functionDeclarations.addAll(statement.getFunctionDeclarations());
+		}
+		return functionDeclarations;
+	}
 }

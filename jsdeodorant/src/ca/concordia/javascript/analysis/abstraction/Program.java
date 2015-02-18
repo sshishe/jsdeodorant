@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.util.PredefinedJSClasses;
 
 public class Program implements SourceContainer {
@@ -22,9 +23,9 @@ public class Program implements SourceContainer {
 		if (source instanceof AbstractStatement)
 			log.debug(String.format("add %s to source program",
 					((AbstractStatement) source).getStatement().toString()));
-		else if (source instanceof FunctionDeclaration)
+		/*else if (source instanceof FunctionDeclaration)
 			log.debug(String.format("add %s function to program",
-					((FunctionDeclaration) source).getName()));
+					((FunctionDeclaration) source).getName()));*/
 	}
 
 	@Override
@@ -126,34 +127,12 @@ public class Program implements SourceContainer {
 	public List<FunctionDeclaration> getFunctionDeclarations() {
 		List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
-			if (sourceElement instanceof AbstractFunctionFragment) {
-				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
-				for (FunctionDeclaration functionDeclaration : abstractFunctionFragment
-						.getFuntionDeclarations())
-					functionDeclarations.add(functionDeclaration);
-			} else if (sourceElement instanceof FunctionDeclaration) {
-				FunctionDeclaration functionDeclaration = (FunctionDeclaration) sourceElement;
-				functionDeclarations.add(functionDeclaration);
+			if(sourceElement instanceof AbstractStatement) {
+				AbstractStatement statement = (AbstractStatement) sourceElement;
+				functionDeclarations.addAll(statement.getFunctionDeclarations());
 			}
 		}
 		return functionDeclarations;
-	}
-
-	public List<AnonymousFunctionDeclaration> getAnonymousFunctionDeclarations() {
-		List<AnonymousFunctionDeclaration> anonymousFunctionDeclarations = new ArrayList<>();
-		for (SourceElement sourceElement : sourceElements) {
-			if (sourceElement instanceof AbstractFunctionFragment) {
-				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
-				for (AnonymousFunctionDeclaration functionDeclaration : abstractFunctionFragment
-						.getAnonymousFuntionDeclarations())
-					anonymousFunctionDeclarations.add(functionDeclaration);
-				// TODO check if AnonymousFunctionDeclaration can be in the root
-				// of program
-			} else if (sourceElement instanceof AnonymousFunctionDeclaration)
-				anonymousFunctionDeclarations
-						.add((AnonymousFunctionDeclaration) sourceElement);
-		}
-		return anonymousFunctionDeclarations;
 	}
 
 	public List<FunctionInvocation> getFunctionInvocations() {

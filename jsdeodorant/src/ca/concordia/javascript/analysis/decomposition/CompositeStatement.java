@@ -43,6 +43,18 @@ public class CompositeStatement extends AbstractStatement implements
 		return expressionList;
 	}
 
+	@Override
+	public List<FunctionDeclaration> getFunctionDeclarations() {
+		List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
+		if (this instanceof FunctionDeclarationStatement) {
+			functionDeclarations.add((FunctionDeclarationStatement) this);
+		}
+		for (AbstractStatement statement : statementList) {
+			functionDeclarations.addAll(statement.getFunctionDeclarations());
+		}
+		return functionDeclarations;
+	}
+
 	/*public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getType().toString());

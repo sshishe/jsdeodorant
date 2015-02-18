@@ -13,11 +13,7 @@ import com.google.javascript.jscomp.parsing.parser.LiteralToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
-import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
-import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberLookupExpressionTree;
@@ -27,19 +23,13 @@ import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 
-import ca.concordia.javascript.analysis.abstraction.AnonymousFunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
-import ca.concordia.javascript.analysis.abstraction.ClassDeclarationType;
 import ca.concordia.javascript.analysis.abstraction.Creation;
-import ca.concordia.javascript.analysis.abstraction.Function;
-import ca.concordia.javascript.analysis.abstraction.FunctionDeclaration;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
-import ca.concordia.javascript.analysis.abstraction.Function.Kind;
 import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
 public abstract class AbstractFunctionFragment {
@@ -48,15 +38,13 @@ public abstract class AbstractFunctionFragment {
 	private SourceContainer parent;
 	private List<Creation> creationList;
 	private List<FunctionInvocation> functionInvocationList;
-	private List<FunctionDeclaration> functionDeclarationList;
-	private List<AnonymousFunctionDeclaration> anonymousFunctionDeclarationList;
+	private List<FunctionDeclarationExpression> functionDeclarationExpressionList;
 
 	protected AbstractFunctionFragment(SourceContainer parent) {
 		this.parent = parent;
 		creationList = new ArrayList<>();
 		functionInvocationList = new ArrayList<>();
-		functionDeclarationList = new ArrayList<>();
-		anonymousFunctionDeclarationList = new ArrayList<>();
+		functionDeclarationExpressionList = new ArrayList<>();
 	}
 
 	/*public static FunctionDeclaration processFunctionDeclaration(
@@ -171,25 +159,8 @@ public abstract class AbstractFunctionFragment {
 			}
 	}*/
 
-	public void addAnonymousFunctionDeclaration(
-			AnonymousFunctionDeclaration anonymousFunctionDeclarationObject) {
-		anonymousFunctionDeclarationList
-				.add(anonymousFunctionDeclarationObject);
-		if (parent != null && parent instanceof CompositeStatement) {
-			CompositeStatement compositeStatement = (CompositeStatement) parent;
-			compositeStatement
-					.addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject);
-		}
-
-	}
-
-	protected void addFunctionDeclaration(
-			FunctionDeclaration functionDeclaration) {
-		functionDeclarationList.add(functionDeclaration);
-		if (parent != null && parent instanceof CompositeStatement) {
-			CompositeStatement compositeStatement = (CompositeStatement) parent;
-			compositeStatement.addFunctionDeclaration(functionDeclaration);
-		}
+	public void addFunctionDeclarationExpression(FunctionDeclarationExpression functionDeclaration) {
+		functionDeclarationExpressionList.add(functionDeclaration);
 	}
 
 	protected void processNewExpressions(List<ParseTree> newExpressions) {
@@ -316,12 +287,8 @@ public abstract class AbstractFunctionFragment {
 		return creationList;
 	}
 
-	public List<FunctionDeclaration> getFuntionDeclarations() {
-		return functionDeclarationList;
-	}
-
-	public List<AnonymousFunctionDeclaration> getAnonymousFuntionDeclarations() {
-		return anonymousFunctionDeclarationList;
+	public List<FunctionDeclarationExpression> getFuntionDeclarationExpressions() {
+		return functionDeclarationExpressionList;
 	}
 
 	public List<FunctionInvocation> getFunctionInvocationList() {

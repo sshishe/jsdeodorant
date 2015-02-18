@@ -3,9 +3,9 @@ package ca.concordia.javascript.analysis.util;
 import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.ClassDeclarationType;
-import ca.concordia.javascript.analysis.abstraction.Function;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 
 public class CompositePostProcessor {
 	static Logger log = Logger
@@ -15,11 +15,11 @@ public class CompositePostProcessor {
 		for (ObjectCreation objectCreation : program.getObjectCreations()) {
 			if (!findPredefinedClasses(program, objectCreation))
 				if (!findFunctionDeclaration(program, objectCreation))
-					if (!findAnonymousFunctionDeclaration(program,
-							objectCreation)) {
+					//if (!findAnonymousFunctionDeclaration(program,
+					//		objectCreation)) {
 						objectCreation
 								.setClassDeclaration(ClassDeclarationType.NOTFOUND);
-					}
+					//}
 		}
 	}
 
@@ -32,27 +32,9 @@ public class CompositePostProcessor {
 		return false;
 	}
 
-	private static boolean findAnonymousFunctionDeclaration(Program program,
-			ObjectCreation objectCreation) {
-		for (Function anonymousFunctionDeclaration : program
-				.getAnonymousFunctionDeclarations()) {
-			if (objectCreation.getClassName() != null)
-				if (objectCreation.getClassName().equals(
-						anonymousFunctionDeclaration.getName()))
-					if (objectCreation.getArguments().size() == anonymousFunctionDeclaration
-							.getParameters().size()) {
-						objectCreation.setClassDeclaration(
-								ClassDeclarationType.ANONYMOUS,
-								anonymousFunctionDeclaration);
-						return true;
-					}
-		}
-		return false;
-	}
-
 	private static boolean findFunctionDeclaration(Program program,
 			ObjectCreation objectCreation) {
-		for (Function functionDeclaration : program.getFunctionDeclarations()) {
+		for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarations()) {
 			if (objectCreation.getClassName() != null)
 				if (objectCreation.getClassName().equals(
 						functionDeclaration.getName()))

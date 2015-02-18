@@ -17,8 +17,16 @@ public class TryStatement extends CompositeStatement {
 		this.catchClause = catchClause;
 	}
 
-	public void setFinally(CompositeStatement finallyBlock) {
+	public void setFinallyBlock(CompositeStatement finallyBlock) {
 		this.finallyBlock = finallyBlock;
+	}
+
+	public CompositeStatement getCatchClause() {
+		return catchClause;
+	}
+
+	public CompositeStatement getFinallyBlock() {
+		return finallyBlock;
 	}
 
 }

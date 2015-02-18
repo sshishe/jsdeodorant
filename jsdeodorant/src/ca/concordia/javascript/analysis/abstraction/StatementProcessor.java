@@ -1,8 +1,11 @@
 package ca.concordia.javascript.analysis.abstraction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
-import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 import ca.concordia.javascript.analysis.decomposition.CompositeStatement;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationStatement;
 import ca.concordia.javascript.analysis.decomposition.LabelledStatement;
 import ca.concordia.javascript.analysis.decomposition.Statement;
@@ -60,9 +63,8 @@ public class StatementProcessor {
 			FunctionDeclarationTree functionDeclarationTree = statement
 					.asFunctionDeclaration();
 			FunctionDeclarationStatement child = new FunctionDeclarationStatement(
-					functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
+					functionDeclarationTree, parent);
 			parent.addElement(child);
-			processStatement(functionDeclarationTree.functionBody, child);
 		}
 
 		else if (statement instanceof IfStatementTree) {
@@ -247,7 +249,7 @@ public class StatementProcessor {
 
 				processStatement(finallyBlock.block, finallyClause);
 
-				child.setFinally(finallyClause);
+				child.setFinallyBlock(finallyClause);
 			}
 		}
 
@@ -269,27 +271,21 @@ public class StatementProcessor {
 			VariableStatementTree variableStatement = statement
 					.asVariableStatement();
 
-			AbstractStatement child = null;
 			VariableDeclarationListTree listTree = variableStatement.declarations;
+			List<FunctionDeclarationExpression> functionDeclarationExpressions = new ArrayList<>();
 			for (VariableDeclarationTree variableDeclarationTree : listTree.declarations) {
 				if (variableDeclarationTree.initializer instanceof FunctionDeclarationTree) {
 					FunctionDeclarationTree functionDeclarationTree = variableDeclarationTree.initializer
 							.asFunctionDeclaration();
-					child = new FunctionDeclarationStatement(
-							functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
-					((FunctionDeclarationStatement)child).setExpressionContainingFunctionDeclaration(
-							new AbstractExpression(variableDeclarationTree));
-					break;
+					functionDeclarationExpressions.add(
+							new FunctionDeclarationExpression(functionDeclarationTree, parent));
 				}
 			}
-			if (child == null)
-				child = new Statement(variableStatement, StatementType.VARIABLE, parent);
-
-			parent.addElement(child);
-			if (child instanceof FunctionDeclarationStatement) {
-				FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree) child.getStatement();
-				processStatement(functionDeclarationTree.functionBody, (FunctionDeclarationStatement)child);
+			Statement child = new Statement(variableStatement, StatementType.VARIABLE, parent);
+			for(FunctionDeclarationExpression functionDeclarationExpression : functionDeclarationExpressions) {
+				child.addFunctionDeclarationExpression(functionDeclarationExpression);
 			}
+			parent.addElement(child);
 		}
 
 		else if (statement instanceof EmptyStatementTree) {
@@ -305,17 +301,14 @@ public class StatementProcessor {
 			ExpressionStatementTree expressionStatement = statement
 					.asExpressionStatement();
 
-			AbstractStatement child = null;
+			FunctionDeclarationExpression functionDeclarationExpression = null;
 			if (expressionStatement.expression instanceof BinaryOperatorTree) {
 				BinaryOperatorTree binaryOperatorTree = expressionStatement.expression
 						.asBinaryOperator();
 				if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
 					FunctionDeclarationTree functionDeclarationTree = binaryOperatorTree.right
 							.asFunctionDeclaration();
-					child = new FunctionDeclarationStatement(
-							functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
-					((FunctionDeclarationStatement)child).setExpressionContainingFunctionDeclaration(
-							new AbstractExpression(expressionStatement.expression));
+					functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, parent);
 				}
 			}
 			else if (expressionStatement.expression instanceof CallExpressionTree) {
@@ -325,21 +318,14 @@ public class StatementProcessor {
 					if (parenExpressionTree.expression instanceof FunctionDeclarationTree) {
 						FunctionDeclarationTree functionDeclarationTree = parenExpressionTree.expression
 								.asFunctionDeclaration();
-						child = new FunctionDeclarationStatement(
-								functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
-						((FunctionDeclarationStatement)child).setExpressionContainingFunctionDeclaration(
-								new AbstractExpression(expressionStatement.expression));
+						functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, parent);
 					}
 				}
 			}
-			if (child == null)
-				child = new Statement(expressionStatement, StatementType.EXPRESSION, parent);
-
+			Statement child = new Statement(expressionStatement, StatementType.EXPRESSION, parent);
+			if(functionDeclarationExpression != null)
+				child.addFunctionDeclarationExpression(functionDeclarationExpression);
 			parent.addElement(child);
-			if (child instanceof FunctionDeclarationStatement) {
-				FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree) child.getStatement();
-				processStatement(functionDeclarationTree.functionBody, (FunctionDeclarationStatement)child);
-			}
 		}
 
 		else if (statement instanceof BreakStatementTree) {
