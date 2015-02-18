@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.javascript.analysis.decomposition.ObjectLiteralExpression;
 import ca.concordia.javascript.analysis.util.PredefinedJSClasses;
 
 public class Program implements SourceContainer {
@@ -109,19 +110,15 @@ public class Program implements SourceContainer {
 		return arrayLiteralCreations;
 	}
 
-	public List<ObjectLiteralCreation> getObjectLiteralCreations() {
-		List<ObjectLiteralCreation> arrayLiteralCreations = new ArrayList<>();
+	public List<ObjectLiteralExpression> getObjectLiteralExpressions() {
+		List<ObjectLiteralExpression> objectLiteralExpressions = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
-			if (sourceElement instanceof AbstractFunctionFragment) {
-				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
-				for (Creation creation : abstractFunctionFragment
-						.getCreations())
-					if (creation instanceof ObjectLiteralCreation)
-						arrayLiteralCreations
-								.add((ObjectLiteralCreation) creation);
+			if (sourceElement instanceof AbstractStatement) {
+				AbstractStatement statement = (AbstractStatement) sourceElement;
+				objectLiteralExpressions.addAll(statement.getObjectLiteralExpressions());
 			}
 		}
-		return arrayLiteralCreations;
+		return objectLiteralExpressions;
 	}
 
 	public List<FunctionDeclaration> getFunctionDeclarations() {

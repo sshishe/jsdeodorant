@@ -8,6 +8,7 @@ import ca.concordia.javascript.analysis.decomposition.CompositeStatement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationStatement;
 import ca.concordia.javascript.analysis.decomposition.LabelledStatement;
+import ca.concordia.javascript.analysis.decomposition.ObjectLiteralExpression;
 import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.decomposition.StatementType;
 import ca.concordia.javascript.analysis.decomposition.TryStatement;
@@ -32,6 +33,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ForStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IfStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ReturnStatementTree;
@@ -273,6 +275,7 @@ public class StatementProcessor {
 
 			VariableDeclarationListTree listTree = variableStatement.declarations;
 			List<FunctionDeclarationExpression> functionDeclarationExpressions = new ArrayList<>();
+			List<ObjectLiteralExpression> objectLiteralExpressions = new ArrayList<>();
 			for (VariableDeclarationTree variableDeclarationTree : listTree.declarations) {
 				if (variableDeclarationTree.initializer instanceof FunctionDeclarationTree) {
 					FunctionDeclarationTree functionDeclarationTree = variableDeclarationTree.initializer
@@ -280,10 +283,19 @@ public class StatementProcessor {
 					functionDeclarationExpressions.add(
 							new FunctionDeclarationExpression(functionDeclarationTree, parent));
 				}
+				else if (variableDeclarationTree.initializer instanceof ObjectLiteralExpressionTree) {
+					ObjectLiteralExpressionTree objectLiteralExpressionTree = variableDeclarationTree.initializer
+							.asObjectLiteralExpression();
+					objectLiteralExpressions.add(
+							new ObjectLiteralExpression(objectLiteralExpressionTree, parent));
+				}
 			}
 			Statement child = new Statement(variableStatement, StatementType.VARIABLE, parent);
-			for(FunctionDeclarationExpression functionDeclarationExpression : functionDeclarationExpressions) {
+			for (FunctionDeclarationExpression functionDeclarationExpression : functionDeclarationExpressions) {
 				child.addFunctionDeclarationExpression(functionDeclarationExpression);
+			}
+			for (ObjectLiteralExpression objectLiteralExpression : objectLiteralExpressions) {
+				child.addObjectLiteralExpression(objectLiteralExpression);
 			}
 			parent.addElement(child);
 		}
@@ -302,6 +314,7 @@ public class StatementProcessor {
 					.asExpressionStatement();
 
 			FunctionDeclarationExpression functionDeclarationExpression = null;
+			ObjectLiteralExpression objectLiteralExpression = null;
 			if (expressionStatement.expression instanceof BinaryOperatorTree) {
 				BinaryOperatorTree binaryOperatorTree = expressionStatement.expression
 						.asBinaryOperator();
@@ -309,6 +322,11 @@ public class StatementProcessor {
 					FunctionDeclarationTree functionDeclarationTree = binaryOperatorTree.right
 							.asFunctionDeclaration();
 					functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, parent);
+				}
+				else if (binaryOperatorTree.right instanceof ObjectLiteralExpressionTree) {
+					ObjectLiteralExpressionTree objectLiteralExpressionTree = binaryOperatorTree.right
+							.asObjectLiteralExpression();
+					objectLiteralExpression = new ObjectLiteralExpression(objectLiteralExpressionTree, parent);
 				}
 			}
 			else if (expressionStatement.expression instanceof CallExpressionTree) {
@@ -323,8 +341,10 @@ public class StatementProcessor {
 				}
 			}
 			Statement child = new Statement(expressionStatement, StatementType.EXPRESSION, parent);
-			if(functionDeclarationExpression != null)
+			if (functionDeclarationExpression != null)
 				child.addFunctionDeclarationExpression(functionDeclarationExpression);
+			if (objectLiteralExpression != null)
+				child.addObjectLiteralExpression(objectLiteralExpression);
 			parent.addElement(child);
 		}
 

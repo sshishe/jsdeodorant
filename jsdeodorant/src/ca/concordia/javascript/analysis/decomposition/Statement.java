@@ -20,9 +20,6 @@ public class Statement extends AbstractStatement {
 
 		processNewExpressions(expressionExtractor.getNewExpressions(statement));
 
-		processObjectLiteralExpressions(expressionExtractor
-				.getObjectLiteralExpressions(statement));
-
 		processArrayLiteralExpressions(expressionExtractor
 				.getArrayLiteralExpressions(statement));
 	}
@@ -36,7 +33,16 @@ public class Statement extends AbstractStatement {
 		for (FunctionDeclarationExpression expression : functionDeclarationExpressions) {
 			functionDeclarations.addAll(expression.getFunctionDeclarations());
 		}
+		List<ObjectLiteralExpression> objectLiteralExpressions = this.getObjectLiteralExpressionList();
+		for (ObjectLiteralExpression objectLiteralExpression : objectLiteralExpressions) {
+			functionDeclarations.addAll(objectLiteralExpression.getFunctionDeclarations());
+		}
 		return functionDeclarations;
+	}
+
+	@Override
+	public List<ObjectLiteralExpression> getObjectLiteralExpressions() {
+		return this.getObjectLiteralExpressionList();
 	}
 
 	public String toString() {

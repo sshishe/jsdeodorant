@@ -1,16 +1,11 @@
 package ca.concordia.javascript.analysis.decomposition;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
-import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
-import com.google.javascript.jscomp.parsing.parser.LiteralToken;
-import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
@@ -18,17 +13,14 @@ import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTre
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberLookupExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
-import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 
 import ca.concordia.javascript.analysis.abstraction.ArrayLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.Creation;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
-import ca.concordia.javascript.analysis.abstraction.ObjectLiteralCreation;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.QualifiedNameExtractor;
 
@@ -39,12 +31,14 @@ public abstract class AbstractFunctionFragment {
 	private List<Creation> creationList;
 	private List<FunctionInvocation> functionInvocationList;
 	private List<FunctionDeclarationExpression> functionDeclarationExpressionList;
+	private List<ObjectLiteralExpression> objectLiteralExpressionList;
 
 	protected AbstractFunctionFragment(SourceContainer parent) {
 		this.parent = parent;
 		creationList = new ArrayList<>();
 		functionInvocationList = new ArrayList<>();
 		functionDeclarationExpressionList = new ArrayList<>();
+		objectLiteralExpressionList = new ArrayList<>();
 	}
 
 	/*public static FunctionDeclaration processFunctionDeclaration(
@@ -163,6 +157,10 @@ public abstract class AbstractFunctionFragment {
 		functionDeclarationExpressionList.add(functionDeclaration);
 	}
 
+	public void addObjectLiteralExpression(ObjectLiteralExpression objectLiteral) {
+		objectLiteralExpressionList.add(objectLiteral);
+	}
+
 	protected void processNewExpressions(List<ParseTree> newExpressions) {
 		for (ParseTree expression : newExpressions) {
 			NewExpressionTree newExpression = (NewExpressionTree) expression;
@@ -229,33 +227,6 @@ public abstract class AbstractFunctionFragment {
 		}
 	}
 
-	protected void processObjectLiteralExpressions(
-			List<ParseTree> objectLiteralExpressions) {
-		for (ParseTree expression : objectLiteralExpressions) {
-			ObjectLiteralExpressionTree objectLiteral = (ObjectLiteralExpressionTree) expression;
-			ImmutableList<ParseTree> nameAndValues = objectLiteral.propertyNameAndValues;
-			Map<String, AbstractExpression> propertyMap = new LinkedHashMap<>();
-			for (ParseTree argument : nameAndValues) {
-				if (argument instanceof PropertyNameAssignmentTree) {
-					// TODO handle nested properties
-					PropertyNameAssignmentTree propertyNameAssignment = (PropertyNameAssignmentTree) argument;
-					Token token = propertyNameAssignment.name;
-					String name = null;
-					if (token instanceof IdentifierToken) {
-						name = token.asIdentifier().value;
-					} else if (token instanceof LiteralToken) {
-						name = token.asLiteral().value;
-					}
-					ParseTree value = propertyNameAssignment.value;
-					propertyMap.put(name, new AbstractExpression(value));
-				}
-			}
-			ObjectLiteralCreation objectLiteralCreation = new ObjectLiteralCreation(
-					propertyMap);
-			addCreation(objectLiteralCreation);
-		}
-	}
-
 	protected void processArrayLiteralExpressions(
 			List<ParseTree> arrayLiteralExpressions) {
 		for (ParseTree expression : arrayLiteralExpressions) {
@@ -289,6 +260,10 @@ public abstract class AbstractFunctionFragment {
 
 	public List<FunctionDeclarationExpression> getFuntionDeclarationExpressions() {
 		return functionDeclarationExpressionList;
+	}
+
+	public List<ObjectLiteralExpression> getObjectLiteralExpressionList() {
+		return objectLiteralExpressionList;
 	}
 
 	public List<FunctionInvocation> getFunctionInvocationList() {

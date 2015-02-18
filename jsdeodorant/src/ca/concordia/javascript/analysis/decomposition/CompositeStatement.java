@@ -55,6 +55,15 @@ public class CompositeStatement extends AbstractStatement implements
 		return functionDeclarations;
 	}
 
+	@Override
+	public List<ObjectLiteralExpression> getObjectLiteralExpressions() {
+		List<ObjectLiteralExpression> objectLiteralExpressions = new ArrayList<>();
+		for (AbstractStatement statement : statementList) {
+			objectLiteralExpressions.addAll(statement.getObjectLiteralExpressions());
+		}
+		return objectLiteralExpressions;
+	}
+
 	/*public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getType().toString());

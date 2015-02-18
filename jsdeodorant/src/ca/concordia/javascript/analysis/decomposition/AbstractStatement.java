@@ -29,6 +29,7 @@ public abstract class AbstractStatement extends AbstractFunctionFragment
 	}
 
 	public abstract List<FunctionDeclaration> getFunctionDeclarations();
+	public abstract List<ObjectLiteralExpression> getObjectLiteralExpressions();
 
 	public String toString() {
 		return SourceHelper.extract(statement);
