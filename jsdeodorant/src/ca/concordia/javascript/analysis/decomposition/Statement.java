@@ -41,8 +41,13 @@ public class Statement extends AbstractStatement {
 	}
 
 	@Override
-	public List<ObjectLiteralExpression> getObjectLiteralExpressions() {
-		return this.getObjectLiteralExpressionList();
+	public List<ObjectLiteralExpression> getObjectLiterals() {
+		List<ObjectLiteralExpression> objectLiterals = new ArrayList<>();
+		for(ObjectLiteralExpression expression : this.getObjectLiteralExpressionList()) {
+			objectLiterals.add(expression);
+			objectLiterals.addAll(expression.getObjectLiterals());
+		}
+		return objectLiterals;
 	}
 
 	public String toString() {

@@ -56,12 +56,12 @@ public class CompositeStatement extends AbstractStatement implements
 	}
 
 	@Override
-	public List<ObjectLiteralExpression> getObjectLiteralExpressions() {
-		List<ObjectLiteralExpression> objectLiteralExpressions = new ArrayList<>();
+	public List<ObjectLiteralExpression> getObjectLiterals() {
+		List<ObjectLiteralExpression> objectLiterals = new ArrayList<>();
 		for (AbstractStatement statement : statementList) {
-			objectLiteralExpressions.addAll(statement.getObjectLiteralExpressions());
+			objectLiterals.addAll(statement.getObjectLiterals());
 		}
-		return objectLiteralExpressions;
+		return objectLiterals;
 	}
 
 	/*public String toString() {

@@ -110,15 +110,15 @@ public class Program implements SourceContainer {
 		return arrayLiteralCreations;
 	}
 
-	public List<ObjectLiteralExpression> getObjectLiteralExpressions() {
-		List<ObjectLiteralExpression> objectLiteralExpressions = new ArrayList<>();
+	public List<ObjectLiteralExpression> getObjectLiterals() {
+		List<ObjectLiteralExpression> objectLiterals = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
 			if (sourceElement instanceof AbstractStatement) {
 				AbstractStatement statement = (AbstractStatement) sourceElement;
-				objectLiteralExpressions.addAll(statement.getObjectLiteralExpressions());
+				objectLiterals.addAll(statement.getObjectLiterals());
 			}
 		}
-		return objectLiteralExpressions;
+		return objectLiterals;
 	}
 
 	public List<FunctionDeclaration> getFunctionDeclarations() {

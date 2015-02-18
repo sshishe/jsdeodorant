@@ -42,6 +42,10 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 					FunctionDeclarationTree functionDeclarationTree = (FunctionDeclarationTree)value;
 					valueExpression = new FunctionDeclarationExpression(functionDeclarationTree, this);
 				}
+				else if (value instanceof ObjectLiteralExpressionTree) {
+					ObjectLiteralExpressionTree objectLiteralExpressionTree = (ObjectLiteralExpressionTree)value;
+					valueExpression = new ObjectLiteralExpression(objectLiteralExpressionTree, this);
+				}
 				else {
 					valueExpression = new AbstractExpression(value);
 				}
@@ -69,5 +73,21 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 			functionDeclarations.addAll(functionDeclarationExpression.getFunctionDeclarations());
 		}
 		return functionDeclarations;
+	}
+
+	public List<ObjectLiteralExpression> getObjectLiterals() {
+		List<ObjectLiteralExpression> objectLiterals = new ArrayList<>();
+		List<ObjectLiteralExpression> objectLiteralExpressions = new ArrayList<>();
+		for (String key : propertyMap.keySet()) {
+			AbstractExpression abstractExpression = propertyMap.get(key);
+			if (abstractExpression instanceof ObjectLiteralExpression) {
+				objectLiteralExpressions.add((ObjectLiteralExpression)abstractExpression);
+			}
+		}
+		for (ObjectLiteralExpression objectLiteralExpression : objectLiteralExpressions) {
+			objectLiterals.add(objectLiteralExpression);
+			objectLiterals.addAll(objectLiteralExpression.getObjectLiterals());
+		}
+		return objectLiterals;
 	}
 }
