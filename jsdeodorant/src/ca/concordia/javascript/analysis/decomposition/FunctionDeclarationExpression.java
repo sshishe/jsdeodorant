@@ -17,7 +17,7 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	private FunctionKind kind;
 	private List<AbstractExpression> parameters;
 	private List<AbstractStatement> statementList;
-
+	
 	public FunctionDeclarationExpression(FunctionDeclarationTree functionDeclarationTree,
 			SourceContainer parent) {
 		super(functionDeclarationTree, parent);

@@ -1,6 +1,7 @@
 package ca.concordia.javascript.analysis.abstraction;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 
@@ -48,5 +49,28 @@ public class FunctionInvocation {
 
 	public String toString() {
 		return SourceHelper.extract(callExpressionTree);
+	}
+
+	public CallExpressionTree getCallExpressionTree() {
+		return callExpressionTree;
+	}
+
+	public void setCallExpressionTree(CallExpressionTree callExpressionTree) {
+		this.callExpressionTree = callExpressionTree;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof FunctionInvocation) {
+			FunctionInvocation toCompare = (FunctionInvocation) other;
+			return Objects.deepEquals(this.callExpressionTree,
+					toCompare.callExpressionTree);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(callExpressionTree);
 	}
 }

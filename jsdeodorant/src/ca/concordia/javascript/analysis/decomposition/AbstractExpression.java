@@ -1,5 +1,7 @@
 package ca.concordia.javascript.analysis.decomposition;
 
+import java.util.Objects;
+
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 import ca.concordia.javascript.analysis.util.SourceHelper;
@@ -32,9 +34,22 @@ public class AbstractExpression extends AbstractFunctionFragment {
 	public ParseTree getExpression() {
 		return expression;
 	}
-	
+
 	public String toString() {
 		return SourceHelper.extract(expression);
 	}
 
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof AbstractExpression) {
+			AbstractExpression toCompare = (AbstractExpression) other;
+			return Objects.equals(this.expression, toCompare.expression);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(expression);
+	}
 }

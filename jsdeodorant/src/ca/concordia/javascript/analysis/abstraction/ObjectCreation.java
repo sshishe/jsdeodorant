@@ -1,6 +1,7 @@
 package ca.concordia.javascript.analysis.abstraction;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
@@ -96,5 +97,20 @@ public class ObjectCreation extends Creation {
 
 	public String toString() {
 		return SourceHelper.extract(newExpressionTree);
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof ObjectCreation) {
+			ObjectCreation toCompare = (ObjectCreation) other;
+			return Objects.equals(this.newExpressionTree,
+					toCompare.newExpressionTree);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(newExpressionTree);
 	}
 }

@@ -23,19 +23,21 @@ public class Statement extends AbstractStatement {
 		processArrayLiteralExpressions(expressionExtractor
 				.getArrayLiteralExpressions(statement));
 	}
-	
+
 	@Override
 	public List<FunctionDeclaration> getFunctionDeclarations() {
 		List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
-		List<FunctionDeclarationExpression> functionDeclarationExpressions =
-				this.getFuntionDeclarationExpressions();
+		List<FunctionDeclarationExpression> functionDeclarationExpressions = this
+				.getFuntionDeclarationExpressions();
 		functionDeclarations.addAll(functionDeclarationExpressions);
 		for (FunctionDeclarationExpression expression : functionDeclarationExpressions) {
 			functionDeclarations.addAll(expression.getFunctionDeclarations());
 		}
-		List<ObjectLiteralExpression> objectLiteralExpressions = this.getObjectLiteralExpressionList();
+		List<ObjectLiteralExpression> objectLiteralExpressions = this
+				.getObjectLiteralExpressionList();
 		for (ObjectLiteralExpression objectLiteralExpression : objectLiteralExpressions) {
-			functionDeclarations.addAll(objectLiteralExpression.getFunctionDeclarations());
+			functionDeclarations.addAll(objectLiteralExpression
+					.getFunctionDeclarations());
 		}
 		return functionDeclarations;
 	}
@@ -43,7 +45,8 @@ public class Statement extends AbstractStatement {
 	@Override
 	public List<ObjectLiteralExpression> getObjectLiterals() {
 		List<ObjectLiteralExpression> objectLiterals = new ArrayList<>();
-		for(ObjectLiteralExpression expression : this.getObjectLiteralExpressionList()) {
+		for (ObjectLiteralExpression expression : this
+				.getObjectLiteralExpressionList()) {
 			objectLiterals.add(expression);
 			objectLiterals.addAll(expression.getObjectLiterals());
 		}
