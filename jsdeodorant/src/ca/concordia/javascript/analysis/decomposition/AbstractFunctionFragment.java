@@ -41,37 +41,6 @@ public abstract class AbstractFunctionFragment {
 		objectLiteralExpressionList = new ArrayList<>();
 	}
 
-	/*
-	 * public static FunctionDeclaration processFunctionDeclaration(
-	 * FunctionDeclarationTree functionDeclarationTree) { FunctionDeclaration
-	 * functionDeclaration = new FunctionDeclaration();
-	 * 
-	 * functionDeclaration.setFunctionDeclarationTree(functionDeclarationTree);
-	 * 
-	 * if (functionDeclarationTree.name != null)
-	 * functionDeclaration.setName(functionDeclarationTree.name.value);
-	 * 
-	 * functionDeclaration.setKind(Kind.valueOf(functionDeclarationTree.kind
-	 * .toString()));
-	 * 
-	 * if (functionDeclarationTree.formalParameterList != null) {
-	 * FormalParameterListTree formalParametersList =
-	 * functionDeclarationTree.formalParameterList .asFormalParameterList(); for
-	 * (ParseTree parameter : formalParametersList.parameters)
-	 * functionDeclaration.addParameter(new AbstractExpression( parameter)); }
-	 * 
-	 * ParseTree functionBodyTree = functionDeclarationTree.functionBody;
-	 * 
-	 * if (functionBodyTree instanceof BlockTree) { BlockTree blockTree =
-	 * functionBodyTree.asBlock(); FunctionBody functionBody = new
-	 * FunctionBody(blockTree); functionDeclaration.setBody(functionBody); }
-	 * 
-	 * // If the body is not BlockTree it will be an expression else {
-	 * log.warn("Unsupported expression"); }
-	 * 
-	 * return functionDeclaration; }
-	 */
-
 	protected void processFunctionInvocations(
 			List<ParseTree> functionInvocations) {
 		for (ParseTree functionInvocation : functionInvocations) {
@@ -102,51 +71,6 @@ public abstract class AbstractFunctionFragment {
 		}
 	}
 
-	/*
-	 * protected void processFunctionDeclarations( List<ParseTree>
-	 * functionDeclarations) { for (ParseTree functionDeclaration :
-	 * functionDeclarations) { FunctionDeclarationTree functionDeclarationTree =
-	 * functionDeclaration .asFunctionDeclaration(); // if
-	 * (functionDeclarationTree.kind == //
-	 * FunctionDeclarationTree.Kind.DECLARATION) if
-	 * (functionDeclarationTree.name != null)
-	 * addFunctionDeclaration(processFunctionDeclaration(
-	 * functionDeclarationTree)); } }
-	 * 
-	 * protected void processAnonymousFunctionDeclarations( List<ParseTree>
-	 * anonymousFunctionDeclarations) { for (ParseTree
-	 * anonymousFunctionDeclaration : anonymousFunctionDeclarations) if
-	 * (anonymousFunctionDeclaration instanceof BinaryOperatorTree) {
-	 * BinaryOperatorTree binaryOperatorTree = anonymousFunctionDeclaration
-	 * .asBinaryOperator(); if (binaryOperatorTree.right instanceof
-	 * FunctionDeclarationTree) { FunctionDeclarationTree
-	 * functionDeclarationTree = binaryOperatorTree.right
-	 * .asFunctionDeclaration(); AnonymousFunctionDeclaration
-	 * anonymousFunctionDeclarationObject = new AnonymousFunctionDeclaration(
-	 * new AbstractExpression(binaryOperatorTree.left),
-	 * processFunctionDeclaration( functionDeclarationTree));
-	 * anonymousFunctionDeclarationObject
-	 * .setFunctionDeclarationTree(functionDeclarationTree);
-	 * addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject); } }
-	 * else if (anonymousFunctionDeclaration instanceof VariableDeclarationTree)
-	 * {
-	 * 
-	 * VariableDeclarationTree variableDeclarationTree =
-	 * anonymousFunctionDeclaration .asVariableDeclaration(); if
-	 * (variableDeclarationTree.initializer instanceof FunctionDeclarationTree)
-	 * { FunctionDeclarationTree functionDeclarationTree =
-	 * variableDeclarationTree.initializer .asFunctionDeclaration();
-	 * AnonymousFunctionDeclaration anonymousFunctionDeclarationObject = new
-	 * AnonymousFunctionDeclaration( new AbstractExpression(
-	 * variableDeclarationTree.lvalue),
-	 * processFunctionDeclaration(functionDeclarationTree));
-	 * anonymousFunctionDeclarationObject
-	 * .setFunctionDeclarationTree(functionDeclarationTree);
-	 * addAnonymousFunctionDeclaration(anonymousFunctionDeclarationObject); }
-	 * 
-	 * } }
-	 */
-
 	private boolean compositeContainsFunctionInvocation(
 			FunctionInvocation functionInvocation, CompositeStatement composite) {
 		for (FunctionInvocation invocation : composite
@@ -174,16 +98,7 @@ public abstract class AbstractFunctionFragment {
 			if (newExpression.operand instanceof IdentifierExpressionTree)
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asIdentifierExpression());
-
-			// TODO support MemberLookupExpressionTrees i.e: var xhr = new
-			// goog.global['XMLHttpRequest']();
-			// and also support for ParenExpressionTree i.e: var col = new
-			// (Backbone.Collection.extend({ model: Model }))();
 			else if (newExpression.operand instanceof MemberExpressionTree)
-				// TODO check if we need to find the type of memberName i.e. the
-				// type of "x"
-				// in x.Child("Something") where x could be an instance of
-				// another class
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asMemberExpression());
 
@@ -193,22 +108,7 @@ public abstract class AbstractFunctionFragment {
 			else if (newExpression.operand instanceof MemberLookupExpressionTree)
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asMemberLookupExpression());
-			// TODO handle the following case in StatementProcessor
-			/*
-			 * else if (newExpression.operand instanceof
-			 * FunctionDeclarationTree) { // i.e new function() {}; operandOfNew
-			 * = new AbstractExpression(
-			 * newExpression.operand.asFunctionDeclaration()); Function
-			 * anonymousFunctionDeclaration = new AnonymousFunctionDeclaration(
-			 * null, processFunctionDeclaration(
-			 * newExpression.operand.asFunctionDeclaration()));
-			 * anonymousFunctionDeclaration
-			 * .setFunctionDeclarationTree(newExpression.operand
-			 * .asFunctionDeclaration()); objectCreation.setClassDeclaration(
-			 * ClassDeclarationType.ANONYMOUS, anonymousFunctionDeclaration);
-			 * 
-			 * }
-			 */else if (newExpression.operand instanceof ThisExpressionTree) {
+			else if (newExpression.operand instanceof ThisExpressionTree) {
 				operandOfNew = new AbstractExpression(
 						newExpression.operand.asThisExpression());
 			} else

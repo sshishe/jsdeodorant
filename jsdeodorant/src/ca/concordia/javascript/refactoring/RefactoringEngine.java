@@ -57,17 +57,6 @@ public class RefactoringEngine {
 
 		CompositePostProcessor.processFunctionDeclarations(program);
 
-		// List<FunctionInvocation> functionInvocations = program
-		// .getFunctionInvocations();
-		//
-		// for (FunctionInvocation functionInvocation : functionInvocations)
-		// // if (functionInvocation.getOperand().getExpression() instanceof
-		// // NewExpressionTree)
-		// // if (QualifiedNameExtractor.getQualifiedName(functionInvocation
-		// // .getOperand().getExpression()).toString().contains("require"))
-		// log.warn(QualifiedNameExtractor.getQualifiedName(functionInvocation
-		// .getOperand().getExpression()));
-
 		ExperimentOutput experimentOutput = new ExperimentOutput(program);
 		experimentOutput.writeToFile();
 		experimentOutput.uniqueClassDeclarationNumber();
