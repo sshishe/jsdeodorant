@@ -167,6 +167,23 @@ public abstract class AbstractFunctionFragment {
 		return this.parent;
 	}
 
+	public FunctionDeclaration getParentFunction() {
+		if (this.parent == null)
+			return null;
+
+		return findParentFunction(this.parent);
+	}
+
+	private FunctionDeclaration findParentFunction(SourceContainer element) {
+		if (element instanceof FunctionDeclarationStatement)
+			return (FunctionDeclarationStatement) element;
+
+		if (element instanceof AbstractStatement) {
+			return findParentFunction(((AbstractStatement) element).getParent());
+		}
+		return null;
+	}
+
 	public List<Creation> getCreations() {
 		return creationList;
 	}
