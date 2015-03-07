@@ -175,8 +175,8 @@ public abstract class AbstractFunctionFragment {
 	}
 
 	private FunctionDeclaration findParentFunction(SourceContainer element) {
-		if (element instanceof FunctionDeclarationStatement)
-			return (FunctionDeclarationStatement) element;
+		if (element instanceof FunctionDeclaration)
+			return (FunctionDeclaration) element;
 
 		if (element instanceof AbstractStatement) {
 			return findParentFunction(((AbstractStatement) element).getParent());
