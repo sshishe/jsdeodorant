@@ -22,7 +22,7 @@ public class QualifiedNameExtractor {
 		return getQualifiedName(expression, new QualifiedName());
 	}
 
-	private static QualifiedName getQualifiedName(ParseTree expression,
+	public static QualifiedName getQualifiedName(ParseTree expression,
 			QualifiedName qualifiedName) {
 		if (expression instanceof LiteralExpressionTree) {
 			qualifiedName.setName(expression.asLiteralExpression().literalToken
@@ -73,7 +73,7 @@ public class QualifiedNameExtractor {
 		}
 	}
 
-	public static String normalizeQualifiedNames(QualifiedName qualifiedName) {
+	public static String getNormalizedName(QualifiedName qualifiedName) {
 		return "";
 	}
 }

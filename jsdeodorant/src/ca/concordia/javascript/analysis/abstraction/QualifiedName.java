@@ -8,7 +8,6 @@ public class QualifiedName {
 	private String name;
 
 	public QualifiedName() {
-
 	}
 
 	public QualifiedName(String name) {
@@ -18,6 +17,15 @@ public class QualifiedName {
 	public QualifiedName(String name, QualifiedName parent) {
 		this.name = name;
 		this.parent = parent;
+	}
+
+	public ParseTree getNode() {
+		return node;
+	}
+
+	public QualifiedName setNode(ParseTree node) {
+		this.node = node;
+		return this;
 	}
 
 	public String getName() {
@@ -33,30 +41,22 @@ public class QualifiedName {
 		return parent;
 	}
 
-	public QualifiedName createParent() {
-		QualifiedName parent = new QualifiedName();
-		this.parent = parent;
-		return parent;
-	}
-
-	public QualifiedName createParent(String name) {
-		QualifiedName parent = new QualifiedName(name);
-		this.parent = parent;
-		return parent;
-	}
-
 	public QualifiedName setParent(QualifiedName parent) {
 		this.parent = parent;
 		return this;
 	}
 
-	public ParseTree getNode() {
-		return node;
+	public QualifiedName createParent() {
+		return createParentNode(new QualifiedName());
 	}
 
-	public QualifiedName setNode(ParseTree node) {
-		this.node = node;
-		return this;
+	public QualifiedName createParent(String name) {
+		return createParentNode(new QualifiedName(name));
+	}
+
+	private QualifiedName createParentNode(QualifiedName newParent) {
+		this.parent = newParent;
+		return parent;
 	}
 
 	private String getQualifiedName(QualifiedName ns) {

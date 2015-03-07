@@ -90,4 +90,8 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 		}
 		return objectLiterals;
 	}
+
+	public Map<String, AbstractExpression> getPropertyMap() {
+		return propertyMap;
+	}
 }

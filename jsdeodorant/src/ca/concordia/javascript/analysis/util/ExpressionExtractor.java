@@ -151,6 +151,11 @@ public class ExpressionExtractor {
 		instanceChecker = new InstanceOfFunctionDeclaration();
 		return getExpressions(element);
 	}
+	
+	public List<ParseTree> getParseTree(ParseTree element) {
+		instanceChecker = new InstanceOfParseTree();
+		return getExpressions(element);
+	}
 
 	private List<ParseTree> getExpressions(ParseTree element) {
 		List<ParseTree> expressionList = new ArrayList<ParseTree>();
@@ -326,8 +331,8 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ThrowStatementTree) {
-			ThrowStatementTree thowStatement = element.asThrowStatement();
-			expressionList.addAll(getExpressions(thowStatement.value));
+			ThrowStatementTree throwStatement = element.asThrowStatement();
+			expressionList.addAll(getExpressions(throwStatement.value));
 		}
 
 		else if (element instanceof DebuggerStatementTree) {
