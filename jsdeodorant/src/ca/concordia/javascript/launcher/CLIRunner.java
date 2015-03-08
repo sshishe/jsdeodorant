@@ -12,6 +12,7 @@ import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.refactoring.RefactoringEngine;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.javascript.jscomp.*;
@@ -20,6 +21,7 @@ import com.google.javascript.jscomp.Compiler;
 public class CLIRunner extends CommandLineRunner {
 	static Logger log = Logger.getLogger(CLIRunner.class.getName());
 	private CompilerOptions compilerOptions;
+	private static AnalysisOptions analysisOptions;
 	private static Flags flags;
 	private final ImmutableList.Builder<SourceFile> inputs = ImmutableList
 			.builder();
@@ -54,46 +56,34 @@ public class CLIRunner extends CommandLineRunner {
 	private void performActions() throws IOException {
 		externs.addAll(ImmutableList.<SourceFile> of());
 
-		if (flags.disableLog)
+		if (analysisOptions.isDisableLog())
 			LogManager.getLoggerRepository().setThreshold(Level.OFF);
 
-		addInputsFromFile(flags.getJS());
-		addExternsFromFile(flags.getExterns());
+		addInputsFromFile(analysisOptions.getJsFiles());
+		addExternsFromFile(analysisOptions.getExterns());
 
 		RefactoringEngine refactoringEngine = new RefactoringEngine(
 				createExtendedCompiler(), createOptions(), inputs.build(),
 				externs.build());
+		
 		log.debug("analysis starts");
 		refactoringEngine.run();
 		log.debug("analysis ends");
-		if (flags.hasPrintModel())
-			printModel();
-
-		if (flags.hasPrintFlowGraph())
-			printflowGraph();
-
-		if (flags.hasAdvancedAnalysis()) {
-			// Program program =
-			// System.out.println("Object Creations using new keyword:"
-			// + program.getObjectCreations().size());
-			// System.out.println("Array Creations using new keyword:"
-			// + program.getArrayCreations().size());
-			// System.out.println("Array Literal Creations: "
-			// + program.getArrayLiteralCreations().size());
-			// System.out.println("Object Literal Creations: "
-			// + program.getObjectLiteralCreations().size());
-
-			// for (Creation creation : program.getObjectCreations()) {
-			// if (creation instanceof ObjectCreation)
-			// System.out.println("Object Creation");
-			// if (creation instanceof ArrayLiteralCreation)
-			// System.out.println("Array Literal Creation");
-			// if (creation instanceof ObjectLiteralCreation)
-			// System.out.println("Object Literal Creation");
-			// }
-		}
 
 		System.exit(0);
+	}
+
+	public AnalysisOptions createAnalysisOptions() throws IOException {
+		analysisOptions = new AnalysisOptions();
+		analysisOptions.setAdvancedAnalysis(flags.advancedAnalysis());
+		analysisOptions.setOutputToCSV(flags.outputToCSV());
+		analysisOptions.setCalculateCyclomatic(flags.calculateCyclomatic());
+		analysisOptions.setDisableLog(flags.disableLog());
+		if (!Strings.isNullOrEmpty(flags.directoryPath()))
+			analysisOptions.setDirectoryPath(flags.directoryPath());
+		analysisOptions.setJsFiles(flags.getJS());
+		analysisOptions.setExterns(flags.getExterns());
+		return analysisOptions;
 	}
 
 	@Override
@@ -112,13 +102,14 @@ public class CLIRunner extends CommandLineRunner {
 		return new ExtendedCompiler(getErrorPrintStream());
 	}
 
-	public CLIRunner() {
+	public CLIRunner() throws IOException {
 		this(new String[0]);
 	}
 
-	protected CLIRunner(String[] args) {
+	protected CLIRunner(String[] args) throws IOException {
 		super(args);
 		compilerOptions = createOptions();
+		analysisOptions = createAnalysisOptions();
 	}
 
 	public void addExternsFromFile(List<String> externs) {
@@ -129,12 +120,7 @@ public class CLIRunner extends CommandLineRunner {
 		this.inputs.addAll(Lists.transform(inputs, TO_SOURCE_FILE_FN));
 	}
 
-	private static void printModel() {
-		log.info("Printing Model");
+	public static AnalysisOptions getAnalysisOptions() {
+		return analysisOptions;
 	}
-
-	private static void printflowGraph() {
-		log.info("Printing Flow Graph");
-	}
-
 }

@@ -11,6 +11,7 @@ import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.util.CompositePostProcessor;
 import ca.concordia.javascript.analysis.util.ExperimentOutput;
+import ca.concordia.javascript.launcher.CLIRunner;
 import ca.concordia.javascript.metrics.CyclomaticComplexity;
 
 import com.google.common.collect.ImmutableList;
@@ -56,19 +57,23 @@ public class RefactoringEngine {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
 		}
-		CompositePostProcessor.processFunctionDeclarations(program);
-		CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(
-				program);
+		if (CLIRunner.getAnalysisOptions().isAdvancedAnalysis())
+			CompositePostProcessor.processFunctionDeclarations(program);
 
-		for (Map.Entry<String, Integer> entry : cyclomaticComplexity
-				.calculate().entrySet()) {
-			System.out.println("Cyclomatic Complexity of " + entry.getKey()
-					+ " is: " + entry.getValue());
+		if (CLIRunner.getAnalysisOptions().isCalculateCyclomatic()) {
+			CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(
+					program);
+			for (Map.Entry<String, Integer> entry : cyclomaticComplexity
+					.calculate().entrySet()) {
+				System.out.println("Cyclomatic Complexity of " + entry.getKey()
+						+ " is: " + entry.getValue());
+			}
 		}
-
-		ExperimentOutput experimentOutput = new ExperimentOutput(program);
-		experimentOutput.writeToFile();
-		experimentOutput.uniqueClassDeclarationNumber();
+		if (CLIRunner.getAnalysisOptions().isOutputToCSV()) {
+			ExperimentOutput experimentOutput = new ExperimentOutput(program);
+			experimentOutput.writeToFile();
+			experimentOutput.uniqueClassDeclarationNumber();
+		}
 
 		return scriptAnalyzer.getMessages();
 	}

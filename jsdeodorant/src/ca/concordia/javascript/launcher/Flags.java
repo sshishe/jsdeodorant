@@ -20,18 +20,18 @@ public class Flags {
 
 	@Option(name = "-advanced_analysis", usage = "Advanceed static analysis")
 	private boolean advancedAnalysis = false;
+	
+	@Option(name = "-output_csv", usage = "Generate a CSV file containing analysis info")
+	private boolean outputToCSV = false;
 
-	@Option(name = "-print_model", usage = "Prints abstract model")
-	private boolean printModel = false;
-
-	@Option(name = "-print_flowgraph", usage = "Prints flow graph")
-	private boolean printFlowGraph = false;
+	@Option(name = "-calculate_cyclomatic", hidden = true, usage = "Enable calculation of cyclomatic complexity")
+	private boolean calculateCyclomatic = false;
 
 	@Option(name = "-directory_path", hidden = true, usage = "Directory path for javascript project")
-	public String directoryPath;
+	private String directoryPath;
 
 	@Option(name = "-disable_log", hidden = true, usage = "Enable logging mechanism")
-	public boolean disableLog = false;
+	private boolean disableLog = false;
 
 	@Option(name = "-js", usage = "The JavaScript filenames, From Google Closure Flags class")
 	private List<String> js = new ArrayList<>();
@@ -39,16 +39,24 @@ public class Flags {
 	@Option(name = "-externs", usage = "List of externs files to use in the compilation.")
 	private List<String> externs = new ArrayList<>();
 
-	public boolean hasAdvancedAnalysis() {
+	public boolean advancedAnalysis() {
 		return advancedAnalysis;
 	}
 
-	public boolean hasPrintModel() {
-		return printModel;
+	public boolean outputToCSV() {
+		return outputToCSV;
+	}
+	
+	public boolean disableLog() {
+		return disableLog;
+	}
+	
+	public String directoryPath(){
+		return directoryPath;
 	}
 
-	public boolean hasPrintFlowGraph() {
-		return printFlowGraph;
+	public boolean calculateCyclomatic() {
+		return calculateCyclomatic;
 	}
 
 	public List<String> getJS() throws IOException {
