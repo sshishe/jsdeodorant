@@ -1,12 +1,14 @@
-package ca.concordia.javascript.launcher;
+package ca.concordia.javascript.analysis;
 
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public class AnalysisOptions {
 	private boolean advancedAnalysis;
 	private boolean calculateCyclomatic;
 	private boolean outputToCSV;
-	private boolean disableLog;
+	private boolean logDisabled;
 	private String directoryPath;
 	private List<String> jsFiles;
 	private List<String> externs;
@@ -35,12 +37,12 @@ public class AnalysisOptions {
 		this.outputToCSV = outputToCSV;
 	}
 
-	public boolean isDisableLog() {
-		return disableLog;
+	public boolean isLogDisabled() {
+		return logDisabled;
 	}
 
-	public void setDisableLog(boolean disableLog) {
-		this.disableLog = disableLog;
+	public void setLogDisabled(boolean disableLog) {
+		this.logDisabled = disableLog;
 	}
 
 	public String getDirectoryPath() {
@@ -57,6 +59,10 @@ public class AnalysisOptions {
 
 	public void setJsFiles(List<String> jsFiles) {
 		this.jsFiles = jsFiles;
+	}
+
+	public void setJsFile(String jsFile) {
+		this.jsFiles = Lists.newArrayList(jsFile);
 	}
 
 	public List<String> getExterns() {

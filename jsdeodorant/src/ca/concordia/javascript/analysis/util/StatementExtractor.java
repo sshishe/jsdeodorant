@@ -47,6 +47,11 @@ public class StatementExtractor {
 		return getStatements(statement);
 	}
 
+	public List<ParseTree> getReturnStatement(ParseTree statement) {
+		instanceChecker = new InstanceOfReturnStatement();
+		return getStatements(statement);
+	}
+
 	private List<ParseTree> getStatements(ParseTree element) {
 		List<ParseTree> statementList = new ArrayList<ParseTree>();
 		if (element instanceof ProgramTree) {
@@ -86,7 +91,7 @@ public class StatementExtractor {
 			DoWhileStatementTree doWhileStatement = element
 					.asDoWhileStatement();
 			statementList.addAll(getStatements(doWhileStatement.body));
-			
+
 			if (instanceChecker.instanceOf(doWhileStatement))
 				statementList.add(doWhileStatement);
 		}
@@ -127,7 +132,7 @@ public class StatementExtractor {
 			SwitchStatementTree switchStatement = element.asSwitchStatement();
 			for (ParseTree caseClause : switchStatement.caseClauses)
 				statementList.addAll(getStatements(caseClause));
-	
+
 			if (instanceChecker.instanceOf(switchStatement))
 				statementList.add(switchStatement);
 		}

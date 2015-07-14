@@ -6,29 +6,29 @@ import java.util.Objects;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
-import ca.concordia.javascript.analysis.util.SourceHelper;
+import ca.concordia.javascript.analysis.util.DebugHelper;
 
 public class FunctionInvocation {
 	private CallExpressionTree callExpressionTree;
-	private String memberName;
+	private AbstractIdentifier member;
 	private AbstractExpression operand;
 	private List<AbstractExpression> arguments;
 
 	public FunctionInvocation(CallExpressionTree callExpressionTree,
-			String memberName, AbstractExpression operand,
+			AbstractIdentifier member, AbstractExpression operand,
 			List<AbstractExpression> arguments) {
 		this.callExpressionTree = callExpressionTree;
-		this.memberName = memberName;
+		this.member = member;
 		this.operand = operand;
 		this.arguments = arguments;
 	}
 
 	public String getMemberName() {
-		return memberName;
+		return member.identifierName;
 	}
 
-	public void setMemberName(String memberName) {
-		this.memberName = memberName;
+	public void setMemberName(AbstractIdentifier member) {
+		this.member = member;
 	}
 
 	public AbstractExpression getOperand() {
@@ -48,7 +48,7 @@ public class FunctionInvocation {
 	}
 
 	public String toString() {
-		return SourceHelper.extract(callExpressionTree);
+		return DebugHelper.extract(callExpressionTree);
 	}
 
 	public CallExpressionTree getCallExpressionTree() {

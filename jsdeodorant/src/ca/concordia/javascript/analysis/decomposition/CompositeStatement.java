@@ -8,14 +8,12 @@ import ca.concordia.javascript.analysis.abstraction.SourceElement;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
-public class CompositeStatement extends AbstractStatement implements
-		SourceContainer {
+public class CompositeStatement extends AbstractStatement implements SourceContainer {
 
 	private List<AbstractStatement> statementList;
 	private List<AbstractExpression> expressionList;
 
-	public CompositeStatement(ParseTree statement, StatementType type,
-			SourceContainer parent) {
+	public CompositeStatement(ParseTree statement, StatementType type, SourceContainer parent) {
 		super(statement, type, parent);
 		statementList = new ArrayList<>();
 		expressionList = new ArrayList<>();
@@ -44,39 +42,33 @@ public class CompositeStatement extends AbstractStatement implements
 	}
 
 	@Override
-	public List<FunctionDeclaration> getFunctionDeclarations() {
+	public List<FunctionDeclaration> getFunctionDeclarationList() {
 		List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
 		if (this instanceof FunctionDeclarationStatement) {
 			functionDeclarations.add((FunctionDeclarationStatement) this);
 		}
 		for (AbstractStatement statement : statementList) {
-			functionDeclarations.addAll(statement.getFunctionDeclarations());
+			functionDeclarations.addAll(statement.getFunctionDeclarationList());
 		}
 		return functionDeclarations;
 	}
 
 	@Override
-	public List<ObjectLiteralExpression> getObjectLiterals() {
+	public List<ObjectLiteralExpression> getObjectLiteralList() {
 		List<ObjectLiteralExpression> objectLiterals = new ArrayList<>();
 		for (AbstractStatement statement : statementList) {
-			objectLiterals.addAll(statement.getObjectLiterals());
+			objectLiterals.addAll(statement.getObjectLiteralList());
 		}
 		return objectLiterals;
 	}
 
-	/*public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getType().toString());
-		if (expressionList.size() > 0) {
-			sb.append("(");
-			for (int i = 0; i < expressionList.size() - 1; i++) {
-				sb.append(expressionList.get(i).toString()).append("; ");
-			}
-			sb.append(expressionList.get(expressionList.size() - 1).toString());
-			sb.append(")");
-		}
-		sb.append("\n");
-		return sb.toString();
-	}*/
+	/*
+	 * public String toString() { StringBuilder sb = new StringBuilder();
+	 * sb.append(getType().toString()); if (expressionList.size() > 0) {
+	 * sb.append("("); for (int i = 0; i < expressionList.size() - 1; i++) {
+	 * sb.append(expressionList.get(i).toString()).append("; "); }
+	 * sb.append(expressionList.get(expressionList.size() - 1).toString());
+	 * sb.append(")"); } sb.append("\n"); return sb.toString(); }
+	 */
 
 }

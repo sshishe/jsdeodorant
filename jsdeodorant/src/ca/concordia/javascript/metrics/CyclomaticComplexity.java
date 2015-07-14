@@ -42,7 +42,7 @@ public class CyclomaticComplexity {
 
 	public Map<String, Integer> calculate() {
 		for (FunctionDeclaration functionDeclaration : program
-				.getFunctionDeclarations()) {
+				.getFunctionDeclarationList()) {
 			int functionComplexity = 1;
 			if (functionDeclaration instanceof FunctionDeclarationStatement) {
 				FunctionDeclarationStatement functionDeclarationStatement = (FunctionDeclarationStatement) functionDeclaration;

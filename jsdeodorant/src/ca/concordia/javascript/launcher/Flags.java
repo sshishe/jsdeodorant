@@ -20,7 +20,7 @@ public class Flags {
 
 	@Option(name = "-advanced_analysis", usage = "Advanceed static analysis")
 	private boolean advancedAnalysis = false;
-	
+
 	@Option(name = "-output_csv", usage = "Generate a CSV file containing analysis info")
 	private boolean outputToCSV = false;
 
@@ -46,12 +46,12 @@ public class Flags {
 	public boolean outputToCSV() {
 		return outputToCSV;
 	}
-	
+
 	public boolean disableLog() {
 		return disableLog;
 	}
-	
-	public String directoryPath(){
+
+	public String directoryPath() {
 		return directoryPath;
 	}
 
@@ -63,10 +63,6 @@ public class Flags {
 		List<String> filesInDirectory = getFilesInDirectory();
 		if (filesInDirectory != null)
 			js.addAll(filesInDirectory);
-
-		if (js.isEmpty())
-			throw new IOException(
-					"Expected input file(s) either using -js or -directory_path");
 		return js;
 	}
 

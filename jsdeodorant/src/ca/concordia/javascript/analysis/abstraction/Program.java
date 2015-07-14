@@ -24,9 +24,11 @@ public class Program implements SourceContainer {
 		if (source instanceof AbstractStatement)
 			log.debug(String.format("add %s to source program",
 					((AbstractStatement) source).getStatement().toString()));
-		/*else if (source instanceof FunctionDeclaration)
-			log.debug(String.format("add %s function to program",
-					((FunctionDeclaration) source).getName()));*/
+		/*
+		 * else if (source instanceof FunctionDeclaration)
+		 * log.debug(String.format("add %s function to program",
+		 * ((FunctionDeclaration) source).getName()));
+		 */
 	}
 
 	@Override
@@ -38,7 +40,7 @@ public class Program implements SourceContainer {
 		return sourceElements;
 	}
 
-	public List<ObjectCreation> getObjectCreations() {
+	public List<ObjectCreation> getObjectCreationList() {
 		List<ObjectCreation> objectCreations = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
 			if (sourceElement instanceof AbstractFunctionFragment) {
@@ -47,13 +49,6 @@ public class Program implements SourceContainer {
 						.getCreations())
 					if (creation instanceof ObjectCreation) {
 						ObjectCreation objectCreation = (ObjectCreation) creation;
-						// TODO remove the following condition after adding
-						// support for MemberLookupExpressionTree and
-						// ParenExpressionTree
-						// if (objectCreation.getClassName() == null) {
-						// objectCreations.add(objectCreation);
-						// continue;
-						// }
 						if (!objectCreation
 								.getOperandOfNew()
 								.toString()
@@ -66,7 +61,7 @@ public class Program implements SourceContainer {
 		return objectCreations;
 	}
 
-	public List<ObjectCreation> getArrayCreations() {
+	public List<ObjectCreation> getArrayCreationList() {
 		List<ObjectCreation> objectCreations = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
 			if (sourceElement instanceof AbstractFunctionFragment) {
@@ -75,14 +70,6 @@ public class Program implements SourceContainer {
 						.getCreations())
 					if (creation instanceof ObjectCreation) {
 						ObjectCreation objectCreation = (ObjectCreation) creation;
-
-						// TODO remove the following condition after adding
-						// support for MemberLookupExpressionTree and
-						// ParenExpressionTree
-						// if (objectCreation.getClassName() == null) {
-						// objectCreations.add(objectCreation);
-						// continue;
-						// }
 						if (objectCreation
 								.getOperandOfNew()
 								.toString()
@@ -95,7 +82,7 @@ public class Program implements SourceContainer {
 		return objectCreations;
 	}
 
-	public List<ArrayLiteralCreation> getArrayLiteralCreations() {
+	public List<ArrayLiteralCreation> getArrayLiteralCreationList() {
 		List<ArrayLiteralCreation> arrayLiteralCreations = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
 			if (sourceElement instanceof AbstractFunctionFragment) {
@@ -110,29 +97,30 @@ public class Program implements SourceContainer {
 		return arrayLiteralCreations;
 	}
 
-	public List<ObjectLiteralExpression> getObjectLiterals() {
+	public List<ObjectLiteralExpression> getObjectLiteralList() {
 		List<ObjectLiteralExpression> objectLiterals = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
 			if (sourceElement instanceof AbstractStatement) {
 				AbstractStatement statement = (AbstractStatement) sourceElement;
-				objectLiterals.addAll(statement.getObjectLiterals());
+				objectLiterals.addAll(statement.getObjectLiteralList());
 			}
 		}
 		return objectLiterals;
 	}
 
-	public List<FunctionDeclaration> getFunctionDeclarations() {
+	public List<FunctionDeclaration> getFunctionDeclarationList() {
 		List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
-			if(sourceElement instanceof AbstractStatement) {
+			if (sourceElement instanceof AbstractStatement) {
 				AbstractStatement statement = (AbstractStatement) sourceElement;
-				functionDeclarations.addAll(statement.getFunctionDeclarations());
+				functionDeclarations.addAll(statement
+						.getFunctionDeclarationList());
 			}
 		}
 		return functionDeclarations;
 	}
 
-	public List<FunctionInvocation> getFunctionInvocations() {
+	public List<FunctionInvocation> getFunctionInvocationList() {
 		List<FunctionInvocation> functionInvocations = new ArrayList<>();
 		for (SourceElement sourceElement : sourceElements) {
 			if (sourceElement instanceof AbstractFunctionFragment) {
@@ -147,4 +135,33 @@ public class Program implements SourceContainer {
 		}
 		return functionInvocations;
 	}
+
+	public List<VariableDeclaration> getVariableDeclarationList() {
+		List<VariableDeclaration> variableDeclarations = new ArrayList<>();
+		for (SourceElement sourceElement : sourceElements) {
+			if (sourceElement instanceof AbstractFunctionFragment) {
+				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
+				for (VariableDeclaration variableDeclaration : abstractFunctionFragment
+						.getVariableDeclarationList())
+					variableDeclarations.add(variableDeclaration);
+			} else if (sourceElement instanceof VariableDeclaration)
+				variableDeclarations.add((VariableDeclaration) sourceElement);
+		}
+		return variableDeclarations;
+	}
+
+	public List<FunctionDeclaration> getClassDeclarationList() {
+		List<FunctionDeclaration> classDeclarations = new ArrayList<>();
+		for (SourceElement sourceElement : sourceElements) {
+			if (sourceElement instanceof AbstractStatement) {
+				AbstractStatement statement = (AbstractStatement) sourceElement;
+				for (FunctionDeclaration functionDeclaration : statement
+						.getFunctionDeclarationList())
+					if (functionDeclaration.isClassDeclaration())
+						classDeclarations.add(functionDeclaration);
+			}
+		}
+		return classDeclarations;
+	}
+
 }

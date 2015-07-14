@@ -4,7 +4,7 @@ import java.util.List;
 
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
-import ca.concordia.javascript.analysis.util.SourceHelper;
+import ca.concordia.javascript.analysis.util.DebugHelper;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
@@ -28,10 +28,10 @@ public abstract class AbstractStatement extends AbstractFunctionFragment
 		return type;
 	}
 
-	public abstract List<FunctionDeclaration> getFunctionDeclarations();
-	public abstract List<ObjectLiteralExpression> getObjectLiterals();
+	public abstract List<FunctionDeclaration> getFunctionDeclarationList();
+	public abstract List<ObjectLiteralExpression> getObjectLiteralList();
 
 	public String toString() {
-		return SourceHelper.extract(statement);
+		return DebugHelper.extract(statement);
 	}
 }

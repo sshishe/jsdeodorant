@@ -5,48 +5,39 @@ import java.util.List;
 
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
-import ca.concordia.javascript.analysis.util.SourceHelper;
+import ca.concordia.javascript.analysis.util.DebugHelper;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 public class Statement extends AbstractStatement {
-	public Statement(ParseTree statement, StatementType type,
-			SourceContainer parent) {
+	public Statement(ParseTree statement, StatementType type, SourceContainer parent) {
 		super(statement, type, parent);
 		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
-
-		processFunctionInvocations(expressionExtractor
-				.getCallExpressions(statement));
-
+		processFunctionInvocations(expressionExtractor.getCallExpressions(statement));
+		processVariableDeclarations(expressionExtractor.getVariableDeclarationExpressions(statement));
 		processNewExpressions(expressionExtractor.getNewExpressions(statement));
-
-		processArrayLiteralExpressions(expressionExtractor
-				.getArrayLiteralExpressions(statement));
+		processArrayLiteralExpressions(expressionExtractor.getArrayLiteralExpressions(statement));
 	}
 
 	@Override
-	public List<FunctionDeclaration> getFunctionDeclarations() {
-		List<FunctionDeclaration> functionDeclarations = new ArrayList<>();
-		List<FunctionDeclarationExpression> functionDeclarationExpressions = this
-				.getFuntionDeclarationExpressions();
-		functionDeclarations.addAll(functionDeclarationExpressions);
+	public List<FunctionDeclaration> getFunctionDeclarationList() {
+		List<FunctionDeclaration> functionDeclarationList = new ArrayList<>();
+		List<FunctionDeclarationExpression> functionDeclarationExpressions = this.getFunctionDeclarationExpressionList();
+		functionDeclarationList.addAll(functionDeclarationExpressions);
 		for (FunctionDeclarationExpression expression : functionDeclarationExpressions) {
-			functionDeclarations.addAll(expression.getFunctionDeclarations());
+			functionDeclarationList.addAll(expression.getFunctionDeclarationList());
 		}
-		List<ObjectLiteralExpression> objectLiteralExpressions = this
-				.getObjectLiteralExpressionList();
+		List<ObjectLiteralExpression> objectLiteralExpressions = this.getObjectLiteralExpressionList();
 		for (ObjectLiteralExpression objectLiteralExpression : objectLiteralExpressions) {
-			functionDeclarations.addAll(objectLiteralExpression
-					.getFunctionDeclarations());
+			functionDeclarationList.addAll(objectLiteralExpression.getFunctionDeclarations());
 		}
-		return functionDeclarations;
+		return functionDeclarationList;
 	}
 
 	@Override
-	public List<ObjectLiteralExpression> getObjectLiterals() {
+	public List<ObjectLiteralExpression> getObjectLiteralList() {
 		List<ObjectLiteralExpression> objectLiterals = new ArrayList<>();
-		for (ObjectLiteralExpression expression : this
-				.getObjectLiteralExpressionList()) {
+		for (ObjectLiteralExpression expression : this.getObjectLiteralExpressionList()) {
 			objectLiterals.add(expression);
 			objectLiterals.addAll(expression.getObjectLiterals());
 		}
@@ -54,6 +45,6 @@ public class Statement extends AbstractStatement {
 	}
 
 	public String toString() {
-		return SourceHelper.extract(getStatement());
+		return DebugHelper.extract(getStatement());
 	}
 }

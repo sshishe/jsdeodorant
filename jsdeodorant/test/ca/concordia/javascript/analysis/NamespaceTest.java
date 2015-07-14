@@ -1,20 +1,19 @@
-package ca.concordia.javascript.analysis.abstraction;
+package ca.concordia.javascript.analysis;
 
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.launcher.TestRunner;
 
-public class CreationTest {
+public class NamespaceTest {
+
 	private static TestRunner testRunner;
 
 	@BeforeClass
@@ -27,29 +26,25 @@ public class CreationTest {
 		testRunner.inputs = ImmutableList.builder();
 	}
 
-	@After
-	public void after() {
-
-	}
-
 	@Test
-	public void testArrayWithNewKeyword() {
+	public void testObjectLiteralNamespace() {
 		try {
-			testRunner
-					.setJsFile("test/abstraction/array-creation-new-keyword.js");
+			//TODO update based on recent changes
+			testRunner.setJsFile("test/namespace/objectliteral.js");
 			AnalysisResult result = testRunner.performActions();
-			assertTrue(result.getProgram().getArrayCreationList().size() == 1);
+			assertTrue(result.getProgram().getClassDeclarationList().size()==2);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Test
-	public void testArrayLiteral() {
+	public void testNewFunctionNamespace() {
 		try {
-			testRunner.setJsFile("test/abstraction/array-literal.js");
+			//TODO update based on recent changes
+			testRunner.setJsFile("test/namespace/newfunction.js");
 			AnalysisResult result = testRunner.performActions();
-			assertTrue(result.getProgram().getArrayLiteralCreationList().size() == 2);
+			assertTrue(result.getProgram().getClassDeclarationList().size()==1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

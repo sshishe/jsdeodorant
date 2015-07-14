@@ -151,7 +151,7 @@ public class ExpressionExtractor {
 		instanceChecker = new InstanceOfFunctionDeclaration();
 		return getExpressions(element);
 	}
-	
+
 	public List<ParseTree> getParseTree(ParseTree element) {
 		instanceChecker = new InstanceOfParseTree();
 		return getExpressions(element);
@@ -192,8 +192,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof DoWhileStatementTree) {
-			DoWhileStatementTree doWhileStatement = element
-					.asDoWhileStatement();
+			DoWhileStatementTree doWhileStatement = element.asDoWhileStatement();
 			expressionList.addAll(getExpressions(doWhileStatement.condition));
 			expressionList.addAll(getExpressions(doWhileStatement.body));
 		}
@@ -267,39 +266,32 @@ public class ExpressionExtractor {
 			}
 
 			if (tryStatement.finallyBlock != null) {
-				FinallyTree finallyBlock = tryStatement.finallyBlock
-						.asFinally();
+				FinallyTree finallyBlock = tryStatement.finallyBlock.asFinally();
 				expressionList.addAll(getExpressions(finallyBlock.block));
 			}
 		}
 
 		else if (element instanceof LabelledStatementTree) {
-			LabelledStatementTree labelledStatement = element
-					.asLabelledStatement();
+			LabelledStatementTree labelledStatement = element.asLabelledStatement();
 			expressionList.addAll(getExpressions(labelledStatement.statement));
 		}
 
 		else if (element instanceof VariableStatementTree) {
-			VariableStatementTree variableStatement = element
-					.asVariableStatement();
-			expressionList
-					.addAll(getExpressions(variableStatement.declarations));
+			VariableStatementTree variableStatement = element.asVariableStatement();
+			expressionList.addAll(getExpressions(variableStatement.declarations));
 		}
 
 		else if (element instanceof VariableDeclarationListTree) {
-			VariableDeclarationListTree variableDeclarationList = element
-					.asVariableDeclarationList();
+			VariableDeclarationListTree variableDeclarationList = element.asVariableDeclarationList();
 			for (VariableDeclarationTree variableDeclaration : variableDeclarationList.declarations) {
 				expressionList.addAll(getExpressions(variableDeclaration));
 			}
 		}
 
 		else if (element instanceof VariableDeclarationTree) {
-			VariableDeclarationTree variableDeclaration = element
-					.asVariableDeclaration();
+			VariableDeclarationTree variableDeclaration = element.asVariableDeclaration();
 			expressionList.addAll(getExpressions(variableDeclaration.lvalue));
-			expressionList
-					.addAll(getExpressions(variableDeclaration.initializer));
+			expressionList.addAll(getExpressions(variableDeclaration.initializer));
 
 			if (instanceChecker.instanceOf(variableDeclaration))
 				expressionList.add(variableDeclaration);
@@ -310,10 +302,8 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ExpressionStatementTree) {
-			ExpressionStatementTree expressionStatement = element
-					.asExpressionStatement();
-			expressionList
-					.addAll(getExpressions(expressionStatement.expression));
+			ExpressionStatementTree expressionStatement = element.asExpressionStatement();
+			expressionList.addAll(getExpressions(expressionStatement.expression));
 		}
 
 		else if (element instanceof BreakStatementTree) {
@@ -321,8 +311,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ContinueStatementTree) {
-			ContinueStatementTree continueStatement = element
-					.asContinueStatement();
+			ContinueStatementTree continueStatement = element.asContinueStatement();
 		}
 
 		else if (element instanceof ReturnStatementTree) {
@@ -336,24 +325,19 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof DebuggerStatementTree) {
-			DebuggerStatementTree debuggerStatement = element
-					.asDebuggerStatement();
+			DebuggerStatementTree debuggerStatement = element.asDebuggerStatement();
 		}
 
 		else if (element instanceof FunctionDeclarationTree) {
-			FunctionDeclarationTree functionDeclarationStatement = element
-					.asFunctionDeclaration();
-			expressionList
-					.addAll(getExpressions(functionDeclarationStatement.formalParameterList));
-			expressionList
-					.addAll(getExpressions(functionDeclarationStatement.functionBody));
+			FunctionDeclarationTree functionDeclarationStatement = element.asFunctionDeclaration();
+			expressionList.addAll(getExpressions(functionDeclarationStatement.formalParameterList));
+			expressionList.addAll(getExpressions(functionDeclarationStatement.functionBody));
 			if (instanceChecker.instanceOf(functionDeclarationStatement))
 				expressionList.add(functionDeclarationStatement);
 		}
 
 		else if (element instanceof FormalParameterListTree) {
-			FormalParameterListTree formalParameterList = element
-					.asFormalParameterList();
+			FormalParameterListTree formalParameterList = element.asFormalParameterList();
 			for (ParseTree parameter : formalParameterList.parameters) {
 				expressionList.addAll(getExpressions(parameter));
 			}
@@ -366,25 +350,21 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof IdentifierExpressionTree) {
-			IdentifierExpressionTree identifierExpression = element
-					.asIdentifierExpression();
+			IdentifierExpressionTree identifierExpression = element.asIdentifierExpression();
 			if (instanceChecker.instanceOf(identifierExpression))
 				expressionList.add(identifierExpression);
 		}
 
 		else if (element instanceof LiteralExpressionTree) {
-			LiteralExpressionTree literalExpression = element
-					.asLiteralExpression();
+			LiteralExpressionTree literalExpression = element.asLiteralExpression();
 			if (instanceChecker.instanceOf(literalExpression))
 				expressionList.add(literalExpression);
 		}
 
 		else if (element instanceof ConditionalExpressionTree) {
-			ConditionalExpressionTree conditionalExpression = element
-					.asConditionalExpression();
+			ConditionalExpressionTree conditionalExpression = element.asConditionalExpression();
 
-			expressionList
-					.addAll(getExpressions(conditionalExpression.condition));
+			expressionList.addAll(getExpressions(conditionalExpression.condition));
 			expressionList.addAll(getExpressions(conditionalExpression.left));
 			expressionList.addAll(getExpressions(conditionalExpression.right));
 
@@ -393,13 +373,10 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof BinaryOperatorTree) {
-			BinaryOperatorTree binaryOperatorExpression = element
-					.asBinaryOperator();
+			BinaryOperatorTree binaryOperatorExpression = element.asBinaryOperator();
 
-			expressionList
-					.addAll(getExpressions(binaryOperatorExpression.left));
-			expressionList
-					.addAll(getExpressions(binaryOperatorExpression.right));
+			expressionList.addAll(getExpressions(binaryOperatorExpression.left));
+			expressionList.addAll(getExpressions(binaryOperatorExpression.right));
 
 			if (instanceChecker.instanceOf(binaryOperatorExpression))
 				expressionList.add(binaryOperatorExpression);
@@ -425,8 +402,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof MemberExpressionTree) {
-			MemberExpressionTree memberExpression = element
-					.asMemberExpression();
+			MemberExpressionTree memberExpression = element.asMemberExpression();
 
 			expressionList.addAll(getExpressions(memberExpression.operand));
 
@@ -435,8 +411,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof PostfixExpressionTree) {
-			PostfixExpressionTree postfixExpression = element
-					.asPostfixExpression();
+			PostfixExpressionTree postfixExpression = element.asPostfixExpression();
 
 			expressionList.addAll(getExpressions(postfixExpression.operand));
 
@@ -454,8 +429,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof AssignmentRestElementTree) {
-			AssignmentRestElementTree assignmentRestElement = element
-					.asAssignmentRestElement();
+			AssignmentRestElementTree assignmentRestElement = element.asAssignmentRestElement();
 
 			if (instanceChecker.instanceOf(assignmentRestElement))
 				expressionList.add(assignmentRestElement);
@@ -469,13 +443,10 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof MemberLookupExpressionTree) {
-			MemberLookupExpressionTree memberLookupExpression = element
-					.asMemberLookupExpression();
+			MemberLookupExpressionTree memberLookupExpression = element.asMemberLookupExpression();
 
-			expressionList
-					.addAll(getExpressions(memberLookupExpression.operand));
-			expressionList
-					.addAll(getExpressions(memberLookupExpression.memberExpression));
+			expressionList.addAll(getExpressions(memberLookupExpression.operand));
+			expressionList.addAll(getExpressions(memberLookupExpression.memberExpression));
 
 			if (instanceChecker.instanceOf(memberLookupExpression))
 				expressionList.add(memberLookupExpression);
@@ -509,8 +480,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ArrayLiteralExpressionTree) {
-			ArrayLiteralExpressionTree arrayLiteralExpression = element
-					.asArrayLiteralExpression();
+			ArrayLiteralExpressionTree arrayLiteralExpression = element.asArrayLiteralExpression();
 
 			for (ParseTree arrayLiteralElement : arrayLiteralExpression.elements) {
 				expressionList.addAll(getExpressions(arrayLiteralElement));
@@ -521,8 +491,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ObjectPatternTree) {
-			ObjectPatternTree objectPatternExpression = element
-					.asObjectPattern();
+			ObjectPatternTree objectPatternExpression = element.asObjectPattern();
 
 			for (ParseTree objectPatternElement : objectPatternExpression.fields) {
 				expressionList.addAll(getExpressions(objectPatternElement));
@@ -533,8 +502,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ObjectLiteralExpressionTree) {
-			ObjectLiteralExpressionTree objectLiteralExpression = element
-					.asObjectLiteralExpression();
+			ObjectLiteralExpressionTree objectLiteralExpression = element.asObjectLiteralExpression();
 
 			for (ParseTree objectLiteralElement : objectLiteralExpression.propertyNameAndValues) {
 				expressionList.addAll(getExpressions(objectLiteralElement));
@@ -566,8 +534,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof SpreadExpressionTree) {
-			SpreadExpressionTree spreadExpression = element
-					.asSpreadExpression();
+			SpreadExpressionTree spreadExpression = element.asSpreadExpression();
 
 			expressionList.addAll(getExpressions(spreadExpression.expression));
 
@@ -576,20 +543,17 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof MissingPrimaryExpressionTree) {
-			MissingPrimaryExpressionTree missingPrimaryExpression = element
-					.asMissingPrimaryExpression();
+			MissingPrimaryExpressionTree missingPrimaryExpression = element.asMissingPrimaryExpression();
 
 			if (instanceChecker.instanceOf(missingPrimaryExpression))
 				expressionList.add(missingPrimaryExpression);
 		}
 
 		else if (element instanceof PropertyNameAssignmentTree) {
-			PropertyNameAssignmentTree propertyNameAssignmentExpression = element
-					.asPropertyNameAssignment();
+			PropertyNameAssignmentTree propertyNameAssignmentExpression = element.asPropertyNameAssignment();
 
 			if (propertyNameAssignmentExpression.value != null)
-				expressionList
-						.addAll(getExpressions(propertyNameAssignmentExpression.value));
+				expressionList.addAll(getExpressions(propertyNameAssignmentExpression.value));
 
 			if (instanceChecker.instanceOf(propertyNameAssignmentExpression))
 				expressionList.add(propertyNameAssignmentExpression);
@@ -603,12 +567,10 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ClassDeclarationTree) {
-			ClassDeclarationTree classDeclarationExpression = element
-					.asClassDeclaration();
+			ClassDeclarationTree classDeclarationExpression = element.asClassDeclaration();
 
 			if (classDeclarationExpression.superClass != null)
-				expressionList
-						.addAll(getExpressions(classDeclarationExpression.superClass));
+				expressionList.addAll(getExpressions(classDeclarationExpression.superClass));
 
 			for (ParseTree expression : classDeclarationExpression.elements) {
 				expressionList.addAll(getExpressions(expression));
@@ -628,13 +590,10 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof DefaultParameterTree) {
-			DefaultParameterTree defaultParameterExpression = element
-					.asDefaultParameter();
+			DefaultParameterTree defaultParameterExpression = element.asDefaultParameter();
 
-			expressionList
-					.addAll(getExpressions(defaultParameterExpression.lhs));
-			expressionList
-					.addAll(getExpressions(defaultParameterExpression.defaultValue));
+			expressionList.addAll(getExpressions(defaultParameterExpression.lhs));
+			expressionList.addAll(getExpressions(defaultParameterExpression.defaultValue));
 
 			if (instanceChecker.instanceOf(defaultParameterExpression))
 				expressionList.add(defaultParameterExpression);
@@ -659,50 +618,41 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ComprehensionTree) {
-			ComprehensionTree comprehensionExpression = element
-					.asComprehension();
+			ComprehensionTree comprehensionExpression = element.asComprehension();
 
 			for (ParseTree child : comprehensionExpression.children) {
 				expressionList.addAll(getExpressions(child));
 			}
 			if (comprehensionExpression.tailExpression != null)
-				expressionList
-						.addAll(getExpressions(comprehensionExpression.tailExpression));
+				expressionList.addAll(getExpressions(comprehensionExpression.tailExpression));
 
 			if (instanceChecker.instanceOf(comprehensionExpression))
 				expressionList.add(comprehensionExpression);
 		}
 
 		else if (element instanceof ComprehensionIfTree) {
-			ComprehensionIfTree comprehensionIfExpression = element
-					.asComprehensionIf();
+			ComprehensionIfTree comprehensionIfExpression = element.asComprehensionIf();
 
-			expressionList
-					.addAll(getExpressions(comprehensionIfExpression.expression));
+			expressionList.addAll(getExpressions(comprehensionIfExpression.expression));
 
 			if (instanceChecker.instanceOf(comprehensionIfExpression))
 				expressionList.add(comprehensionIfExpression);
 		}
 
 		else if (element instanceof ComprehensionForTree) {
-			ComprehensionForTree comprehensionForExpression = element
-					.asComprehensionFor();
+			ComprehensionForTree comprehensionForExpression = element.asComprehensionFor();
 
-			expressionList
-					.addAll(getExpressions(comprehensionForExpression.initializer));
-			expressionList
-					.addAll(getExpressions(comprehensionForExpression.collection));
+			expressionList.addAll(getExpressions(comprehensionForExpression.initializer));
+			expressionList.addAll(getExpressions(comprehensionForExpression.collection));
 
 			if (instanceChecker.instanceOf(comprehensionForExpression))
 				expressionList.add(comprehensionForExpression);
 		}
 
 		else if (element instanceof TemplateLiteralExpressionTree) {
-			TemplateLiteralExpressionTree templateLiteralExpression = element
-					.asTemplateLiteralExpression();
+			TemplateLiteralExpressionTree templateLiteralExpression = element.asTemplateLiteralExpression();
 
-			expressionList
-					.addAll(getExpressions(templateLiteralExpression.operand));
+			expressionList.addAll(getExpressions(templateLiteralExpression.operand));
 
 			for (ParseTree templateElement : templateLiteralExpression.elements) {
 				expressionList.addAll(getExpressions(templateElement));
@@ -713,81 +663,62 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof TemplateLiteralPortionTree) {
-			TemplateLiteralPortionTree templateLiteralPortionExpression = element
-					.asTemplateLiteralPortion();
+			TemplateLiteralPortionTree templateLiteralPortionExpression = element.asTemplateLiteralPortion();
 
 			if (instanceChecker.instanceOf(templateLiteralPortionExpression))
 				expressionList.add(templateLiteralPortionExpression);
 		}
 
 		else if (element instanceof TemplateSubstitutionTree) {
-			TemplateSubstitutionTree templateSubstitutionExpression = element
-					.asTemplateSubstitution();
+			TemplateSubstitutionTree templateSubstitutionExpression = element.asTemplateSubstitution();
 
-			expressionList
-					.addAll(getExpressions(templateSubstitutionExpression.expression));
+			expressionList.addAll(getExpressions(templateSubstitutionExpression.expression));
 
 			if (instanceChecker.instanceOf(templateSubstitutionExpression))
 				expressionList.add(templateSubstitutionExpression);
 		}
 
 		else if (element instanceof ComputedPropertyDefinitionTree) {
-			ComputedPropertyDefinitionTree computedPropertyDefinitionExpression = element
-					.asComputedPropertyDefinition();
+			ComputedPropertyDefinitionTree computedPropertyDefinitionExpression = element.asComputedPropertyDefinition();
 
-			expressionList
-					.addAll(getExpressions(computedPropertyDefinitionExpression.property));
+			expressionList.addAll(getExpressions(computedPropertyDefinitionExpression.property));
 
-			expressionList
-					.addAll(getExpressions(computedPropertyDefinitionExpression.value));
+			expressionList.addAll(getExpressions(computedPropertyDefinitionExpression.value));
 
-			if (instanceChecker
-					.instanceOf(computedPropertyDefinitionExpression))
+			if (instanceChecker.instanceOf(computedPropertyDefinitionExpression))
 				expressionList.add(computedPropertyDefinitionExpression);
 		}
 
 		else if (element instanceof ComputedPropertyMethodTree) {
-			ComputedPropertyMethodTree computedPropertyMethodDefinitionExpression = element
-					.asComputedPropertyMethod();
+			ComputedPropertyMethodTree computedPropertyMethodDefinitionExpression = element.asComputedPropertyMethod();
 
-			expressionList
-					.addAll(getExpressions(computedPropertyMethodDefinitionExpression.property));
+			expressionList.addAll(getExpressions(computedPropertyMethodDefinitionExpression.property));
 
-			expressionList
-					.addAll(getExpressions(computedPropertyMethodDefinitionExpression.method));
+			expressionList.addAll(getExpressions(computedPropertyMethodDefinitionExpression.method));
 
-			if (instanceChecker
-					.instanceOf(computedPropertyMethodDefinitionExpression))
+			if (instanceChecker.instanceOf(computedPropertyMethodDefinitionExpression))
 				expressionList.add(computedPropertyMethodDefinitionExpression);
 		}
 
 		else if (element instanceof ComputedPropertyGetterTree) {
-			ComputedPropertyGetterTree computedPropertyGetterDefinitionExpression = element
-					.asComputedPropertyGetter();
+			ComputedPropertyGetterTree computedPropertyGetterDefinitionExpression = element.asComputedPropertyGetter();
 
-			expressionList
-					.addAll(getExpressions(computedPropertyGetterDefinitionExpression.property));
+			expressionList.addAll(getExpressions(computedPropertyGetterDefinitionExpression.property));
 
-			expressionList
-					.addAll(getExpressions(computedPropertyGetterDefinitionExpression.body));
+			expressionList.addAll(getExpressions(computedPropertyGetterDefinitionExpression.body));
 
-			if (instanceChecker
-					.instanceOf(computedPropertyGetterDefinitionExpression))
+			if (instanceChecker.instanceOf(computedPropertyGetterDefinitionExpression))
 				expressionList.add(computedPropertyGetterDefinitionExpression);
 		}
 
 		else if (element instanceof ComputedPropertySetterTree) {
-			ComputedPropertySetterTree computedPropertySetterDefinitionExpression = element
-					.asComputedPropertySetter();
+			ComputedPropertySetterTree computedPropertySetterDefinitionExpression = element.asComputedPropertySetter();
 
-			expressionList
-					.addAll(getExpressions(computedPropertySetterDefinitionExpression.property));
+			expressionList.addAll(getExpressions(computedPropertySetterDefinitionExpression.property));
 
-			expressionList
-					.addAll(getExpressions(computedPropertySetterDefinitionExpression.body));
+			expressionList.addAll(getExpressions(computedPropertySetterDefinitionExpression.body));
 
-			if (instanceChecker
-					.instanceOf(computedPropertySetterDefinitionExpression))
+			if (instanceChecker.instanceOf(computedPropertySetterDefinitionExpression))
 				expressionList.add(computedPropertySetterDefinitionExpression);
 		}
 
@@ -799,11 +730,9 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ExportDeclarationTree) {
-			ExportDeclarationTree exportDeclarationExpression = element
-					.asExportDeclaration();
+			ExportDeclarationTree exportDeclarationExpression = element.asExportDeclaration();
 
-			expressionList
-					.addAll(getExpressions(exportDeclarationExpression.declaration));
+			expressionList.addAll(getExpressions(exportDeclarationExpression.declaration));
 
 			for (ParseTree exportDeclaration : exportDeclarationExpression.exportSpecifierList) {
 				expressionList.addAll(getExpressions(exportDeclaration));
@@ -814,16 +743,14 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ExportSpecifierTree) {
-			ExportSpecifierTree exportSpecifierExpression = element
-					.asExportSpecifier();
+			ExportSpecifierTree exportSpecifierExpression = element.asExportSpecifier();
 
 			if (instanceChecker.instanceOf(exportSpecifierExpression))
 				expressionList.add(exportSpecifierExpression);
 		}
 
 		else if (element instanceof ImportDeclarationTree) {
-			ImportDeclarationTree importDeclarationExpression = element
-					.asImportDeclaration();
+			ImportDeclarationTree importDeclarationExpression = element.asImportDeclaration();
 
 			for (ParseTree importDeclaration : importDeclarationExpression.importSpecifierList) {
 				expressionList.addAll(getExpressions(importDeclaration));
@@ -834,8 +761,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ImportSpecifierTree) {
-			ImportSpecifierTree importSpecifierExpression = element
-					.asImportSpecifier();
+			ImportSpecifierTree importSpecifierExpression = element.asImportSpecifier();
 
 			if (instanceChecker.instanceOf(importSpecifierExpression))
 				expressionList.add(importSpecifierExpression);
