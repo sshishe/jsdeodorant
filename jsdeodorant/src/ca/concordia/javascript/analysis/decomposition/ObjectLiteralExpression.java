@@ -20,9 +20,10 @@ import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpression
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 
-public class ObjectLiteralExpression extends AbstractExpression implements SourceContainer {
+public class ObjectLiteralExpression extends AbstractExpression implements SourceContainer, IdentifiableExpression {
 	static Logger log = Logger.getLogger(ObjectLiteralExpression.class.getName());
-	private AbstractIdentifier name;
+	private AbstractIdentifier internalIdentifier;
+	private AbstractIdentifier publicIdentifier;
 	private Map<Token, AbstractExpression> propertyMap;
 	private ObjectLiteralExpressionTree objectLiteralTree;
 
@@ -95,6 +96,12 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 	}
 
 	public AbstractIdentifier getIdentifier() {
+		if (internalIdentifier == null)
+			internalIdentifier = buildInternalIdentifier();
+		return internalIdentifier;
+	}
+
+	private AbstractIdentifier buildInternalIdentifier() {
 		if (getParent() instanceof Program) {
 			Program program = (Program) getParent();
 			for (SourceElement sourceElement : program.getSourceElements()) {
@@ -114,9 +121,29 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 	}
 
 	public String getName() {
-		if (name == null)
-			name = getIdentifier();
-		return name.toString();
+		return getName(getIdentifier());
+	}
+
+	public String getName(AbstractIdentifier identifier) {
+		return identifier.toString();
+	}
+
+	public String getQualifiedName() {
+		this.publicIdentifier = getPublicIdentifier();
+		if (hasNamespace())
+			return getNamespace() + "." + getName(publicIdentifier);
+		else
+			return getName(publicIdentifier);
+	}
+
+	public AbstractIdentifier getPublicIdentifier() {
+		if (publicIdentifier == null)
+			publicIdentifier = getIdentifier();
+		return publicIdentifier;
+	}
+
+	public void setPublicIdentifier(AbstractIdentifier publicIdentifier) {
+		this.publicIdentifier = publicIdentifier;
 	}
 
 	private AbstractIdentifier getIdentifierFromObjectLiteralList(AbstractStatement statement) {

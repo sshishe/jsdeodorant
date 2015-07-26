@@ -19,9 +19,10 @@ import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
-public class FunctionDeclarationExpression extends AbstractExpression implements SourceContainer, FunctionDeclaration {
+public class FunctionDeclarationExpression extends AbstractExpression implements SourceContainer, FunctionDeclaration, IdentifiableExpression {
 	private static final Logger log = Logger.getLogger(FunctionDeclarationExpression.class.getName());
-	private AbstractIdentifier name;
+	private AbstractIdentifier identifier;
+	private AbstractIdentifier publicIdentifier;
 	private FunctionKind kind;
 	private FunctionDeclarationTree functionDeclarationTree;
 	private ParseTree leftValueExpression;
@@ -69,18 +70,58 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		return statementList;
 	}
 
+	public AbstractIdentifier getIdentifier() {
+		if (identifier == null)
+			identifier = buildIdentifier();
+		return identifier;
+	}
+
+	/**
+	 * if this method return null we might have IIFE without any lValue
+	 */
+	public String getName() {
+		identifier = getIdentifier();
+		return getName(identifier);
+	}
+
+	public String getName(AbstractIdentifier identifier) {
+		if (identifier == null)
+			return "<Anonymous>";
+		if (Strings.isNullOrEmpty(identifier.toString()))
+			return "<Anonymous>";
+		return identifier.toString();
+	}
+
+	public String getQualifiedName() {
+		this.publicIdentifier = getPublicIdentifier();
+		if (hasNamespace())
+			return getNamespace() + "." + getName(publicIdentifier);
+		else
+			return getName(publicIdentifier);
+	}
+
+	public AbstractIdentifier getPublicIdentifier() {
+		if (publicIdentifier == null)
+			publicIdentifier = getIdentifier();
+		return publicIdentifier;
+	}
+
+	public void setPublicIdentifier(AbstractIdentifier publicIdentifier) {
+		this.publicIdentifier = publicIdentifier;
+	}
+	
 	/**
 	 * This method tries to retrieve the name of the Function Declaration
-	 * Expression leftValueToken will be assigned when the we have
+	 * Expression. leftValueToken will be assigned when we have
 	 * ObjectLiteralExpression which the operand would be the key of key/value
-	 * leftValueExpression will be assigned when we have VariableStatement,
-	 * NewExpression, Call Expression and BinaryOperationExpression If
-	 * leftValue{token|expression} is null, the method tries to find the parent
-	 * function and find the lValue from there, it would be ParenExpression or
-	 * something like that which at the creation time it's not possible to
-	 * access the lValue
+	 * leftValueExpression also would be assigned when we have
+	 * VariableStatement, NewExpression, Call Expression and
+	 * BinaryOperationExpression If leftValue{token|expression} is null, the
+	 * method tries to find the parent function and find the lValue from there,
+	 * it would be ParenExpression or something like that which at the creation
+	 * time it's not possible to access the lValue
 	 */
-	public AbstractIdentifier getIdentifier() {
+	private AbstractIdentifier buildIdentifier() {
 		if (leftValueExpression != null)
 			return IdentifierHelper.getIdentifier(leftValueExpression);
 		else if (leftValueToken != null)
@@ -102,17 +143,6 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		return null;
 	}
 
-	/**
-	 * if this method return null we might have IIFE without any lValue
-	 */
-	public String getName() {
-		name = getIdentifier();
-		if (name == null)
-			return "<Anonymous>";
-		if (Strings.isNullOrEmpty(name.toString()))
-			return "<Anonymous>";
-		return name.toString();
-	}
 
 	public FunctionKind getKind() {
 		return kind;

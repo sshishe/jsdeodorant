@@ -37,10 +37,14 @@ public class Namespace {
 		StringBuffer namespaceName = new StringBuffer();
 		Stack<String> namespaceStack = new Stack<String>();
 		do {
-			if (currentLevel.part instanceof ObjectLiteralExpression)
-				namespaceStack.push(((ObjectLiteralExpression) currentLevel.part).getName());
-			else if (currentLevel.part instanceof FunctionDeclarationExpression)
-				namespaceStack.push(((FunctionDeclarationExpression) currentLevel.part).getName());
+			if (currentLevel.part instanceof ObjectLiteralExpression) {
+				AbstractIdentifier identifier = ((ObjectLiteralExpression) currentLevel.part).getPublicIdentifier();
+				namespaceStack.push(identifier.toString());
+			} else if (currentLevel.part instanceof FunctionDeclarationExpression) {
+				FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) currentLevel.part;
+				AbstractIdentifier identifier = functionDeclarationExpression.getPublicIdentifier();
+				namespaceStack.push(identifier.toString());
+			}
 			if (currentLevel.hasParent())
 				namespaceStack.push(".");
 			currentLevel = currentLevel.getParent();
@@ -52,7 +56,9 @@ public class Namespace {
 		return namespaceName.toString();
 	}
 
-	private boolean hasParent() {
+
+
+	public boolean hasParent() {
 		return parent != null;
 	}
 }

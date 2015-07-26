@@ -31,8 +31,7 @@ public class CompositeIdentifier extends AbstractIdentifier {
 			return new PlainIdentifier(getNode());
 		} else {
 			CompositeIdentifier compositeVariable = (CompositeIdentifier) rightPartParameter;
-			return new CompositeIdentifier(getNode(),
-					compositeVariable.getLeftPart());
+			return new CompositeIdentifier(getNode(), compositeVariable.getLeftPart());
 		}
 	}
 
@@ -50,13 +49,21 @@ public class CompositeIdentifier extends AbstractIdentifier {
 		return null;
 	}
 
+	public boolean removePart(PlainIdentifier partToDelete) {
+		//		AbstractIdentifier left = getLeftPart();
+		//		if (left instanceof PlainIdentifier)
+		//			if (left.equals(partToDelete))
+		//				
+		//		return false;
+		return false;
+	}
+
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
 		} else if (o instanceof CompositeIdentifier) {
 			CompositeIdentifier composite = (CompositeIdentifier) o;
-			return this.identifierName.equals(composite.identifierName)
-					&& this.rightPart.equals(composite.rightPart);
+			return this.identifierName.equals(composite.identifierName) && this.rightPart.equals(composite.rightPart);
 		}
 		return false;
 	}

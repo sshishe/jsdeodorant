@@ -14,8 +14,8 @@ import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
-public class FunctionDeclarationStatement extends CompositeStatement implements FunctionDeclaration {
-	private AbstractIdentifier name;
+public class FunctionDeclarationStatement extends CompositeStatement implements FunctionDeclaration, Identifiable {
+	private AbstractIdentifier identifier;
 	private FunctionKind kind;
 	private List<AbstractExpression> parameters;
 	private FunctionDeclarationTree functionDeclarationTree;
@@ -25,7 +25,7 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 		super(functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
 		this.functionDeclarationTree = functionDeclarationTree;
 		this.parameters = new ArrayList<>();
-		this.name = getIdentifier();
+		this.identifier = getIdentifier();
 		this.kind = FunctionKind.valueOf(functionDeclarationTree.kind.toString());
 
 		if (functionDeclarationTree.formalParameterList != null) {
@@ -37,10 +37,16 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 	}
 
 	public String getName() {
-		return Strings.isNullOrEmpty(name.toString()) ? "<Anonymous>" : name.toString();
+		return Strings.isNullOrEmpty(identifier.toString()) ? "<Anonymous>" : identifier.toString();
 	}
 
 	public AbstractIdentifier getIdentifier() {
+		if (identifier == null)
+			identifier = buildIdentifier();
+		return identifier;
+	}
+
+	public AbstractIdentifier buildIdentifier() {
 		return IdentifierHelper.getIdentifier(functionDeclarationTree);
 	}
 

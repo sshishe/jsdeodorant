@@ -52,7 +52,7 @@ public class ObjectCreation extends Creation {
 		return classDeclaration;
 	}
 
-	public void addClassDeclaration(FunctionDeclaration functionDeclaration) {
+	public void setClassDeclaration(FunctionDeclaration functionDeclaration) {
 		classDeclaration = functionDeclaration;
 	}
 

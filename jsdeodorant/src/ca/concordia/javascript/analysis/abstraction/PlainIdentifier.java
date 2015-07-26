@@ -19,7 +19,7 @@ public class PlainIdentifier extends AbstractIdentifier {
 			return true;
 		}
 		if (o instanceof PlainIdentifier) {
-			PlainIdentifier plain = (PlainIdentifier) o;
+			AbstractIdentifier plain = (AbstractIdentifier) o;
 			if (this.identifierName == null) // Mostly happens when we have new
 												// function(){..} for other
 												// cases, finding the name is

@@ -1,15 +1,20 @@
 package ca.concordia.javascript.analysis.decomposition;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
+import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
+import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Namespace;
+import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 import ca.concordia.javascript.analysis.util.DebugHelper;
 
+import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 public class AbstractExpression extends AbstractFunctionFragment {
@@ -54,16 +59,72 @@ public class AbstractExpression extends AbstractFunctionFragment {
 		return Objects.hashCode(expression);
 	}
 
-	public Namespace getNamespace() {
+	public Namespace getRawNamespace() {
 		if (namespace == null) {
 			SourceContainer parent = getParent();
-			buildNamespaceStructure(parent);
+			namespace = buildNamespaceStructure(parent);
 		}
 		return namespace;
 	}
 
+	public Namespace getNamespace() {
+		if (getRawNamespace() != null)
+			if (refineIdentifier())
+				return namespace;
+		return null;
+	}
+
 	public boolean hasNamespace() {
 		return getNamespace() != null;
+	}
+
+	public boolean refineIdentifier() {
+		if (namespace != null) {
+			AbstractExpression part = namespace.getPart();
+			if (part instanceof FunctionDeclarationExpression) {
+				FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) part;
+				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.NEW_FUNCTION) {
+					//if we add more classes extending AbstractExpression but the given class does not implement IdentifiableExpression
+					if (this instanceof IdentifiableExpression) {
+						AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+						if (identifier instanceof CompositeIdentifier) {
+							PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
+							// variable declarations are not accessible outside of new function(){} unless they assigned to this
+							if (mostLeftPart.getIdentifierName().equals("this")) {
+								this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
+								return true;
+							}
+						}
+					}
+				}
+				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE) {
+					List<AbstractStatement> returnStatements = functionDeclarationExpression.getReturnStatementList();
+					if (this instanceof IdentifiableExpression) {
+						AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+						if (identifier instanceof CompositeIdentifier) {
+							PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
+							for (AbstractStatement returnStatement : returnStatements) {
+								if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree && mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
+									if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
+										this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
+										return true;
+									}
+								} else
+									log.warn("return statement's statement type is: " + returnStatement.getStatement().getClass() + " which is not properly handled for namespace");
+							}
+						}
+					}
+				}
+			}
+			if (part instanceof ObjectLiteralExpression) {
+				ObjectLiteralExpression objectLiteralExpression = (ObjectLiteralExpression) part;
+				if (this instanceof IdentifiableExpression) {
+					AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+					this.asIdentifiableExpression().setPublicIdentifier(new CompositeIdentifier(objectLiteralExpression.getIdentifier().getNode(), identifier));
+				}
+			}
+		}
+		return false;
 	}
 
 	private Namespace buildNamespaceStructure(SourceContainer parent) {
@@ -77,13 +138,21 @@ public class AbstractExpression extends AbstractFunctionFragment {
 			buildNamespaceStructure(((CompositeStatement) parent).getParent(), namespace);
 		else {
 			AbstractExpression parentExpression = (AbstractExpression) parent;
+			Namespace parentNamespace = new Namespace(parentExpression);
 			if (namespace == null)
-				this.namespace = namespace = new Namespace(parentExpression);
+				this.namespace = namespace = parentNamespace;
 			else
-				namespace = namespace.setParent(new Namespace(parentExpression));
+				namespace = namespace.setParent(parentNamespace);
 			if (parentExpression.getParent() != null)
 				buildNamespaceStructure(parentExpression.getParent(), namespace);
 		}
 		return this.namespace;
+	}
+
+	public IdentifiableExpression asIdentifiableExpression() {
+		if (this instanceof IdentifiableExpression)
+			return (IdentifiableExpression) this;
+		else
+			throw new ClassCastException("This class is not of type IdentifiableExpression");
 	}
 }

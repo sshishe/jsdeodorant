@@ -81,11 +81,19 @@ public abstract class AbstractIdentifier {
 		this.node = node;
 	}
 
-	public PlainIdentifier asPlainIdentifier() {
-		return (PlainIdentifier) this;
+	public AbstractIdentifier asPlainIdentifier() {
+		return (AbstractIdentifier) this;
 	}
 
 	public CompositeIdentifier asCompositeIdentifier() {
 		return (CompositeIdentifier) this;
+	}
+
+	public String getIdentifierName() {
+		return identifierName;
+	}
+
+	public void setIdentifierName(String identifierName) {
+		this.identifierName = identifierName;
 	}
 }
