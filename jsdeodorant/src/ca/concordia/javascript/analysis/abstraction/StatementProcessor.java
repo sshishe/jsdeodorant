@@ -266,9 +266,7 @@ public class StatementProcessor {
 							FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asParenExpression().expression.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
 							functionDeclarationExpressions.add(functionDeclarationExpression);
 						}
-				} else
-					// Simple variable declaration: var foo="bar";
-					return;
+				}
 			}
 			Statement child = new Statement(variableStatement, StatementType.VARIABLE, parent);
 			for (FunctionDeclarationExpression functionDeclarationExpression : functionDeclarationExpressions) {
@@ -278,6 +276,7 @@ public class StatementProcessor {
 				child.addObjectLiteralExpression(objectLiteralExpression);
 			}
 			parent.addElement(child);
+
 		}
 
 		else if (statement instanceof EmptyStatementTree) {
