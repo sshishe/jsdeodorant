@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,16 +26,10 @@ public class CreationTest {
 		testRunner.inputs = ImmutableList.builder();
 	}
 
-	@After
-	public void after() {
-
-	}
-
 	@Test
 	public void testArrayWithNewKeyword() {
 		try {
-			testRunner
-					.setJsFile("test/abstraction/array-creation-new-keyword.js");
+			testRunner.setJsFile("test/abstraction/array-creation-new-keyword.js");
 			AnalysisResult result = testRunner.performActions();
 			assertTrue(result.getProgram().getArrayCreationList().size() == 1);
 		} catch (IOException e) {
