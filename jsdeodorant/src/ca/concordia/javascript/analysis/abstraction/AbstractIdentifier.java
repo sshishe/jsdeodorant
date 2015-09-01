@@ -58,6 +58,7 @@ public abstract class AbstractIdentifier {
 			FunctionDeclarationTree functionDeclaration = currentNode.asFunctionDeclaration();
 			if (functionDeclaration.name != null)
 				return functionDeclaration.name.value;
+			return "function";
 		} else if (currentNode instanceof ArrayLiteralExpressionTree) {
 			ArrayLiteralExpressionTree arrayLiteralExpression = currentNode.asArrayLiteralExpression();
 			if (arrayLiteralExpression.elements.isEmpty())

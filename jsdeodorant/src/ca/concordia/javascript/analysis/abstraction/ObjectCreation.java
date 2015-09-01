@@ -24,11 +24,13 @@ public class ObjectCreation extends Creation {
 	private AbstractExpression operandOfNew;
 	private List<AbstractExpression> arguments;
 	private boolean isClassDeclarationPredefined = false;
+	private boolean isFunctionObject = false;
 
-	public ObjectCreation(NewExpressionTree newExpressionTree,
-			AbstractFunctionFragment statement) {
+	public ObjectCreation(NewExpressionTree newExpressionTree, AbstractFunctionFragment statement) {
 		this.newExpressionTree = newExpressionTree;
 		this.statement = statement;
+		if (IdentifierHelper.getIdentifier(newExpressionTree.operand).identifierName.equals("function"))
+			setFunctionObject(true);
 	}
 
 	/**
@@ -39,13 +41,12 @@ public class ObjectCreation extends Creation {
 	 * @param arguments
 	 *            passed to constructor
 	 */
-	public ObjectCreation(NewExpressionTree newExpressionTree,
-			AbstractFunctionFragment statement,
-			AbstractExpression operandOfNew, List<AbstractExpression> arguments) {
+	public ObjectCreation(NewExpressionTree newExpressionTree, AbstractExpression operandOfNew, List<AbstractExpression> arguments) {
 		this.newExpressionTree = newExpressionTree;
-		// this.statement=statement;
 		this.operandOfNew = operandOfNew;
 		this.arguments = arguments;
+		if (this.operandOfNew.asIdentifiableExpression().getIdentifier().equals("function"))
+			setFunctionObject(true);
 	}
 
 	public FunctionDeclaration getClassDeclaration() {
@@ -61,10 +62,8 @@ public class ObjectCreation extends Creation {
 	}
 
 	public String getClassName() {
-		AbstractIdentifier identifier = IdentifierHelper
-				.getIdentifier(operandOfNew.getExpression());
-		return Strings.isNullOrEmpty(identifier.toString()) ? "<Anonymous>"
-				: identifier.toString();
+		AbstractIdentifier identifier = IdentifierHelper.getIdentifier(operandOfNew.getExpression());
+		return Strings.isNullOrEmpty(identifier.toString()) ? "<Anonymous>" : identifier.toString();
 	}
 
 	public AbstractIdentifier getIdentifier() {
@@ -99,8 +98,7 @@ public class ObjectCreation extends Creation {
 	public boolean equals(Object other) {
 		if (other instanceof ObjectCreation) {
 			ObjectCreation toCompare = (ObjectCreation) other;
-			return Objects.equals(this.newExpressionTree,
-					toCompare.newExpressionTree);
+			return Objects.equals(this.newExpressionTree, toCompare.newExpressionTree);
 		}
 		return false;
 	}
@@ -122,8 +120,15 @@ public class ObjectCreation extends Creation {
 		return isClassDeclarationPredefined;
 	}
 
-	public void setClassDeclarationPredefined(
-			boolean isClassDeclarationPredefined) {
+	public void setClassDeclarationPredefined(boolean isClassDeclarationPredefined) {
 		this.isClassDeclarationPredefined = isClassDeclarationPredefined;
+	}
+
+	public boolean isFunctionObject() {
+		return isFunctionObject;
+	}
+
+	public void setFunctionObject(boolean isFunctionObject) {
+		this.isFunctionObject = isFunctionObject;
 	}
 }

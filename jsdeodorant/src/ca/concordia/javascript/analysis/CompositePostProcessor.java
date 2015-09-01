@@ -19,6 +19,8 @@ public class CompositePostProcessor {
 		csvWriter.writeToFile(fileHeader.split(","));
 
 		for (ObjectCreation objectCreation : program.getObjectCreationList()) {
+			if (objectCreation.getClassName() == null || objectCreation.isFunctionObject())
+				continue;
 			if (!findPredefinedClasses(program, objectCreation)) {
 				findFunctionDeclaration(objectCreation, program);
 			}
@@ -34,8 +36,6 @@ public class CompositePostProcessor {
 	}
 
 	private static boolean findFunctionDeclaration(ObjectCreation objectCreation, Program program) {
-		if (objectCreation.getClassName() == null)
-			return false;
 		boolean findMatch = false;
 		for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarationList()) {
 			String functionQualifiedName;
