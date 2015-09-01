@@ -36,21 +36,14 @@ public class ScriptParser {
 
 	public ProgramTree parse(SourceFile sourceFile) {
 		try {
-			com.google.javascript.jscomp.parsing.parser.SourceFile sourceFileForParser = new com.google.javascript.jscomp.parsing.parser.SourceFile(
-					sourceFile.getName(), sourceFile.getCode());
+			com.google.javascript.jscomp.parsing.parser.SourceFile sourceFileForParser = new com.google.javascript.jscomp.parsing.parser.SourceFile(sourceFile.getName(), sourceFile.getCode());
 
-			com.google.javascript.jscomp.parsing.Config configForErrorReporter = compiler
-					.getConfig(LanguageMode.ECMASCRIPT6);
+			com.google.javascript.jscomp.parsing.Config configForErrorReporter = compiler.getConfig(LanguageMode.ECMASCRIPT6);
 
-			Es6ErrorReporter es6ErrorReporter = new Es6ErrorReporter(
-					compiler.getDefaultErrorReporter(), sourceFile,
-					configForErrorReporter);
+			Es6ErrorReporter es6ErrorReporter = new Es6ErrorReporter(compiler.getDefaultErrorReporter(), sourceFile, configForErrorReporter);
+			com.google.javascript.jscomp.parsing.parser.Parser.Config es6config = new com.google.javascript.jscomp.parsing.parser.Parser.Config(mode(LanguageMode.ECMASCRIPT6));
 
-			com.google.javascript.jscomp.parsing.parser.Parser.Config es6config = new com.google.javascript.jscomp.parsing.parser.Parser.Config(
-					mode(LanguageMode.ECMASCRIPT6));
-
-			Parser parser = new Parser(es6config, es6ErrorReporter,
-					sourceFileForParser);
+			Parser parser = new Parser(es6config, es6ErrorReporter, sourceFileForParser);
 
 			return parser.parseProgram();
 
@@ -60,8 +53,7 @@ public class ScriptParser {
 		return null;
 	}
 
-	private static com.google.javascript.jscomp.parsing.parser.Parser.Config.Mode mode(
-			com.google.javascript.jscomp.parsing.Config.LanguageMode mode) {
+	private static com.google.javascript.jscomp.parsing.parser.Parser.Config.Mode mode(com.google.javascript.jscomp.parsing.Config.LanguageMode mode) {
 		switch (mode) {
 		case ECMASCRIPT3:
 			return com.google.javascript.jscomp.parsing.parser.Parser.Config.Mode.ES3;

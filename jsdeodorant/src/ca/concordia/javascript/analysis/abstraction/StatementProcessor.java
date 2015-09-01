@@ -239,44 +239,21 @@ public class StatementProcessor {
 		else if (statement instanceof VariableStatementTree) {
 			VariableStatementTree variableStatement = statement.asVariableStatement();
 			VariableDeclarationListTree listTree = variableStatement.declarations;
-			List<FunctionDeclarationExpression> functionDeclarationExpressions = new ArrayList<>();
-			List<ObjectLiteralExpression> objectLiteralExpressions = new ArrayList<>();
+			List<AbstractExpression> declarationExpressions = new ArrayList<>();
+			//List<ObjectLiteralExpression> objectLiteralExpressions = new ArrayList<>();
 			for (VariableDeclarationTree variableDeclarationTree : listTree.declarations) {
-				if (variableDeclarationTree.initializer instanceof FunctionDeclarationTree) {
-					FunctionDeclarationTree functionDeclarationTree = variableDeclarationTree.initializer.asFunctionDeclaration();
-					FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.VARIABLE_DECLARATION, variableDeclarationTree.lvalue, parent);
-					functionDeclarationExpressions.add(functionDeclarationExpression);
-				} else if (variableDeclarationTree.initializer instanceof ObjectLiteralExpressionTree) {
-					ObjectLiteralExpressionTree objectLiteralExpressionTree = variableDeclarationTree.initializer.asObjectLiteralExpression();
-					objectLiteralExpressions.add(new ObjectLiteralExpression(objectLiteralExpressionTree, parent));
-				}
-				// var foo=new function() {...}
-				else if (variableDeclarationTree.initializer instanceof NewExpressionTree) {
-					NewExpressionTree newExpressionTree = variableDeclarationTree.initializer.asNewExpression();
-					if (newExpressionTree.operand instanceof FunctionDeclarationTree) {
-						FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(newExpressionTree.operand.asFunctionDeclaration(), FunctionDeclarationExpressionNature.NEW_FUNCTION, variableDeclarationTree.lvalue, parent);
-						functionDeclarationExpressions.add(functionDeclarationExpression);
-					}
-				}
-				// Handling IIFEs: var someObj = (function () {...})();
-				else if (variableDeclarationTree.initializer instanceof CallExpressionTree) {
-					CallExpressionTree callExpressionTree = variableDeclarationTree.initializer.asCallExpression();
-					if (callExpressionTree.operand instanceof ParenExpressionTree)
-						if (callExpressionTree.operand.asParenExpression().expression instanceof FunctionDeclarationTree) {
-							FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asParenExpression().expression.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
-							functionDeclarationExpressions.add(functionDeclarationExpression);
-						}
-				}
+				AbstractExpression expression = getFunctionDeclarationExpression(variableDeclarationTree, parent);
+				if (expression != null)
+					declarationExpressions.add(expression);
 			}
 			Statement child = new Statement(variableStatement, StatementType.VARIABLE, parent);
-			for (FunctionDeclarationExpression functionDeclarationExpression : functionDeclarationExpressions) {
-				child.addFunctionDeclarationExpression(functionDeclarationExpression);
-			}
-			for (ObjectLiteralExpression objectLiteralExpression : objectLiteralExpressions) {
-				child.addObjectLiteralExpression(objectLiteralExpression);
+			for (AbstractExpression expression : declarationExpressions) {
+				if (expression instanceof FunctionDeclarationExpression)
+					child.addFunctionDeclarationExpression((FunctionDeclarationExpression) expression);
+				if (expression instanceof ObjectLiteralExpression)
+					child.addObjectLiteralExpression((ObjectLiteralExpression) expression);
 			}
 			parent.addElement(child);
-
 		}
 
 		else if (statement instanceof EmptyStatementTree) {
@@ -372,5 +349,33 @@ public class StatementProcessor {
 			parent.addElement(child);
 		}
 
+	}
+
+	public static AbstractExpression getFunctionDeclarationExpression(VariableDeclarationTree variableDeclarationTree, SourceContainer parent) {
+		if (variableDeclarationTree.initializer instanceof FunctionDeclarationTree) {
+			FunctionDeclarationTree functionDeclarationTree = variableDeclarationTree.initializer.asFunctionDeclaration();
+			return new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.VARIABLE_DECLARATION, variableDeclarationTree.lvalue, parent);
+		} else if (variableDeclarationTree.initializer instanceof ObjectLiteralExpressionTree) {
+			ObjectLiteralExpressionTree objectLiteralExpressionTree = variableDeclarationTree.initializer.asObjectLiteralExpression();
+			return new ObjectLiteralExpression(objectLiteralExpressionTree, parent);
+		}
+		// var foo=new function() {...}
+		else if (variableDeclarationTree.initializer instanceof NewExpressionTree) {
+			NewExpressionTree newExpressionTree = variableDeclarationTree.initializer.asNewExpression();
+			if (newExpressionTree.operand instanceof FunctionDeclarationTree) {
+				FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(newExpressionTree.operand.asFunctionDeclaration(), FunctionDeclarationExpressionNature.NEW_FUNCTION, variableDeclarationTree.lvalue, parent);
+				return functionDeclarationExpression;
+			}
+		}
+		// Handling IIFEs: var someObj = (function () {...})();
+		else if (variableDeclarationTree.initializer instanceof CallExpressionTree) {
+			CallExpressionTree callExpressionTree = variableDeclarationTree.initializer.asCallExpression();
+			if (callExpressionTree.operand instanceof ParenExpressionTree)
+				if (callExpressionTree.operand.asParenExpression().expression instanceof FunctionDeclarationTree) {
+					FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asParenExpression().expression.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
+					return functionDeclarationExpression;
+				}
+		}
+		return null;
 	}
 }

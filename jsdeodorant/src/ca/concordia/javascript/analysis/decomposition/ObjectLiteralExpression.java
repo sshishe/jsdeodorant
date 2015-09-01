@@ -107,14 +107,18 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 			for (SourceElement sourceElement : program.getSourceElements()) {
 				if (sourceElement instanceof AbstractStatement) {
 					AbstractStatement statement = (AbstractStatement) sourceElement;
-					return getIdentifierFromObjectLiteralList(statement);
+					AbstractIdentifier identifier = getIdentifierFromObjectLiteralList(statement);
+					if (identifier != null)
+						return identifier;
 				}
 			}
 
 		} else if (getParent() instanceof CompositeStatement) {
 			CompositeStatement composite = (CompositeStatement) getParent();
 			for (AbstractStatement statement : composite.getStatements()) {
-				return getIdentifierFromObjectLiteralList(statement);
+				AbstractIdentifier identifier = getIdentifierFromObjectLiteralList(statement);
+				if (identifier != null)
+					return identifier;
 			}
 		}
 		return null;

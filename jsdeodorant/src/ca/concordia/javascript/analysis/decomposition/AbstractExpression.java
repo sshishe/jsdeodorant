@@ -99,29 +99,32 @@ public class AbstractExpression extends AbstractFunctionFragment {
 				}
 				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE) {
 					List<AbstractStatement> returnStatements = functionDeclarationExpression.getReturnStatementList();
-					if (this instanceof IdentifiableExpression) {
-						AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
-						if (identifier instanceof CompositeIdentifier) {
-							PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
-							for (AbstractStatement returnStatement : returnStatements) {
-								if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree && mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
-									if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
-										this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
-										return true;
+					if (returnStatements != null)
+						if (this instanceof IdentifiableExpression) {
+							AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+							if (identifier instanceof CompositeIdentifier) {
+								PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
+								for (AbstractStatement returnStatement : returnStatements) {
+									if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree && mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
+										if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
+											this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
+											return true;
+										}
 									}
-								} else
-									log.warn("return statement's statement type is: " + returnStatement.getStatement().getClass() + " which is not properly handled for namespace");
+								}
 							}
 						}
-					}
 				}
 			}
 			if (part instanceof ObjectLiteralExpression) {
 				ObjectLiteralExpression objectLiteralExpression = (ObjectLiteralExpression) part;
-				if (this instanceof IdentifiableExpression) {
-					AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
-					this.asIdentifiableExpression().setPublicIdentifier(new CompositeIdentifier(objectLiteralExpression.getIdentifier().getNode(), identifier));
-				}
+				if (objectLiteralExpression.getIdentifier() != null)
+					if (this instanceof IdentifiableExpression) {
+						AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+						//this.asIdentifiableExpression().setPublicIdentifier(new CompositeIdentifier(objectLiteralExpression.getIdentifier().getNode(), identifier));
+						this.asIdentifiableExpression().setPublicIdentifier(identifier);
+						return true;
+					}
 			}
 		}
 		return false;

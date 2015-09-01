@@ -12,6 +12,8 @@ import ca.concordia.javascript.metrics.CyclomaticComplexity;
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.JSError;
+import com.google.javascript.jscomp.Result;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.WarningLevel;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
@@ -32,21 +34,23 @@ public class AnalysisEngine {
 	public AnalysisEngine(ExtendedCompiler compiler, CompilerOptions compilerOptions, ImmutableList<SourceFile> inputs, ImmutableList<SourceFile> externs) {
 		this.compiler = compiler;
 		this.compilerOptions = compilerOptions;
-		this.compilerOptions.setIdeMode(false);
+		this.compilerOptions.setIdeMode(true);
+		this.compilerOptions.skipAllCompilerPasses();
 		CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(this.compilerOptions);
 		WarningLevel warningLevel = WarningLevel.QUIET;
 		warningLevel.setOptionsForWarningLevel(this.compilerOptions);
-
 		this.inputs = inputs;
 		this.externs = externs;
 	}
 
 	public AnalysisResult run(AnalysisOptions analysisOption) {
-		compiler.compile(externs, inputs, compilerOptions);
+		Result result = compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		program = new Program();
 
 		for (SourceFile sourceFile : inputs) {
+			if (containsError(sourceFile, result))
+				continue;
 			ProgramTree programTree = scriptAnalyzer.parse(sourceFile);
 			for (ParseTree sourceElement : programTree.sourceElements) {
 				StatementProcessor.processStatement(sourceElement, program);
@@ -71,6 +75,14 @@ public class AnalysisEngine {
 		}
 
 		return new AnalysisResult(program, scriptAnalyzer.getMessages());
+	}
+
+	private boolean containsError(SourceFile sourceFile, Result result) {
+		for (JSError error : result.errors) {
+			if (error.sourceName.equals(sourceFile.getOriginalPath()))
+				return true;
+		}
+		return false;
 	}
 
 	public Program getProgram() {

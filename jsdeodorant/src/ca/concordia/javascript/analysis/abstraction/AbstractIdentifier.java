@@ -5,8 +5,11 @@ import ca.concordia.javascript.analysis.util.IdentifierHelper;
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.LiteralToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
+import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ConditionalExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LiteralExpressionTree;
@@ -16,6 +19,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.UnaryExpressionTree;
 
 public abstract class AbstractIdentifier {
 	protected String identifierName;
@@ -32,34 +36,32 @@ public abstract class AbstractIdentifier {
 
 	public AbstractIdentifier(ParseTree node) {
 		this.node = node;
-		extractIdentifierName(node);
+		this.identifierName = extractIdentifierName(node);
 	}
 
-	private void extractIdentifierName(ParseTree currentNode) {
+	private String extractIdentifierName(ParseTree currentNode) {
 		if (currentNode instanceof LiteralExpressionTree) {
-			identifierName = currentNode.asLiteralExpression().literalToken.toString().replace("\"", "");
+			return currentNode.asLiteralExpression().literalToken.toString().replace("\"", "");
 		} else if (currentNode instanceof IdentifierExpressionTree) {
-			identifierName = currentNode.asIdentifierExpression().identifierToken.value;
+			return currentNode.asIdentifierExpression().identifierToken.value;
 		} else if (currentNode instanceof ThisExpressionTree) {
-			identifierName = "this";
-		} else if (currentNode instanceof NewExpressionTree) {
-
+			return "this";
 		} else if (currentNode instanceof MemberExpressionTree) {
-			identifierName = currentNode.asMemberExpression().memberName.value;
+			return currentNode.asMemberExpression().memberName.value;
 		} else if (currentNode instanceof MemberLookupExpressionTree) {
-			extractIdentifierName(node.asMemberLookupExpression().memberExpression);
+			return extractIdentifierName(currentNode.asMemberLookupExpression().memberExpression);
 		} else if (currentNode instanceof ParenExpressionTree) {
-
+			return extractIdentifierName(currentNode.asParenExpression().expression);
 		} else if (currentNode instanceof CallExpressionTree) {
-
+			return extractIdentifierName(currentNode.asCallExpression().operand);
 		} else if (currentNode instanceof FunctionDeclarationTree) {
 			FunctionDeclarationTree functionDeclaration = currentNode.asFunctionDeclaration();
 			if (functionDeclaration.name != null)
-				identifierName = functionDeclaration.name.value;
+				return functionDeclaration.name.value;
 		} else if (currentNode instanceof ArrayLiteralExpressionTree) {
 			ArrayLiteralExpressionTree arrayLiteralExpression = currentNode.asArrayLiteralExpression();
 			if (arrayLiteralExpression.elements.isEmpty())
-				identifierName = "[]";
+				return "[]";
 			else {
 				StringBuilder sb = new StringBuilder("[");
 				for (ParseTree element : arrayLiteralExpression.elements) {
@@ -67,10 +69,33 @@ public abstract class AbstractIdentifier {
 					if (arrayLiteralExpression.elements.indexOf(element) != arrayLiteralExpression.elements.size() - 1)
 						sb.append(',');
 				}
-				identifierName = sb.append(']').toString();
+				return sb.append(']').toString();
 			}
+		} else if (currentNode instanceof BinaryOperatorTree) {
+			BinaryOperatorTree binaryOperator = currentNode.asBinaryOperator();
+			return extractIdentifierName(binaryOperator.left) + " " + binaryOperator.operator + " " + extractIdentifierName(binaryOperator.right);
+		} else if (currentNode instanceof ConditionalExpressionTree) {
+			ConditionalExpressionTree conditionalExpression = currentNode.asConditionalExpression();
+			return extractIdentifierName(conditionalExpression.condition) + " ? " + extractIdentifierName(conditionalExpression.left) + " : " + extractIdentifierName(conditionalExpression.right);
+		} else if (currentNode instanceof UnaryExpressionTree) {
+			UnaryExpressionTree unaryExpression = currentNode.asUnaryExpression();
+			return unaryExpression.operator + extractIdentifierName(unaryExpression.operand);
+		} else if (currentNode instanceof NewExpressionTree) {
+			NewExpressionTree newExpression = currentNode.asNewExpression();
+			return "new " + extractIdentifierName(newExpression.operand) + "(" + extractIdentifierName(newExpression.arguments) + ")";
+		} else if (currentNode instanceof ArgumentListTree) {
+			StringBuilder arguments = new StringBuilder("");
+			for (ParseTree argument : currentNode.asArgumentList().arguments) {
+				arguments.append(extractIdentifierName(argument));
+				if (currentNode.asArgumentList().arguments.indexOf(argument) != currentNode.asArgumentList().arguments.size() - 1)
+					arguments.append(",");
+			}
+			return arguments.toString();
 		}
-
+		if (currentNode == null)
+			return "";
+		return "<" + currentNode.getClass() + ">";
+		//throw new UnsupportedOperationException("Node type is not supported: " + currentNode.getClass());
 	}
 
 	public ParseTree getNode() {

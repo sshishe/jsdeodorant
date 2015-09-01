@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
+import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
@@ -109,7 +110,7 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	public void setPublicIdentifier(AbstractIdentifier publicIdentifier) {
 		this.publicIdentifier = publicIdentifier;
 	}
-	
+
 	/**
 	 * This method tries to retrieve the name of the Function Declaration
 	 * Expression. leftValueToken will be assigned when we have
@@ -124,8 +125,6 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	private AbstractIdentifier buildIdentifier() {
 		if (leftValueExpression != null)
 			return IdentifierHelper.getIdentifier(leftValueExpression);
-		else if (leftValueToken != null)
-			return new PlainIdentifier(leftValueToken);
 		else if (getParent() instanceof ObjectLiteralExpression) {
 			ObjectLiteralExpression objectLiteralExpression = (ObjectLiteralExpression) getParent();
 			for (Token key : objectLiteralExpression.getPropertyMap().keySet())
@@ -139,10 +138,16 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 						return IdentifierHelper.findLValue(statement, functionDeclarationExpression.getExpression());
 					}
 			}
-		}
+		} else if (getParent() instanceof Program) {
+			Program parent = ((Program) getParent());
+			for (FunctionDeclaration functionDeclaration : parent.getFunctionDeclarationList())
+				if (functionDeclaration.equals(this))
+					//					//return IdentifierHelper.findLValue((AbstractStatement) functionDeclaration, functionDeclaration.getFunctionDeclarationTree());
+					return new PlainIdentifier(functionDeclaration.getFunctionDeclarationTree());
+		} else if (leftValueToken != null)
+			return new PlainIdentifier(leftValueToken);
 		return null;
 	}
-
 
 	public FunctionKind getKind() {
 		return kind;
