@@ -88,62 +88,137 @@ public class AbstractExpression extends AbstractFunctionFragment {
 			if (part instanceof FunctionDeclarationExpression) {
 				FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) part;
 				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.NEW_FUNCTION) {
-					//if we add more classes extending AbstractExpression but the given class does not implement IdentifiableExpression
-					if (this instanceof IdentifiableExpression) {
-						AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
-						if (identifier instanceof CompositeIdentifier) {
-							PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
-							// variable declarations are not accessible outside of new function(){} unless they assigned to this
-							if (mostLeftPart.getIdentifierName().equals("this")) {
-								this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
-								return true;
-							}
-						}
-					}
+					return refineIdentifierForNewFunctionWithThis();
 				}
 				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE) {
-					List<AbstractStatement> returnStatements = functionDeclarationExpression.getReturnStatementList();
-					if (returnStatements != null)
-						if (this instanceof IdentifiableExpression) {
-							AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
-							for (AbstractStatement returnStatement : returnStatements) {
-								if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree) {
-									if (identifier instanceof CompositeIdentifier) {
-										PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
-										if (mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
-											if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
-												this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
-												return true;
-											}
-										}
+					if (functionDeclarationExpression.getParameters().size() > 0) {
+						return refineIdentifierForIIFEWithParamter(functionDeclarationExpression);
+					} else {
+						List<AbstractStatement> returnStatements = functionDeclarationExpression.getReturnStatementList();
+						if (returnStatements != null)
+							if (this instanceof IdentifiableExpression) {
+								AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+								for (AbstractStatement returnStatement : returnStatements) {
+									if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree) {
+										return refineIdentifierForIIFEWithReturnVariable(identifier, returnStatement);
+									} else if (returnStatement.getStatement().asReturnStatement().expression instanceof ObjectLiteralExpressionTree) {
+										return refineIdentifierForIIFEWithReturnObjectLiteral(returnStatement);
 									}
-								} else if (returnStatement.getStatement().asReturnStatement().expression instanceof ObjectLiteralExpressionTree) {
-									for (ObjectLiteralExpression objectLiteralExpression : returnStatement.getObjectLiteralExpressionList()) {
-										Map<Token, AbstractExpression> propertyMap = objectLiteralExpression.getPropertyMap();
-										for (Token key : propertyMap.keySet()) {
-											AbstractExpression abstractExpression = propertyMap.get(key);
-											if (IdentifierHelper.getIdentifier(abstractExpression.expression).equals(this.asIdentifiableExpression().getIdentifier())) {
-												this.asIdentifiableExpression().setPublicIdentifier(new PlainIdentifier(key));
-												return true;
-											}
-										}
-									}
-
-									return false;
 								}
 							}
-						}
+					}
 				}
 			}
 			if (part instanceof ObjectLiteralExpression) {
 				ObjectLiteralExpression objectLiteralExpression = (ObjectLiteralExpression) part;
-				if (objectLiteralExpression.getIdentifier() != null)
+				if (objectLiteralExpression.getIdentifier() != null) {
 					if (this instanceof IdentifiableExpression) {
-						AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
-						//this.asIdentifiableExpression().setPublicIdentifier(new CompositeIdentifier(objectLiteralExpression.getIdentifier().getNode(), identifier));
-						this.asIdentifiableExpression().setPublicIdentifier(identifier);
+						return refineIdentifierForObjectLiteral();
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * They way public members are exposed: using object literal var
+	 * namespace={publicFunction:function(){},anotherPublicFunction:function(){}
+	 * };
+	 * 
+	 * @return
+	 */
+	private boolean refineIdentifierForObjectLiteral() {
+		AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+		//this.asIdentifiableExpression().setPublicIdentifier(new CompositeIdentifier(objectLiteralExpression.getIdentifier().getNode(), identifier));
+		this.asIdentifiableExpression().setPublicIdentifier(identifier);
+		return true;
+	}
+
+	/**
+	 * new function(){this.publicFunction = function() {};}
+	 * 
+	 * @return
+	 */
+	private boolean refineIdentifierForNewFunctionWithThis() {
+		//if we add more classes extending AbstractExpression but the given class does not implement IdentifiableExpression
+		if (this instanceof IdentifiableExpression) {
+			AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+			if (identifier instanceof CompositeIdentifier) {
+				PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
+				// variable declarations are not accessible outside of new function(){} unless they assigned to this
+				if (mostLeftPart.getIdentifierName().equals("this")) {
+					this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * They way public members are exposed: return
+	 * {publicMethod1:privateMethod1,
+	 * properties:{publicProperty1:privateProperty1}}
+	 * 
+	 * @param returnStatement
+	 * @return
+	 */
+	private boolean refineIdentifierForIIFEWithReturnObjectLiteral(AbstractStatement returnStatement) {
+		for (ObjectLiteralExpression objectLiteralExpression : returnStatement.getObjectLiteralExpressionList()) {
+			Map<Token, AbstractExpression> propertyMap = objectLiteralExpression.getPropertyMap();
+			for (Token key : propertyMap.keySet()) {
+				AbstractExpression abstractExpression = propertyMap.get(key);
+				if (IdentifierHelper.getIdentifier(abstractExpression.expression).equals(this.asIdentifiableExpression().getIdentifier())) {
+					this.asIdentifiableExpression().setPublicIdentifier(new PlainIdentifier(key));
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * The way public members are exposed using returning local variable: var
+	 * instance = {}; instance.publicMethod=...; return instance;
+	 * 
+	 * @param identifier
+	 * @param returnStatement
+	 * @return
+	 */
+	private boolean refineIdentifierForIIFEWithReturnVariable(AbstractIdentifier identifier, AbstractStatement returnStatement) {
+		if (identifier instanceof CompositeIdentifier) {
+			PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
+			if (mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
+				if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
+					this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * They way public members are exposed using parameter: (function
+	 * (namespace){ namespace.publicMethod=function(){...};}
+	 * 
+	 * @param functionDeclarationExpression
+	 * @return
+	 */
+	private boolean refineIdentifierForIIFEWithParamter(FunctionDeclarationExpression functionDeclarationExpression) {
+		AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+		if (identifier instanceof CompositeIdentifier) {
+			PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
+			if (mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
+				for (AbstractExpression parameter : functionDeclarationExpression.getParameters()) {
+					if (parameter.expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
+						// The public identifier is equal to internal identifier
 						return true;
 					}
+
+				}
 			}
 		}
 		return false;
