@@ -12,7 +12,6 @@ import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
-import ca.concordia.javascript.analysis.util.StatementExtractor;
 
 import com.google.common.base.Strings;
 import com.google.javascript.jscomp.parsing.parser.Token;
@@ -65,10 +64,6 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 
 	public void addStatement(AbstractStatement statement) {
 		statementList.add(statement);
-	}
-
-	public List<AbstractStatement> getStatements() {
-		return statementList;
 	}
 
 	public AbstractIdentifier getIdentifier() {
@@ -197,19 +192,8 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		this.functionDeclarationExpressionNature = functionDeclarationExpressionNature;
 	}
 
-	@Override
 	public List<AbstractStatement> getReturnStatementList() {
-		StatementExtractor statementExtractor = new StatementExtractor();
-		List<ParseTree> returnStatements = statementExtractor.getReturnStatement(functionDeclarationTree);
-
-		if (returnStatements != null && !returnStatements.isEmpty()) {
-			List<AbstractStatement> returnStatementList = new ArrayList<>();
-			for (ParseTree returnStatementTree : returnStatements) {
-				returnStatementList.add(new Statement(returnStatementTree, StatementType.RETURN, this));
-			}
-			return returnStatementList;
-		}
-		return null;
+		return getReturnStatementListExtracted(getStatements());
 	}
 
 	public boolean isClassDeclaration() {
@@ -218,5 +202,10 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 
 	public void setClassDeclaration(boolean state) {
 		this.isClassDeclaration = state;
+	}
+
+	@Override
+	public List<AbstractStatement> getStatements() {
+		return statementList;
 	}
 }

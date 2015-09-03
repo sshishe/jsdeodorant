@@ -58,16 +58,16 @@ public class NamespaceTest {
 		}
 	}
 
-	private AnalysisResult setAnalysisForIIFE() throws IOException {
-		testRunner.setJsFile("test/namespace/iife.js");
+	private AnalysisResult setAnalysisForIIFE(String fileName) throws IOException {
+		testRunner.setJsFile(fileName);
 		AnalysisResult result = testRunner.performActions();
 		return result;
 	}
 
 	@Test
-	public void testIIFENamespaceNumberOfClassDeclaration() {
+	public void testIIFEAssignToVarNamespaceNumberOfClassDeclaration() {
 		try {
-			AnalysisResult result = setAnalysisForIIFE();
+			AnalysisResult result = setAnalysisForIIFE("test/namespace/iife-assign-to-var.js");
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 2);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -75,13 +75,23 @@ public class NamespaceTest {
 	}
 
 	@Test
-	public void testIIFENamespaceWithQualifiedName() {
+	public void testIIFEAssignToVarNamespaceWithQualifiedName() {
 		try {
-			AnalysisResult result = setAnalysisForIIFE();
+			AnalysisResult result = setAnalysisForIIFE("test/namespace/iife-assign-to-var.js");
 			for (FunctionDeclaration functionDeclaration : result.getProgram().getClassDeclarationList()) {
 				String qualifiedName = ((FunctionDeclarationExpression) functionDeclaration).getQualifiedName();
 				assertTrue(qualifiedName.equals("someObj.publicClass") || qualifiedName.equals("someObj.innerObj.deepInnerClass"));
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testIIFEObjLiteralNamespaceNumberOfClassDeclaration() {
+		try {
+			AnalysisResult result = setAnalysisForIIFE("test/namespace/iife-obj-literal.js");
+			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

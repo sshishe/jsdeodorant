@@ -7,7 +7,6 @@ import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
-import ca.concordia.javascript.analysis.util.StatementExtractor;
 
 import com.google.common.base.Strings;
 import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
@@ -66,27 +65,16 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 		return (FunctionDeclarationTree) getStatement();
 	}
 
-	@Override
-	public List<AbstractStatement> getReturnStatementList() {
-		StatementExtractor statementExtractor = new StatementExtractor();
-		List<ParseTree> returnStatements = statementExtractor.getReturnStatement(functionDeclarationTree);
-
-		if (returnStatements != null && !returnStatements.isEmpty()) {
-			List<AbstractStatement> returnStatementList = new ArrayList<>();
-			for (ParseTree returnStatementTree : returnStatements) {
-				returnStatementList.add(new Statement(returnStatementTree, StatementType.RETURN, this));
-			}
-			return returnStatementList;
-		}
-		return null;
-	}
-
 	public boolean isClassDeclaration() {
 		return isClassDeclaration;
 	}
 
 	public void setClassDeclaration(boolean state) {
 		this.isClassDeclaration = state;
+	}
+
+	public List<AbstractStatement> getReturnStatementList() {
+		return getReturnStatementListExtracted(getStatements());
 	}
 
 }

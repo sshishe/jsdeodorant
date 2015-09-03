@@ -327,9 +327,15 @@ public class StatementProcessor {
 
 		else if (statement instanceof ReturnStatementTree) {
 			ReturnStatementTree returnStatement = statement.asReturnStatement();
-
 			Statement child = new Statement(returnStatement, StatementType.RETURN, parent);
-
+			if (returnStatement.expression instanceof ObjectLiteralExpressionTree) {
+				AbstractExpression expression = new ObjectLiteralExpression(returnStatement.expression.asObjectLiteralExpression(), parent);
+				child.addObjectLiteralExpression((ObjectLiteralExpression) expression);
+			}
+			if (returnStatement.expression instanceof FunctionDeclarationTree) {
+				AbstractExpression expression = new FunctionDeclarationExpression(returnStatement.expression.asFunctionDeclaration(), FunctionDeclarationExpressionNature.RETURN, parent);
+				child.addFunctionDeclarationExpression((FunctionDeclarationExpression) expression);
+			}
 			parent.addElement(child);
 		}
 

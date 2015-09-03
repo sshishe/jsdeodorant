@@ -16,6 +16,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.MemberLookupExpressionT
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ReturnStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 
@@ -224,5 +225,18 @@ public abstract class AbstractFunctionFragment {
 
 	public List<VariableDeclaration> getVariableDeclarationList() {
 		return variableDeclarationList;
+	}
+
+	protected List<AbstractStatement> getReturnStatementListExtracted(List<AbstractStatement> statementsList) {
+		List<AbstractStatement> statements = new ArrayList<>();
+		for (AbstractStatement abstractStatement : statementsList) {
+			if (abstractStatement instanceof CompositeStatement)
+				for (AbstractStatement statement : ((CompositeStatement) abstractStatement).getStatements()) {
+					if (statement.getStatement() instanceof ReturnStatementTree) {
+						statements.add(statement);
+					}
+				}
+		}
+		return statements.size() == 0 ? null : statements;
 	}
 }

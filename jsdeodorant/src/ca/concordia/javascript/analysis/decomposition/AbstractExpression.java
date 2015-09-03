@@ -1,6 +1,7 @@
 package ca.concordia.javascript.analysis.decomposition;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.log4j.Logger;
@@ -12,9 +13,12 @@ import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
+import ca.concordia.javascript.analysis.util.IdentifierHelper;
 import ca.concordia.javascript.analysis.util.DebugHelper;
 
+import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 public class AbstractExpression extends AbstractFunctionFragment {
@@ -102,15 +106,30 @@ public class AbstractExpression extends AbstractFunctionFragment {
 					if (returnStatements != null)
 						if (this instanceof IdentifiableExpression) {
 							AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
-							if (identifier instanceof CompositeIdentifier) {
-								PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
-								for (AbstractStatement returnStatement : returnStatements) {
-									if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree && mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
-										if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
-											this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
-											return true;
+							for (AbstractStatement returnStatement : returnStatements) {
+								if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree) {
+									if (identifier instanceof CompositeIdentifier) {
+										PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
+										if (mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
+											if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
+												this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
+												return true;
+											}
 										}
 									}
+								} else if (returnStatement.getStatement().asReturnStatement().expression instanceof ObjectLiteralExpressionTree) {
+									for (ObjectLiteralExpression objectLiteralExpression : returnStatement.getObjectLiteralExpressionList()) {
+										Map<Token, AbstractExpression> propertyMap = objectLiteralExpression.getPropertyMap();
+										for (Token key : propertyMap.keySet()) {
+											AbstractExpression abstractExpression = propertyMap.get(key);
+											if (IdentifierHelper.getIdentifier(abstractExpression.expression).equals(this.asIdentifiableExpression().getIdentifier())) {
+												this.asIdentifiableExpression().setPublicIdentifier(new PlainIdentifier(key));
+												return true;
+											}
+										}
+									}
+
+									return false;
 								}
 							}
 						}

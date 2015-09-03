@@ -20,8 +20,8 @@ public class TestRunner extends Runner {
 		getAnalysisOptions().setAdvancedAnalysis(state);
 	}
 
-	public void setJsFile(String jsFile) {
-		getAnalysisOptions().setJsFile(jsFile);
+	public void setJsFile(String jsFilej) {
+		getAnalysisOptions().setJsFile(jsFilej);
 	}
 
 	@Override
