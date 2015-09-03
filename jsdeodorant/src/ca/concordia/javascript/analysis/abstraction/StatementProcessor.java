@@ -36,6 +36,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ForStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IfStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
+import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
@@ -299,7 +300,18 @@ public class StatementProcessor {
 						FunctionDeclarationTree functionDeclarationTree = parenExpressionTree.expression.asFunctionDeclaration();
 						functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
 					}
+				} else if (callExpressionTree.operand instanceof MemberExpressionTree) {
+					MemberExpressionTree memberExpressionTree = callExpressionTree.operand.asMemberExpression();
+					if (memberExpressionTree.operand instanceof ParenExpressionTree) {
+						ParenExpressionTree parenExpressionTree = memberExpressionTree.operand.asParenExpression();
+						if (parenExpressionTree.expression instanceof FunctionDeclarationTree) {
+							FunctionDeclarationTree functionDeclarationTree = parenExpressionTree.expression.asFunctionDeclaration();
+							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
+						}
+					}
+
 				}
+
 			}
 			Statement child = new Statement(expressionStatement, StatementType.EXPRESSION, parent);
 			if (functionDeclarationExpression != null)
