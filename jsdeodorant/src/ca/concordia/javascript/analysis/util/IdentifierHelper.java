@@ -7,6 +7,7 @@ import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 
+import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
@@ -33,7 +34,14 @@ public class IdentifierHelper {
 		return getIdentifier(node, null);
 	}
 
-	public static AbstractIdentifier getIdentifier(ParseTree node, CompositeIdentifier composite) {
+	public static AbstractIdentifier getIdentifier(IdentifierToken token, AbstractIdentifier composite) {
+		if (composite == null)
+			return new PlainIdentifier(token);
+		else
+			return new CompositeIdentifier(token, composite);
+	}
+
+	public static AbstractIdentifier getIdentifier(ParseTree node, AbstractIdentifier composite) {
 		AbstractIdentifier identifier;
 		if (node instanceof LiteralExpressionTree) {
 			return new PlainIdentifier(node);

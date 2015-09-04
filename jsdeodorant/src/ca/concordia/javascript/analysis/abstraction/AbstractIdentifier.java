@@ -2,6 +2,8 @@ package ca.concordia.javascript.analysis.abstraction;
 
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
+import org.apache.log4j.Logger;
+
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.LiteralToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
@@ -22,6 +24,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.UnaryExpressionTree;
 
 public abstract class AbstractIdentifier {
+	private static final Logger log = Logger.getLogger(AbstractIdentifier.class.getName());
 	protected String identifierName;
 	private ParseTree node;
 	protected Token token;
@@ -37,6 +40,10 @@ public abstract class AbstractIdentifier {
 	public AbstractIdentifier(ParseTree node) {
 		this.node = node;
 		this.identifierName = extractIdentifierName(node);
+	}
+
+	public AbstractIdentifier(AbstractIdentifier identifier) {
+		this.identifierName = identifier.toString();
 	}
 
 	private String extractIdentifierName(ParseTree currentNode) {
@@ -58,7 +65,7 @@ public abstract class AbstractIdentifier {
 			FunctionDeclarationTree functionDeclaration = currentNode.asFunctionDeclaration();
 			if (functionDeclaration.name != null)
 				return functionDeclaration.name.value;
-			return "function";
+			//return "function";
 		} else if (currentNode instanceof ArrayLiteralExpressionTree) {
 			ArrayLiteralExpressionTree arrayLiteralExpression = currentNode.asArrayLiteralExpression();
 			if (arrayLiteralExpression.elements.isEmpty())
@@ -94,11 +101,19 @@ public abstract class AbstractIdentifier {
 			return arguments.toString();
 		}
 		if (currentNode == null)
-			return "";
-		return "<" + currentNode.getClass() + ">";
+			log.error("Current node is null");
+		//log.error("Node type is not supported:" + "<" + currentNode.getClass() + ">");
+		return "";
+		//return 
 		//throw new UnsupportedOperationException("Node type is not supported: " + currentNode.getClass());
 	}
 
+	/**
+	 * Return the ParseTree corresponding to the identifier. Might return null
+	 * it is a join of two composite identifier
+	 * 
+	 * @return ParseTree
+	 */
 	public ParseTree getNode() {
 		return node;
 	}
