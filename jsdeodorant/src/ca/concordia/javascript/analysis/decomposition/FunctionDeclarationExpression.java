@@ -91,9 +91,13 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	public String getQualifiedName() {
 		this.publicIdentifier = getPublicIdentifier();
 		if (hasNamespace())
-			return getNamespace() + "." + getName(publicIdentifier);
-		else
-			return getName(publicIdentifier);
+			if (getNamespace().getPart().isIdentifiableExpression())
+				if (getNamespace().getPart().asIdentifiableExpression().getName().equals("<Anonymous>"))
+					return getName(publicIdentifier);
+				else
+					return getNamespace() + "." + getName(publicIdentifier);
+
+		return getName(publicIdentifier);
 	}
 
 	public AbstractIdentifier getPublicIdentifier() {

@@ -101,6 +101,19 @@ public class NamespaceTest {
 	}
 
 	@Test
+	public void testIIFEWithApplyMethodWithQualifiedName() {
+		try {
+			AnalysisResult result = setAnalysisForIIFE("test/namespace/iife-with-apply.js");
+			for (FunctionDeclaration functionDeclaration : result.getProgram().getClassDeclarationList()) {
+				String qualifiedName = ((FunctionDeclarationExpression) functionDeclaration).getQualifiedName();
+				assertTrue(qualifiedName.equals("myApp.utils.getValue") || qualifiedName.equals("myApp.utils.tools.diagnose"));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
 	public void testIIFEObjLiteralNamespaceNumberOfClassDeclaration() {
 		try {
 			AnalysisResult result = setAnalysisForIIFE("test/namespace/iife-obj-literal.js");

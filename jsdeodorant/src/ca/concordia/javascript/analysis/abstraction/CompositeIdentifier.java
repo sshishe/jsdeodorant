@@ -16,6 +16,16 @@ public class CompositeIdentifier extends AbstractIdentifier {
 		this.rightPart = rightPart;
 	}
 
+	public CompositeIdentifier(Token token, AbstractIdentifier rightPart) {
+		super(token);
+		this.rightPart = rightPart;
+	}
+
+	public CompositeIdentifier(AbstractIdentifier part, AbstractIdentifier rightPart) {
+		super(part);
+		this.rightPart = rightPart;
+	}
+
 	// if composite identifier is "one.two.three" then right part is "two.three"
 	public AbstractIdentifier getRightPart() {
 		return rightPart;

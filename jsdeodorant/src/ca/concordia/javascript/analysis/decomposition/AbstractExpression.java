@@ -8,17 +8,21 @@ import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
+import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Namespace;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
+import ca.concordia.javascript.analysis.util.ModelHelper;
 import ca.concordia.javascript.analysis.util.DebugHelper;
 
 import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 public class AbstractExpression extends AbstractFunctionFragment {
@@ -91,30 +95,72 @@ public class AbstractExpression extends AbstractFunctionFragment {
 					return refineIdentifierForNewFunctionWithThis();
 				}
 				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE) {
+					// IIFE with passing parameter -> (function(namespace){namespace.publicFunction=...})(namespace);
 					if (functionDeclarationExpression.getParameters().size() > 0) {
 						return refineIdentifierForIIFEWithParamter(functionDeclarationExpression);
-					} else {
-						List<AbstractStatement> returnStatements = functionDeclarationExpression.getReturnStatementList();
-						if (returnStatements != null)
-							if (this instanceof IdentifiableExpression) {
-								AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
-								for (AbstractStatement returnStatement : returnStatements) {
-									if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree) {
-										return refineIdentifierForIIFEWithReturnVariable(identifier, returnStatement);
-									} else if (returnStatement.getStatement().asReturnStatement().expression instanceof ObjectLiteralExpressionTree) {
-										return refineIdentifierForIIFEWithReturnObjectLiteral(returnStatement);
+					}
+					AbstractStatement statement = ModelHelper.getStatementContainingFunctionDeclaration(functionDeclarationExpression);
+					List<FunctionInvocation> functionInvocations = statement.getFunctionInvocationList();
+					for (FunctionInvocation functionInvocation : functionInvocations) {
+						if (functionInvocation.getOperand().expression instanceof MemberExpressionTree) {
+							MemberExpressionTree memberExpression = functionInvocation.getOperand().expression.asMemberExpression();
+							if (memberExpression.operand instanceof ParenExpressionTree)
+								if (memberExpression.operand.asParenExpression().expression.equals(functionDeclarationExpression.getFunctionDeclarationTree()))
+									if (memberExpression.memberName.value.equals("apply")) {
+										return refineIdentifierForIIFEWithApplyMethod(functionDeclarationExpression, functionInvocation.getArguments());
 									}
+						}
+					}
+					// IIFE which return statement is used to expose members either using return localVar or return {};
+					List<AbstractStatement> returnStatements = functionDeclarationExpression.getReturnStatementList();
+					if (returnStatements != null)
+						if (this instanceof IdentifiableExpression) {
+							AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+							for (AbstractStatement returnStatement : returnStatements) {
+								// return localVar;
+								if (returnStatement.getStatement().asReturnStatement().expression instanceof IdentifierExpressionTree) {
+									return refineIdentifierForIIFEWithReturnVariable(identifier, returnStatement);
+									// return {};
+								} else if (returnStatement.getStatement().asReturnStatement().expression instanceof ObjectLiteralExpressionTree) {
+									return refineIdentifierForIIFEWithReturnObjectLiteral(returnStatement);
 								}
 							}
-					}
+						}
 				}
 			}
+
 			if (part instanceof ObjectLiteralExpression) {
 				ObjectLiteralExpression objectLiteralExpression = (ObjectLiteralExpression) part;
 				if (objectLiteralExpression.getIdentifier() != null) {
 					if (this instanceof IdentifiableExpression) {
 						return refineIdentifierForObjectLiteral();
 					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Exposing public member by assigning members to this which this is bind by
+	 * apply
+	 * 
+	 * @param functionDeclarationExpression
+	 * @param arguments
+	 * @return
+	 */
+	private boolean refineIdentifierForIIFEWithApplyMethod(FunctionDeclarationExpression functionDeclarationExpression, List<AbstractExpression> arguments) {
+		// apply accepts one argument
+		AbstractExpression argument = arguments.get(0);
+		if (this instanceof IdentifiableExpression) {
+			AbstractIdentifier identifier = this.asIdentifiableExpression().getIdentifier();
+			if (identifier instanceof CompositeIdentifier) {
+				PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
+				// variable declarations are not accessible outside of new function(){} unless they assigned to this
+				if (mostLeftPart.getIdentifierName().equals("this")) {
+					AbstractIdentifier leftPart = IdentifierHelper.getIdentifier(argument.getExpression());
+					this.asIdentifiableExpression().setPublicIdentifier(new CompositeIdentifier(leftPart, identifier.asCompositeIdentifier().getRightPart()));
+					return true;
 				}
 			}
 		}
@@ -244,6 +290,12 @@ public class AbstractExpression extends AbstractFunctionFragment {
 				buildNamespaceStructure(parentExpression.getParent(), namespace);
 		}
 		return this.namespace;
+	}
+
+	public boolean isIdentifiableExpression() {
+		if (this instanceof IdentifiableExpression)
+			return true;
+		return false;
 	}
 
 	public IdentifiableExpression asIdentifiableExpression() {
