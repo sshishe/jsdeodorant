@@ -68,7 +68,7 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 
 	public AbstractIdentifier getIdentifier() {
 		if (identifier == null)
-			identifier = buildIdentifier();
+			identifier = buildInternalIdentifier();
 		return identifier;
 	}
 
@@ -121,7 +121,7 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	 * it would be ParenExpression or something like that which at the creation
 	 * time it's not possible to access the lValue
 	 */
-	private AbstractIdentifier buildIdentifier() {
+	private AbstractIdentifier buildInternalIdentifier() {
 		if (leftValueExpression != null)
 			return IdentifierHelper.getIdentifier(leftValueExpression);
 		else if (getParent() instanceof ObjectLiteralExpression) {

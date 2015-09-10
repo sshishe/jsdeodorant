@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
+import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
+import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
@@ -114,8 +116,7 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 				if (sourceElement instanceof AbstractStatement) {
 					AbstractStatement statement = (AbstractStatement) sourceElement;
 					AbstractIdentifier identifier = getIdentifierFromObjectLiteralList(statement);
-					if (identifier != null)
-						return identifier;
+					return identifier;
 				}
 			}
 
@@ -126,8 +127,20 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 				if (identifier != null)
 					return identifier;
 			}
+		} else if (getParent() instanceof AbstractExpression) {
+			AbstractExpression parentExpression = (AbstractExpression) getParent();
+			if (parentExpression instanceof ObjectLiteralExpression) {
+				ObjectLiteralExpression parentObjectLiteral = (ObjectLiteralExpression) parentExpression;
+				for (Token key : parentObjectLiteral.propertyMap.keySet()) {
+					AbstractExpression abstractExpression = parentObjectLiteral.propertyMap.get(key);
+					if (abstractExpression.equals(this)) {
+						return new PlainIdentifier(key);
+					}
+				}
+			}
 		}
 		return null;
+
 	}
 
 	public String getName() {
