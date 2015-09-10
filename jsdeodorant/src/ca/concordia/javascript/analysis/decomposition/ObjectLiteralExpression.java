@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
-import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;

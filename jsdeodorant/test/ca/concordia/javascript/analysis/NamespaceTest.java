@@ -151,4 +151,21 @@ public class NamespaceTest {
 			e.printStackTrace();
 		}
 	}
+
+	private AnalysisResult setAnalysisForNestedObjectLiterals(String fileName) throws IOException {
+		testRunner.setJsFile(fileName);
+		AnalysisResult result = testRunner.performActions();
+		return result;
+	}
+
+	@Test
+	public void testNestedObjectLiterals() {
+		try {
+			AnalysisResult result = setAnalysisForNestedObjectLiterals("test/namespace/nested-object-literals.js");
+			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
+			assertEquals(result.getProgram().getClassDeclarationList().get(0).getName(), "test");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
