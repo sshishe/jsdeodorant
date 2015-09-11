@@ -90,7 +90,10 @@ public abstract class AbstractIdentifier {
 			return unaryExpression.operator + extractIdentifierName(unaryExpression.operand);
 		} else if (currentNode instanceof NewExpressionTree) {
 			NewExpressionTree newExpression = currentNode.asNewExpression();
-			return "new " + extractIdentifierName(newExpression.operand) + "(" + extractIdentifierName(newExpression.arguments) + ")";
+			if (newExpression.arguments != null)
+				return "new " + extractIdentifierName(newExpression.operand) + "(" + extractIdentifierName(newExpression.arguments) + ")";
+			else
+				return "new " + extractIdentifierName(newExpression.operand) + "()";
 		} else if (currentNode instanceof ArgumentListTree) {
 			StringBuilder arguments = new StringBuilder("");
 			for (ParseTree argument : currentNode.asArgumentList().arguments) {
