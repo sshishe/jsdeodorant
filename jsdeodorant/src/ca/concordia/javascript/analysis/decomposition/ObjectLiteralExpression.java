@@ -115,7 +115,8 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 				if (sourceElement instanceof AbstractStatement) {
 					AbstractStatement statement = (AbstractStatement) sourceElement;
 					AbstractIdentifier identifier = getIdentifierFromObjectLiteralList(statement);
-					return identifier;
+					if (identifier != null)
+						return identifier;
 				}
 			}
 
