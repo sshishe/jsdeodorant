@@ -56,8 +56,11 @@ public class IdentifierHelper {
 			else
 				return composite;
 		} else if (node instanceof NewExpressionTree) {
-			identifier = new PlainIdentifier(node);
-			return new CompositeIdentifier(node.asNewExpression().operand, identifier);
+			//			identifier = new PlainIdentifier(node);
+			//			if (node.equals(node.asNewExpression().operand))
+			//				return identifier;
+			//			return new CompositeIdentifier(node.asNewExpression().operand, identifier);
+			return getIdentifier(((NewExpressionTree) node).operand);
 		} else if (node instanceof MemberExpressionTree) {
 			if (composite == null)
 				identifier = new PlainIdentifier(node);

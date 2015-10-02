@@ -38,6 +38,10 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 	public String getName() {
 		return Strings.isNullOrEmpty(identifier.toString()) ? "<Anonymous>" : identifier.toString();
 	}
+	
+	public String getQualifiedName(){
+		return getName();
+	}
 
 	public AbstractIdentifier getIdentifier() {
 		if (identifier == null)

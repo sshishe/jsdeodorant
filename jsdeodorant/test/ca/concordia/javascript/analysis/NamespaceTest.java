@@ -134,8 +134,7 @@ public class NamespaceTest {
 		try {
 			AnalysisResult result = setAnalysisForNewFunction();
 			for (FunctionDeclaration functionDeclaration : result.getProgram().getClassDeclarationList()) {
-				String qualifiedName = ((FunctionDeclarationExpression) functionDeclaration).getQualifiedName();
-				assertTrue(qualifiedName.equals("ns.publicFunction"));
+				assertTrue(functionDeclaration.getQualifiedName().equals("ns.publicFunction"));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -163,7 +162,18 @@ public class NamespaceTest {
 		try {
 			AnalysisResult result = setAnalysisForNestedObjectLiterals("test/namespace/nested-object-literals.js");
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
-			assertEquals(result.getProgram().getClassDeclarationList().get(0).getName(), "test");
+			assertEquals(result.getProgram().getClassDeclarationList().get(0).getQualifiedName(), "application.utilities.drawing.canvas.test");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testExternalAliasing() {
+		try {
+			AnalysisResult result = setAnalysisForNestedObjectLiterals("test/namespace/external-aliased.js");
+			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
+			assertEquals(result.getProgram().getClassDeclarationList().get(0).getQualifiedName(), "namespace.innerNamespace.Foo");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

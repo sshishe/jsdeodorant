@@ -38,15 +38,10 @@ public class CompositePostProcessor {
 	private static boolean findFunctionDeclaration(ObjectCreation objectCreation, Program program) {
 		boolean findMatch = false;
 		for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarationList()) {
-			String functionQualifiedName;
-			if (functionDeclaration instanceof AbstractExpression) {
-				functionQualifiedName = ((AbstractExpression) functionDeclaration).asIdentifiableExpression().getQualifiedName();
-				//log.warn(((AbstractExpression) functionDeclaration).asIdentifiableExpression().getQualifiedName());
-			} else
-				functionQualifiedName = functionDeclaration.getName();
-			writeEntriesToFile(objectCreation, functionDeclaration, functionQualifiedName);
-			//log.info("Object creation name is: " + objectCreation.getIdentifier().toString() + " And function identifier is: " + functionQualifiedName);
+			String functionQualifiedName = functionDeclaration.getQualifiedName();
+			//log.info("Object creation name is: " + objectCreation.getAliasedIdentifier().toString() + " And function identifier is: " + functionQualifiedName);
 			if (functionQualifiedName.equals(objectCreation.getIdentifier().toString())) {
+				//if (functionQualifiedName.equals(objectCreation.getIdentifier().toString())) {
 				functionDeclaration.setClassDeclaration(true);
 				objectCreation.setClassDeclaration(functionDeclaration);
 				return true;
@@ -55,8 +50,8 @@ public class CompositePostProcessor {
 		return findMatch;
 	}
 
-	private static void writeEntriesToFile(ObjectCreation objectCreation, FunctionDeclaration functionDeclaration, String functionQualifiedName) {
-		StringBuilder entry = new StringBuilder(objectCreation.getIdentifier().toString()).append(",").append(functionQualifiedName);
+	private static void writeEntriesToFile(ObjectCreation objectCreation, FunctionDeclaration functionDeclaration, String objectCreationAliasedName, String functionQualifiedName) {
+		StringBuilder entry = new StringBuilder(objectCreationAliasedName).append(",").append(functionQualifiedName);
 		entry.append(",");
 		entry.append(objectCreation.getNewExpressionTree().location.toString().replace(",", "-"));
 		entry.append(",");
