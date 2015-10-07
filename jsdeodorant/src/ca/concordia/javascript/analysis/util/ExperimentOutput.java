@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import ca.concordia.javascript.analysis.CompositePostProcessor;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
@@ -12,7 +13,6 @@ import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 public class ExperimentOutput {
 	static Logger log = Logger.getLogger(ExperimentOutput.class.getName());
 	private Program program;
-	private Set<String> matchedClassNames = new HashSet<>();
 	private CSVFileWriter csvWriter;
 
 	public ExperimentOutput(Program program) {
@@ -24,21 +24,18 @@ public class ExperimentOutput {
 
 	public void uniqueClassDeclarationNumber() {
 		Set<FunctionDeclaration> classes = new HashSet<>();
-		log.info("Name and location of class declarations:");
 		for (ObjectCreation creation : program.getObjectCreationList()) {
 			if (!classes.contains(creation.getClassDeclaration())) {
 				if (creation.getClassDeclaration() != null) {
 					classes.add(creation.getClassDeclaration());
-					log.info(creation.getClassName()
-							+ " "
-							+ creation.getClassDeclaration()
-									.getFunctionDeclarationTree().location
-							+ "And the invocation is at: "
-							+ creation.getNewExpressionTree().location);
+					log.info(creation.getClassName() + " " + creation.getClassDeclaration().getFunctionDeclarationTree().location + "And the invocation is at: " + creation.getNewExpressionTree().location);
 				}
 			}
 		}
-		log.info("Number of unique classes:" + classes.size());
+		if (classes.size() > 0) {
+			log.info("Number of unique classes in this file:" + classes.size());
+			CompositePostProcessor.setTotalNumberOfClasses(CompositePostProcessor.getTotalNumberOfClasses() + classes.size());
+		}
 	}
 
 	public void writeToFile() {

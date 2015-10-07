@@ -30,7 +30,7 @@ public class NamespaceTest {
 
 	private AnalysisResult setAnalysisForObjectLiteral() throws IOException {
 		testRunner.setJsFile("test/namespace/object-literal.js");
-		AnalysisResult result = testRunner.performActions();
+		AnalysisResult result = testRunner.performActionsForTest();
 		return result;
 	}
 
@@ -60,7 +60,7 @@ public class NamespaceTest {
 
 	private AnalysisResult setAnalysisForIIFE(String fileName) throws IOException {
 		testRunner.setJsFile(fileName);
-		AnalysisResult result = testRunner.performActions();
+		AnalysisResult result = testRunner.performActionsForTest();
 		return result;
 	}
 
@@ -125,7 +125,7 @@ public class NamespaceTest {
 
 	private AnalysisResult setAnalysisForNewFunction() throws IOException {
 		testRunner.setJsFile("test/namespace/new-function.js");
-		AnalysisResult result = testRunner.performActions();
+		AnalysisResult result = testRunner.performActionsForTest();
 		return result;
 	}
 
@@ -153,7 +153,7 @@ public class NamespaceTest {
 
 	private AnalysisResult setAnalysisForNestedObjectLiterals(String fileName) throws IOException {
 		testRunner.setJsFile(fileName);
-		AnalysisResult result = testRunner.performActions();
+		AnalysisResult result = testRunner.performActionsForTest();
 		return result;
 	}
 

@@ -2,8 +2,6 @@ package ca.concordia.javascript.analysis.abstraction;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,23 +26,15 @@ public class CreationTest {
 
 	@Test
 	public void testArrayWithNewKeyword() {
-		try {
-			testRunner.setJsFile("test/abstraction/array-creation-new-keyword.js");
-			AnalysisResult result = testRunner.performActions();
-			assertTrue(result.getProgram().getArrayCreationList().size() == 1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		testRunner.setJsFile("test/abstraction/array-creation-new-keyword.js");
+		AnalysisResult result = testRunner.performActionsForTest();
+		assertTrue(result.getProgram().getArrayCreationList().size() == 1);
 	}
 
 	@Test
 	public void testArrayLiteral() {
-		try {
-			testRunner.setJsFile("test/abstraction/array-literal.js");
-			AnalysisResult result = testRunner.performActions();
-			assertTrue(result.getProgram().getArrayLiteralCreationList().size() == 2);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		testRunner.setJsFile("test/abstraction/array-literal.js");
+		AnalysisResult result = testRunner.performActionsForTest();
+		assertTrue(result.getProgram().getArrayLiteralCreationList().size() == 2);
 	}
 }

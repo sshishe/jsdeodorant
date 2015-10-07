@@ -21,8 +21,7 @@ import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.SourceFile;
 
 public abstract class Runner extends CommandLineRunner {
-	protected static Logger log = Logger.getLogger(AnalysisEngine.class
-			.getName());
+	protected static Logger log = Logger.getLogger(AnalysisEngine.class.getName());
 	protected CompilerOptions compilerOptions;
 	private static AnalysisOptions analysisOptions;
 	public ImmutableList.Builder<SourceFile> inputs = ImmutableList.builder();
@@ -63,19 +62,17 @@ public abstract class Runner extends CommandLineRunner {
 		return new ExtendedCompiler(getErrorPrintStream());
 	}
 
-	public AnalysisResult performActions() throws IOException {
+	public List<AnalysisResult> performActions() throws IOException {
 		externs.addAll(ImmutableList.<SourceFile> of());
 		if (analysisOptions.isLogDisabled())
 			LogManager.getLoggerRepository().setThreshold(Level.OFF);
 		addInputsFromFile(analysisOptions.getJsFiles());
 		addExternsFromFile(analysisOptions.getExterns());
-		AnalysisEngine analysisEngine = new AnalysisEngine(
-				createExtendedCompiler(), createOptions(), inputs.build(),
-				externs.build());
+		AnalysisEngine analysisEngine = new AnalysisEngine(createExtendedCompiler(), createOptions(), inputs.build(), externs.build());
 		log.debug("analysis starts");
-		AnalysisResult result = analysisEngine.run(analysisOptions);
+		List<AnalysisResult> results = analysisEngine.run(analysisOptions);
 		log.debug("analysis ends");
-		return result;
+		return results;
 	}
 
 	public abstract AnalysisOptions createAnalysisOptions();

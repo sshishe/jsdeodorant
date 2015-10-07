@@ -27,6 +27,9 @@ public class Flags {
 	@Option(name = "-calculate_cyclomatic", hidden = true, usage = "Enable calculation of cyclomatic complexity")
 	private boolean calculateCyclomatic = false;
 
+	@Option(name = "-analyze-packages", hidden = true, usage = "Enable package analysis for Node style packaging")
+	private boolean analyzePackages = false;
+
 	@Option(name = "-directory_path", hidden = true, usage = "Directory path for javascript project")
 	private String directoryPath;
 
@@ -59,6 +62,10 @@ public class Flags {
 		return calculateCyclomatic;
 	}
 
+	public boolean analyzePackages() {
+		return analyzePackages;
+	}
+
 	public List<String> getJS() throws IOException {
 		List<String> filesInDirectory = getFilesInDirectory();
 		if (filesInDirectory != null)
@@ -72,13 +79,10 @@ public class Flags {
 			File rootDir = new File(directoryPath);
 
 			if (!rootDir.exists())
-				throw new FileNotFoundException(
-						"The directory path is not valid");
+				throw new FileNotFoundException("The directory path is not valid");
 
 			for (File f : Files.fileTreeTraverser().preOrderTraversal(rootDir)) {
-				if (f.isFile()
-						&& Files.getFileExtension(f.toPath().toString())
-								.toLowerCase().equals("js"))
+				if (f.isFile() && Files.getFileExtension(f.toPath().toString()).toLowerCase().equals("js"))
 					jsFiles.add(f.toPath().toString());
 			}
 			return jsFiles;

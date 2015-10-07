@@ -1,5 +1,7 @@
 package ca.concordia.javascript.analysis;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -21,7 +23,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ProgramTree;
 
 public class AnalysisEngine {
 	static Logger log = Logger.getLogger(AnalysisEngine.class.getName());
-	private Program program;
+	private List<Program> programs;
 	private final ExtendedCompiler compiler;
 	private final CompilerOptions compilerOptions;
 	private ImmutableList<SourceFile> inputs;
@@ -43,38 +45,44 @@ public class AnalysisEngine {
 		this.externs = externs;
 	}
 
-	public AnalysisResult run(AnalysisOptions analysisOption) {
+	public List<AnalysisResult> run(AnalysisOptions analysisOption) {
 		Result result = compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
-		program = new Program();
+		programs = new ArrayList<Program>();
+		List<AnalysisResult> analysisResults = new ArrayList<>();
 
 		for (SourceFile sourceFile : inputs) {
 			if (containsError(sourceFile, result))
 				continue;
+			Program program = new Program();
 			ProgramTree programTree = scriptAnalyzer.parse(sourceFile);
 			for (ParseTree sourceElement : programTree.sourceElements) {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
+			programs.add(program);
+			analysisResults.add(new AnalysisResult(program, scriptAnalyzer.getMessages()));
 		}
 
-		if (analysisOption.isAdvancedAnalysis())
-			CompositePostProcessor.processFunctionDeclarations(program);
+		for (Program program : programs) {
+			if (analysisOption.isAdvancedAnalysis())
+				CompositePostProcessor.processFunctionDeclarations(program);
 
-		if (analysisOption.isCalculateCyclomatic()) {
-			CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(program);
+			if (analysisOption.isCalculateCyclomatic()) {
+				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(program);
 
-			// OOPMetrics oopMetrics = new OOPMetrics(program);
-			for (Map.Entry<String, Integer> entry : cyclomaticComplexity.calculate().entrySet()) {
-				log.warn("Cyclomatic Complexity of " + entry.getKey() + " is: " + entry.getValue());
+				// OOPMetrics oopMetrics = new OOPMetrics(program);
+				for (Map.Entry<String, Integer> entry : cyclomaticComplexity.calculate().entrySet()) {
+					log.warn("Cyclomatic Complexity of " + entry.getKey() + " is: " + entry.getValue());
+				}
+			}
+			if (analysisOption.isOutputToCSV()) {
+				ExperimentOutput experimentOutput = new ExperimentOutput(program);
+				experimentOutput.writeToFile();
+				experimentOutput.uniqueClassDeclarationNumber();
 			}
 		}
-		if (analysisOption.isOutputToCSV()) {
-			ExperimentOutput experimentOutput = new ExperimentOutput(program);
-			experimentOutput.writeToFile();
-			experimentOutput.uniqueClassDeclarationNumber();
-		}
-
-		return new AnalysisResult(program, scriptAnalyzer.getMessages());
+		log.info("Total number of classes: " + CompositePostProcessor.getTotalNumberOfClasses());
+		return analysisResults;
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {
@@ -85,8 +93,8 @@ public class AnalysisEngine {
 		return false;
 	}
 
-	public Program getProgram() {
-		return program;
+	public List<Program> getPrograms() {
+		return programs;
 	}
 
 	public ImmutableList<SourceFile> getInputs() {
