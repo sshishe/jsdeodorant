@@ -5,18 +5,18 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import ca.concordia.javascript.analysis.AnalysisInstance;
 import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
-import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 
 public class ExperimentOutput {
 	static Logger log = Logger.getLogger(ExperimentOutput.class.getName());
-	private Program program;
+	private AnalysisInstance analysisInstance;
 	private CSVFileWriter csvWriter;
 
-	public ExperimentOutput(Program program) {
-		this.program = program;
+	public ExperimentOutput(AnalysisInstance analysisInstance) {
+		this.analysisInstance = analysisInstance;
 		csvWriter = new CSVFileWriter("log.csv");
 		String fileHeader = "Invocation Type, DeclarationType, Number of Params, FunctionType,Invocation Location";
 		csvWriter.writeToFile(fileHeader.split(","));
@@ -24,7 +24,7 @@ public class ExperimentOutput {
 
 	public void uniqueClassDeclarationNumber() {
 		Set<FunctionDeclaration> classes = new HashSet<>();
-		for (ObjectCreation creation : program.getObjectCreationList()) {
+		for (ObjectCreation creation : analysisInstance.getProgram().getObjectCreationList()) {
 			if (!classes.contains(creation.getClassDeclaration())) {
 				if (creation.getClassDeclaration() != null) {
 					classes.add(creation.getClassDeclaration());

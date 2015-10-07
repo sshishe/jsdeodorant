@@ -10,9 +10,7 @@ import org.apache.log4j.Logger;
 import ca.concordia.javascript.analysis.AnalysisEngine;
 import ca.concordia.javascript.analysis.AnalysisInstance;
 import ca.concordia.javascript.analysis.AnalysisOptions;
-import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.analysis.ExtendedCompiler;
-import ca.concordia.javascript.analysis.util.ExperimentOutput;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -73,15 +71,6 @@ public abstract class Runner extends CommandLineRunner {
 		AnalysisEngine analysisEngine = new AnalysisEngine(createExtendedCompiler(), createOptions(), inputs.build(), externs.build());
 		log.debug("analysis starts");
 		List<AnalysisInstance> results = analysisEngine.run(analysisOptions);
-
-		if (analysisOptions.isOutputToCSV()) {
-			for (AnalysisInstance analysisInstance : AnalysisResult.getAnalysisInstances()) {
-				ExperimentOutput experimentOutput = new ExperimentOutput(analysisInstance.getProgram());
-				experimentOutput.writeToFile();
-				experimentOutput.uniqueClassDeclarationNumber();
-			}
-		}
-		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		log.debug("analysis ends");
 		return results;
 	}

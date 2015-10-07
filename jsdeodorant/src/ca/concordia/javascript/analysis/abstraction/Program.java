@@ -146,5 +146,4 @@ public class Program implements SourceContainer {
 		}
 		return classDeclarations;
 	}
-
 }

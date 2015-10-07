@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
+import ca.concordia.javascript.analysis.util.ExperimentOutput;
 import ca.concordia.javascript.metrics.CyclomaticComplexity;
 
 import com.google.common.collect.ImmutableList;
@@ -56,7 +57,7 @@ public class AnalysisEngine {
 			for (ParseTree sourceElement : programTree.sourceElements) {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
-			analysisInstances.add(new AnalysisInstance(program, scriptAnalyzer.getMessages()));
+			analysisInstances.add(new AnalysisInstance(program, sourceFile, scriptAnalyzer.getMessages()));
 		}
 
 		for (AnalysisInstance analysisInstance : analysisInstances) {
@@ -71,8 +72,15 @@ public class AnalysisEngine {
 					log.warn("Cyclomatic Complexity of " + entry.getKey() + " is: " + entry.getValue());
 				}
 			}
+
+			if (analysisOption.isOutputToCSV()) {
+				ExperimentOutput experimentOutput = new ExperimentOutput(analysisInstance);
+				experimentOutput.writeToFile();
+				experimentOutput.uniqueClassDeclarationNumber();
+			}
 			AnalysisResult.addAnalysisInstance(analysisInstance);
 		}
+		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		return analysisInstances;
 	}
 
