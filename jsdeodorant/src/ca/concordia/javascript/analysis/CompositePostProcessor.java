@@ -11,7 +11,6 @@ import ca.concordia.javascript.analysis.util.PredefinedJSClasses;
 public class CompositePostProcessor {
 	static Logger log = Logger.getLogger(CompositePostProcessor.class.getName());
 	private static CSVFileWriter csvWriter;
-	private static int totalNumberOfClasses = 0;
 
 	public static void processFunctionDeclarations(Program program) {
 		csvWriter = new CSVFileWriter("clasees.csv");
@@ -57,13 +56,5 @@ public class CompositePostProcessor {
 		entry.append(",");
 		entry.append(functionDeclaration.getFunctionDeclarationTree().location.toString().replace(",", "-"));
 		csvWriter.writeToFile(entry.toString().split(","));
-	}
-
-	public static int getTotalNumberOfClasses() {
-		return totalNumberOfClasses;
-	}
-
-	public static void setTotalNumberOfClasses(int totalNumberOfClasses) {
-		CompositePostProcessor.totalNumberOfClasses = totalNumberOfClasses;
 	}
 }

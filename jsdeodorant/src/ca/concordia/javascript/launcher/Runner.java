@@ -8,8 +8,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.AnalysisEngine;
+import ca.concordia.javascript.analysis.AnalysisInstance;
 import ca.concordia.javascript.analysis.AnalysisOptions;
-import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.analysis.ExtendedCompiler;
 
 import com.google.common.base.Function;
@@ -62,7 +62,7 @@ public abstract class Runner extends CommandLineRunner {
 		return new ExtendedCompiler(getErrorPrintStream());
 	}
 
-	public List<AnalysisResult> performActions() throws IOException {
+	public List<AnalysisInstance> performActions() throws IOException {
 		externs.addAll(ImmutableList.<SourceFile> of());
 		if (analysisOptions.isLogDisabled())
 			LogManager.getLoggerRepository().setThreshold(Level.OFF);
@@ -70,7 +70,7 @@ public abstract class Runner extends CommandLineRunner {
 		addExternsFromFile(analysisOptions.getExterns());
 		AnalysisEngine analysisEngine = new AnalysisEngine(createExtendedCompiler(), createOptions(), inputs.build(), externs.build());
 		log.debug("analysis starts");
-		List<AnalysisResult> results = analysisEngine.run(analysisOptions);
+		List<AnalysisInstance> results = analysisEngine.run(analysisOptions);
 		log.debug("analysis ends");
 		return results;
 	}

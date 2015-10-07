@@ -45,11 +45,11 @@ public class AnalysisEngine {
 		this.externs = externs;
 	}
 
-	public List<AnalysisResult> run(AnalysisOptions analysisOption) {
+	public List<AnalysisInstance> run(AnalysisOptions analysisOption) {
 		Result result = compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		programs = new ArrayList<Program>();
-		List<AnalysisResult> analysisResults = new ArrayList<>();
+		List<AnalysisInstance> analysisInstances = new ArrayList<>();
 
 		for (SourceFile sourceFile : inputs) {
 			if (containsError(sourceFile, result))
@@ -60,7 +60,7 @@ public class AnalysisEngine {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
 			programs.add(program);
-			analysisResults.add(new AnalysisResult(program, scriptAnalyzer.getMessages()));
+			analysisInstances.add(new AnalysisInstance(program, scriptAnalyzer.getMessages()));
 		}
 
 		for (Program program : programs) {
@@ -81,8 +81,8 @@ public class AnalysisEngine {
 				experimentOutput.uniqueClassDeclarationNumber();
 			}
 		}
-		log.info("Total number of classes: " + CompositePostProcessor.getTotalNumberOfClasses());
-		return analysisResults;
+		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
+		return analysisInstances;
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {

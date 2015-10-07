@@ -3,8 +3,6 @@ package ca.concordia.javascript.analysis.abstraction;
 import java.util.List;
 import java.util.Objects;
 
-import javax.naming.OperationNotSupportedException;
-
 import org.apache.log4j.Logger;
 
 import com.google.common.base.Strings;
@@ -12,7 +10,6 @@ import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableStatementTree;
 

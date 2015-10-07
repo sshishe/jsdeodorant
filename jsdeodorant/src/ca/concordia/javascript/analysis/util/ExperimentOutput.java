@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.CompositePostProcessor;
+import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
@@ -34,7 +34,7 @@ public class ExperimentOutput {
 		}
 		if (classes.size() > 0) {
 			log.info("Number of unique classes in this file:" + classes.size());
-			CompositePostProcessor.setTotalNumberOfClasses(CompositePostProcessor.getTotalNumberOfClasses() + classes.size());
+			AnalysisResult.setTotalNumberOfClasses(AnalysisResult.getTotalNumberOfClasses() + classes.size());
 		}
 	}
 

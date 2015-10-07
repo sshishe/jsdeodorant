@@ -3,8 +3,8 @@ package ca.concordia.javascript.launcher;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ca.concordia.javascript.analysis.AnalysisInstance;
 import ca.concordia.javascript.analysis.AnalysisOptions;
-import ca.concordia.javascript.analysis.AnalysisResult;
 
 public class TestRunner extends Runner {
 	public TestRunner() {
@@ -36,7 +36,7 @@ public class TestRunner extends Runner {
 		return getAnalysisOptions();
 	}
 
-	public AnalysisResult performActionsForTest() {
+	public AnalysisInstance performActionsForTest() {
 		try {
 			return super.performActions().get(0);
 		} catch (IOException e) {

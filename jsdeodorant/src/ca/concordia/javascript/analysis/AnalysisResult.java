@@ -3,22 +3,20 @@ package ca.concordia.javascript.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.concordia.javascript.analysis.abstraction.Program;
-
 public class AnalysisResult {
-	private List<String> messages;
-	private Program program;
+	private static List<AnalysisInstance> analysisInstances;
+	private static int totalNumberOfClasses = 0;
 
-	public AnalysisResult(Program program, List<String> messages) {
-		this.program = program;
-		messages = new ArrayList<>();
+	public AnalysisResult() {
+		if (analysisInstances == null)
+			analysisInstances = new ArrayList<>();
 	}
 
-	public List<String> getMessages() {
-		return messages;
+	public static int getTotalNumberOfClasses() {
+		return totalNumberOfClasses;
 	}
 
-	public Program getProgram() {
-		return program;
+	public static void setTotalNumberOfClasses(int totalNumberOfClasses) {
+		AnalysisResult.totalNumberOfClasses = totalNumberOfClasses;
 	}
 }
