@@ -6,6 +6,7 @@ import java.util.List;
 public final class AnalysisResult {
 	private static List<AnalysisInstance> analysisInstances = new ArrayList<>();
 	private static int totalNumberOfClasses = 0;
+	private static int totalNumberOfFiles = 0;
 
 	private AnalysisResult() {
 
@@ -15,8 +16,8 @@ public final class AnalysisResult {
 		return totalNumberOfClasses;
 	}
 
-	public static void setTotalNumberOfClasses(int totalNumberOfClasses) {
-		AnalysisResult.totalNumberOfClasses = totalNumberOfClasses;
+	public static void increaseTotalNumberOfClasses(int increment) {
+		AnalysisResult.totalNumberOfClasses += increment;
 	}
 
 	public static void addAnalysisInstance(AnalysisInstance instance) {
@@ -25,5 +26,13 @@ public final class AnalysisResult {
 
 	public static List<AnalysisInstance> getAnalysisInstances() {
 		return analysisInstances;
+	}
+
+	public static int getTotalNumberOfFiles() {
+		return totalNumberOfFiles;
+	}
+
+	public static void increaseTotalNumberOfFiles() {
+		AnalysisResult.totalNumberOfFiles++;
 	}
 }

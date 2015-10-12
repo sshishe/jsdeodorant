@@ -236,6 +236,6 @@ public abstract class AbstractFunctionFragment {
 					}
 				}
 		}
-		return statements.size() == 0 ? null : statements;
+		return statements;
 	}
 }

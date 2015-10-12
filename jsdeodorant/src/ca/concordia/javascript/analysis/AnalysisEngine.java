@@ -48,6 +48,10 @@ public class AnalysisEngine {
 		Result result = compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		List<AnalysisInstance> analysisInstances = new ArrayList<>();
+		if (analysisOption.isOutputToCSV()) {
+			ExperimentOutput.createAndClearFolder("log/functions");
+			ExperimentOutput.createAndClearFolder("log/classes");
+		}
 
 		for (SourceFile sourceFile : inputs) {
 			if (containsError(sourceFile, result))
@@ -75,12 +79,13 @@ public class AnalysisEngine {
 
 			if (analysisOption.isOutputToCSV()) {
 				ExperimentOutput experimentOutput = new ExperimentOutput(analysisInstance);
-				experimentOutput.writeToFile();
-				experimentOutput.uniqueClassDeclarationNumber();
+				experimentOutput.functionSignatures();
+				experimentOutput.uniqueClassDeclaration();
 			}
 			AnalysisResult.addAnalysisInstance(analysisInstance);
 		}
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
+		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
 		return analysisInstances;
 	}
 
