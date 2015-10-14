@@ -1,19 +1,29 @@
 package ca.concordia.javascript.analysis.abstraction;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
+import com.google.javascript.jscomp.SourceFile;
 
 public class Package {
 	private String name;
+	private List<String> messages;
 	private Program program;
+	private SourceFile sourceFile;
 	private PackageType packageType;
-	private List<FunctionDeclaration> functionDeclarations;
 
-	public Package(String name, Program program, PackageType packageType) {
-		this.name = name;
+	public Package(Program program, SourceFile sourceFile, List<String> messages) {
 		this.program = program;
+		this.sourceFile = sourceFile;
+		messages = new ArrayList<>();
+	}
+
+	public Package(String packageName, PackageType packageType, Program program, SourceFile sourceFile, List<String> messages) {
+		this.name = packageName;
 		this.packageType = packageType;
+		this.program = program;
+		this.sourceFile = sourceFile;
+		messages = new ArrayList<>();
 	}
 
 	public String getName() {
@@ -24,12 +34,20 @@ public class Package {
 		this.name = name;
 	}
 
+	public List<String> getMessages() {
+		return messages;
+	}
+
 	public Program getProgram() {
 		return program;
 	}
 
-	public void setProgram(Program program) {
-		this.program = program;
+	public SourceFile getSourceFile() {
+		return sourceFile;
+	}
+
+	public void setSourceFile(SourceFile sourceFile) {
+		this.sourceFile = sourceFile;
 	}
 
 	public PackageType getPackageType() {
@@ -38,13 +56,5 @@ public class Package {
 
 	public void setPackageType(PackageType packageType) {
 		this.packageType = packageType;
-	}
-
-	public List<FunctionDeclaration> getFunctionDeclarations() {
-		return functionDeclarations;
-	}
-
-	public void setFunctionDeclarations(List<FunctionDeclaration> functionDeclarations) {
-		this.functionDeclarations = functionDeclarations;
 	}
 }

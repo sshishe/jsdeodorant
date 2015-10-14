@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
+import ca.concordia.javascript.analysis.abstraction.Package;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.javascript.launcher.TestRunner;
@@ -28,16 +29,16 @@ public class NamespaceTest {
 		testRunner.inputs = ImmutableList.builder();
 	}
 
-	private AnalysisInstance setAnalysisForObjectLiteral() throws IOException {
+	private Package setAnalysisForObjectLiteral() throws IOException {
 		testRunner.setJsFile("test/namespace/object-literal.js");
-		AnalysisInstance result = testRunner.performActionsForTest();
+		Package result = testRunner.performActionsForTest();
 		return result;
 	}
 
 	@Test
 	public void testObjectLiteralNamespaceNumberOfClassDeclaration() {
 		try {
-			AnalysisInstance result = setAnalysisForObjectLiteral();
+			Package result = setAnalysisForObjectLiteral();
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 2);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,7 +49,7 @@ public class NamespaceTest {
 	public void testObjectLiteralNamespaceWithQualifiedName() {
 		try {
 			//TODO update based on recent changes
-			AnalysisInstance result = setAnalysisForObjectLiteral();
+			Package result = setAnalysisForObjectLiteral();
 			for (FunctionDeclaration functionDeclaration : result.getProgram().getClassDeclarationList()) {
 				String qualifiedName = ((FunctionDeclarationExpression) functionDeclaration).getQualifiedName();
 				assertTrue(qualifiedName.equals("yourNamespace.Foo") || qualifiedName.equals("yourNamespace.Bar"));
@@ -58,16 +59,16 @@ public class NamespaceTest {
 		}
 	}
 
-	private AnalysisInstance setAnalysisForIIFE(String fileName) throws IOException {
+	private Package setAnalysisForIIFE(String fileName) throws IOException {
 		testRunner.setJsFile(fileName);
-		AnalysisInstance result = testRunner.performActionsForTest();
+		Package result = testRunner.performActionsForTest();
 		return result;
 	}
 
 	@Test
 	public void testIIFEAssignToVarNamespaceNumberOfClassDeclaration() {
 		try {
-			AnalysisInstance result = setAnalysisForIIFE("test/namespace/iife-assign-to-var.js");
+			Package result = setAnalysisForIIFE("test/namespace/iife-assign-to-var.js");
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 2);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -77,7 +78,7 @@ public class NamespaceTest {
 	@Test
 	public void testIIFEAssignToVarNamespaceWithQualifiedName() {
 		try {
-			AnalysisInstance result = setAnalysisForIIFE("test/namespace/iife-assign-to-var.js");
+			Package result = setAnalysisForIIFE("test/namespace/iife-assign-to-var.js");
 			for (FunctionDeclaration functionDeclaration : result.getProgram().getClassDeclarationList()) {
 				String qualifiedName = ((FunctionDeclarationExpression) functionDeclaration).getQualifiedName();
 				assertTrue(qualifiedName.equals("someObj.publicClass") || qualifiedName.equals("someObj.innerObj.deepInnerClass"));
@@ -90,7 +91,7 @@ public class NamespaceTest {
 	@Test
 	public void testIIFEPassAsParameterWithQualifiedName() {
 		try {
-			AnalysisInstance result = setAnalysisForIIFE("test/namespace/iife-with-parameter.js");
+			Package result = setAnalysisForIIFE("test/namespace/iife-with-parameter.js");
 			for (FunctionDeclaration functionDeclaration : result.getProgram().getClassDeclarationList()) {
 				String qualifiedName = ((FunctionDeclarationExpression) functionDeclaration).getQualifiedName();
 				assertTrue(qualifiedName.equals("namespace.sayHello"));
@@ -103,7 +104,7 @@ public class NamespaceTest {
 	@Test
 	public void testIIFEWithApplyMethodWithQualifiedName() {
 		try {
-			AnalysisInstance result = setAnalysisForIIFE("test/namespace/iife-with-apply.js");
+			Package result = setAnalysisForIIFE("test/namespace/iife-with-apply.js");
 			for (FunctionDeclaration functionDeclaration : result.getProgram().getClassDeclarationList()) {
 				String qualifiedName = ((FunctionDeclarationExpression) functionDeclaration).getQualifiedName();
 				assertTrue(qualifiedName.equals("myApp.utils.getValue") || qualifiedName.equals("myApp.utils.tools.diagnose"));
@@ -116,23 +117,23 @@ public class NamespaceTest {
 	@Test
 	public void testIIFEObjLiteralNamespaceNumberOfClassDeclaration() {
 		try {
-			AnalysisInstance result = setAnalysisForIIFE("test/namespace/iife-obj-literal.js");
+			Package result = setAnalysisForIIFE("test/namespace/iife-obj-literal.js");
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private AnalysisInstance setAnalysisForNewFunction() throws IOException {
+	private Package setAnalysisForNewFunction() throws IOException {
 		testRunner.setJsFile("test/namespace/new-function.js");
-		AnalysisInstance result = testRunner.performActionsForTest();
+		Package result = testRunner.performActionsForTest();
 		return result;
 	}
 
 	@Test
 	public void testNewFunctionNamespaceWithQualifiedName() {
 		try {
-			AnalysisInstance result = setAnalysisForNewFunction();
+			Package result = setAnalysisForNewFunction();
 			for (FunctionDeclaration functionDeclaration : result.getProgram().getClassDeclarationList()) {
 				assertTrue(functionDeclaration.getQualifiedName().equals("ns.publicFunction"));
 			}
@@ -144,23 +145,23 @@ public class NamespaceTest {
 	@Test
 	public void testNewFunctionNamespaceNumberOfClasses() {
 		try {
-			AnalysisInstance result = setAnalysisForNewFunction();
+			Package result = setAnalysisForNewFunction();
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private AnalysisInstance setAnalysisForNestedObjectLiterals(String fileName) throws IOException {
+	private Package setAnalysisForNestedObjectLiterals(String fileName) throws IOException {
 		testRunner.setJsFile(fileName);
-		AnalysisInstance result = testRunner.performActionsForTest();
+		Package result = testRunner.performActionsForTest();
 		return result;
 	}
 
 	@Test
 	public void testNestedObjectLiterals() {
 		try {
-			AnalysisInstance result = setAnalysisForNestedObjectLiterals("test/namespace/nested-object-literals.js");
+			Package result = setAnalysisForNestedObjectLiterals("test/namespace/nested-object-literals.js");
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
 			assertEquals(result.getProgram().getClassDeclarationList().get(0).getQualifiedName(), "application.utilities.drawing.canvas.test");
 		} catch (IOException e) {
@@ -171,7 +172,7 @@ public class NamespaceTest {
 	@Test
 	public void testExternalAliasing() {
 		try {
-			AnalysisInstance result = setAnalysisForNestedObjectLiterals("test/namespace/external-aliased.js");
+			Package result = setAnalysisForNestedObjectLiterals("test/namespace/external-aliased.js");
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
 			assertEquals(result.getProgram().getClassDeclarationList().get(0).getQualifiedName(), "namespace.innerNamespace.Foo");
 		} catch (IOException e) {

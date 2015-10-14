@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import ca.concordia.javascript.analysis.abstraction.Package;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.util.ExperimentOutput;
@@ -44,10 +45,10 @@ public class AnalysisEngine {
 		this.externs = externs;
 	}
 
-	public List<AnalysisInstance> run(AnalysisOptions analysisOption) {
+	public List<Package> run(AnalysisOptions analysisOption) {
 		Result result = compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
-		List<AnalysisInstance> analysisInstances = new ArrayList<>();
+		List<Package> packages = new ArrayList<>();
 		if (analysisOption.isOutputToCSV()) {
 			ExperimentOutput.createAndClearFolder("log/functions");
 			ExperimentOutput.createAndClearFolder("log/classes");
@@ -61,10 +62,10 @@ public class AnalysisEngine {
 			for (ParseTree sourceElement : programTree.sourceElements) {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
-			analysisInstances.add(new AnalysisInstance(program, sourceFile, scriptAnalyzer.getMessages()));
+			packages.add(new Package(program, sourceFile, scriptAnalyzer.getMessages()));
 		}
 
-		for (AnalysisInstance analysisInstance : analysisInstances) {
+		for (Package analysisInstance : packages) {
 			if (analysisOption.isAdvancedAnalysis())
 				CompositePostProcessor.processFunctionDeclarations(analysisInstance.getProgram());
 
@@ -86,7 +87,7 @@ public class AnalysisEngine {
 		}
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
-		return analysisInstances;
+		return packages;
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {

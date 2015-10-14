@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import ca.concordia.javascript.analysis.AnalysisInstance;
 import ca.concordia.javascript.launcher.TestRunner;
 
 public class CreationTest {
@@ -27,14 +26,14 @@ public class CreationTest {
 	@Test
 	public void testArrayWithNewKeyword() {
 		testRunner.setJsFile("test/abstraction/array-creation-new-keyword.js");
-		AnalysisInstance result = testRunner.performActionsForTest();
+		Package result = testRunner.performActionsForTest();
 		assertTrue(result.getProgram().getArrayCreationList().size() == 1);
 	}
 
 	@Test
 	public void testArrayLiteral() {
 		testRunner.setJsFile("test/abstraction/array-literal.js");
-		AnalysisInstance result = testRunner.performActionsForTest();
+		Package result = testRunner.performActionsForTest();
 		assertTrue(result.getProgram().getArrayLiteralCreationList().size() == 2);
 	}
 }

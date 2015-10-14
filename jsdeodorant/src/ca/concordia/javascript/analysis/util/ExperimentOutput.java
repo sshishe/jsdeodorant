@@ -9,18 +9,18 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.AnalysisInstance;
 import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
+import ca.concordia.javascript.analysis.abstraction.Package;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 
 public class ExperimentOutput {
 	static Logger log = Logger.getLogger(ExperimentOutput.class.getName());
-	private AnalysisInstance analysisInstance;
+	private Package analysisInstance;
 	private CSVFileWriter csvWriter;
 
-	public ExperimentOutput(AnalysisInstance analysisInstance) {
+	public ExperimentOutput(Package analysisInstance) {
 		this.analysisInstance = analysisInstance;
 	}
 
