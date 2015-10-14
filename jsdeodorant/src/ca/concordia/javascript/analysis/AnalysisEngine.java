@@ -83,7 +83,7 @@ public class AnalysisEngine {
 				experimentOutput.functionSignatures();
 				experimentOutput.uniqueClassDeclaration();
 			}
-			AnalysisResult.addAnalysisInstance(packageInstance);
+			AnalysisResult.addPackageInstance(packageInstance);
 		}
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());

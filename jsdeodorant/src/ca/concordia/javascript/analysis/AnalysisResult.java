@@ -6,7 +6,7 @@ import java.util.List;
 import ca.concordia.javascript.analysis.abstraction.Package;
 
 public final class AnalysisResult {
-	private static List<Package> analysisInstances = new ArrayList<>();
+	private static List<Package> packageInstances = new ArrayList<>();
 	private static int totalNumberOfClasses = 0;
 	private static int totalNumberOfFiles = 0;
 
@@ -22,12 +22,12 @@ public final class AnalysisResult {
 		AnalysisResult.totalNumberOfClasses += increment;
 	}
 
-	public static void addAnalysisInstance(Package instance) {
-		analysisInstances.add(instance);
+	public static void addPackageInstance(Package instance) {
+		packageInstances.add(instance);
 	}
 
-	public static List<Package> getAnalysisInstances() {
-		return analysisInstances;
+	public static List<Package> getPackageInstance() {
+		return packageInstances;
 	}
 
 	public static int getTotalNumberOfFiles() {
