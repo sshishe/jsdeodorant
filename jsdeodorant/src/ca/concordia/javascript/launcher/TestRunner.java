@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import ca.concordia.javascript.analysis.AnalysisOptions;
-import ca.concordia.javascript.analysis.abstraction.Package;
+import ca.concordia.javascript.analysis.abstraction.JSPackage;
 
 public class TestRunner extends Runner {
 	public TestRunner() {
@@ -19,7 +19,7 @@ public class TestRunner extends Runner {
 	}
 
 	public void setAdvancedAnalysis(boolean state) {
-		getAnalysisOptions().setAdvancedAnalysis(state);
+		getAnalysisOptions().setClassAnalysis(state);
 	}
 
 	public void setJsFile(String jsFilej) {
@@ -29,14 +29,14 @@ public class TestRunner extends Runner {
 	@Override
 	public AnalysisOptions createAnalysisOptions() {
 		setAnalysisOptions(new AnalysisOptions());
-		getAnalysisOptions().setAdvancedAnalysis(true);
+		getAnalysisOptions().setClassAnalysis(true);
 		getAnalysisOptions().setCalculateCyclomatic(false);
 		getAnalysisOptions().setOutputToCSV(false);
 		getAnalysisOptions().setLogDisabled(true);
 		return getAnalysisOptions();
 	}
 
-	public Package performActionsForTest() {
+	public JSPackage performActionsForTest() {
 		try {
 			return super.performActions().get(0);
 		} catch (IOException e) {

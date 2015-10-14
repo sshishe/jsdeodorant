@@ -5,20 +5,20 @@ import java.util.List;
 
 import com.google.javascript.jscomp.SourceFile;
 
-public class Package {
+public class JSPackage {
 	private String name;
 	private List<String> messages;
 	private Program program;
 	private SourceFile sourceFile;
 	private PackageType packageType;
 
-	public Package(Program program, SourceFile sourceFile, List<String> messages) {
+	public JSPackage(Program program, SourceFile sourceFile, List<String> messages) {
 		this.program = program;
 		this.sourceFile = sourceFile;
 		messages = new ArrayList<>();
 	}
 
-	public Package(String packageName, PackageType packageType, Program program, SourceFile sourceFile, List<String> messages) {
+	public JSPackage(String packageName, PackageType packageType, Program program, SourceFile sourceFile, List<String> messages) {
 		this.name = packageName;
 		this.packageType = packageType;
 		this.program = program;

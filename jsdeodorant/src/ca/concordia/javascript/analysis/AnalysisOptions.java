@@ -5,7 +5,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 public class AnalysisOptions {
-	private boolean advancedAnalysis;
+	private boolean classAnalysis;
+	private boolean packageAnalysis;
 	private boolean calculateCyclomatic;
 	private boolean outputToCSV;
 	private boolean logDisabled;
@@ -13,12 +14,20 @@ public class AnalysisOptions {
 	private List<String> jsFiles;
 	private List<String> externs;
 
-	public boolean isAdvancedAnalysis() {
-		return advancedAnalysis;
+	public boolean hasClassAnlysis() {
+		return classAnalysis;
 	}
 
-	public void setAdvancedAnalysis(boolean advancedAnalysis) {
-		this.advancedAnalysis = advancedAnalysis;
+	public void setClassAnalysis(boolean classAnlysis) {
+		this.classAnalysis = classAnlysis;
+	}
+	
+	public boolean hasPackageAnalysis() {
+		return packageAnalysis;
+	}
+
+	public void setPackageAnalysis(boolean packageAnalysis) {
+		this.packageAnalysis = packageAnalysis;
 	}
 
 	public boolean isCalculateCyclomatic() {

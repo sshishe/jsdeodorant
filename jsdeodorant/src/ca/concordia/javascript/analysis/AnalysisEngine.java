@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.abstraction.Package;
+import ca.concordia.javascript.analysis.abstraction.JSPackage;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.util.ExperimentOutput;
@@ -45,10 +45,10 @@ public class AnalysisEngine {
 		this.externs = externs;
 	}
 
-	public List<Package> run(AnalysisOptions analysisOption) {
+	public List<JSPackage> run(AnalysisOptions analysisOption) {
 		Result result = compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
-		List<Package> packages = new ArrayList<>();
+		List<JSPackage> packages = new ArrayList<>();
 		if (analysisOption.isOutputToCSV()) {
 			ExperimentOutput.createAndClearFolder("log/functions");
 			ExperimentOutput.createAndClearFolder("log/classes");
@@ -62,12 +62,15 @@ public class AnalysisEngine {
 			for (ParseTree sourceElement : programTree.sourceElements) {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
-			packages.add(new Package(program, sourceFile, scriptAnalyzer.getMessages()));
+			packages.add(new JSPackage(program, sourceFile, scriptAnalyzer.getMessages()));
 		}
 
-		for (Package packageInstance : packages) {
-			if (analysisOption.isAdvancedAnalysis())
-				CompositePostProcessor.processFunctionDeclarations(packageInstance.getProgram());
+		for (JSPackage packageInstance : packages) {
+			if (analysisOption.hasClassAnlysis())
+				CompositePostProcessor.processFunctionDeclarationsToFindClasses(packageInstance);
+
+			if (analysisOption.hasPackageAnalysis())
+				CompositePostProcessor.processPackages(packageInstance);
 
 			if (analysisOption.isCalculateCyclomatic()) {
 				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(packageInstance.getProgram());

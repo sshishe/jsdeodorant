@@ -18,8 +18,8 @@ public class Flags {
 	static Logger logger = Logger.getLogger(Flags.class.getName());
 	public CmdLineParser parser = new CmdLineParser(this);
 
-	@Option(name = "-advanced_analysis", usage = "Advanceed static analysis")
-	private boolean advancedAnalysis = false;
+	@Option(name = "-class_analysis", usage = "Advanceed static analysis")
+	private boolean classAnalysis = false;
 
 	@Option(name = "-output_csv", usage = "Generate a CSV file containing analysis info")
 	private boolean outputToCSV = false;
@@ -27,8 +27,8 @@ public class Flags {
 	@Option(name = "-calculate_cyclomatic", hidden = true, usage = "Enable calculation of cyclomatic complexity")
 	private boolean calculateCyclomatic = false;
 
-	@Option(name = "-analyze-packages", hidden = true, usage = "Enable package analysis for Node style packaging")
-	private boolean analyzePackages = false;
+	@Option(name = "-package-analysis", hidden = true, usage = "Enable package analysis for Node style packaging")
+	private boolean packageAnalysis = false;
 
 	@Option(name = "-directory_path", hidden = true, usage = "Directory path for javascript project")
 	private String directoryPath;
@@ -42,8 +42,12 @@ public class Flags {
 	@Option(name = "-externs", usage = "List of externs files to use in the compilation.")
 	private List<String> externs = new ArrayList<>();
 
-	public boolean advancedAnalysis() {
-		return advancedAnalysis;
+	public boolean classAnalysis() {
+		return classAnalysis;
+	}
+
+	public boolean packageAnalysis() {
+		return packageAnalysis;
 	}
 
 	public boolean outputToCSV() {
@@ -60,10 +64,6 @@ public class Flags {
 
 	public boolean calculateCyclomatic() {
 		return calculateCyclomatic;
-	}
-
-	public boolean analyzePackages() {
-		return analyzePackages;
 	}
 
 	public List<String> getJS() throws IOException {

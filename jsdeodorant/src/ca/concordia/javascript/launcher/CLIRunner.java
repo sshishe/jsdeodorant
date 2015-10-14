@@ -45,7 +45,8 @@ public class CLIRunner extends Runner {
 	public AnalysisOptions createAnalysisOptions() {
 		try {
 			setAnalysisOptions(new AnalysisOptions());
-			getAnalysisOptions().setAdvancedAnalysis(flags.advancedAnalysis());
+			getAnalysisOptions().setClassAnalysis(flags.classAnalysis());
+			getAnalysisOptions().setPackageAnalysis(flags.packageAnalysis());
 			getAnalysisOptions().setOutputToCSV(flags.outputToCSV());
 			getAnalysisOptions().setCalculateCyclomatic(flags.calculateCyclomatic());
 			getAnalysisOptions().setLogDisabled(flags.disableLog());

@@ -11,16 +11,16 @@ import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
-import ca.concordia.javascript.analysis.abstraction.Package;
+import ca.concordia.javascript.analysis.abstraction.JSPackage;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 
 public class ExperimentOutput {
 	static Logger log = Logger.getLogger(ExperimentOutput.class.getName());
-	private Package analysisInstance;
+	private JSPackage analysisInstance;
 	private CSVFileWriter csvWriter;
 
-	public ExperimentOutput(Package analysisInstance) {
+	public ExperimentOutput(JSPackage analysisInstance) {
 		this.analysisInstance = analysisInstance;
 	}
 

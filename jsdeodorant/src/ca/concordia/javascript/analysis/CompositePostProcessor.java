@@ -2,6 +2,7 @@ package ca.concordia.javascript.analysis;
 
 import org.apache.log4j.Logger;
 
+import ca.concordia.javascript.analysis.abstraction.JSPackage;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
@@ -12,7 +13,8 @@ public class CompositePostProcessor {
 	static Logger log = Logger.getLogger(CompositePostProcessor.class.getName());
 	private static CSVFileWriter csvWriter;
 
-	public static void processFunctionDeclarations(Program program) {
+	public static void processFunctionDeclarationsToFindClasses(JSPackage packageInstance) {
+		Program program = packageInstance.getProgram();
 		csvWriter = new CSVFileWriter("clasees.csv");
 		String fileHeader = "Object creation, Function name, Obj Loc, Func Loc";
 		csvWriter.writeToFile(fileHeader.split(","));
@@ -24,6 +26,11 @@ public class CompositePostProcessor {
 				findFunctionDeclaration(objectCreation, program);
 			}
 		}
+	}
+
+	public static void processPackages(JSPackage packageInstance) {
+		Program program = packageInstance.getProgram();
+		packageInstance.setName("shahriar");
 	}
 
 	private static boolean findPredefinedClasses(Program program, ObjectCreation objectCreation) {
@@ -47,14 +54,5 @@ public class CompositePostProcessor {
 			}
 		}
 		return findMatch;
-	}
-
-	private static void writeEntriesToFile(ObjectCreation objectCreation, FunctionDeclaration functionDeclaration, String objectCreationAliasedName, String functionQualifiedName) {
-		StringBuilder entry = new StringBuilder(objectCreationAliasedName).append(",").append(functionQualifiedName);
-		entry.append(",");
-		entry.append(objectCreation.getNewExpressionTree().location.toString().replace(",", "-"));
-		entry.append(",");
-		entry.append(functionDeclaration.getFunctionDeclarationTree().location.toString().replace(",", "-"));
-		csvWriter.writeToFile(entry.toString().split(","));
 	}
 }
