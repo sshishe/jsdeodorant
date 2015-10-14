@@ -2,7 +2,7 @@ package ca.concordia.javascript.analysis;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.abstraction.JSPackage;
+import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
@@ -13,7 +13,7 @@ public class CompositePostProcessor {
 	static Logger log = Logger.getLogger(CompositePostProcessor.class.getName());
 	private static CSVFileWriter csvWriter;
 
-	public static void processFunctionDeclarationsToFindClasses(JSPackage packageInstance) {
+	public static void processFunctionDeclarationsToFindClasses(Module packageInstance) {
 		Program program = packageInstance.getProgram();
 		csvWriter = new CSVFileWriter("clasees.csv");
 		String fileHeader = "Object creation, Function name, Obj Loc, Func Loc";
@@ -28,9 +28,9 @@ public class CompositePostProcessor {
 		}
 	}
 
-	public static void processPackages(JSPackage packageInstance) {
-		Program program = packageInstance.getProgram();
-		packageInstance.setName("shahriar");
+	public static void processModules(Module module) {
+		Program program = module.getProgram();
+		module.setName("shahriar");
 	}
 
 	private static boolean findPredefinedClasses(Program program, ObjectCreation objectCreation) {

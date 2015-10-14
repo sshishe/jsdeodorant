@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 
 public class AnalysisOptions {
 	private boolean classAnalysis;
-	private boolean packageAnalysis;
+	private boolean moduleAnalysis;
 	private boolean calculateCyclomatic;
 	private boolean outputToCSV;
 	private boolean logDisabled;
@@ -22,12 +22,12 @@ public class AnalysisOptions {
 		this.classAnalysis = classAnlysis;
 	}
 	
-	public boolean hasPackageAnalysis() {
-		return packageAnalysis;
+	public boolean hasModuleAnalysis() {
+		return moduleAnalysis;
 	}
 
-	public void setPackageAnalysis(boolean packageAnalysis) {
-		this.packageAnalysis = packageAnalysis;
+	public void setModuleAnlysis(boolean moduleAnalysis) {
+		this.moduleAnalysis = moduleAnalysis;
 	}
 
 	public boolean isCalculateCyclomatic() {

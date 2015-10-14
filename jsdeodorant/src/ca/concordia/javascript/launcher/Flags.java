@@ -27,8 +27,8 @@ public class Flags {
 	@Option(name = "-calculate_cyclomatic", hidden = true, usage = "Enable calculation of cyclomatic complexity")
 	private boolean calculateCyclomatic = false;
 
-	@Option(name = "-package-analysis", hidden = true, usage = "Enable package analysis for Node style packaging")
-	private boolean packageAnalysis = false;
+	@Option(name = "-module-analysis", hidden = true, usage = "Enable module analysis for Node style packaging")
+	private boolean moduleAnalysis = false;
 
 	@Option(name = "-directory_path", hidden = true, usage = "Directory path for javascript project")
 	private String directoryPath;
@@ -46,8 +46,8 @@ public class Flags {
 		return classAnalysis;
 	}
 
-	public boolean packageAnalysis() {
-		return packageAnalysis;
+	public boolean moduleAnalysis() {
+		return moduleAnalysis;
 	}
 
 	public boolean outputToCSV() {

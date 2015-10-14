@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.abstraction.JSPackage;
+import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.util.ExperimentOutput;
@@ -45,10 +45,10 @@ public class AnalysisEngine {
 		this.externs = externs;
 	}
 
-	public List<JSPackage> run(AnalysisOptions analysisOption) {
+	public List<Module> run(AnalysisOptions analysisOption) {
 		Result result = compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
-		List<JSPackage> packages = new ArrayList<>();
+		List<Module> modules = new ArrayList<>();
 		if (analysisOption.isOutputToCSV()) {
 			ExperimentOutput.createAndClearFolder("log/functions");
 			ExperimentOutput.createAndClearFolder("log/classes");
@@ -62,18 +62,18 @@ public class AnalysisEngine {
 			for (ParseTree sourceElement : programTree.sourceElements) {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
-			packages.add(new JSPackage(program, sourceFile, scriptAnalyzer.getMessages()));
+			modules.add(new Module(program, sourceFile, scriptAnalyzer.getMessages()));
 		}
 
-		for (JSPackage packageInstance : packages) {
+		for (Module module : modules) {
 			if (analysisOption.hasClassAnlysis())
-				CompositePostProcessor.processFunctionDeclarationsToFindClasses(packageInstance);
+				CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
-			if (analysisOption.hasPackageAnalysis())
-				CompositePostProcessor.processPackages(packageInstance);
+			if (analysisOption.hasModuleAnalysis())
+				CompositePostProcessor.processModules(module);
 
 			if (analysisOption.isCalculateCyclomatic()) {
-				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(packageInstance.getProgram());
+				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(module.getProgram());
 
 				// OOPMetrics oopMetrics = new OOPMetrics(program);
 				for (Map.Entry<String, Integer> entry : cyclomaticComplexity.calculate().entrySet()) {
@@ -82,15 +82,15 @@ public class AnalysisEngine {
 			}
 
 			if (analysisOption.isOutputToCSV()) {
-				ExperimentOutput experimentOutput = new ExperimentOutput(packageInstance);
+				ExperimentOutput experimentOutput = new ExperimentOutput(module);
 				experimentOutput.functionSignatures();
 				experimentOutput.uniqueClassDeclaration();
 			}
-			AnalysisResult.addPackageInstance(packageInstance);
+			AnalysisResult.addPackageInstance(module);
 		}
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
-		return packages;
+		return modules;
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {

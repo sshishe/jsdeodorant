@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import ca.concordia.javascript.analysis.AnalysisOptions;
-import ca.concordia.javascript.analysis.abstraction.JSPackage;
+import ca.concordia.javascript.analysis.abstraction.Module;
 
 public class TestRunner extends Runner {
 	public TestRunner() {
@@ -36,7 +36,7 @@ public class TestRunner extends Runner {
 		return getAnalysisOptions();
 	}
 
-	public JSPackage performActionsForTest() {
+	public Module performActionsForTest() {
 		try {
 			return super.performActions().get(0);
 		} catch (IOException e) {

@@ -5,22 +5,23 @@ import java.util.List;
 
 import com.google.javascript.jscomp.SourceFile;
 
-public class JSPackage {
+public class Module {
 	private String name;
 	private List<String> messages;
 	private Program program;
 	private SourceFile sourceFile;
-	private PackageType packageType;
+	private ModuleType moduleType;
 
-	public JSPackage(Program program, SourceFile sourceFile, List<String> messages) {
+	public Module(Program program, SourceFile sourceFile, List<String> messages) {
 		this.program = program;
 		this.sourceFile = sourceFile;
+		this.moduleType = ModuleType.File;
 		messages = new ArrayList<>();
 	}
 
-	public JSPackage(String packageName, PackageType packageType, Program program, SourceFile sourceFile, List<String> messages) {
-		this.name = packageName;
-		this.packageType = packageType;
+	public Module(String moduleName, ModuleType moduleType, Program program, SourceFile sourceFile, List<String> messages) {
+		this.name = moduleName;
+		this.moduleType = moduleType;
 		this.program = program;
 		this.sourceFile = sourceFile;
 		messages = new ArrayList<>();
@@ -50,11 +51,11 @@ public class JSPackage {
 		this.sourceFile = sourceFile;
 	}
 
-	public PackageType getPackageType() {
-		return packageType;
+	public ModuleType getPackageType() {
+		return moduleType;
 	}
 
-	public void setPackageType(PackageType packageType) {
-		this.packageType = packageType;
+	public void setPackageType(ModuleType packageType) {
+		this.moduleType = packageType;
 	}
 }

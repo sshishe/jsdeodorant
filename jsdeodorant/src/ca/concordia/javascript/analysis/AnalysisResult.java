@@ -3,10 +3,10 @@ package ca.concordia.javascript.analysis;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.concordia.javascript.analysis.abstraction.JSPackage;
+import ca.concordia.javascript.analysis.abstraction.Module;
 
 public final class AnalysisResult {
-	private static List<JSPackage> packageInstances = new ArrayList<>();
+	private static List<Module> packageInstances = new ArrayList<>();
 	private static int totalNumberOfClasses = 0;
 	private static int totalNumberOfFiles = 0;
 
@@ -22,11 +22,11 @@ public final class AnalysisResult {
 		AnalysisResult.totalNumberOfClasses += increment;
 	}
 
-	public static void addPackageInstance(JSPackage instance) {
+	public static void addPackageInstance(Module instance) {
 		packageInstances.add(instance);
 	}
 
-	public static List<JSPackage> getPackageInstance() {
+	public static List<Module> getPackageInstance() {
 		return packageInstances;
 	}
 

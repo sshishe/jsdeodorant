@@ -1,7 +1,7 @@
 package ca.concordia.javascript.analysis.abstraction;
 
-public enum PackageType {
+public enum ModuleType {
 	File, 
-	AMD, 
-	Common
+	Common,
+	AMD
 }
