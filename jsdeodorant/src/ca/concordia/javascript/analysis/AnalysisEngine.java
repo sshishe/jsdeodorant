@@ -65,12 +65,12 @@ public class AnalysisEngine {
 			packages.add(new Package(program, sourceFile, scriptAnalyzer.getMessages()));
 		}
 
-		for (Package analysisInstance : packages) {
+		for (Package packageInstance : packages) {
 			if (analysisOption.isAdvancedAnalysis())
-				CompositePostProcessor.processFunctionDeclarations(analysisInstance.getProgram());
+				CompositePostProcessor.processFunctionDeclarations(packageInstance.getProgram());
 
 			if (analysisOption.isCalculateCyclomatic()) {
-				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(analysisInstance.getProgram());
+				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(packageInstance.getProgram());
 
 				// OOPMetrics oopMetrics = new OOPMetrics(program);
 				for (Map.Entry<String, Integer> entry : cyclomaticComplexity.calculate().entrySet()) {
@@ -79,11 +79,11 @@ public class AnalysisEngine {
 			}
 
 			if (analysisOption.isOutputToCSV()) {
-				ExperimentOutput experimentOutput = new ExperimentOutput(analysisInstance);
+				ExperimentOutput experimentOutput = new ExperimentOutput(packageInstance);
 				experimentOutput.functionSignatures();
 				experimentOutput.uniqueClassDeclaration();
 			}
-			AnalysisResult.addAnalysisInstance(analysisInstance);
+			AnalysisResult.addAnalysisInstance(packageInstance);
 		}
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
