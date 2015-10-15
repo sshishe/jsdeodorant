@@ -11,12 +11,14 @@ public class Module {
 	private Program program;
 	private SourceFile sourceFile;
 	private ModuleType moduleType;
+	private List<Module> dependencies;
 
 	public Module(Program program, SourceFile sourceFile, List<String> messages) {
 		this.program = program;
 		this.sourceFile = sourceFile;
 		this.moduleType = ModuleType.File;
 		messages = new ArrayList<>();
+		this.dependencies = new ArrayList<>();
 	}
 
 	public Module(String moduleName, ModuleType moduleType, Program program, SourceFile sourceFile, List<String> messages) {
@@ -25,6 +27,7 @@ public class Module {
 		this.program = program;
 		this.sourceFile = sourceFile;
 		messages = new ArrayList<>();
+		this.dependencies = new ArrayList<>();
 	}
 
 	public String getName() {
@@ -57,5 +60,21 @@ public class Module {
 
 	public void setPackageType(ModuleType packageType) {
 		this.moduleType = packageType;
+	}
+
+	public List<Module> getDependencies() {
+		return dependencies;
+	}
+
+	public void setDependencies(List<Module> dependencies) {
+		this.dependencies = dependencies;
+	}
+
+	public void addDependency(Module dependency) {
+		this.dependencies.add(dependency);
+	}
+
+	public void addDependency(List<Module> dependencies) {
+		this.dependencies.addAll(dependencies);
 	}
 }
