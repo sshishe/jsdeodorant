@@ -17,7 +17,7 @@ public class Module {
 		this.program = program;
 		this.sourceFile = sourceFile;
 		this.moduleType = ModuleType.File;
-		messages = new ArrayList<>();
+		this.messages = messages;
 		this.dependencies = new ArrayList<>();
 	}
 
@@ -26,7 +26,7 @@ public class Module {
 		this.moduleType = moduleType;
 		this.program = program;
 		this.sourceFile = sourceFile;
-		messages = new ArrayList<>();
+		this.messages = messages;
 		this.dependencies = new ArrayList<>();
 	}
 
