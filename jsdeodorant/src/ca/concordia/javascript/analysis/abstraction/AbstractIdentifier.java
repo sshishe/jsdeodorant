@@ -35,6 +35,8 @@ public abstract class AbstractIdentifier {
 		} else if (token instanceof LiteralToken) {
 			identifierName = token.asLiteral().value;
 		}
+		else
+			identifierName = token.toString();
 	}
 
 	public AbstractIdentifier(ParseTree node) {
@@ -98,7 +100,8 @@ public abstract class AbstractIdentifier {
 			StringBuilder arguments = new StringBuilder("");
 			for (ParseTree argument : currentNode.asArgumentList().arguments) {
 				arguments.append(extractIdentifierName(argument));
-				if (currentNode.asArgumentList().arguments.indexOf(argument) != currentNode.asArgumentList().arguments.size() - 1)
+				if (currentNode.asArgumentList().arguments
+						.indexOf(argument) != currentNode.asArgumentList().arguments.size() - 1)
 					arguments.append(",");
 			}
 			return arguments.toString();

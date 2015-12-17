@@ -5,8 +5,12 @@ import org.apache.log4j.Logger;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
+import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.util.CSVFileWriter;
+import ca.concordia.javascript.analysis.util.InstanceChecker;
+import ca.concordia.javascript.analysis.util.InstanceOfRequireStatement;
 import ca.concordia.javascript.analysis.util.PredefinedJSClasses;
 
 public class CompositePostProcessor {
@@ -29,7 +33,15 @@ public class CompositePostProcessor {
 	}
 
 	public static void processModules(Module module) {
+		InstanceChecker assignmentInstanceChecker = new InstanceOfRequireStatement();
 		Program program = module.getProgram();
+		for (SourceElement element : program.getSourceElements()) {
+			if (element instanceof Statement) {
+				Statement statement = (Statement) element;
+				if (assignmentInstanceChecker.instanceOf(statement.getStatement()))
+					log.warn(element);
+			}
+		}
 		module.setName("shahriar");
 	}
 

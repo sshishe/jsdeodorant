@@ -8,6 +8,7 @@ import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
+import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
@@ -41,6 +42,11 @@ public class IdentifierHelper {
 			return new CompositeIdentifier(token, composite);
 	}
 
+	public static AbstractIdentifier getIdentifier(Token token) {
+		return new PlainIdentifier(token);
+
+	}
+
 	public static AbstractIdentifier getIdentifier(ParseTree node, AbstractIdentifier composite) {
 		AbstractIdentifier identifier;
 		if (node instanceof LiteralExpressionTree) {
@@ -66,13 +72,15 @@ public class IdentifierHelper {
 				identifier = new PlainIdentifier(node);
 			else
 				identifier = composite;
-			return getIdentifier(node.asMemberExpression().operand, new CompositeIdentifier(node.asMemberExpression().operand, identifier));
+			return getIdentifier(node.asMemberExpression().operand, new CompositeIdentifier(node
+					.asMemberExpression().operand, identifier));
 		} else if (node instanceof MemberLookupExpressionTree) {
 			if (composite == null)
 				identifier = new PlainIdentifier(node);
 			else
 				identifier = composite;
-			return getIdentifier(node.asMemberLookupExpression().operand, new CompositeIdentifier(node.asMemberLookupExpression().operand, identifier));
+			return getIdentifier(node.asMemberLookupExpression().operand, new CompositeIdentifier(node
+					.asMemberLookupExpression().operand, identifier));
 		} else if (node instanceof ParenExpressionTree) {
 			identifier = new PlainIdentifier(node);
 			//return new CompositeIdentifier(node.asParenExpression().expression, identifier);
