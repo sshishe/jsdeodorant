@@ -70,7 +70,7 @@ public class AnalysisEngine {
 				CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
 			if (analysisOption.hasModuleAnalysis())
-				CompositePostProcessor.processModules(module);
+				CompositePostProcessor.processModules(module, modules);
 
 			if (analysisOption.isCalculateCyclomatic()) {
 				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(module.getProgram());

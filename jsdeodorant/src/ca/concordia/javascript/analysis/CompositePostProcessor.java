@@ -1,5 +1,7 @@
 package ca.concordia.javascript.analysis;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.Module;
@@ -9,8 +11,7 @@ import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.util.CSVFileWriter;
-import ca.concordia.javascript.analysis.util.InstanceChecker;
-import ca.concordia.javascript.analysis.util.InstanceOfRequireStatement;
+import ca.concordia.javascript.analysis.util.ModuleHelper;
 import ca.concordia.javascript.analysis.util.PredefinedJSClasses;
 
 public class CompositePostProcessor {
@@ -32,13 +33,13 @@ public class CompositePostProcessor {
 		}
 	}
 
-	public static void processModules(Module module) {
-		InstanceChecker assignmentInstanceChecker = new InstanceOfRequireStatement();
+	public static void processModules(Module module, List<Module> modules) {
+		ModuleHelper moduleHelper = new ModuleHelper();
 		Program program = module.getProgram();
 		for (SourceElement element : program.getSourceElements()) {
 			if (element instanceof Statement) {
 				Statement statement = (Statement) element;
-				if (assignmentInstanceChecker.instanceOf(statement.getStatement()))
+				if (moduleHelper.hasRequireStatement(module, modules, statement.getStatement()))
 					log.warn(element);
 			}
 		}
