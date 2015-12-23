@@ -66,7 +66,7 @@ public class ExperimentOutput {
 					classes.add(creation.getClassDeclaration());
 					writeClassDeclarationToFile(creation);
 					log.info(creation.getClassName() + " " + creation.getClassDeclaration()
-							.getFunctionDeclarationTree().location + "And the invocation is at: " + creation
+							.getFunctionDeclarationTree().location + " And the invocation is at: " + creation
 									.getNewExpressionTree().location);
 				}
 			}

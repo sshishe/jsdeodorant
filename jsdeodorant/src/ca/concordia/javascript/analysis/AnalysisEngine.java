@@ -66,11 +66,11 @@ public class AnalysisEngine {
 		}
 
 		for (Module module : modules) {
-			if (analysisOption.hasClassAnlysis())
-				CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
-
 			if (analysisOption.hasModuleAnalysis())
 				CompositePostProcessor.processModules(module, modules);
+
+			if (analysisOption.hasClassAnlysis())
+				CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
 			if (analysisOption.isCalculateCyclomatic()) {
 				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(module.getProgram());

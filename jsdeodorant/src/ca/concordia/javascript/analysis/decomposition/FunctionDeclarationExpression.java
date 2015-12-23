@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
+import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
@@ -96,8 +97,20 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 					return getName(publicIdentifier);
 				else
 					return getNamespace() + "." + getName(publicIdentifier);
-
+		if (hasModuleInformation())
+			refineModuleInformation();
 		return getName(publicIdentifier);
+	}
+
+	private void refineModuleInformation() {
+		this.asIdentifiableExpression().setPublicIdentifier(publicIdentifier.asCompositeIdentifier().getMostRightPart());
+	}
+
+	private boolean hasModuleInformation() {
+		if (publicIdentifier instanceof CompositeIdentifier)
+			if (publicIdentifier.asCompositeIdentifier().getMostLeftPart().equals("exports") || publicIdentifier.asCompositeIdentifier().getLeftPart().toString().contains("module.exports"))
+				return true;
+		return false;
 	}
 
 	public AbstractIdentifier getPublicIdentifier() {

@@ -1,41 +1,36 @@
 package ca.concordia.javascript.analysis.abstraction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.javascript.jscomp.SourceFile;
 
 public class Module {
-	private String name;
 	private List<String> messages;
 	private Program program;
 	private SourceFile sourceFile;
 	private ModuleType moduleType;
-	private List<Module> dependencies;
+	private Map<String, Module> dependencies;
+	private List<Export> exports;
 
 	public Module(Program program, SourceFile sourceFile, List<String> messages) {
 		this.program = program;
 		this.sourceFile = sourceFile;
 		this.moduleType = ModuleType.File;
 		this.messages = messages;
-		this.dependencies = new ArrayList<>();
+		this.dependencies = new HashMap<>();
+		this.exports = new ArrayList<>();
 	}
 
-	public Module(String moduleName, ModuleType moduleType, Program program, SourceFile sourceFile, List<String> messages) {
-		this.name = moduleName;
+	public Module(ModuleType moduleType, Program program, SourceFile sourceFile, List<String> messages) {
 		this.moduleType = moduleType;
 		this.program = program;
 		this.sourceFile = sourceFile;
 		this.messages = messages;
-		this.dependencies = new ArrayList<>();
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		this.dependencies = new HashMap<>();
+		this.exports = new ArrayList<>();
 	}
 
 	public List<String> getMessages() {
@@ -62,19 +57,19 @@ public class Module {
 		this.moduleType = packageType;
 	}
 
-	public List<Module> getDependencies() {
+	public Map<String, Module> getDependencies() {
 		return dependencies;
 	}
 
-	public void setDependencies(List<Module> dependencies) {
-		this.dependencies = dependencies;
+	public void addDependency(String name, Module dependency) {
+		this.dependencies.put(name, dependency);
 	}
 
-	public void addDependency(Module dependency) {
-		this.dependencies.add(dependency);
+	public List<Export> getExports() {
+		return exports;
 	}
 
-	public void addDependency(List<Module> dependencies) {
-		this.dependencies.addAll(dependencies);
+	public void addExport(Export export) {
+		exports.add(export);
 	}
 }

@@ -59,13 +59,18 @@ public class CompositeIdentifier extends AbstractIdentifier {
 		return null;
 	}
 
-	public boolean removePart(PlainIdentifier partToDelete) {
-		//		AbstractIdentifier left = getLeftPart();
-		//		if (left instanceof PlainIdentifier)
-		//			if (left.equals(partToDelete))
-		//				
-		//		return false;
-		return false;
+	public PlainIdentifier getMostRightPart() {
+		if (rightPart instanceof PlainIdentifier) {
+			return new PlainIdentifier(rightPart.getNode());
+		} else {
+			AbstractIdentifier right = getRightPart();
+			while (!(right instanceof PlainIdentifier)) {
+				right = ((CompositeIdentifier) right).rightPart;
+				if (right instanceof PlainIdentifier)
+					return new PlainIdentifier(right.getNode());
+			}
+		}
+		return null;
 	}
 
 	public boolean equals(Object o) {

@@ -144,7 +144,7 @@ public class ObjectCreation extends Creation {
 			for (VariableDeclarationTree variableDeclaration : variableStatementTree.declarations.declarations) {
 				if (variableDeclaration.initializer == null)
 					continue;
-				// if new function() iife then continue, do not change the identifier
+				// if new function() IIFE then continue, do not change the identifier
 				if (variableDeclaration.initializer instanceof NewExpressionTree && variableDeclaration.initializer.asNewExpression().operand instanceof FunctionDeclarationTree)
 					continue;
 				if (IdentifierHelper.getIdentifier(variableDeclaration.lvalue).identifierName.equals(identifier.getMostLeftPart().identifierName))
@@ -152,7 +152,6 @@ public class ObjectCreation extends Creation {
 						return identifier.getRightPart();
 					else
 						return identifier;
-				//return new CompositeIdentifier(IdentifierHelper.getIdentifier(variableDeclaration.initializer), identifier.getRightPart());
 			}
 		} else if (statement.getStatement() instanceof ExpressionStatementTree) {
 			ExpressionStatementTree expression = statement.getStatement().asExpressionStatement();

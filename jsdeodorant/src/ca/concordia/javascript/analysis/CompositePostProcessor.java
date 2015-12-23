@@ -1,25 +1,30 @@
 package ca.concordia.javascript.analysis;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
+import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.Statement;
+import ca.concordia.javascript.analysis.module.ExportHelper;
+import ca.concordia.javascript.analysis.module.RequireHelper;
 import ca.concordia.javascript.analysis.util.CSVFileWriter;
-import ca.concordia.javascript.analysis.util.ModuleHelper;
 import ca.concordia.javascript.analysis.util.PredefinedJSClasses;
 
 public class CompositePostProcessor {
 	static Logger log = Logger.getLogger(CompositePostProcessor.class.getName());
 	private static CSVFileWriter csvWriter;
 
-	public static void processFunctionDeclarationsToFindClasses(Module packageInstance) {
-		Program program = packageInstance.getProgram();
+	public static void processFunctionDeclarationsToFindClasses(Module module) {
+		Program program = module.getProgram();
 		csvWriter = new CSVFileWriter("clasees.csv");
 		String fileHeader = "Object creation, Function name, Obj Loc, Func Loc";
 		csvWriter.writeToFile(fileHeader.split(","));
@@ -28,22 +33,22 @@ public class CompositePostProcessor {
 			if (objectCreation.getClassName() == null || objectCreation.isFunctionObject())
 				continue;
 			if (!findPredefinedClasses(program, objectCreation)) {
-				findFunctionDeclaration(objectCreation, program);
+				findFunctionDeclaration(objectCreation, module);
 			}
 		}
 	}
 
 	public static void processModules(Module module, List<Module> modules) {
-		ModuleHelper moduleHelper = new ModuleHelper();
+		RequireHelper requireHelper = new RequireHelper(module, modules);
+		ExportHelper exportHelper = new ExportHelper(module, modules);
 		Program program = module.getProgram();
 		for (SourceElement element : program.getSourceElements()) {
 			if (element instanceof Statement) {
 				Statement statement = (Statement) element;
-				if (moduleHelper.hasRequireStatement(module, modules, statement.getStatement()))
-					log.warn(element);
+				requireHelper.extract(statement.getStatement());
+				exportHelper.extract(statement.getStatement());
 			}
 		}
-		module.setName("shahriar");
 	}
 
 	private static boolean findPredefinedClasses(Program program, ObjectCreation objectCreation) {
@@ -54,18 +59,27 @@ public class CompositePostProcessor {
 		return false;
 	}
 
-	private static boolean findFunctionDeclaration(ObjectCreation objectCreation, Program program) {
+	private static boolean findFunctionDeclaration(ObjectCreation objectCreation, Module module) {
 		boolean findMatch = false;
-		for (FunctionDeclaration functionDeclaration : program.getFunctionDeclarationList()) {
-			String functionQualifiedName = functionDeclaration.getQualifiedName();
-			//log.info("Object creation name is: " + objectCreation.getAliasedIdentifier().toString() + " And function identifier is: " + functionQualifiedName);
-			if (functionQualifiedName.equals(objectCreation.getIdentifier().toString())) {
-				//if (functionQualifiedName.equals(objectCreation.getIdentifier().toString())) {
-				functionDeclaration.setClassDeclaration(true);
-				objectCreation.setClassDeclaration(functionDeclaration);
-				return true;
-			}
+		for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
+			findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getIdentifier(), functionDeclaration);
+		}
+		for (Entry<String, Module> dependency : module.getDependencies().entrySet()) {
+			if (objectCreation.getIdentifier() instanceof CompositeIdentifier && objectCreation.getIdentifier().asCompositeIdentifier().getMostLeftPart().equals(dependency.getKey()))
+				for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
+					findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getIdentifier().asCompositeIdentifier().getRightPart(), functionDeclaration);
+				}
 		}
 		return findMatch;
+	}
+
+	private static boolean matchFunctionDeclarationAndObjectCreation(ObjectCreation objectCreation, AbstractIdentifier aliasedObjectCreation, FunctionDeclaration functionDeclaration) {
+		String functionQualifiedName = functionDeclaration.getQualifiedName();
+		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
+			functionDeclaration.setClassDeclaration(true);
+			objectCreation.setClassDeclaration(functionDeclaration);
+			return true;
+		}
+		return false;
 	}
 }

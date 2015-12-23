@@ -1,8 +1,10 @@
-package ca.concordia.javascript.analysis.util;
+package ca.concordia.javascript.analysis.module;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -13,23 +15,29 @@ import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableStatementTree;
 
+import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Module;
+import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
-public class ModuleHelper {
-	static Logger log = Logger.getLogger(ModuleHelper.class.getName());
+public class RequireHelper {
+	static Logger log = Logger.getLogger(RequireHelper.class.getName());
+	private AbstractIdentifier requireIdentifier;
 	private File moduleFile;
 	private Module currentModule;
 	private List<Module> modules;
 
-	public boolean hasRequireStatement(Module module, List<Module> modules, ParseTree expression) {
+	public RequireHelper(Module module, List<Module> modules) {
 		this.currentModule = module;
 		this.modules = modules;
+	}
+
+	public void extract(ParseTree expression) {
 		if (expression instanceof VariableStatementTree) {
 			VariableStatementTree variableStatement = expression.asVariableStatement();
 			for (VariableDeclarationTree variableDeclaration : variableStatement.declarations.declarations) {
 				if (checkIfInitializerIsRequireStatement(variableDeclaration)) {
 					matchModules();
-					return true;
+					return;
 				}
 			}
 		}
@@ -38,20 +46,18 @@ public class ModuleHelper {
 			if (expressionStatement.expression instanceof BinaryOperatorTree)
 				if (checkIfRValueIsRequireStatement(expressionStatement.expression.asBinaryOperator())) {
 					matchModules();
-					return true;
+					return;
 				}
 		}
-		return false;
 	}
 
 	private void matchModules() {
 		for (Module module : modules) {
 			try {
 				if (module.getSourceFile().getOriginalPath().equals(moduleFile.getCanonicalFile().getPath())) {
-					currentModule.addDependency(module);
+					currentModule.addDependency(requireIdentifier.toString(), module);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -60,13 +66,21 @@ public class ModuleHelper {
 	private boolean checkIfRValueIsRequireStatement(BinaryOperatorTree binaryOperator) {
 		if (!IdentifierHelper.getIdentifier(binaryOperator.operator).equals("="))
 			return false;
-		return checkIfCallExpressionIsRequireStatement(binaryOperator.right);
+		if (checkIfCallExpressionIsRequireStatement(binaryOperator.right)) {
+			requireIdentifier = IdentifierHelper.getIdentifier(binaryOperator.left);
+			return true;
+		}
+		return false;
 	}
 
 	private boolean checkIfInitializerIsRequireStatement(VariableDeclarationTree variableDeclaration) {
 		if (variableDeclaration.initializer == null)
 			return false;
-		return checkIfCallExpressionIsRequireStatement(variableDeclaration.initializer);
+		if (checkIfCallExpressionIsRequireStatement(variableDeclaration.initializer)) {
+			requireIdentifier = IdentifierHelper.getIdentifier(variableDeclaration.lvalue);
+			return true;
+		}
+		return false;
 	}
 
 	private boolean checkIfCallExpressionIsRequireStatement(ParseTree node) {
