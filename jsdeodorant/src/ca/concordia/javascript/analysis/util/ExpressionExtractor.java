@@ -394,7 +394,7 @@ public class ExpressionExtractor {
 		}
 
 		else if (element instanceof ArgumentListTree) {
-			ArgumentListTree argumentList = element.asArgumentList();
+			ArgumentListTree argumentList = ((ArgumentListTree) element);
 
 			for (ParseTree argument : argumentList.arguments) {
 				expressionList.addAll(getExpressions(argument));

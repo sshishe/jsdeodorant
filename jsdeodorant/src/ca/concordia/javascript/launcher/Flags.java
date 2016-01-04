@@ -1,6 +1,5 @@
 package ca.concordia.javascript.launcher;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,9 +9,6 @@ import org.apache.log4j.Logger;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-
-import com.google.common.base.Strings;
-import com.google.common.io.Files;
 
 import ca.concordia.javascript.analysis.util.FileUtil;
 

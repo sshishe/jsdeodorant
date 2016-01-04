@@ -34,8 +34,7 @@ public abstract class AbstractIdentifier {
 			identifierName = token.asIdentifier().value;
 		} else if (token instanceof LiteralToken) {
 			identifierName = token.asLiteral().value;
-		}
-		else
+		} else
 			identifierName = token.toString();
 	}
 
@@ -98,10 +97,10 @@ public abstract class AbstractIdentifier {
 				return "new " + extractIdentifierName(newExpression.operand) + "()";
 		} else if (currentNode instanceof ArgumentListTree) {
 			StringBuilder arguments = new StringBuilder("");
-			for (ParseTree argument : currentNode.asArgumentList().arguments) {
+			ArgumentListTree argumentsListTree = ((ArgumentListTree) currentNode);
+			for (ParseTree argument : argumentsListTree.arguments) {
 				arguments.append(extractIdentifierName(argument));
-				if (currentNode.asArgumentList().arguments
-						.indexOf(argument) != currentNode.asArgumentList().arguments.size() - 1)
+				if (argumentsListTree.arguments.indexOf(argument) != argumentsListTree.arguments.size() - 1)
 					arguments.append(",");
 			}
 			return arguments.toString();

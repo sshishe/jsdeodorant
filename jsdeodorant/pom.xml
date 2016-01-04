@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>com.google.javascript</groupId>
 			<artifactId>closure-compiler</artifactId>
-			<version>v20141215</version>
+			<version>v20151216</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
