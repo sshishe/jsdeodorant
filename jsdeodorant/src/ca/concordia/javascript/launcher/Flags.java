@@ -14,6 +14,8 @@ import org.kohsuke.args4j.Option;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
 
+import ca.concordia.javascript.analysis.util.FileUtil;
+
 public class Flags {
 	static Logger logger = Logger.getLogger(Flags.class.getName());
 	public CmdLineParser parser = new CmdLineParser(this);
@@ -74,20 +76,7 @@ public class Flags {
 	}
 
 	private List<String> getFilesInDirectory() throws FileNotFoundException {
-		List<String> jsFiles = new ArrayList<>();
-		if (!Strings.isNullOrEmpty(directoryPath)) {
-			File rootDir = new File(directoryPath);
-
-			if (!rootDir.exists())
-				throw new FileNotFoundException("The directory path is not valid");
-
-			for (File f : Files.fileTreeTraverser().preOrderTraversal(rootDir)) {
-				if (f.isFile() && Files.getFileExtension(f.toPath().toString()).toLowerCase().equals("js"))
-					jsFiles.add(f.toPath().toString());
-			}
-			return jsFiles;
-		}
-		return null;
+		return FileUtil.getFilesInDirectory(directoryPath);
 	}
 
 	public List<String> getExterns() {

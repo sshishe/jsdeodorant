@@ -1,10 +1,13 @@
 package ca.concordia.javascript.launcher;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import ca.concordia.javascript.analysis.AnalysisOptions;
 import ca.concordia.javascript.analysis.abstraction.Module;
+import ca.concordia.javascript.analysis.util.FileUtil;
 
 public class TestRunner extends Runner {
 	public TestRunner() {
@@ -22,13 +25,22 @@ public class TestRunner extends Runner {
 		getAnalysisOptions().setClassAnalysis(state);
 	}
 
-	public void setJsFile(String jsFilej) {
-		getAnalysisOptions().setJsFile(jsFilej);
+	public void setJsFile(String jsFile) {
+		getAnalysisOptions().setJsFile(jsFile);
+	}
+
+	public void setDirectoryPath(String jsDirectoryPath) {
+		try {
+			getAnalysisOptions().setJsFiles(FileUtil.getFilesInDirectory(jsDirectoryPath));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public AnalysisOptions createAnalysisOptions() {
 		setAnalysisOptions(new AnalysisOptions());
+		getAnalysisOptions().setModuleAnlysis(true);
 		getAnalysisOptions().setClassAnalysis(true);
 		getAnalysisOptions().setCalculateCyclomatic(false);
 		getAnalysisOptions().setOutputToCSV(false);
@@ -36,9 +48,19 @@ public class TestRunner extends Runner {
 		return getAnalysisOptions();
 	}
 
-	public Module performActionsForTest() {
+	public Module performActionsForModule() {
 		try {
 			return super.performActions().get(0);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public List<Module> performActionsForModules() {
+		try {
+			return super.performActions();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

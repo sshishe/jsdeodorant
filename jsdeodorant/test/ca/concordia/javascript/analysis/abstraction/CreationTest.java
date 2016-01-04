@@ -26,14 +26,14 @@ public class CreationTest {
 	@Test
 	public void testArrayWithNewKeyword() {
 		testRunner.setJsFile("test/abstraction/array-creation-new-keyword.js");
-		Module result = testRunner.performActionsForTest();
+		Module result = testRunner.performActionsForModule();
 		assertTrue(result.getProgram().getArrayCreationList().size() == 1);
 	}
 
 	@Test
 	public void testArrayLiteral() {
 		testRunner.setJsFile("test/abstraction/array-literal.js");
-		Module result = testRunner.performActionsForTest();
+		Module result = testRunner.performActionsForModule();
 		assertTrue(result.getProgram().getArrayLiteralCreationList().size() == 2);
 	}
 }

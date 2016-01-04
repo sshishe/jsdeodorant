@@ -62,7 +62,7 @@ public class CompositePostProcessor {
 	private static boolean findFunctionDeclaration(ObjectCreation objectCreation, Module module) {
 		boolean findMatch = false;
 		for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
-			findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getIdentifier(), functionDeclaration);
+			findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getAliasedIdentifier(), functionDeclaration);
 		}
 		for (Entry<String, Module> dependency : module.getDependencies().entrySet()) {
 			if (objectCreation.getIdentifier() instanceof CompositeIdentifier && objectCreation.getIdentifier().asCompositeIdentifier().getMostLeftPart().equals(dependency.getKey()))
