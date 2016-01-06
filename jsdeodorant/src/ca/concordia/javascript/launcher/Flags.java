@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.spi.StringArrayOptionHandler;
 
 import ca.concordia.javascript.analysis.util.FileUtil;
 
@@ -34,11 +35,14 @@ public class Flags {
 	@Option(name = "-disable_log", hidden = true, usage = "Enable logging mechanism")
 	private boolean disableLog = false;
 
-	@Option(name = "-js", usage = "The JavaScript filenames, From Google Closure Flags class")
+	@Option(name = "-js", usage = "The JavaScript filenames, From Google Closure Flags class", handler = StringArrayOptionHandler.class)
 	private List<String> js = new ArrayList<>();
 
-	@Option(name = "-externs", usage = "List of externs files to use in the compilation.")
+	@Option(name = "-externs", usage = "List of externs files to use in the compilation.", handler = StringArrayOptionHandler.class)
 	private List<String> externs = new ArrayList<>();
+
+	@Option(name = "-libraries", usage = "List of libraries to exclude when looking for classes.", handler = StringArrayOptionHandler.class)
+	private List<String> libraries = new ArrayList<>();
 
 	public boolean classAnalysis() {
 		return classAnalysis;
@@ -77,6 +81,10 @@ public class Flags {
 
 	public List<String> getExterns() {
 		return externs;
+	}
+
+	public List<String> getLibraries() {
+		return libraries;
 	}
 
 	public void parse(String[] args) throws CmdLineException {

@@ -66,11 +66,14 @@ public class AnalysisEngine {
 		}
 
 		for (Module module : modules) {
+			checkForBeingLibrary(module, analysisOption);
+
 			if (analysisOption.hasModuleAnalysis())
 				CompositePostProcessor.processModules(module, modules);
 
 			if (analysisOption.hasClassAnlysis())
-				CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
+				if (!module.isLibrary())
+					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
 			if (analysisOption.isCalculateCyclomatic()) {
 				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(module.getProgram());
@@ -88,9 +91,18 @@ public class AnalysisEngine {
 			}
 			AnalysisResult.addPackageInstance(module);
 		}
+		ExperimentOutput experimentOutput = new ExperimentOutput();
+		experimentOutput.aggregateReportForModule(modules);
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
 		return modules;
+	}
+
+	private void checkForBeingLibrary(Module module, AnalysisOptions analysisOption) {
+		if (analysisOption.getLibraries().size() > 0)
+			for (String library : analysisOption.getLibraries())
+				if (module.getSourceFile().getOriginalPath().contains(library))
+					module.setAsLibrary(true);
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {

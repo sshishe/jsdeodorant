@@ -12,6 +12,7 @@ public class Module {
 	private Program program;
 	private SourceFile sourceFile;
 	private ModuleType moduleType;
+	private boolean isLibrary;
 	private Map<String, Module> dependencies;
 	private List<Export> exports;
 
@@ -71,5 +72,13 @@ public class Module {
 
 	public void addExport(Export export) {
 		exports.add(export);
+	}
+
+	public boolean isLibrary() {
+		return isLibrary;
+	}
+
+	public void setAsLibrary(boolean isLibrary) {
+		this.isLibrary = isLibrary;
 	}
 }

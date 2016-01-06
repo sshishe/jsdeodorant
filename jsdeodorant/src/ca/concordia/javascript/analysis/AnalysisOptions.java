@@ -13,6 +13,7 @@ public class AnalysisOptions {
 	private String directoryPath;
 	private List<String> jsFiles;
 	private List<String> externs;
+	private List<String> libraries;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -21,7 +22,7 @@ public class AnalysisOptions {
 	public void setClassAnalysis(boolean classAnlysis) {
 		this.classAnalysis = classAnlysis;
 	}
-	
+
 	public boolean hasModuleAnalysis() {
 		return moduleAnalysis;
 	}
@@ -80,5 +81,13 @@ public class AnalysisOptions {
 
 	public void setExterns(List<String> externs) {
 		this.externs = externs;
+	}
+
+	public List<String> getLibraries() {
+		return libraries;
+	}
+
+	public void setLibraries(List<String> libraries) {
+		this.libraries = libraries;
 	}
 }

@@ -24,6 +24,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpression
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.UnaryExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableStatementTree;
@@ -72,15 +73,13 @@ public class IdentifierHelper {
 				identifier = new PlainIdentifier(node);
 			else
 				identifier = composite;
-			return getIdentifier(node.asMemberExpression().operand, new CompositeIdentifier(node
-					.asMemberExpression().operand, identifier));
+			return getIdentifier(node.asMemberExpression().operand, new CompositeIdentifier(node.asMemberExpression().operand, identifier));
 		} else if (node instanceof MemberLookupExpressionTree) {
 			if (composite == null)
 				identifier = new PlainIdentifier(node);
 			else
 				identifier = composite;
-			return getIdentifier(node.asMemberLookupExpression().operand, new CompositeIdentifier(node
-					.asMemberLookupExpression().operand, identifier));
+			return getIdentifier(node.asMemberLookupExpression().operand, new CompositeIdentifier(node.asMemberLookupExpression().operand, identifier));
 		} else if (node instanceof ParenExpressionTree) {
 			identifier = new PlainIdentifier(node);
 			//return new CompositeIdentifier(node.asParenExpression().expression, identifier);
@@ -104,6 +103,8 @@ public class IdentifierHelper {
 		} else if (node instanceof ConditionalExpressionTree) {
 			return new PlainIdentifier(node);
 		} else if (node instanceof ObjectLiteralExpressionTree) {
+			return new PlainIdentifier(node);
+		} else if (node instanceof UnaryExpressionTree) {
 			return new PlainIdentifier(node);
 		} else {
 			throw new UnsupportedOperationException(node.getClass() + " is not supported as an identifier");
