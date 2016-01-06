@@ -63,11 +63,7 @@ public class IdentifierHelper {
 			else
 				return composite;
 		} else if (node instanceof NewExpressionTree) {
-			//			identifier = new PlainIdentifier(node);
-			//			if (node.equals(node.asNewExpression().operand))
-			//				return identifier;
-			//			return new CompositeIdentifier(node.asNewExpression().operand, identifier);
-			return getIdentifier(((NewExpressionTree) node).operand);
+			return getIdentifier(node.asNewExpression().operand);
 		} else if (node instanceof MemberExpressionTree) {
 			if (composite == null)
 				identifier = new PlainIdentifier(node);
@@ -82,16 +78,10 @@ public class IdentifierHelper {
 			return getIdentifier(node.asMemberLookupExpression().operand, new CompositeIdentifier(node.asMemberLookupExpression().operand, identifier));
 		} else if (node instanceof ParenExpressionTree) {
 			identifier = new PlainIdentifier(node);
-			//return new CompositeIdentifier(node.asParenExpression().expression, identifier);
 			return identifier;
 		} else if (node instanceof CallExpressionTree) {
-			if (composite == null)
-				identifier = new PlainIdentifier(node);
-			else
-				identifier = composite;
-			return new CompositeIdentifier(node.asCallExpression().operand, identifier);
+			return getIdentifier(node.asCallExpression().operand);
 		} else if (node instanceof FunctionDeclarationTree) {
-			//return StatementProcessor.getFunctionDeclarationExpression(variableDeclarationTree, null);
 			return new PlainIdentifier(node.asFunctionDeclaration());
 		} else if (node instanceof ArrayLiteralExpressionTree) {
 			if (composite == null)
@@ -109,7 +99,6 @@ public class IdentifierHelper {
 		} else {
 			throw new UnsupportedOperationException(node.getClass() + " is not supported as an identifier");
 		}
-		// return null;
 	}
 
 	public static boolean isCompositeIdentifier(AbstractIdentifier identifier) {
