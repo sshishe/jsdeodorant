@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis.util;
+package ca.concordia.javascript.language;
 
 public enum PredefinedClasses {
 	Anchor,

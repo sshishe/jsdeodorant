@@ -134,8 +134,8 @@ public abstract class AbstractIdentifier {
 		this.node = node;
 	}
 
-	public AbstractIdentifier asPlainIdentifier() {
-		return (AbstractIdentifier) this;
+	public PlainIdentifier asPlainIdentifier() {
+		return (PlainIdentifier) this;
 	}
 
 	public CompositeIdentifier asCompositeIdentifier() {

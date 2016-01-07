@@ -11,6 +11,7 @@ import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
+import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
@@ -18,8 +19,8 @@ import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.module.ExportHelper;
 import ca.concordia.javascript.analysis.module.RequireHelper;
 import ca.concordia.javascript.analysis.util.CSVFileWriter;
-import ca.concordia.javascript.analysis.util.IdentifierHelper;
-import ca.concordia.javascript.analysis.util.PredefinedClasses;
+import ca.concordia.javascript.language.PredefinedClasses;
+import ca.concordia.javascript.language.PredefinedFunctions;
 
 public class CompositePostProcessor {
 	static Logger log = Logger.getLogger(CompositePostProcessor.class.getName());
@@ -52,11 +53,10 @@ public class CompositePostProcessor {
 	public static void processFunctionInvocations(Module module) {
 		Program program = module.getProgram();
 		for (FunctionInvocation functionInvocation : program.getFunctionInvocationList()) {
-			AbstractIdentifier functionInvocationIdentifier = IdentifierHelper.getIdentifier(functionInvocation.getCallExpressionTree());
 
 			// First find declaration within the current module
 			for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
-				if (functionDeclaration.getName().contains(functionInvocationIdentifier.toString()))
+				if (functionDeclaration.getName().contains(functionInvocation.getIdentifier().toString()))
 					functionInvocation.setFunctionDeclaration(functionDeclaration);
 			}
 
@@ -64,14 +64,20 @@ public class CompositePostProcessor {
 			if (functionInvocation.getFunctionDeclaration() != null)
 				continue;
 
+			// Check if the function is predefined JavaScript function
+			functionInvocation.setPredefinedState(PredefinedFunctions.isItPredefined(functionInvocation.getPredefinedName()));
+
+			if (functionInvocation.isPredefined())
+				continue;
+
 			for (Map.Entry<String, Module> dependency : module.getDependencies().entrySet()) {
 				// If the invocation is not Composite, it may be not part of the exports or module.exports
-				if (!(functionInvocationIdentifier instanceof CompositeIdentifier))
+				if (!(functionInvocation.getIdentifier() instanceof CompositeIdentifier))
 					continue;
 
-				if (dependency.getKey().equals(functionInvocationIdentifier.asCompositeIdentifier().getMostLeftPart().toString())) {
+				if (dependency.getKey().equals(functionInvocation.getIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
 					for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
-						if (functionDeclaration.getName().contains(functionInvocationIdentifier.asCompositeIdentifier().getRightPart().toString()))
+						if (functionDeclaration.getName().contains(functionInvocation.getIdentifier().asCompositeIdentifier().getRightPart().toString()))
 							functionInvocation.setFunctionDeclaration(functionDeclaration);
 					}
 				}

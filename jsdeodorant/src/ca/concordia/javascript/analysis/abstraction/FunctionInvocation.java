@@ -8,17 +8,18 @@ import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.util.DebugHelper;
+import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
 public class FunctionInvocation {
+	private AbstractIdentifier identifier;
 	private CallExpressionTree callExpressionTree;
 	private AbstractIdentifier member;
 	private AbstractExpression operand;
 	private List<AbstractExpression> arguments;
 	private FunctionDeclaration functionDeclaration;
+	private boolean isPredefined = false;
 
-	public FunctionInvocation(CallExpressionTree callExpressionTree,
-			AbstractIdentifier member, AbstractExpression operand,
-			List<AbstractExpression> arguments) {
+	public FunctionInvocation(CallExpressionTree callExpressionTree, AbstractIdentifier member, AbstractExpression operand, List<AbstractExpression> arguments) {
 		this.callExpressionTree = callExpressionTree;
 		this.member = member;
 		this.operand = operand;
@@ -65,8 +66,7 @@ public class FunctionInvocation {
 	public boolean equals(Object other) {
 		if (other instanceof FunctionInvocation) {
 			FunctionInvocation toCompare = (FunctionInvocation) other;
-			return Objects.deepEquals(this.callExpressionTree,
-					toCompare.callExpressionTree);
+			return Objects.deepEquals(this.callExpressionTree, toCompare.callExpressionTree);
 		}
 		return false;
 	}
@@ -82,5 +82,26 @@ public class FunctionInvocation {
 
 	public void setFunctionDeclaration(FunctionDeclaration functionDeclaration) {
 		this.functionDeclaration = functionDeclaration;
+	}
+
+	public boolean isPredefined() {
+		return isPredefined;
+	}
+
+	public void setPredefinedState(boolean state) {
+		this.isPredefined = state;
+	}
+
+	public AbstractIdentifier getIdentifier() {
+		if (identifier == null)
+			identifier = IdentifierHelper.getIdentifier(this.callExpressionTree);
+		return identifier;
+	}
+
+	public String getPredefinedName() {
+		if (getIdentifier() instanceof CompositeIdentifier)
+			return getIdentifier().asCompositeIdentifier().getMostRightPart().toString();
+		else
+			return getIdentifier().toString();
 	}
 }

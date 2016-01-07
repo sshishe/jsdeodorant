@@ -94,8 +94,11 @@ public class ExperimentOutput {
 			int parameterSize = functionInvocation.getArguments().size();
 			String parametersName = getParametersName(functionInvocation.getArguments());
 			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(IdentifierHelper.getIdentifier(functionInvocation.getCallExpressionTree()).toString().replace(",", "-")).append(",").append(currentModule.isLibrary()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionInvocation.getCallExpressionTree().location.toString().replace(",", "-")).append(",");
-			if (functionInvocation.getFunctionDeclaration() != null)
+			if (functionInvocation.isPredefined())
+				lineToWrite.append(functionInvocation.getPredefinedName());
+			else if (functionInvocation.getFunctionDeclaration() != null)
 				lineToWrite.append(functionInvocation.getFunctionDeclaration().getFunctionDeclarationTree().location.toString().replace(",", "-"));
+
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
 

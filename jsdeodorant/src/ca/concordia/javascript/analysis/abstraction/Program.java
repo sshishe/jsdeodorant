@@ -9,7 +9,7 @@ import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.ObjectLiteralExpression;
-import ca.concordia.javascript.analysis.util.PredefinedClasses;
+import ca.concordia.javascript.language.PredefinedClasses;
 
 public class Program implements SourceContainer {
 	private static final Logger log = Logger.getLogger(Program.class.getName());
