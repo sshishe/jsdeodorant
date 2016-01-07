@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.util.DebugHelper;
 
 public class FunctionInvocation {
@@ -13,6 +14,7 @@ public class FunctionInvocation {
 	private AbstractIdentifier member;
 	private AbstractExpression operand;
 	private List<AbstractExpression> arguments;
+	private FunctionDeclaration functionDeclaration;
 
 	public FunctionInvocation(CallExpressionTree callExpressionTree,
 			AbstractIdentifier member, AbstractExpression operand,
@@ -72,5 +74,13 @@ public class FunctionInvocation {
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(callExpressionTree);
+	}
+
+	public FunctionDeclaration getFunctionDeclaration() {
+		return functionDeclaration;
+	}
+
+	public void setFunctionDeclaration(FunctionDeclaration functionDeclaration) {
+		this.functionDeclaration = functionDeclaration;
 	}
 }

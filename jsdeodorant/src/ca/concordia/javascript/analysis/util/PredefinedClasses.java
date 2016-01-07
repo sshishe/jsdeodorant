@@ -1,6 +1,6 @@
 package ca.concordia.javascript.analysis.util;
 
-public enum PredefinedJSClasses {
+public enum PredefinedClasses {
 	Anchor,
 	anchors,
 	Applet,
@@ -60,7 +60,7 @@ public enum PredefinedJSClasses {
 	Worker;
 	
 	public static boolean contains(String token) {
-		for (PredefinedJSClasses c : PredefinedJSClasses.values()) {
+		for (PredefinedClasses c : PredefinedClasses.values()) {
 			if (c.name().equals(token)) {
 				return true;
 			}

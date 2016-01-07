@@ -88,7 +88,8 @@ public class RequireHelper {
 		if (node instanceof CallExpressionTree) {
 			CallExpressionTree callExpression = node.asCallExpression();
 			if (IdentifierHelper.getIdentifier(callExpression.operand).equals("require")) {
-				moduleFile = normalizeModuleName(IdentifierHelper.getIdentifier(callExpression.arguments.arguments.get(0)).getIdentifierName());
+				if (callExpression.arguments.arguments.size() > 0)
+					moduleFile = normalizeModuleName(IdentifierHelper.getIdentifier(callExpression.arguments.arguments.get(0)).getIdentifierName());
 				if (moduleFile == null)
 					return false;
 				return true;

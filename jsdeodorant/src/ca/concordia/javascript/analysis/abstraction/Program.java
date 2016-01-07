@@ -9,7 +9,7 @@ import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.ObjectLiteralExpression;
-import ca.concordia.javascript.analysis.util.PredefinedJSClasses;
+import ca.concordia.javascript.analysis.util.PredefinedClasses;
 
 public class Program implements SourceContainer {
 	private static final Logger log = Logger.getLogger(Program.class.getName());
@@ -47,7 +47,7 @@ public class Program implements SourceContainer {
 				for (Creation creation : abstractFunctionFragment.getCreations())
 					if (creation instanceof ObjectCreation) {
 						ObjectCreation objectCreation = (ObjectCreation) creation;
-						if (!objectCreation.getOperandOfNew().toString().equalsIgnoreCase(PredefinedJSClasses.Array.toString()))
+						if (!objectCreation.getOperandOfNew().toString().equalsIgnoreCase(PredefinedClasses.Array.toString()))
 							objectCreations.add(objectCreation);
 					}
 			}
@@ -63,7 +63,7 @@ public class Program implements SourceContainer {
 				for (Creation creation : abstractFunctionFragment.getCreations())
 					if (creation instanceof ObjectCreation) {
 						ObjectCreation objectCreation = (ObjectCreation) creation;
-						if (objectCreation.getOperandOfNew().toString().equalsIgnoreCase(PredefinedJSClasses.Array.toString()))
+						if (objectCreation.getOperandOfNew().toString().equalsIgnoreCase(PredefinedClasses.Array.toString()))
 							objectCreations.add(objectCreation);
 					}
 			}

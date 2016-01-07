@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
+import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
@@ -28,13 +29,13 @@ public class ExperimentOutput {
 	public void functionSignatures() {
 		if (currentModule.getProgram().getFunctionDeclarationList().size() == 0)
 			return;
-		csvWriter = new CSVFileWriter("log/functions/" + getFileName() + ".csv");
+		csvWriter = new CSVFileWriter("log/functions/" + getFileName() + "-declarations.csv");
 		String fileHeader = "File path, function name, FunctionType, Is it a library,Declaration Location, Number of Params,Parameter Names, Number of Return Statements";
 		csvWriter.writeToFile(fileHeader.split(","));
 		for (FunctionDeclaration functionDeclaration : currentModule.getProgram().getFunctionDeclarationList()) {
 			StringBuilder lineToWrite = new StringBuilder();
 			int parameterSize = functionDeclaration.getParameters().size();
-			String parametersName = getParametersName(functionDeclaration);
+			String parametersName = getParametersName(functionDeclaration.getParameters());
 			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(functionDeclaration.getName().replace(",", "-")).append(",").append(functionDeclaration.getKind()).append(",").append(currentModule.isLibrary()).append(",").append(functionDeclaration.getFunctionDeclarationTree().location.toString().replace(",", "-")).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionDeclaration.getReturnStatementList().size());
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
@@ -82,21 +83,39 @@ public class ExperimentOutput {
 		}
 	}
 
+	public void functionInvocations() {
+		if (currentModule.getProgram().getFunctionInvocationList().size() == 0)
+			return;
+		csvWriter = new CSVFileWriter("log/functions/" + getFileName() + "-invocations.csv");
+		String fileHeader = "File path, function name, Is it a library, Number of Params,Parameter Names, Invocation Location, Declaration Location";
+		csvWriter.writeToFile(fileHeader.split(","));
+		for (FunctionInvocation functionInvocation : currentModule.getProgram().getFunctionInvocationList()) {
+			StringBuilder lineToWrite = new StringBuilder();
+			int parameterSize = functionInvocation.getArguments().size();
+			String parametersName = getParametersName(functionInvocation.getArguments());
+			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(IdentifierHelper.getIdentifier(functionInvocation.getCallExpressionTree()).toString().replace(",", "-")).append(",").append(currentModule.isLibrary()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionInvocation.getCallExpressionTree().location.toString().replace(",", "-")).append(",");
+			if (functionInvocation.getFunctionDeclaration() != null)
+				lineToWrite.append(functionInvocation.getFunctionDeclaration().getFunctionDeclarationTree().location.toString().replace(",", "-"));
+			csvWriter.writeToFile(lineToWrite.toString().split(","));
+		}
+
+	}
+
 	private void writeClassDeclarationToFile(ObjectCreation objectCreation) {
 		StringBuilder lineToWrite = new StringBuilder();
 		int parameterSize = objectCreation.getClassDeclaration().getParameters().size();
-		String parametersName = getParametersName(objectCreation.getClassDeclaration());
+		String parametersName = getParametersName(objectCreation.getClassDeclaration().getParameters());
 		lineToWrite.append(objectCreation.getClassName().replace(",", "-")).append(",").append(objectCreation.getClassDeclaration().getQualifiedName()).append(",").append(objectCreation.getClassDeclaration().getKind()).append(",").append(objectCreation.getArguments().size()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(objectCreation.getNewExpressionTree().location.toString().replace(",", "-")).append(",").append(objectCreation.getClassDeclaration().getFunctionDeclarationTree().location.toString().replace(",", "-"));
 		csvWriter.writeToFile(lineToWrite.toString().split(","));
 	}
 
-	private String getParametersName(FunctionDeclaration functionDeclaration) {
-		int parameterSize = functionDeclaration.getParameters().size();
+	private String getParametersName(List<AbstractExpression> expressions) {
+		int parameterSize = expressions.size();
 		if (parameterSize > 0) {
 			StringBuilder parameters = new StringBuilder();
 			int parameterIndex = 0;
-			for (AbstractExpression parameter : functionDeclaration.getParameters()) {
-				parameters.append(IdentifierHelper.getIdentifier(parameter.getExpression()));
+			for (AbstractExpression parameter : expressions) {
+				parameters.append(IdentifierHelper.getIdentifier(parameter.getExpression()).toString().replace(",", "-"));
 				if (parameterIndex < parameterSize - 1)
 					parameters.append("|");
 				parameterIndex++;
