@@ -47,6 +47,9 @@ public class Flags {
 	@Option(name = "-analyze-lbClasses", usage = "Analyze libraries to find class usage in them")
 	private boolean analyzeLibraryClasses = false;
 
+	@Option(name = "-libraries-with-path", usage = "List of libraries such as Node built-int modules path", handler = StringArrayOptionHandler.class)
+	private List<String> librariesWithPath = new ArrayList<>();
+
 	public boolean classAnalysis() {
 		return classAnalysis;
 	}
@@ -92,6 +95,10 @@ public class Flags {
 
 	public boolean analyzeLibraryClasses() {
 		return analyzeLibraryClasses;
+	}
+
+	public List<String> getLibrariesWithPath() {
+		return librariesWithPath;
 	}
 
 	public void parse(String[] args) throws CmdLineException {

@@ -38,7 +38,6 @@ public class RequireHelper {
 			for (VariableDeclarationTree variableDeclaration : variableStatement.declarations.declarations) {
 				if (checkIfInitializerIsRequireStatement(variableDeclaration)) {
 					matchModules();
-					return;
 				}
 			}
 		} else if (expression instanceof ExpressionStatementTree) {
@@ -56,6 +55,7 @@ public class RequireHelper {
 			try {
 				if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().equals(moduleFile.getCanonicalPath())) {
 					currentModule.addDependency(requireIdentifier.toString(), module);
+					return;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

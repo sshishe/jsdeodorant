@@ -15,6 +15,7 @@ public class AnalysisOptions {
 	private List<String> externs;
 	private List<String> libraries;
 	private boolean analyzeLibrariesForClasses;
+	private List<String> librariesWithPath;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -98,5 +99,13 @@ public class AnalysisOptions {
 
 	public void setAnalyzeLibrariesForClasses(boolean flag) {
 		this.analyzeLibrariesForClasses = flag;
+	}
+
+	public List<String> getLibrariesWithPath() {
+		return librariesWithPath;
+	}
+
+	public void setLibrariesWithPath(List<String> libraries) {
+		this.librariesWithPath = libraries;
 	}
 }

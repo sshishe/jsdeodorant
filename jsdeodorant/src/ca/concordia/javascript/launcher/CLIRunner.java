@@ -56,6 +56,7 @@ public class CLIRunner extends Runner {
 			getAnalysisOptions().setExterns(flags.getExterns());
 			getAnalysisOptions().setLibraries(flags.getLibraries());
 			getAnalysisOptions().setAnalyzeLibrariesForClasses(flags.analyzeLibraryClasses());
+			getAnalysisOptions().setLibrariesWithPath(flags.getLibrariesWithPath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
