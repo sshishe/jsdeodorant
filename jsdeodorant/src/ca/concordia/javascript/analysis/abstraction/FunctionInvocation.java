@@ -18,6 +18,7 @@ public class FunctionInvocation {
 	private List<AbstractExpression> arguments;
 	private FunctionDeclaration functionDeclaration;
 	private boolean isPredefined = false;
+	private Module functionDeclarationModule;
 
 	public FunctionInvocation(CallExpressionTree callExpressionTree, AbstractIdentifier member, AbstractExpression operand, List<AbstractExpression> arguments) {
 		this.callExpressionTree = callExpressionTree;
@@ -80,8 +81,10 @@ public class FunctionInvocation {
 		return functionDeclaration;
 	}
 
-	public void setFunctionDeclaration(FunctionDeclaration functionDeclaration) {
+	public void setFunctionDeclaration(FunctionDeclaration functionDeclaration, Module functionDeclarationModule) {
 		this.functionDeclaration = functionDeclaration;
+		this.functionDeclarationModule = functionDeclarationModule;
+
 	}
 
 	public boolean isPredefined() {
@@ -103,5 +106,13 @@ public class FunctionInvocation {
 			return getIdentifier().asCompositeIdentifier().getMostRightPart().toString();
 		else
 			return getIdentifier().toString();
+	}
+
+	public Module getFunctionDeclarationModule() {
+		return functionDeclarationModule;
+	}
+
+	public void seFunctionDeclarationModule(Module definitionModule) {
+		this.functionDeclarationModule = definitionModule;
 	}
 }

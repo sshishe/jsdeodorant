@@ -66,6 +66,30 @@ public class PredefinedFunctions {
 		htmlFunctions.addFunction("sup");
 		predefinedFunctions.add(htmlFunctions);
 
+		// Array
+		PredefinedFunction arrayFunctions = new PredefinedFunction("Array");
+		arrayFunctions.addFunction("concat");
+		arrayFunctions.addFunction("every");
+		arrayFunctions.addFunction("filter");
+		arrayFunctions.addFunction("forEach");
+		arrayFunctions.addFunction("indexOf");
+		arrayFunctions.addFunction("join");
+		arrayFunctions.addFunction("lastIndexOf");
+		arrayFunctions.addFunction("map");
+		arrayFunctions.addFunction("pop");
+		arrayFunctions.addFunction("push");
+		arrayFunctions.addFunction("reduce");
+		arrayFunctions.addFunction("reduceRight");
+		arrayFunctions.addFunction("reverse");
+		arrayFunctions.addFunction("shift");
+		arrayFunctions.addFunction("slice");
+		arrayFunctions.addFunction("some");
+		arrayFunctions.addFunction("toSource");
+		arrayFunctions.addFunction("splice");
+		arrayFunctions.addFunction("toString");
+		arrayFunctions.addFunction("unshift");
+		predefinedFunctions.add(arrayFunctions);
+
 		// Date
 		PredefinedFunction dateFunctions = new PredefinedFunction("Date");
 		dateFunctions.addFunction("Date");
@@ -120,7 +144,7 @@ public class PredefinedFunctions {
 		dateFunctions.addFunction("UTC");
 		predefinedFunctions.add(dateFunctions);
 
-		// Date
+		// Math
 		PredefinedFunction mathFunctions = new PredefinedFunction("Math");
 		dateFunctions.addFunction("abs");
 		dateFunctions.addFunction("acos");
@@ -150,6 +174,20 @@ public class PredefinedFunctions {
 		regexFunctions.addFunction("toSource");
 		regexFunctions.addFunction("toString");
 		predefinedFunctions.add(regexFunctions);
+
+		// Node Console object
+		PredefinedFunction consoleFunction = new PredefinedFunction("console");
+		consoleFunction.addFunction("log");
+		consoleFunction.addFunction("error");
+		regexFunctions.addFunction("assert");
+		regexFunctions.addFunction("info");
+		regexFunctions.addFunction("dir");
+		regexFunctions.addFunction("log");
+		regexFunctions.addFunction("time");
+		regexFunctions.addFunction("timeEnd");
+		regexFunctions.addFunction("trace");
+		regexFunctions.addFunction("warn");
+		predefinedFunctions.add(consoleFunction);
 	}
 
 	public static boolean isItPredefined(String name) {

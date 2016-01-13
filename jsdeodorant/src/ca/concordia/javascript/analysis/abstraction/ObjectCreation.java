@@ -35,6 +35,7 @@ public class ObjectCreation extends Creation {
 	private boolean isFunctionObject = false;
 	private AbstractIdentifier identifier;
 	private AbstractIdentifier aliasedIdentifier;
+	private Module classDeclarationModule;
 
 	public ObjectCreation(NewExpressionTree newExpressionTree, AbstractFunctionFragment statement) {
 		this.newExpressionTree = newExpressionTree;
@@ -63,8 +64,9 @@ public class ObjectCreation extends Creation {
 		return classDeclaration;
 	}
 
-	public void setClassDeclaration(FunctionDeclaration functionDeclaration) {
+	public void setClassDeclaration(FunctionDeclaration functionDeclaration, Module module) {
 		classDeclaration = functionDeclaration;
+		this.classDeclarationModule = module;
 	}
 
 	public AbstractExpression getOperandOfNew() {
@@ -230,5 +232,38 @@ public class ObjectCreation extends Creation {
 
 	public void setFunctionObject(boolean isFunctionObject) {
 		this.isFunctionObject = isFunctionObject;
+	}
+
+	public String getClassDeclarationQualifiedName() {
+		if (this.isClassDeclarationPredefined)
+			return getIdentifier().toString();
+		else
+			return this.getClassDeclaration().getQualifiedName();
+	}
+
+	public String getClassDeclarationKind() {
+		if (this.getClassDeclaration() != null)
+			return this.getClassDeclaration().getKind().toString();
+		else
+			return "";
+	}
+
+	public String getObjectCreationLocation() {
+		return this.getNewExpressionTree().location.toString();
+	}
+
+	public String getClassDeclarationLocation() {
+		if (this.getClassDeclaration() != null)
+			return this.getClassDeclaration().getFunctionDeclarationTree().location.toString();
+		else
+			return "";
+	}
+
+	public Module getClassDeclarationModule() {
+		return classDeclarationModule;
+	}
+
+	public void setClassDeclarationModule(Module classDeclarationModule) {
+		this.classDeclarationModule = classDeclarationModule;
 	}
 }

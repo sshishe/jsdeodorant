@@ -57,7 +57,7 @@ public class CompositePostProcessor {
 			// First find declaration within the current module
 			for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
 				if (functionDeclaration.getName().contains(functionInvocation.getIdentifier().toString()))
-					functionInvocation.setFunctionDeclaration(functionDeclaration);
+					functionInvocation.setFunctionDeclaration(functionDeclaration, null);
 			}
 
 			// If the function declaration is already found, skip the rest for cross-module detection
@@ -78,7 +78,7 @@ public class CompositePostProcessor {
 				if (dependency.getKey().equals(functionInvocation.getIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
 					for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
 						if (functionDeclaration.getName().contains(functionInvocation.getIdentifier().asCompositeIdentifier().getRightPart().toString()))
-							functionInvocation.setFunctionDeclaration(functionDeclaration);
+							functionInvocation.setFunctionDeclaration(functionDeclaration, dependency.getValue());
 					}
 				}
 			}
@@ -96,22 +96,22 @@ public class CompositePostProcessor {
 	private static boolean findFunctionDeclaration(ObjectCreation objectCreation, Module module) {
 		boolean findMatch = false;
 		for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
-			findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getAliasedIdentifier(), functionDeclaration);
+			findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getAliasedIdentifier(), functionDeclaration, module);
 		}
 		for (Entry<String, Module> dependency : module.getDependencies().entrySet()) {
 			if (objectCreation.getIdentifier() instanceof CompositeIdentifier && objectCreation.getIdentifier().asCompositeIdentifier().getMostLeftPart().equals(dependency.getKey()))
 				for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
-					findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getIdentifier().asCompositeIdentifier().getRightPart(), functionDeclaration);
+					findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getIdentifier().asCompositeIdentifier().getRightPart(), functionDeclaration, module);
 				}
 		}
 		return findMatch;
 	}
 
-	private static boolean matchFunctionDeclarationAndObjectCreation(ObjectCreation objectCreation, AbstractIdentifier aliasedObjectCreation, FunctionDeclaration functionDeclaration) {
+	private static boolean matchFunctionDeclarationAndObjectCreation(ObjectCreation objectCreation, AbstractIdentifier aliasedObjectCreation, FunctionDeclaration functionDeclaration, Module module) {
 		String functionQualifiedName = functionDeclaration.getQualifiedName();
 		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
 			functionDeclaration.setClassDeclaration(true);
-			objectCreation.setClassDeclaration(functionDeclaration);
+			objectCreation.setClassDeclaration(functionDeclaration, module);
 			return true;
 		}
 		return false;

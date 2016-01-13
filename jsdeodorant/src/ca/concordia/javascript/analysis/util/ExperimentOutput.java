@@ -8,9 +8,9 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import ca.concordia.javascript.analysis.AnalysisResult;
-import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
+import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 
@@ -47,19 +47,26 @@ public class ExperimentOutput {
 			return;
 		String currentFilePath = "log/classes/" + getFileName() + ".csv";
 		csvWriter = new CSVFileWriter(currentFilePath);
-		String fileHeader = "Object Creation Name, Class FQN,DeclarationType, Number of Arguments, Number of Parameters, Parameter Names, Invocation Location, Declaration Location";
+		String fileHeader = "Object Creation Name, Class FQN, Is Declaration Predefined?, DeclarationType, Number of Arguments, Number of Parameters, Parameter Names, Invocation Location, Declaration Location, Is invocation in a library?, Is definition in a library?";
 		csvWriter.writeToFile(fileHeader.split(","));
 		Set<FunctionDeclaration> classes = new HashSet<>();
+		boolean classExists = false;
 		for (ObjectCreation creation : currentModule.getProgram().getObjectCreationList()) {
-			if (!classes.contains(creation.getClassDeclaration())) {
-				if (creation.getClassDeclaration() != null) {
+			if (creation.isClassDeclarationPredefined()) {
+				writeClassDeclarationToFile(creation);
+				log.info(creation.getClassName() + " " + creation.getClassDeclarationLocation() + " And the invocation is at: " + creation.getObjectCreationLocation());
+				classExists = true;
+			}
+			if (creation.getClassDeclaration() != null) {
+				if (!classes.contains(creation.getClassDeclaration())) {
 					classes.add(creation.getClassDeclaration());
 					writeClassDeclarationToFile(creation);
 					log.info(creation.getClassName() + " " + creation.getClassDeclaration().getFunctionDeclarationTree().location + " And the invocation is at: " + creation.getNewExpressionTree().location);
 				}
+				classExists = true;
 			}
 		}
-		if (classes.size() == 0) {
+		if (!classExists) {
 			new File(currentFilePath).delete();
 			return;
 		} else
@@ -87,7 +94,7 @@ public class ExperimentOutput {
 		if (currentModule.getProgram().getFunctionInvocationList().size() == 0)
 			return;
 		csvWriter = new CSVFileWriter("log/functions/" + getFileName() + "-invocations.csv");
-		String fileHeader = "File path, function name, Is it a library, Number of Params,Parameter Names, Invocation Location, Declaration Location";
+		String fileHeader = "File path, function name, Is it a library, Number of Params,Parameter Names, Invocation Location, Declaration Location, isItPredefined";
 		csvWriter.writeToFile(fileHeader.split(","));
 		for (FunctionInvocation functionInvocation : currentModule.getProgram().getFunctionInvocationList()) {
 			StringBuilder lineToWrite = new StringBuilder();
@@ -95,10 +102,11 @@ public class ExperimentOutput {
 			String parametersName = getParametersName(functionInvocation.getArguments());
 			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(IdentifierHelper.getIdentifier(functionInvocation.getCallExpressionTree()).toString().replace(",", "-")).append(",").append(currentModule.isLibrary()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionInvocation.getCallExpressionTree().location.toString().replace(",", "-")).append(",");
 			if (functionInvocation.isPredefined())
-				lineToWrite.append(functionInvocation.getPredefinedName());
+				lineToWrite.append(functionInvocation.getPredefinedName()).append(",").append("True");
 			else if (functionInvocation.getFunctionDeclaration() != null)
-				lineToWrite.append(functionInvocation.getFunctionDeclaration().getFunctionDeclarationTree().location.toString().replace(",", "-"));
-
+				lineToWrite.append(functionInvocation.getFunctionDeclaration().getFunctionDeclarationTree().location.toString().replace(",", "-")).append(",").append("False");
+			else
+				lineToWrite.append(",").append("False");
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
 
@@ -106,9 +114,19 @@ public class ExperimentOutput {
 
 	private void writeClassDeclarationToFile(ObjectCreation objectCreation) {
 		StringBuilder lineToWrite = new StringBuilder();
-		int parameterSize = objectCreation.getClassDeclaration().getParameters().size();
-		String parametersName = getParametersName(objectCreation.getClassDeclaration().getParameters());
-		lineToWrite.append(objectCreation.getClassName().replace(",", "-")).append(",").append(objectCreation.getClassDeclaration().getQualifiedName()).append(",").append(objectCreation.getClassDeclaration().getKind()).append(",").append(objectCreation.getArguments().size()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(objectCreation.getNewExpressionTree().location.toString().replace(",", "-")).append(",").append(objectCreation.getClassDeclaration().getFunctionDeclarationTree().location.toString().replace(",", "-"));
+		int parameterSize;
+		String parametersName;
+		boolean isDefinitionInLibrary = false;
+		if (objectCreation.isClassDeclarationPredefined()) {
+			parameterSize = objectCreation.getArguments().size();
+			parametersName = "";
+			isDefinitionInLibrary = false;
+		} else {
+			parameterSize = objectCreation.getClassDeclaration().getParameters().size();
+			parametersName = getParametersName(objectCreation.getClassDeclaration().getParameters());
+			isDefinitionInLibrary = objectCreation.getClassDeclarationModule().isLibrary();
+		}
+		lineToWrite.append(objectCreation.getClassName().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationQualifiedName()).append(",").append(objectCreation.isClassDeclarationPredefined() ? "TRUE" : "FALSE").append(",").append(objectCreation.getClassDeclarationKind()).append(",").append(objectCreation.getArguments().size()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(objectCreation.getObjectCreationLocation().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationLocation().replace(",", "-")).append(",").append(currentModule.isLibrary()).append(",").append(isDefinitionInLibrary);
 		csvWriter.writeToFile(lineToWrite.toString().split(","));
 	}
 
