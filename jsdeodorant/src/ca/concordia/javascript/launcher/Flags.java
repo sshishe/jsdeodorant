@@ -41,8 +41,11 @@ public class Flags {
 	@Option(name = "-externs", usage = "List of externs files to use in the compilation.", handler = StringArrayOptionHandler.class)
 	private List<String> externs = new ArrayList<>();
 
-	@Option(name = "-libraries", usage = "List of libraries to exclude when looking for classes.", handler = StringArrayOptionHandler.class)
+	@Option(name = "-libraries", usage = "List of libraries to distinguish between production/test codes.", handler = StringArrayOptionHandler.class)
 	private List<String> libraries = new ArrayList<>();
+
+	@Option(name = "-analyze-lbClasses", usage = "Analyze libraries to find class usage in them")
+	private boolean analyzeLibraryClasses = false;
 
 	public boolean classAnalysis() {
 		return classAnalysis;
@@ -85,6 +88,10 @@ public class Flags {
 
 	public List<String> getLibraries() {
 		return libraries;
+	}
+
+	public boolean analyzeLibraryClasses() {
+		return analyzeLibraryClasses;
 	}
 
 	public void parse(String[] args) throws CmdLineException {

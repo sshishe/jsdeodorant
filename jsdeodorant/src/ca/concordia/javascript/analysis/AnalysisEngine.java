@@ -72,7 +72,7 @@ public class AnalysisEngine {
 				CompositePostProcessor.processModules(module, modules);
 
 			if (analysisOption.hasClassAnlysis())
-				if (!module.isLibrary())
+				if (analysisOption.analyzeLibrariesForClasses())
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
 			CompositePostProcessor.processFunctionInvocations(module);

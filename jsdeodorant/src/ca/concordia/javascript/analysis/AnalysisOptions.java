@@ -14,6 +14,7 @@ public class AnalysisOptions {
 	private List<String> jsFiles;
 	private List<String> externs;
 	private List<String> libraries;
+	private boolean analyzeLibrariesForClasses;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -89,5 +90,13 @@ public class AnalysisOptions {
 
 	public void setLibraries(List<String> libraries) {
 		this.libraries = libraries;
+	}
+
+	public boolean analyzeLibrariesForClasses() {
+		return analyzeLibrariesForClasses;
+	}
+
+	public void setAnalyzeLibrariesForClasses(boolean flag) {
+		this.analyzeLibrariesForClasses = flag;
 	}
 }
