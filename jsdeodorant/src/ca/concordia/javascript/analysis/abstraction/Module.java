@@ -7,12 +7,14 @@ import java.util.Map;
 
 import com.google.javascript.jscomp.SourceFile;
 
+import ca.concordia.javascript.analysis.module.LibraryType;
+
 public class Module {
 	private List<String> messages;
 	private Program program;
 	private SourceFile sourceFile;
 	private ModuleType moduleType;
-	private boolean isLibrary;
+	private LibraryType libraryType;
 	private Map<String, Module> dependencies;
 	private List<Export> exports;
 
@@ -23,6 +25,7 @@ public class Module {
 		this.messages = messages;
 		this.dependencies = new HashMap<>();
 		this.exports = new ArrayList<>();
+		this.libraryType = LibraryType.NONE;
 	}
 
 	public Module(ModuleType moduleType, Program program, SourceFile sourceFile, List<String> messages) {
@@ -32,6 +35,7 @@ public class Module {
 		this.messages = messages;
 		this.dependencies = new HashMap<>();
 		this.exports = new ArrayList<>();
+		this.libraryType = LibraryType.NONE;
 	}
 
 	public List<String> getMessages() {
@@ -74,11 +78,11 @@ public class Module {
 		exports.add(export);
 	}
 
-	public boolean isLibrary() {
-		return isLibrary;
+	public LibraryType getLibraryType() {
+		return libraryType;
 	}
 
-	public void setAsLibrary(boolean isLibrary) {
-		this.isLibrary = isLibrary;
+	public void setAsLibrary(LibraryType libraryType) {
+		this.libraryType = libraryType;
 	}
 }

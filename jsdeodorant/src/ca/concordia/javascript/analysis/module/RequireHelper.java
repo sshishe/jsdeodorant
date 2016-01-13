@@ -51,15 +51,18 @@ public class RequireHelper {
 	}
 
 	private void matchModules() {
-		for (Module module : modules) {
-			try {
-				if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().equals(moduleFile.getCanonicalPath())) {
+		String moduleCanonicalPath;
+		try {
+			moduleCanonicalPath = moduleFile.getCanonicalPath();
+			for (Module module : modules) {
+
+				if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().equals(moduleCanonicalPath)) {
 					currentModule.addDependency(requireIdentifier.toString(), module);
 					return;
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -9,7 +9,8 @@ import org.apache.log4j.Logger;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
-import ca.concordia.javascript.analysis.util.ExperimentOutput;
+import ca.concordia.javascript.analysis.module.LibraryType;
+import ca.concordia.javascript.experiment.CSVOutput;
 import ca.concordia.javascript.metrics.CyclomaticComplexity;
 
 import com.google.common.collect.ImmutableList;
@@ -50,8 +51,8 @@ public class AnalysisEngine {
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		List<Module> modules = new ArrayList<>();
 		if (analysisOption.isOutputToCSV()) {
-			ExperimentOutput.createAndClearFolder("log/functions");
-			ExperimentOutput.createAndClearFolder("log/classes");
+			CSVOutput.createAndClearFolder("log/functions");
+			CSVOutput.createAndClearFolder("log/classes");
 		}
 
 		for (SourceFile sourceFile : inputs) {
@@ -72,7 +73,7 @@ public class AnalysisEngine {
 				CompositePostProcessor.processModules(module, modules);
 
 			if (analysisOption.hasClassAnlysis())
-				if (analysisOption.analyzeLibrariesForClasses())
+				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() != LibraryType.BUILT_IN)
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
 			CompositePostProcessor.processFunctionInvocations(module);
@@ -86,14 +87,14 @@ public class AnalysisEngine {
 			}
 
 			if (analysisOption.isOutputToCSV()) {
-				ExperimentOutput experimentOutput = new ExperimentOutput(module);
+				CSVOutput experimentOutput = new CSVOutput(module);
 				experimentOutput.functionSignatures();
 				experimentOutput.functionInvocations();
 				experimentOutput.uniqueClassDeclaration();
 			}
 			AnalysisResult.addPackageInstance(module);
 		}
-		ExperimentOutput experimentOutput = new ExperimentOutput();
+		CSVOutput experimentOutput = new CSVOutput();
 		experimentOutput.aggregateReportForModule(modules);
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
@@ -103,8 +104,16 @@ public class AnalysisEngine {
 	private void checkForBeingLibrary(Module module, AnalysisOptions analysisOption) {
 		if (analysisOption.getLibraries() != null && analysisOption.getLibraries().size() > 0)
 			for (String library : analysisOption.getLibraries())
-				if (module.getSourceFile().getOriginalPath().contains(library))
-					module.setAsLibrary(true);
+				if (module.getSourceFile().getOriginalPath().contains(library)) {
+					module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
+					return;
+				}
+		// for libraries with path such as Node's built-in modules
+		for (String library : analysisOption.getLibrariesWithPath())
+			if (module.getSourceFile().getOriginalPath().contains(library)) {
+				module.setAsLibrary(LibraryType.BUILT_IN);
+				return;
+			}
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {

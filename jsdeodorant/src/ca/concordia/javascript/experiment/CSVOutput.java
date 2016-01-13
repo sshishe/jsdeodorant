@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis.util;
+package ca.concordia.javascript.experiment;
 
 import java.io.File;
 import java.util.HashSet;
@@ -13,16 +13,20 @@ import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.javascript.analysis.module.LibraryType;
+import ca.concordia.javascript.analysis.util.CSVFileWriter;
+import ca.concordia.javascript.analysis.util.FileUtil;
+import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
-public class ExperimentOutput {
-	static Logger log = Logger.getLogger(ExperimentOutput.class.getName());
+public class CSVOutput {
+	static Logger log = Logger.getLogger(CSVOutput.class.getName());
 	private Module currentModule;
 	private CSVFileWriter csvWriter;
 
-	public ExperimentOutput() {
+	public CSVOutput() {
 	}
 
-	public ExperimentOutput(Module module) {
+	public CSVOutput(Module module) {
 		this.currentModule = module;
 	}
 
@@ -30,16 +34,15 @@ public class ExperimentOutput {
 		if (currentModule.getProgram().getFunctionDeclarationList().size() == 0)
 			return;
 		csvWriter = new CSVFileWriter("log/functions/" + getFileName() + "-declarations.csv");
-		String fileHeader = "File path, function name, FunctionType, Is it a library,Declaration Location, Number of Params,Parameter Names, Number of Return Statements";
+		String fileHeader = "File path, function name, FunctionType, Library Type,Declaration Location, Number of Params,Parameter Names, Number of Return Statements";
 		csvWriter.writeToFile(fileHeader.split(","));
 		for (FunctionDeclaration functionDeclaration : currentModule.getProgram().getFunctionDeclarationList()) {
 			StringBuilder lineToWrite = new StringBuilder();
 			int parameterSize = functionDeclaration.getParameters().size();
 			String parametersName = getParametersName(functionDeclaration.getParameters());
-			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(functionDeclaration.getName().replace(",", "-")).append(",").append(functionDeclaration.getKind()).append(",").append(currentModule.isLibrary()).append(",").append(functionDeclaration.getFunctionDeclarationTree().location.toString().replace(",", "-")).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionDeclaration.getReturnStatementList().size());
+			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(functionDeclaration.getName().replace(",", "-")).append(",").append(functionDeclaration.getKind()).append(",").append(currentModule.getLibraryType()).append(",").append(functionDeclaration.getFunctionDeclarationTree().location.toString().replace(",", "-")).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionDeclaration.getReturnStatementList().size());
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
-
 	}
 
 	public void uniqueClassDeclaration() {
@@ -81,11 +84,11 @@ public class ExperimentOutput {
 	public void aggregateReportForModule(List<Module> modules) {
 		String currentFilePath = "log/aggregate/modules.csv";
 		csvWriter = new CSVFileWriter(currentFilePath);
-		String fileHeader = "Module name, Is it a library, Number of dependencies, Number of exports";
+		String fileHeader = "Module name, Library Type, Number of dependencies, Number of exports";
 		csvWriter.writeToFile(fileHeader.split(","));
 		for (Module module : modules) {
 			StringBuilder lineToWrite = new StringBuilder();
-			lineToWrite.append(module.getSourceFile().getName()).append(",").append(module.isLibrary()).append(",").append(module.getDependencies().size()).append(",").append(module.getExports().size());
+			lineToWrite.append(module.getSourceFile().getName()).append(",").append(module.getLibraryType()).append(",").append(module.getDependencies().size()).append(",").append(module.getExports().size());
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
 	}
@@ -94,13 +97,13 @@ public class ExperimentOutput {
 		if (currentModule.getProgram().getFunctionInvocationList().size() == 0)
 			return;
 		csvWriter = new CSVFileWriter("log/functions/" + getFileName() + "-invocations.csv");
-		String fileHeader = "File path, function name, Is it a library, Number of Params,Parameter Names, Invocation Location, Declaration Location, isItPredefined";
+		String fileHeader = "File path, function name, Library Type, Number of Params,Parameter Names, Invocation Location, Declaration Location, isItPredefined";
 		csvWriter.writeToFile(fileHeader.split(","));
 		for (FunctionInvocation functionInvocation : currentModule.getProgram().getFunctionInvocationList()) {
 			StringBuilder lineToWrite = new StringBuilder();
 			int parameterSize = functionInvocation.getArguments().size();
 			String parametersName = getParametersName(functionInvocation.getArguments());
-			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(IdentifierHelper.getIdentifier(functionInvocation.getCallExpressionTree()).toString().replace(",", "-")).append(",").append(currentModule.isLibrary()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionInvocation.getCallExpressionTree().location.toString().replace(",", "-")).append(",");
+			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(IdentifierHelper.getIdentifier(functionInvocation.getCallExpressionTree()).toString().replace(",", "-")).append(",").append(currentModule.getLibraryType()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionInvocation.getCallExpressionTree().location.toString().replace(",", "-")).append(",");
 			if (functionInvocation.isPredefined())
 				lineToWrite.append(functionInvocation.getPredefinedName()).append(",").append("True");
 			else if (functionInvocation.getFunctionDeclaration() != null)
@@ -124,9 +127,9 @@ public class ExperimentOutput {
 		} else {
 			parameterSize = objectCreation.getClassDeclaration().getParameters().size();
 			parametersName = getParametersName(objectCreation.getClassDeclaration().getParameters());
-			isDefinitionInLibrary = objectCreation.getClassDeclarationModule().isLibrary();
+			isDefinitionInLibrary = objectCreation.getClassDeclarationModule().getLibraryType() != LibraryType.NONE;
 		}
-		lineToWrite.append(objectCreation.getClassName().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationQualifiedName()).append(",").append(objectCreation.isClassDeclarationPredefined() ? "TRUE" : "FALSE").append(",").append(objectCreation.getClassDeclarationKind()).append(",").append(objectCreation.getArguments().size()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(objectCreation.getObjectCreationLocation().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationLocation().replace(",", "-")).append(",").append(currentModule.isLibrary()).append(",").append(isDefinitionInLibrary);
+		lineToWrite.append(objectCreation.getClassName().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationQualifiedName()).append(",").append(objectCreation.isClassDeclarationPredefined() ? "TRUE" : "FALSE").append(",").append(objectCreation.getClassDeclarationKind()).append(",").append(objectCreation.getArguments().size()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(objectCreation.getObjectCreationLocation().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationLocation().replace(",", "-")).append(",").append(currentModule.getLibraryType()).append(",").append(isDefinitionInLibrary);
 		csvWriter.writeToFile(lineToWrite.toString().split(","));
 	}
 

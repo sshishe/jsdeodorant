@@ -1,6 +1,8 @@
 package ca.concordia.javascript.launcher;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Level;
@@ -11,6 +13,7 @@ import ca.concordia.javascript.analysis.AnalysisEngine;
 import ca.concordia.javascript.analysis.AnalysisOptions;
 import ca.concordia.javascript.analysis.ExtendedCompiler;
 import ca.concordia.javascript.analysis.abstraction.Module;
+import ca.concordia.javascript.analysis.util.FileUtil;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -67,12 +70,25 @@ public abstract class Runner extends CommandLineRunner {
 		if (analysisOptions.isLogDisabled())
 			LogManager.getLoggerRepository().setThreshold(Level.OFF);
 		addInputsFromFile(analysisOptions.getJsFiles());
+		addInputsFromFile(extractFilesFromLibraries(analysisOptions.getLibrariesWithPath()));
 		addExternsFromFile(analysisOptions.getExterns());
 		AnalysisEngine analysisEngine = new AnalysisEngine(createExtendedCompiler(), createOptions(), inputs.build(), externs.build());
 		log.debug("analysis starts");
 		List<Module> results = analysisEngine.run(analysisOptions);
 		log.debug("analysis ends");
 		return results;
+	}
+
+	private List<String> extractFilesFromLibraries(List<String> librariesWithPath) {
+		List<String> allFiles = new ArrayList<>();
+		for (String directoryPath : librariesWithPath) {
+			try {
+				allFiles.addAll(FileUtil.getFilesInDirectory(directoryPath));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return allFiles;
 	}
 
 	public abstract AnalysisOptions createAnalysisOptions();
