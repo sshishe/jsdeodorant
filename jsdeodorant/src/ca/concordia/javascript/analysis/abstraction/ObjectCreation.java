@@ -73,7 +73,7 @@ public class ObjectCreation extends Creation {
 		return operandOfNew;
 	}
 
-	public String getClassName() {
+	public String getOperandOfNewName() {
 		AbstractIdentifier identifier = IdentifierHelper.getIdentifier(operandOfNew.getExpression());
 		return Strings.isNullOrEmpty(identifier.toString()) ? "<Anonymous>" : identifier.toString();
 	}

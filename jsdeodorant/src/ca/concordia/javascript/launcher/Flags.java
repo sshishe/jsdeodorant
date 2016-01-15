@@ -23,6 +23,9 @@ public class Flags {
 	@Option(name = "-output_csv", usage = "Generate a CSV file containing analysis info")
 	private boolean outputToCSV = false;
 
+	@Option(name = "-output_db", usage = "Put analysis info into a Postgres DB")
+	private boolean outputToDB = false;
+
 	@Option(name = "-calculate_cyclomatic", hidden = true, usage = "Enable calculation of cyclomatic complexity")
 	private boolean calculateCyclomatic = false;
 
@@ -47,8 +50,11 @@ public class Flags {
 	@Option(name = "-analyze-lbClasses", usage = "Analyze libraries to find class usage in them")
 	private boolean analyzeLibraryClasses = false;
 
-	@Option(name = "-libraries-with-path", usage = "List of libraries such as Node built-int modules path", handler = StringArrayOptionHandler.class)
+	@Option(name = "-libraries-with-path", usage = "List of libraries with path such as Node's global LB path", handler = StringArrayOptionHandler.class)
 	private List<String> librariesWithPath = new ArrayList<>();
+
+	@Option(name = "-builtin-libraries", usage = "List of Node's built-in libraries such as Error or Util", handler = StringArrayOptionHandler.class)
+	private List<String> builtInLibraries = new ArrayList<>();
 
 	public boolean classAnalysis() {
 		return classAnalysis;
@@ -60,6 +66,10 @@ public class Flags {
 
 	public boolean outputToCSV() {
 		return outputToCSV;
+	}
+
+	public boolean outputToDB() {
+		return outputToDB;
 	}
 
 	public boolean disableLog() {
@@ -99,6 +109,10 @@ public class Flags {
 
 	public List<String> getLibrariesWithPath() {
 		return librariesWithPath;
+	}
+
+	public List<String> getBuiltinLibraries() {
+		return builtInLibraries;
 	}
 
 	public void parse(String[] args) throws CmdLineException {

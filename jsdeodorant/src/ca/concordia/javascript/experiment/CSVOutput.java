@@ -11,7 +11,6 @@ import ca.concordia.javascript.analysis.AnalysisResult;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
-import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.module.LibraryType;
 import ca.concordia.javascript.analysis.util.CSVFileWriter;
@@ -39,7 +38,7 @@ public class CSVOutput {
 		for (FunctionDeclaration functionDeclaration : currentModule.getProgram().getFunctionDeclarationList()) {
 			StringBuilder lineToWrite = new StringBuilder();
 			int parameterSize = functionDeclaration.getParameters().size();
-			String parametersName = getParametersName(functionDeclaration.getParameters());
+			String parametersName = LogUtil.getParametersName(functionDeclaration.getParameters());
 			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(functionDeclaration.getName().replace(",", "-")).append(",").append(functionDeclaration.getKind()).append(",").append(currentModule.getLibraryType()).append(",").append(functionDeclaration.getFunctionDeclarationTree().location.toString().replace(",", "-")).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionDeclaration.getReturnStatementList().size());
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
@@ -57,14 +56,14 @@ public class CSVOutput {
 		for (ObjectCreation creation : currentModule.getProgram().getObjectCreationList()) {
 			if (creation.isClassDeclarationPredefined()) {
 				writeClassDeclarationToFile(creation);
-				log.info(creation.getClassName() + " " + creation.getClassDeclarationLocation() + " And the invocation is at: " + creation.getObjectCreationLocation());
+				log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclarationLocation() + " And the invocation is at: " + creation.getObjectCreationLocation());
 				classExists = true;
 			}
 			if (creation.getClassDeclaration() != null) {
 				if (!classes.contains(creation.getClassDeclaration())) {
 					classes.add(creation.getClassDeclaration());
 					writeClassDeclarationToFile(creation);
-					log.info(creation.getClassName() + " " + creation.getClassDeclaration().getFunctionDeclarationTree().location + " And the invocation is at: " + creation.getNewExpressionTree().location);
+					log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclaration().getFunctionDeclarationTree().location + " And the invocation is at: " + creation.getNewExpressionTree().location);
 				}
 				classExists = true;
 			}
@@ -102,7 +101,7 @@ public class CSVOutput {
 		for (FunctionInvocation functionInvocation : currentModule.getProgram().getFunctionInvocationList()) {
 			StringBuilder lineToWrite = new StringBuilder();
 			int parameterSize = functionInvocation.getArguments().size();
-			String parametersName = getParametersName(functionInvocation.getArguments());
+			String parametersName = LogUtil.getParametersName(functionInvocation.getArguments());
 			lineToWrite.append(currentModule.getSourceFile().getName()).append(",").append(IdentifierHelper.getIdentifier(functionInvocation.getCallExpressionTree()).toString().replace(",", "-")).append(",").append(currentModule.getLibraryType()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(functionInvocation.getCallExpressionTree().location.toString().replace(",", "-")).append(",");
 			if (functionInvocation.isPredefined())
 				lineToWrite.append(functionInvocation.getPredefinedName()).append(",").append("True");
@@ -126,27 +125,11 @@ public class CSVOutput {
 			isDefinitionInLibrary = false;
 		} else {
 			parameterSize = objectCreation.getClassDeclaration().getParameters().size();
-			parametersName = getParametersName(objectCreation.getClassDeclaration().getParameters());
+			parametersName = LogUtil.getParametersName(objectCreation.getClassDeclaration().getParameters());
 			isDefinitionInLibrary = objectCreation.getClassDeclarationModule().getLibraryType() != LibraryType.NONE;
 		}
-		lineToWrite.append(objectCreation.getClassName().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationQualifiedName()).append(",").append(objectCreation.isClassDeclarationPredefined() ? "TRUE" : "FALSE").append(",").append(objectCreation.getClassDeclarationKind()).append(",").append(objectCreation.getArguments().size()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(objectCreation.getObjectCreationLocation().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationLocation().replace(",", "-")).append(",").append(currentModule.getLibraryType()).append(",").append(isDefinitionInLibrary);
+		lineToWrite.append(objectCreation.getOperandOfNewName().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationQualifiedName()).append(",").append(objectCreation.isClassDeclarationPredefined() ? "TRUE" : "FALSE").append(",").append(objectCreation.getClassDeclarationKind()).append(",").append(objectCreation.getArguments().size()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(objectCreation.getObjectCreationLocation().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationLocation().replace(",", "-")).append(",").append(currentModule.getLibraryType()).append(",").append(isDefinitionInLibrary);
 		csvWriter.writeToFile(lineToWrite.toString().split(","));
-	}
-
-	private String getParametersName(List<AbstractExpression> expressions) {
-		int parameterSize = expressions.size();
-		if (parameterSize > 0) {
-			StringBuilder parameters = new StringBuilder();
-			int parameterIndex = 0;
-			for (AbstractExpression parameter : expressions) {
-				parameters.append(IdentifierHelper.getIdentifier(parameter.getExpression()).toString().replace(",", "-"));
-				if (parameterIndex < parameterSize - 1)
-					parameters.append("|");
-				parameterIndex++;
-			}
-			return parameters.toString();
-		}
-		return "";
 	}
 
 	public static boolean createAndClearFolder(String folderName) {

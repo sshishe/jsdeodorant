@@ -81,6 +81,8 @@ public abstract class Runner extends CommandLineRunner {
 
 	private List<String> extractFilesFromLibraries(List<String> librariesWithPath) {
 		List<String> allFiles = new ArrayList<>();
+		if (librariesWithPath == null)
+			return allFiles;
 		for (String directoryPath : librariesWithPath) {
 			try {
 				allFiles.addAll(FileUtil.getFilesInDirectory(directoryPath));

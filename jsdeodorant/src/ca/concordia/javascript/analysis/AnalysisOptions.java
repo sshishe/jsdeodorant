@@ -9,6 +9,7 @@ public class AnalysisOptions {
 	private boolean moduleAnalysis;
 	private boolean calculateCyclomatic;
 	private boolean outputToCSV;
+	private boolean outputToDB;
 	private boolean logDisabled;
 	private String directoryPath;
 	private List<String> jsFiles;
@@ -16,6 +17,7 @@ public class AnalysisOptions {
 	private List<String> libraries;
 	private boolean analyzeLibrariesForClasses;
 	private List<String> librariesWithPath;
+	private List<String> builtInLibraries;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -47,6 +49,14 @@ public class AnalysisOptions {
 
 	public void setOutputToCSV(boolean outputToCSV) {
 		this.outputToCSV = outputToCSV;
+	}
+
+	public boolean isOutputToDB() {
+		return outputToDB;
+	}
+
+	public void setOutputToDB(boolean outputToDB) {
+		this.outputToDB = outputToDB;
 	}
 
 	public boolean isLogDisabled() {
@@ -107,5 +117,13 @@ public class AnalysisOptions {
 
 	public void setLibrariesWithPath(List<String> libraries) {
 		this.librariesWithPath = libraries;
+	}
+
+	public List<String> getBuiltInLibraries() {
+		return builtInLibraries;
+	}
+
+	public void setBuiltinLibraries(List<String> builtInLibraries) {
+		this.builtInLibraries = builtInLibraries;
 	}
 }

@@ -45,6 +45,10 @@ public class TestRunner extends Runner {
 		getAnalysisOptions().setCalculateCyclomatic(false);
 		getAnalysisOptions().setOutputToCSV(false);
 		getAnalysisOptions().setLogDisabled(true);
+		getAnalysisOptions().setOutputToDB(false);
+		getAnalysisOptions().setClassAnalysis(true);
+		getAnalysisOptions().setModuleAnlysis(true);
+		getAnalysisOptions().setAnalyzeLibrariesForClasses(true);
 		return getAnalysisOptions();
 	}
 

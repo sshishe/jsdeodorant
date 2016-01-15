@@ -48,6 +48,7 @@ public class CLIRunner extends Runner {
 			getAnalysisOptions().setClassAnalysis(flags.classAnalysis());
 			getAnalysisOptions().setModuleAnlysis(flags.moduleAnalysis());
 			getAnalysisOptions().setOutputToCSV(flags.outputToCSV());
+			getAnalysisOptions().setOutputToDB(flags.outputToDB());
 			getAnalysisOptions().setCalculateCyclomatic(flags.calculateCyclomatic());
 			getAnalysisOptions().setLogDisabled(flags.disableLog());
 			if (!Strings.isNullOrEmpty(flags.directoryPath()))
@@ -57,6 +58,7 @@ public class CLIRunner extends Runner {
 			getAnalysisOptions().setLibraries(flags.getLibraries());
 			getAnalysisOptions().setAnalyzeLibrariesForClasses(flags.analyzeLibraryClasses());
 			getAnalysisOptions().setLibrariesWithPath(flags.getLibrariesWithPath());
+			getAnalysisOptions().setBuiltinLibraries(flags.getBuiltinLibraries());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

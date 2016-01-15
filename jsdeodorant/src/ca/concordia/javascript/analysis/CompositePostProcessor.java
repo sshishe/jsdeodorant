@@ -11,25 +11,22 @@ import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
-import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.module.ExportHelper;
 import ca.concordia.javascript.analysis.module.RequireHelper;
-import ca.concordia.javascript.analysis.util.CSVFileWriter;
 import ca.concordia.javascript.language.PredefinedClasses;
 import ca.concordia.javascript.language.PredefinedFunctions;
 
 public class CompositePostProcessor {
 	static Logger log = Logger.getLogger(CompositePostProcessor.class.getName());
-	private static CSVFileWriter csvWriter;
 
 	public static void processFunctionDeclarationsToFindClasses(Module module) {
 		Program program = module.getProgram();
 		for (ObjectCreation objectCreation : program.getObjectCreationList()) {
-			if (objectCreation.getClassName() == null || objectCreation.isFunctionObject())
+			if (objectCreation.getOperandOfNewName() == null || objectCreation.isFunctionObject())
 				continue;
 			if (!findPredefinedClasses(program, objectCreation)) {
 				findFunctionDeclaration(objectCreation, module);
@@ -57,7 +54,7 @@ public class CompositePostProcessor {
 			// First find declaration within the current module
 			for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
 				if (functionDeclaration.getName().contains(functionInvocation.getIdentifier().toString()))
-					functionInvocation.setFunctionDeclaration(functionDeclaration, null);
+					functionInvocation.setFunctionDeclaration(functionDeclaration, module);
 			}
 
 			// If the function declaration is already found, skip the rest for cross-module detection
@@ -86,7 +83,7 @@ public class CompositePostProcessor {
 	}
 
 	private static boolean findPredefinedClasses(Program program, ObjectCreation objectCreation) {
-		if (PredefinedClasses.contains(objectCreation.getClassName())) {
+		if (PredefinedClasses.contains(objectCreation.getOperandOfNewName())) {
 			objectCreation.setClassDeclarationPredefined(true);
 			return true;
 		}

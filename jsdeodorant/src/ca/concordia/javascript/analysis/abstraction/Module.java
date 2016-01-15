@@ -1,5 +1,7 @@
 package ca.concordia.javascript.analysis.abstraction;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,5 +86,15 @@ public class Module {
 
 	public void setAsLibrary(LibraryType libraryType) {
 		this.libraryType = libraryType;
+	}
+
+	public String getCanonicalPath() {
+		try {
+			return new File(this.getSourceFile().getOriginalPath()).getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

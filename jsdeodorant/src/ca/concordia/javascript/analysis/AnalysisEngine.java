@@ -11,6 +11,7 @@ import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.module.LibraryType;
 import ca.concordia.javascript.experiment.CSVOutput;
+import ca.concordia.javascript.experiment.PostgresOutput;
 import ca.concordia.javascript.metrics.CyclomaticComplexity;
 
 import com.google.common.collect.ImmutableList;
@@ -29,6 +30,7 @@ public class AnalysisEngine {
 	private final CompilerOptions compilerOptions;
 	private ImmutableList<SourceFile> inputs;
 	private ImmutableList<SourceFile> externs;
+	private PostgresOutput psqlOutput;
 
 	public AnalysisEngine(ExtendedCompiler compiler, CompilerOptions compilerOptions) {
 		this(compiler, compilerOptions, null, null);
@@ -53,6 +55,10 @@ public class AnalysisEngine {
 		if (analysisOption.isOutputToCSV()) {
 			CSVOutput.createAndClearFolder("log/functions");
 			CSVOutput.createAndClearFolder("log/classes");
+		}
+
+		if (analysisOption.isOutputToDB()) {
+			psqlOutput = new PostgresOutput(analysisOption.getDirectoryPath());
 		}
 
 		for (SourceFile sourceFile : inputs) {
@@ -87,11 +93,17 @@ public class AnalysisEngine {
 			}
 
 			if (analysisOption.isOutputToCSV()) {
-				CSVOutput experimentOutput = new CSVOutput(module);
-				experimentOutput.functionSignatures();
-				experimentOutput.functionInvocations();
-				experimentOutput.uniqueClassDeclaration();
+				CSVOutput csvOutput = new CSVOutput(module);
+				csvOutput.functionSignatures();
+				csvOutput.functionInvocations();
+				csvOutput.uniqueClassDeclaration();
 			}
+
+			if (analysisOption.isOutputToDB()) {
+				psqlOutput.logModuleInfo(module);
+				psqlOutput.logFunctionsAndClasses(module);
+			}
+
 			AnalysisResult.addPackageInstance(module);
 		}
 		CSVOutput experimentOutput = new CSVOutput();
@@ -108,12 +120,21 @@ public class AnalysisEngine {
 					module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
 					return;
 				}
-		// for libraries with path such as Node's built-in modules
-		for (String library : analysisOption.getLibrariesWithPath())
-			if (module.getSourceFile().getOriginalPath().contains(library)) {
-				module.setAsLibrary(LibraryType.BUILT_IN);
-				return;
-			}
+		// for libraries with path such as Node's global modules
+		if (analysisOption.getLibrariesWithPath() != null && analysisOption.getLibrariesWithPath().size() > 0)
+			for (String library : analysisOption.getLibrariesWithPath())
+				if (module.getSourceFile().getOriginalPath().contains(library)) {
+					module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
+					return;
+				}
+
+		// for libraries such as Node's built-in modules
+		if (analysisOption.getBuiltInLibraries() != null && analysisOption.getBuiltInLibraries().size() > 0)
+			for (String library : analysisOption.getBuiltInLibraries())
+				if (module.getSourceFile().getOriginalPath().contains(library)) {
+					module.setAsLibrary(LibraryType.BUILT_IN);
+					return;
+				}
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {
