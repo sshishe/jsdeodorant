@@ -193,7 +193,7 @@ public class NamespaceTest {
 		try {
 			Module result = setAnalysisForFunctionAssignToProto();
 			for (FunctionInvocation functionInvocation : result.getProgram().getFunctionInvocationList()) {
-				assertTrue((functionInvocation).getFunctionDeclaration() != null);
+				assertTrue(functionInvocation.getFunctionDeclaration() != null);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
