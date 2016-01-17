@@ -65,6 +65,7 @@ public class AnalysisEngine {
 			if (containsError(sourceFile, result))
 				continue;
 			Program program = new Program();
+
 			ProgramTree programTree = scriptAnalyzer.parse(sourceFile);
 			for (ParseTree sourceElement : programTree.sourceElements) {
 				StatementProcessor.processStatement(sourceElement, program);
@@ -82,7 +83,8 @@ public class AnalysisEngine {
 				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() != LibraryType.BUILT_IN)
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
-			CompositePostProcessor.processFunctionInvocations(module);
+			if (module.getLibraryType() == LibraryType.NONE)
+				CompositePostProcessor.processFunctionInvocations(module);
 
 			if (analysisOption.isCalculateCyclomatic()) {
 				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(module.getProgram());

@@ -45,6 +45,18 @@ public class AbstractExpression extends AbstractFunctionFragment {
 		processArrayLiteralExpressions(expressionExtractor.getArrayLiteralExpressions(expression));
 	}
 
+	public AbstractExpression(ParseTree expression, SourceContainer parent, boolean processInside) {
+		super(parent);
+		this.expression = expression;
+		if (processInside) {
+			ExpressionExtractor expressionExtractor = new ExpressionExtractor();
+			processFunctionInvocations(expressionExtractor.getCallExpressions(expression));
+			processVariableDeclarations(expressionExtractor.getVariableDeclarationExpressions(expression));
+			processNewExpressions(expressionExtractor.getNewExpressions(expression));
+			processArrayLiteralExpressions(expressionExtractor.getArrayLiteralExpressions(expression));
+		}
+	}
+
 	public ParseTree getExpression() {
 		return expression;
 	}
