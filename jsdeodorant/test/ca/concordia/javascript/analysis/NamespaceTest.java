@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
+import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
@@ -191,7 +192,9 @@ public class NamespaceTest {
 	public void testFunctionAssignToProto() {
 		try {
 			Module result = setAnalysisForFunctionAssignToProto();
-			assertTrue(result.getProgram().getFunctionInvocationList().get(0).getFunctionDeclaration() != null);
+			for (FunctionInvocation functionInvocation : result.getProgram().getFunctionInvocationList()) {
+				assertTrue((functionInvocation).getFunctionDeclaration() != null);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

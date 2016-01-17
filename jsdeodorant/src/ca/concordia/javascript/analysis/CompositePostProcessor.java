@@ -53,7 +53,7 @@ public class CompositePostProcessor {
 
 			// First find declaration within the current module
 			for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
-				if (functionDeclaration.getName().contains(functionInvocation.getIdentifier().toString()))
+				if (functionDeclaration.getName().contains(functionInvocation.getAliasedIdentifier().toString()))
 					functionInvocation.setFunctionDeclaration(functionDeclaration, module);
 			}
 
@@ -74,7 +74,7 @@ public class CompositePostProcessor {
 
 				if (dependency.getKey().equals(functionInvocation.getIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
 					for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
-						if (functionDeclaration.getName().contains(functionInvocation.getIdentifier().asCompositeIdentifier().getRightPart().toString()))
+						if (functionDeclaration.getName().contains(functionInvocation.getAliasedIdentifier().asCompositeIdentifier().getRightPart().toString()))
 							functionInvocation.setFunctionDeclaration(functionDeclaration, dependency.getValue());
 					}
 				}

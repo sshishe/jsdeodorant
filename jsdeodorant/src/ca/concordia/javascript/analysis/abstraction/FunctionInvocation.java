@@ -8,6 +8,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.util.DebugHelper;
+import ca.concordia.javascript.analysis.util.ExternalAliasHelper;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
 public class FunctionInvocation {
@@ -19,6 +20,7 @@ public class FunctionInvocation {
 	private FunctionDeclaration functionDeclaration;
 	private boolean isPredefined = false;
 	private Module functionDeclarationModule;
+	private AbstractIdentifier aliasedIdentifier;
 
 	public FunctionInvocation(CallExpressionTree callExpressionTree, AbstractIdentifier member, AbstractExpression operand, List<AbstractExpression> arguments) {
 		this.callExpressionTree = callExpressionTree;
@@ -114,5 +116,13 @@ public class FunctionInvocation {
 
 	public void seFunctionDeclarationModule(Module definitionModule) {
 		this.functionDeclarationModule = definitionModule;
+	}
+
+	public AbstractIdentifier getAliasedIdentifier() {
+		if (aliasedIdentifier != null)
+			return aliasedIdentifier;
+		if (getIdentifier() instanceof PlainIdentifier)
+			return aliasedIdentifier = identifier;
+		return aliasedIdentifier = ExternalAliasHelper.getAliasedIdentifier(this.operand, getIdentifier());
 	}
 }
