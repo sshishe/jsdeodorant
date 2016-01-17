@@ -25,7 +25,6 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	private AbstractIdentifier identifier;
 	private AbstractIdentifier publicIdentifier;
 	private FunctionKind kind;
-	private FunctionDeclarationTree functionDeclarationTree;
 	private ParseTree leftValueExpression;
 	// in object literal expressions the left value token would be the key of
 	// the {key/value}
@@ -38,7 +37,6 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 
 	public FunctionDeclarationExpression(FunctionDeclarationTree functionDeclarationTree, FunctionDeclarationExpressionNature functionDeclarationExpressionNature, SourceContainer parent) {
 		super(functionDeclarationTree, parent);
-		this.functionDeclarationTree = functionDeclarationTree;
 		this.statementList = new ArrayList<>();
 		this.functionDeclarationExpressionNature = functionDeclarationExpressionNature;
 		this.parameters = new ArrayList<>();
