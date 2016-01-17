@@ -57,7 +57,7 @@ public abstract class AbstractFunctionFragment {
 			}
 			AbstractIdentifier identifier = IdentifierHelper.getIdentifier(callExpression.operand);
 
-			FunctionInvocation functionInvocationObject = new FunctionInvocation(callExpression, identifier, new AbstractExpression(callExpression.operand), arguments);
+			FunctionInvocation functionInvocationObject = new FunctionInvocation(callExpression, identifier, new AbstractExpression(callExpression.operand,parent), arguments);
 			addFunctionInvocation(functionInvocationObject);
 		}
 	}
