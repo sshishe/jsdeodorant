@@ -46,6 +46,7 @@ public abstract class AbstractIdentifier {
 	}
 
 	public AbstractIdentifier(AbstractIdentifier identifier) {
+		this.node = identifier.getNode();
 		this.identifierName = identifier.toString();
 	}
 
@@ -148,5 +149,10 @@ public abstract class AbstractIdentifier {
 
 	public void setIdentifierName(String identifierName) {
 		this.identifierName = identifierName;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.toString().equals(((AbstractIdentifier) obj).toString());
 	}
 }

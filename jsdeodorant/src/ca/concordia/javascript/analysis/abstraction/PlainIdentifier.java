@@ -17,8 +17,7 @@ public class PlainIdentifier extends AbstractIdentifier {
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		}
-		if (o instanceof PlainIdentifier) {
+		} else if (o instanceof PlainIdentifier) {
 			AbstractIdentifier plain = (AbstractIdentifier) o;
 			if (this.identifierName == null) // Mostly happens when we have new
 												// function(){..} for other

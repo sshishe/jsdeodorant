@@ -45,6 +45,7 @@ public class ExportHelper {
 			PlainIdentifier exportIdentifier = lValueIdentifier.asCompositeIdentifier().getMostRightPart();
 			Export export = new Export(exportIdentifier.getIdentifierName(), new AbstractExpression(binaryOperator.right));
 			currentModule.addExport(export);
+			return true;
 		}
 		return false;
 	}

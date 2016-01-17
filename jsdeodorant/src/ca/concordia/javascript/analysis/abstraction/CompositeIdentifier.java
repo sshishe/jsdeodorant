@@ -31,6 +31,10 @@ public class CompositeIdentifier extends AbstractIdentifier {
 		return rightPart;
 	}
 
+	public void setRightPart(AbstractIdentifier rightPart) {
+		this.rightPart = rightPart;
+	}
+
 	// if composite identifier is "one.two.three" then left part is "one.two"
 	public AbstractIdentifier getLeftPart() {
 		return getLeftPart(rightPart);
@@ -78,7 +82,7 @@ public class CompositeIdentifier extends AbstractIdentifier {
 			return true;
 		} else if (o instanceof CompositeIdentifier) {
 			CompositeIdentifier composite = (CompositeIdentifier) o;
-			return this.identifierName.equals(composite.identifierName) && this.rightPart.equals(composite.rightPart);
+			return this.identifierName.equals(composite.identifierName) && this.rightPart.toString().equals(composite.rightPart.toString());
 		}
 		return false;
 	}

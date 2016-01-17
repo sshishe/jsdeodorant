@@ -89,7 +89,7 @@ public class RequireHelper {
 	private boolean checkIfCallExpressionIsRequireStatement(ParseTree node) {
 		if (node instanceof CallExpressionTree) {
 			CallExpressionTree callExpression = node.asCallExpression();
-			if (IdentifierHelper.getIdentifier(callExpression.operand).equals("require")) {
+			if (IdentifierHelper.getIdentifier(callExpression.operand).toString().equals("require")) {
 				if (callExpression.arguments.arguments.size() > 0)
 					moduleFile = normalizeModuleName(IdentifierHelper.getIdentifier(callExpression.arguments.arguments.get(0)).getIdentifierName());
 				if (moduleFile == null)

@@ -2,11 +2,6 @@ package ca.concordia.javascript.analysis.util;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
-import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
-import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
-import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
-
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
@@ -30,6 +25,11 @@ import com.google.javascript.jscomp.parsing.parser.trees.UnaryExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.VariableStatementTree;
+
+import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
+import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
+import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
+import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 
 public class IdentifierHelper {
 	private static final Logger log = Logger.getLogger(IdentifierHelper.class.getName());
@@ -129,5 +129,35 @@ public class IdentifierHelper {
 					return getIdentifier(variableDeclaration.lvalue);
 		}
 		return null;
+	}
+
+	public static AbstractIdentifier removePart(AbstractIdentifier identifier, String partToRemove) {
+		//	return identifier;
+		return removePart(null, identifier, partToRemove);
+	}
+
+	private static AbstractIdentifier removePart(AbstractIdentifier newIdentifier, AbstractIdentifier identifier, String partToRemove) {
+		if (identifier instanceof PlainIdentifier)
+			if (newIdentifier == null)
+				return identifier;
+			else {
+				if (newIdentifier instanceof PlainIdentifier)
+					return new CompositeIdentifier(newIdentifier, identifier);
+				return new CompositeIdentifier(newIdentifier.asCompositeIdentifier().getLeftPart(), new CompositeIdentifier(newIdentifier.asCompositeIdentifier().getMostRightPart(), identifier));
+			}
+
+		CompositeIdentifier composite = identifier.asCompositeIdentifier();
+		if (composite.getMostLeftPart().toString().equals(partToRemove))
+			return new CompositeIdentifier(newIdentifier, composite.getRightPart());
+		if (composite.getMostRightPart().toString().equals(partToRemove))
+			return new CompositeIdentifier(newIdentifier, composite.getLeftPart());
+
+		if (newIdentifier == null)
+			newIdentifier = composite.getMostLeftPart();
+		else
+			newIdentifier = new CompositeIdentifier(newIdentifier, composite.getMostLeftPart());
+
+		newIdentifier = removePart(newIdentifier, composite.getRightPart(), partToRemove);
+		return newIdentifier;
 	}
 }

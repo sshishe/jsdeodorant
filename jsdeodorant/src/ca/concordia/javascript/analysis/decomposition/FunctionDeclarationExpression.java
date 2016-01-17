@@ -5,6 +5,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Strings;
+import com.google.javascript.jscomp.parsing.parser.Token;
+import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
+import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
@@ -13,12 +19,6 @@ import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
-
-import com.google.common.base.Strings;
-import com.google.javascript.jscomp.parsing.parser.Token;
-import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
-import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
-import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 public class FunctionDeclarationExpression extends AbstractExpression implements SourceContainer, FunctionDeclaration, IdentifiableExpression {
 	private static final Logger log = Logger.getLogger(FunctionDeclarationExpression.class.getName());
@@ -136,7 +136,7 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	 */
 	private AbstractIdentifier buildInternalIdentifier() {
 		if (leftValueExpression != null)
-			return IdentifierHelper.getIdentifier(leftValueExpression);
+			return normalizePrototype(IdentifierHelper.getIdentifier(leftValueExpression));
 		else if (getParent() instanceof ObjectLiteralExpression) {
 			ObjectLiteralExpression objectLiteralExpression = (ObjectLiteralExpression) getParent();
 			for (Token key : objectLiteralExpression.getPropertyMap().keySet())
@@ -159,6 +159,10 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		} else if (leftValueToken != null)
 			return new PlainIdentifier(leftValueToken);
 		return null;
+	}
+
+	private AbstractIdentifier normalizePrototype(AbstractIdentifier identifierToBeNormalized) {
+		return IdentifierHelper.removePart(identifierToBeNormalized, "prototype");
 	}
 
 	public FunctionKind getKind() {

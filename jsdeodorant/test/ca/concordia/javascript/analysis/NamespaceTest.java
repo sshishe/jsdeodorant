@@ -1,6 +1,7 @@
 package ca.concordia.javascript.analysis;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -31,6 +32,12 @@ public class NamespaceTest {
 
 	private Module setAnalysisForObjectLiteral() throws IOException {
 		testRunner.setJsFile("test/namespace/object-literal.js");
+		Module result = testRunner.performActionsForModule();
+		return result;
+	}
+
+	private Module setAnalysisForFunctionAssignToProto() throws IOException {
+		testRunner.setJsFile("test/namespace/function-assign-to-proto.js");
 		Module result = testRunner.performActionsForModule();
 		return result;
 	}
@@ -175,6 +182,16 @@ public class NamespaceTest {
 			Module result = setAnalysisForNestedObjectLiterals("test/namespace/external-aliased.js");
 			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
 			assertEquals(result.getProgram().getClassDeclarationList().get(0).getQualifiedName(), "namespace.innerNamespace.Foo");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testFunctionAssignToProto() {
+		try {
+			Module result = setAnalysisForFunctionAssignToProto();
+			assertTrue(result.getProgram().getFunctionInvocationList().get(0).getFunctionDeclaration() != null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

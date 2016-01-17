@@ -6,6 +6,13 @@ import java.util.Objects;
 
 import org.apache.log4j.Logger;
 
+import com.google.javascript.jscomp.parsing.parser.Token;
+import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
@@ -13,17 +20,10 @@ import ca.concordia.javascript.analysis.abstraction.Namespace;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
+import ca.concordia.javascript.analysis.util.DebugHelper;
 import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
 import ca.concordia.javascript.analysis.util.ModelHelper;
-import ca.concordia.javascript.analysis.util.DebugHelper;
-
-import com.google.javascript.jscomp.parsing.parser.Token;
-import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 public class AbstractExpression extends AbstractFunctionFragment {
 	private static final Logger log = Logger.getLogger(AbstractExpression.class.getName());
@@ -215,7 +215,7 @@ public class AbstractExpression extends AbstractFunctionFragment {
 			Map<Token, AbstractExpression> propertyMap = objectLiteralExpression.getPropertyMap();
 			for (Token key : propertyMap.keySet()) {
 				AbstractExpression abstractExpression = propertyMap.get(key);
-				if (IdentifierHelper.getIdentifier(abstractExpression.expression).equals(this.asIdentifiableExpression().getIdentifier())) {
+				if (IdentifierHelper.getIdentifier(abstractExpression.expression).toString().equals(this.asIdentifiableExpression().getIdentifier().toString())) {
 					this.asIdentifiableExpression().setPublicIdentifier(new PlainIdentifier(key));
 					return true;
 				}
@@ -237,7 +237,7 @@ public class AbstractExpression extends AbstractFunctionFragment {
 		if (identifier instanceof CompositeIdentifier) {
 			PlainIdentifier mostLeftPart = identifier.asCompositeIdentifier().getMostLeftPart();
 			if (mostLeftPart.getNode() instanceof IdentifierExpressionTree) {
-				if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value)) {
+				if (returnStatement.getStatement().asReturnStatement().expression.asIdentifierExpression().identifierToken.value.toString().equals(mostLeftPart.getNode().asIdentifierExpression().identifierToken.value.toString())) {
 					this.asIdentifiableExpression().setPublicIdentifier(((CompositeIdentifier) identifier).getRightPart());
 					return true;
 				}
