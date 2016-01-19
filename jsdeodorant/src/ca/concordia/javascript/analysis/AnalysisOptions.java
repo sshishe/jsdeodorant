@@ -18,6 +18,11 @@ public class AnalysisOptions {
 	private boolean analyzeLibrariesForClasses;
 	private List<String> librariesWithPath;
 	private List<String> builtInLibraries;
+	private String psqlServerName;
+	private String psqlPortNumber;
+	private String psqlDatabase;
+	private String psqlUser;
+	private String psqlPassword;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -125,5 +130,45 @@ public class AnalysisOptions {
 
 	public void setBuiltinLibraries(List<String> builtInLibraries) {
 		this.builtInLibraries = builtInLibraries;
+	}
+
+	public String getPsqlServerName() {
+		return psqlServerName;
+	}
+
+	public void setPsqlServerName(String serverName) {
+		this.psqlServerName = serverName;
+	}
+
+	public String getPsqlPortNumber() {
+		return psqlPortNumber;
+	}
+
+	public void setPsqlPortNumber(String portNumber) {
+		this.psqlPortNumber = portNumber;
+	}
+
+	public String getPsqlDatabaseName() {
+		return psqlDatabase;
+	}
+
+	public void setPsqlDatabaseName(String database) {
+		this.psqlDatabase = database;
+	}
+
+	public String getPsqlUser() {
+		return psqlUser;
+	}
+
+	public void setPsqlUser(String user) {
+		this.psqlUser = user;
+	}
+
+	public String getPsqlPassword() {
+		return psqlPassword;
+	}
+
+	public void setPsqlPassword(String password) {
+		this.psqlPassword = password;
 	}
 }

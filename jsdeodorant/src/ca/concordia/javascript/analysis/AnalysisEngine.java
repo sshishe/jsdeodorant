@@ -60,7 +60,7 @@ public class AnalysisEngine {
 		}
 
 		if (analysisOption.isOutputToDB()) {
-			psqlOutput = new PostgresOutput(analysisOption.getDirectoryPath());
+			psqlOutput = new PostgresOutput(analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(), analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(), analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
 		}
 
 		for (SourceFile sourceFile : inputs) {

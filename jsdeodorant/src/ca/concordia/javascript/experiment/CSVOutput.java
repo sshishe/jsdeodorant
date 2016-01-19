@@ -13,7 +13,6 @@ import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.module.LibraryType;
-import ca.concordia.javascript.analysis.util.CSVFileWriter;
 import ca.concordia.javascript.analysis.util.FileUtil;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
 

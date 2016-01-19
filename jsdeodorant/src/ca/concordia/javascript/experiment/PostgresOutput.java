@@ -10,20 +10,28 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Properties;
 
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.module.LibraryType;
+import ca.concordia.javascript.analysis.util.StringUtil;
 
 public class PostgresOutput {
 	private Connection connection;
 	private int iterationId = 1;
 
-	public PostgresOutput(String folderPath) {
+	public PostgresOutput(String folderPath, String serverName, String portNumber, String database, String user, String password) {
 		connection = null;
 		try {
-			connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/jsdeodorant");
+			String url = "jdbc:postgresql://" + serverName + ':' + portNumber + '/' + database;
+			Properties props = new Properties();
+			if (!StringUtil.isNullOrEmpty(user))
+				props.setProperty("user", user);
+			if (!StringUtil.isNullOrEmpty(password))
+				props.setProperty("password", password);
+			connection = DriverManager.getConnection(url, props);
 			setExperimentIterationId(folderPath);
 		} catch (SQLException e) {
 			System.out.println("Connection Failed! Check output console");

@@ -56,6 +56,21 @@ public class Flags {
 	@Option(name = "-builtin-libraries", usage = "List of Node's built-in libraries such as Error or Util", handler = StringArrayOptionHandler.class)
 	private List<String> builtInLibraries = new ArrayList<>();
 
+	@Option(name = "-psqlServer", hidden = true, usage = "Postgres password")
+	private String psqlServer;
+
+	@Option(name = "-psqlPort", hidden = true, usage = "Postgres port")
+	private String psqlPort;
+
+	@Option(name = "-psqlDbName", hidden = true, usage = "Postgres database name")
+	private String psqlDBName;
+
+	@Option(name = "-psqlUser", hidden = true, usage = "Postgres user")
+	private String psqlUser;
+
+	@Option(name = "-psqlPassword", hidden = true, usage = "Postgres password")
+	private String psqlPassword;
+
 	public boolean classAnalysis() {
 		return classAnalysis;
 	}
@@ -117,5 +132,25 @@ public class Flags {
 
 	public void parse(String[] args) throws CmdLineException {
 		parser.parseArgument(args);
+	}
+
+	public String getPsqlServerName() {
+		return psqlServer;
+	}
+
+	public String getPsqlUser() {
+		return psqlUser;
+	}
+
+	public String getPsqlPassword() {
+		return psqlPassword;
+	}
+
+	public String getPsqlDbName() {
+		return psqlDBName;
+	}
+
+	public String getPsqlPort() {
+		return psqlPort;
 	}
 }

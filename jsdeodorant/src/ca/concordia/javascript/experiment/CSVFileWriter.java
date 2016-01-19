@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis.util;
+package ca.concordia.javascript.experiment;
 
 import java.io.FileWriter;
 import java.io.IOException;

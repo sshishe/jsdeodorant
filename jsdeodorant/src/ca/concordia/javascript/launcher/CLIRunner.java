@@ -59,6 +59,11 @@ public class CLIRunner extends Runner {
 			getAnalysisOptions().setAnalyzeLibrariesForClasses(flags.analyzeLibraryClasses());
 			getAnalysisOptions().setLibrariesWithPath(flags.getLibrariesWithPath());
 			getAnalysisOptions().setBuiltinLibraries(flags.getBuiltinLibraries());
+			getAnalysisOptions().setPsqlServerName(flags.getPsqlServerName());
+			getAnalysisOptions().setPsqlPortNumber(flags.getPsqlPort());
+			getAnalysisOptions().setPsqlDatabaseName(flags.getPsqlDbName());
+			getAnalysisOptions().setPsqlUser(flags.getPsqlUser());
+			getAnalysisOptions().setPsqlPassword(flags.getPsqlPassword());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
