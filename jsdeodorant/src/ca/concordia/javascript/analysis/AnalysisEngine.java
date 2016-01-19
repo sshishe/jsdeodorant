@@ -125,12 +125,12 @@ public class AnalysisEngine {
 					return;
 				}
 		// for libraries with path such as Node's global modules
-		if (analysisOption.getLibrariesWithPath() != null && analysisOption.getLibrariesWithPath().size() > 0)
-			for (String library : analysisOption.getLibrariesWithPath())
-				if (module.getSourceFile().getOriginalPath().contains(library)) {
-					module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
-					return;
-				}
+		//		if (analysisOption.getLibrariesWithPath() != null && analysisOption.getLibrariesWithPath().size() > 0)
+		//			for (String library : analysisOption.getLibrariesWithPath())
+		//				if (module.getSourceFile().getOriginalPath().contains(library)) {
+		//					module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
+		//					return;
+		//				}
 
 		// for libraries such as Node's built-in modules
 		if (analysisOption.getBuiltInLibraries() != null && analysisOption.getBuiltInLibraries().size() > 0)

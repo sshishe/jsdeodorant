@@ -68,10 +68,10 @@ public class PostgresOutput {
 	public void logFunctionsAndClasses(Module module) {
 		for (ObjectCreation creation : module.getProgram().getObjectCreationList()) {
 			if (creation.isClassDeclarationPredefined()) {
-				insertIntoModuleFunctions(creation.getOperandOfNewName(), creation.getOperandOfNewName(), LibraryType.JS_PREDEFINED.toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath(), "");
+				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getOperandOfNewName(), "", LibraryType.JS_PREDEFINED.toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");
 			}
 			if (creation.getClassDeclaration() != null) {
-				insertIntoModuleFunctions(creation.getOperandOfNewName(), creation.getClassDeclarationQualifiedName(), creation.getClassDeclarationModule().getLibraryType().toString(), creation.getClassDeclaration().getKind().toString(), true, creation.getArguments().size(), creation.getClassDeclaration().getParameters().size(), LogUtil.getParametersName(creation.getClassDeclaration().getParameters()), module.getCanonicalPath(), creation.getClassDeclarationModule().getCanonicalPath());
+				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getClassDeclarationQualifiedName(), module.getLibraryType().toString(), creation.getClassDeclarationModule().getLibraryType().toString(), creation.getClassDeclaration().getKind().toString(), true, creation.getArguments().size(), creation.getClassDeclaration().getParameters().size(), LogUtil.getParametersName(creation.getClassDeclaration().getParameters()), module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), creation.getClassDeclarationModule().getCanonicalPath() + " " + creation.getClassDeclarationLocation());
 			}
 		}
 		for (FunctionInvocation functionInvocation : module.getProgram().getFunctionInvocationList()) {
@@ -94,24 +94,26 @@ public class PostgresOutput {
 					definitionModulePath = functionInvocation.getFunctionDeclarationModule().getCanonicalPath();
 				}
 			}
-			insertIntoModuleFunctions(functionInvocation.getIdentifier().toString(), functionDefinitionName, definitionModuleType, definitionFunctionType, false, functionInvocation.getArguments().size(), parameterSize, parameterName, module.getCanonicalPath(), definitionModulePath);
+			insertIntoModuleFunctions("FUNCTION", functionInvocation.getIdentifier().toString(), functionDefinitionName, module.getLibraryType().toString(), definitionModuleType, definitionFunctionType, false, functionInvocation.getArguments().size(), parameterSize, parameterName, module.getCanonicalPath() + " " + functionInvocation.getFunctionInvocationLocation(), definitionModulePath + " " + functionInvocation.getFunctionDeclarationLocation());
 		}
 	}
 
-	private void insertIntoModuleFunctions(String invocationName, String definitionName, String definitionModuleType, String definitionFunctionType, boolean isClass, int numberOfArguments, int numberOfParameters, String parameterNames, String invocationLocation, String definitionLocation) {
-		PreparedStatement query = getPreparedStatement("INSERT INTO module_functions VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	private void insertIntoModuleFunctions(String matchType, String invocationName, String definitionName, String invocationModuleType, String definitionModuleType, String definitionFunctionType, boolean isClass, int numberOfArguments, int numberOfParameters, String parameterNames, String invocationLocation, String definitionLocation) {
+		PreparedStatement query = getPreparedStatement("INSERT INTO module_functions VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		try {
 			query.setInt(1, iterationId);
-			query.setString(2, invocationName);
-			query.setString(3, definitionName);
-			query.setString(4, definitionModuleType);
-			query.setString(5, definitionFunctionType);
-			query.setBoolean(6, isClass);
-			query.setInt(7, numberOfArguments);
-			query.setInt(8, numberOfParameters);
-			query.setString(9, parameterNames);
-			query.setString(10, invocationLocation);
-			query.setString(11, definitionLocation);
+			query.setString(2, matchType);
+			query.setString(3, invocationName);
+			query.setString(4, definitionName);
+			query.setString(5, invocationModuleType);
+			query.setString(6, definitionModuleType);
+			query.setString(7, definitionFunctionType);
+			query.setBoolean(8, isClass);
+			query.setInt(9, numberOfArguments);
+			query.setInt(10, numberOfParameters);
+			query.setString(11, parameterNames);
+			query.setString(12, invocationLocation);
+			query.setString(13, definitionLocation);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

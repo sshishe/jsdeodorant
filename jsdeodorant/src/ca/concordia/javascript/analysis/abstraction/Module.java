@@ -17,6 +17,11 @@ public class Module {
 	private SourceFile sourceFile;
 	private ModuleType moduleType;
 	private LibraryType libraryType;
+	@Override
+	public String toString() {
+		return "Module [sourceFile=" + sourceFile + ", moduleType=" + moduleType + ", libraryType=" + libraryType + "]";
+	}
+
 	private Map<String, Module> dependencies;
 	private List<Export> exports;
 

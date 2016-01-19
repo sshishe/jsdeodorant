@@ -14,6 +14,7 @@ import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.util.DebugHelper;
 import ca.concordia.javascript.analysis.util.ExternalAliasHelper;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
+import ca.concordia.javascript.analysis.util.SourceLocationHelper;
 
 public class ObjectCreation extends Creation {
 	static Logger log = Logger.getLogger(ObjectCreation.class.getName());
@@ -162,12 +163,14 @@ public class ObjectCreation extends Creation {
 	}
 
 	public String getObjectCreationLocation() {
-		return this.getNewExpressionTree().location.toString();
+		return SourceLocationHelper.getLocation(this.getClassDeclaration().getFunctionDeclarationTree().location);
 	}
 
 	public String getClassDeclarationLocation() {
-		if (this.getClassDeclaration() != null)
-			return this.getClassDeclaration().getFunctionDeclarationTree().location.toString();
+		if (this.getClassDeclaration() != null) {
+			return SourceLocationHelper.getLocation(this.getClassDeclaration().getFunctionDeclarationTree().location);
+		}
+
 		else
 			return "";
 	}

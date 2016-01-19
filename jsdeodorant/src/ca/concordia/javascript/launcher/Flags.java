@@ -50,8 +50,8 @@ public class Flags {
 	@Option(name = "-analyze-lbClasses", usage = "Analyze libraries to find class usage in them")
 	private boolean analyzeLibraryClasses = false;
 
-	@Option(name = "-libraries-with-path", usage = "List of libraries with path such as Node's global LB path", handler = StringArrayOptionHandler.class)
-	private List<String> librariesWithPath = new ArrayList<>();
+//	@Option(name = "-libraries-with-path", usage = "List of libraries with path such as Node's global LB path", handler = StringArrayOptionHandler.class)
+//	private List<String> librariesWithPath = new ArrayList<>();
 
 	@Option(name = "-builtin-libraries", usage = "List of Node's built-in libraries such as Error or Util", handler = StringArrayOptionHandler.class)
 	private List<String> builtInLibraries = new ArrayList<>();
@@ -122,9 +122,9 @@ public class Flags {
 		return analyzeLibraryClasses;
 	}
 
-	public List<String> getLibrariesWithPath() {
-		return librariesWithPath;
-	}
+	//	public List<String> getLibrariesWithPath() {
+	//		return librariesWithPath;
+	//	}
 
 	public List<String> getBuiltinLibraries() {
 		return builtInLibraries;

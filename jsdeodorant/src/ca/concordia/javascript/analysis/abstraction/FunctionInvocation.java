@@ -10,6 +10,7 @@ import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.util.DebugHelper;
 import ca.concordia.javascript.analysis.util.ExternalAliasHelper;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
+import ca.concordia.javascript.analysis.util.SourceLocationHelper;
 
 public class FunctionInvocation {
 	private AbstractIdentifier identifier;
@@ -124,5 +125,16 @@ public class FunctionInvocation {
 		if (getIdentifier() instanceof PlainIdentifier)
 			return aliasedIdentifier = identifier;
 		return aliasedIdentifier = ExternalAliasHelper.getAliasedIdentifier(this.operand, getIdentifier());
+	}
+
+	public String getFunctionInvocationLocation() {
+		return SourceLocationHelper.getLocation(this.callExpressionTree.location);
+	}
+
+	public String getFunctionDeclarationLocation() {
+		if (this.functionDeclaration != null)
+			return SourceLocationHelper.getLocation(this.functionDeclaration.getFunctionDeclarationTree().location);
+		else
+			return "";
 	}
 }
