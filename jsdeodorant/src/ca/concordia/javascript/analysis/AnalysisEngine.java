@@ -52,9 +52,11 @@ public class AnalysisEngine {
 		Result result = compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		List<Module> modules = new ArrayList<>();
+
 		if (analysisOption.isOutputToCSV()) {
 			CSVOutput.createAndClearFolder("log/functions");
 			CSVOutput.createAndClearFolder("log/classes");
+			CSVOutput.createAndClearFolder("log/aggregate");
 		}
 
 		if (analysisOption.isOutputToDB()) {
