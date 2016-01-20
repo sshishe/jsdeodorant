@@ -14,15 +14,15 @@ public class PredefinedFunctions {
 		numberFunctions.addFunction("toFixed");
 		numberFunctions.addFunction("toLocaleString");
 		numberFunctions.addFunction("toPrecision");
-		numberFunctions.addFunction("toString");
-		numberFunctions.addFunction("valueOf");
+//		numberFunctions.addFunction("toString");
+//		numberFunctions.addFunction("valueOf");
 		predefinedFunctions.add(numberFunctions);
 
 		// Boolean
 		PredefinedFunction booleanFunctions = new PredefinedFunction("Boolean");
-		booleanFunctions.addFunction("toSource");
-		booleanFunctions.addFunction("toString");
-		booleanFunctions.addFunction("valueOf");
+//		booleanFunctions.addFunction("toSource");
+//		booleanFunctions.addFunction("toString");
+//		booleanFunctions.addFunction("valueOf");
 		predefinedFunctions.add(booleanFunctions);
 
 		// String
@@ -44,9 +44,9 @@ public class PredefinedFunctions {
 		stringFunctions.addFunction("toLocaleLowerCase");
 		stringFunctions.addFunction("toLocaleUpperCase");
 		stringFunctions.addFunction("toLowerCase");
-		stringFunctions.addFunction("toString");
+//		stringFunctions.addFunction("toString");
 		stringFunctions.addFunction("toUpperCase");
-		stringFunctions.addFunction("valueOf");
+//		stringFunctions.addFunction("valueOf");
 		predefinedFunctions.add(stringFunctions);
 
 		// HTML
@@ -84,9 +84,9 @@ public class PredefinedFunctions {
 		arrayFunctions.addFunction("shift");
 		arrayFunctions.addFunction("slice");
 		arrayFunctions.addFunction("some");
-		arrayFunctions.addFunction("toSource");
+//		arrayFunctions.addFunction("toSource");
 		arrayFunctions.addFunction("splice");
-		arrayFunctions.addFunction("toString");
+//		arrayFunctions.addFunction("toString");
 		arrayFunctions.addFunction("unshift");
 		predefinedFunctions.add(arrayFunctions);
 
@@ -135,8 +135,8 @@ public class PredefinedFunctions {
 		dateFunctions.addFunction("toLocaleFormat");
 		dateFunctions.addFunction("toLocaleString");
 		dateFunctions.addFunction("toLocaleTimeString");
-		dateFunctions.addFunction("toSource");
-		dateFunctions.addFunction("toString");
+//		dateFunctions.addFunction("toSource");
+//		dateFunctions.addFunction("toString");
 		dateFunctions.addFunction("toTimeString");
 		dateFunctions.addFunction("toUTCString");
 		dateFunctions.addFunction("valueOf");
@@ -164,30 +164,16 @@ public class PredefinedFunctions {
 		dateFunctions.addFunction("sin");
 		dateFunctions.addFunction("sqrt");
 		dateFunctions.addFunction("tan");
-		dateFunctions.addFunction("toSource");
+//		dateFunctions.addFunction("toSource");
 		predefinedFunctions.add(mathFunctions);
 
 		// RegExp
 		PredefinedFunction regexFunctions = new PredefinedFunction("Regex");
 		regexFunctions.addFunction("exec");
 		regexFunctions.addFunction("test");
-		regexFunctions.addFunction("toSource");
-		regexFunctions.addFunction("toString");
+		//		regexFunctions.addFunction("toSource");
+		//		regexFunctions.addFunction("toString");
 		predefinedFunctions.add(regexFunctions);
-
-		// Node Console object
-		PredefinedFunction consoleFunction = new PredefinedFunction("console");
-		consoleFunction.addFunction("log");
-		consoleFunction.addFunction("error");
-		regexFunctions.addFunction("assert");
-		regexFunctions.addFunction("info");
-		regexFunctions.addFunction("dir");
-		regexFunctions.addFunction("log");
-		regexFunctions.addFunction("time");
-		regexFunctions.addFunction("timeEnd");
-		regexFunctions.addFunction("trace");
-		regexFunctions.addFunction("warn");
-		predefinedFunctions.add(consoleFunction);
 	}
 
 	public static boolean isItPredefined(String name) {
