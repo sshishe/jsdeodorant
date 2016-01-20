@@ -17,6 +17,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.MemberLookupExpressionT
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NullTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ObjectPatternTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PostfixExpressionTree;
@@ -104,6 +105,8 @@ public class IdentifierHelper {
 		} else if (node instanceof NullTree) {
 			return new PlainIdentifier(node);
 		} else if (node instanceof TemplateLiteralExpressionTree) {
+			return new PlainIdentifier(node);
+		} else if (node instanceof ObjectPatternTree) {
 			return new PlainIdentifier(node);
 		} else {
 			throw new UnsupportedOperationException(node.getClass() + " is not supported as an identifier");
