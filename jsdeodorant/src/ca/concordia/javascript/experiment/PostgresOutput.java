@@ -66,6 +66,8 @@ public class PostgresOutput {
 	}
 
 	public void logFunctionsAndClasses(Module module) {
+		if (module.getLibraryType() != LibraryType.NONE)
+			return;
 		for (ObjectCreation creation : module.getProgram().getObjectCreationList()) {
 			if (creation.isClassDeclarationPredefined()) {
 				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getOperandOfNewName(), "", LibraryType.JS_PREDEFINED.toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");

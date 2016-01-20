@@ -10,6 +10,7 @@ import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.module.LibraryType;
+import ca.concordia.javascript.analysis.util.FileUtil;
 import ca.concordia.javascript.experiment.CSVOutput;
 import ca.concordia.javascript.experiment.PostgresOutput;
 import ca.concordia.javascript.metrics.CyclomaticComplexity;
@@ -64,8 +65,8 @@ public class AnalysisEngine {
 		}
 
 		for (SourceFile sourceFile : inputs) {
-			if (containsError(sourceFile, result))
-				continue;
+			//			if (containsError(sourceFile, result))
+			//				continue;
 			Program program = new Program();
 
 			ProgramTree programTree = scriptAnalyzer.parse(sourceFile);
@@ -77,12 +78,22 @@ public class AnalysisEngine {
 
 		for (Module module : modules) {
 			checkForBeingLibrary(module, analysisOption);
+			if (module.getLibraryType() == LibraryType.BUILT_IN) {
+				for (Module otherModule : modules) {
+					if (module != otherModule) {
+						String[] modulePath = module.getCanonicalPath().split("/");
+						otherModule.addDependency(FileUtil.getElementsOf(modulePath, modulePath.length - 1, modulePath.length - 1).replace(".js", ""), module);
+					}
+				}
+			}
+		}
 
+		for (Module module : modules) {
 			if (analysisOption.hasModuleAnalysis())
 				CompositePostProcessor.processModules(module, modules);
 
 			if (analysisOption.hasClassAnlysis())
-				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() != LibraryType.BUILT_IN)
+				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE)
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
 			if (module.getLibraryType() == LibraryType.NONE)

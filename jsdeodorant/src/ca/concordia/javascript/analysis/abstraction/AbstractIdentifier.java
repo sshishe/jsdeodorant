@@ -22,6 +22,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.NullTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PostfixExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.TemplateLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.UnaryExpressionTree;
 
@@ -112,7 +113,9 @@ public abstract class AbstractIdentifier {
 			return extractIdentifierName(postfixExpression.operand) + postfixExpression.operator.toString();
 		} else if (currentNode instanceof NullTree) {
 			return "";
-		}
+		} else if (currentNode instanceof TemplateLiteralExpressionTree)
+			return "";
+
 		if (currentNode == null)
 			log.error("Current node is null");
 		//log.error("Node type is not supported:" + "<" + currentNode.getClass() + ">");

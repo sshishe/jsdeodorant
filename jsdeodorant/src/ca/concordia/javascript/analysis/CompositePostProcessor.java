@@ -11,6 +11,7 @@ import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
+import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
@@ -67,19 +68,42 @@ public class CompositePostProcessor {
 			if (functionInvocation.isPredefined())
 				continue;
 
-			for (Map.Entry<String, Module> dependency : module.getDependencies().entrySet()) {
-				// If the invocation is not Composite, it may be not part of the exports or module.exports
-				if (!(functionInvocation.getIdentifier() instanceof CompositeIdentifier))
+			// Node specific function which are not qualified names
+			// If the invocation is not Composite, it may be not part of the exports or module.exports
+			if (functionInvocation.getIdentifier() instanceof PlainIdentifier) {
+				if (nodeSpecificFunction(functionInvocation, module.getDependencies()))
 					continue;
-
-				if (dependency.getKey().equals(functionInvocation.getIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
-					for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
-						if (functionDeclaration.getName().contains(functionInvocation.getAliasedIdentifier().asCompositeIdentifier().getRightPart().toString()))
-							functionInvocation.setFunctionDeclaration(functionDeclaration, dependency.getValue());
+			} else
+				for (Map.Entry<String, Module> dependency : module.getDependencies().entrySet()) {
+					if (dependency.getKey().equals(functionInvocation.getIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
+						for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
+							if (functionDeclaration.getName().contains(functionInvocation.getAliasedIdentifier().asCompositeIdentifier().getRightPart().toString()))
+								//if (functionDeclaration.getName().toLowerCase().contains(functionInvocation.getAliasedIdentifier().toString().toLowerCase()))
+								functionInvocation.setFunctionDeclaration(functionDeclaration, dependency.getValue());
+						}
 					}
 				}
+		}
+	}
+
+	private static boolean nodeSpecificFunction(FunctionInvocation functionInvocation, Map<String, Module> map) {
+		for (Map.Entry<String, Module> dependency : map.entrySet()) {
+			if (dependency.getKey().equals("module"))
+				if (inspectFunctions(functionInvocation, dependency))
+					return true;
+		}
+		return false;
+	}
+
+	private static boolean inspectFunctions(FunctionInvocation functionInvocation, Entry<String, Module> dependency) {
+		for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
+			if (functionDeclaration.getName().toLowerCase().contains(functionInvocation.getAliasedIdentifier().toString().toLowerCase())) {
+				functionInvocation.setFunctionDeclaration(functionDeclaration, dependency.getValue());
+				if (functionInvocation.getFunctionDeclaration() != null)
+					return true;
 			}
 		}
+		return false;
 	}
 
 	private static boolean findPredefinedClasses(Program program, ObjectCreation objectCreation) {

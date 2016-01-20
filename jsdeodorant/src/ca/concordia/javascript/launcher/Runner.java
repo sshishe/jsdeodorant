@@ -70,7 +70,7 @@ public abstract class Runner extends CommandLineRunner {
 		if (analysisOptions.isLogDisabled())
 			LogManager.getLoggerRepository().setThreshold(Level.OFF);
 		addInputsFromFile(analysisOptions.getJsFiles());
-		addInputsFromFile(extractFilesFromLibraries(analysisOptions.getLibrariesWithPath()));
+		addInputsFromFile(extractFilesFromLibraries(analysisOptions.getBuiltInLibraries()));
 		addExternsFromFile(analysisOptions.getExterns());
 		AnalysisEngine analysisEngine = new AnalysisEngine(createExtendedCompiler(), createOptions(), inputs.build(), externs.build());
 		log.debug("analysis starts");

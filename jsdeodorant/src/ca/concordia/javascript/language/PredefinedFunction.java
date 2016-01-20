@@ -29,8 +29,8 @@ public class PredefinedFunction {
 	}
 
 	public boolean contains(String functionName) {
-		for (String string : functions) {
-			if (string.equalsIgnoreCase(functionName))
+		for (String function : functions) {
+			if ((objectName + "." + function).equalsIgnoreCase(functionName))
 				return true;
 		}
 		return false;
