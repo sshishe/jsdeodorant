@@ -145,7 +145,7 @@ public class CSVOutput {
 
 	private String getFileName() {
 		String[] filePart = currentModule.getSourceFile().getOriginalPath().split("/");
-		String fileName = FileUtil.getElementsOf(filePart, filePart.length - 2, filePart.length - 1).replace("/", "|");
+		String fileName = FileUtil.getElementsOf(filePart, filePart.length - 2, filePart.length - 1).replace("/", ".");
 		if (fileName.lastIndexOf('|') == fileName.length() - 1)
 			fileName = fileName.substring(0, fileName.length() - 1);
 		return fileName;

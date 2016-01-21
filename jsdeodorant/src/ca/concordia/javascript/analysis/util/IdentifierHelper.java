@@ -8,12 +8,14 @@ import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionT
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ConditionalExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.DefaultParameterTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberLookupExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.MissingPrimaryExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NullTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
@@ -21,6 +23,8 @@ import com.google.javascript.jscomp.parsing.parser.trees.ObjectPatternTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PostfixExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.RestParameterTree;
+import com.google.javascript.jscomp.parsing.parser.trees.SpreadExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.TemplateLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.UnaryExpressionTree;
@@ -107,6 +111,14 @@ public class IdentifierHelper {
 		} else if (node instanceof TemplateLiteralExpressionTree) {
 			return new PlainIdentifier(node);
 		} else if (node instanceof ObjectPatternTree) {
+			return new PlainIdentifier(node);
+		} else if (node instanceof MissingPrimaryExpressionTree) {
+			return new PlainIdentifier(node);
+		} else if (node instanceof DefaultParameterTree){
+			return new PlainIdentifier(node);
+		} else if (node instanceof RestParameterTree){
+			return new PlainIdentifier(node);
+		} else if (node instanceof SpreadExpressionTree){
 			return new PlainIdentifier(node);
 		} else {
 			throw new UnsupportedOperationException(node.getClass() + " is not supported as an identifier");

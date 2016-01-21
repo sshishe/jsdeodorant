@@ -161,9 +161,9 @@ public class ObjectCreation extends Creation {
 		else
 			return "";
 	}
-
+	
 	public String getObjectCreationLocation() {
-		return SourceLocationHelper.getLocation(this.getClassDeclaration().getFunctionDeclarationTree().location);
+		return SourceLocationHelper.getLocation(this.newExpressionTree.location);
 	}
 
 	public String getClassDeclarationLocation() {

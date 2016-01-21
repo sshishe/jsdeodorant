@@ -1,5 +1,7 @@
 package ca.concordia.javascript.analysis;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +39,8 @@ public class AnalysisEngine {
 		this(compiler, compilerOptions, null, null);
 	}
 
-	public AnalysisEngine(ExtendedCompiler compiler, CompilerOptions compilerOptions, ImmutableList<SourceFile> inputs, ImmutableList<SourceFile> externs) {
+	public AnalysisEngine(ExtendedCompiler compiler, CompilerOptions compilerOptions, ImmutableList<SourceFile> inputs,
+			ImmutableList<SourceFile> externs) {
 		this.compiler = compiler;
 		this.compilerOptions = compilerOptions;
 		this.compilerOptions.setIdeMode(true);
@@ -61,12 +64,14 @@ public class AnalysisEngine {
 		}
 
 		if (analysisOption.isOutputToDB()) {
-			psqlOutput = new PostgresOutput(analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(), analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(), analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
+			psqlOutput = new PostgresOutput(analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(),
+					analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(),
+					analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
 		}
 
 		for (SourceFile sourceFile : inputs) {
-			//			if (containsError(sourceFile, result))
-			//				continue;
+			// if (containsError(sourceFile, result))
+			// continue;
 			Program program = new Program();
 
 			ProgramTree programTree = scriptAnalyzer.parse(sourceFile);
@@ -82,7 +87,10 @@ public class AnalysisEngine {
 				for (Module otherModule : modules) {
 					if (module != otherModule) {
 						String[] modulePath = module.getCanonicalPath().split("/");
-						otherModule.addDependency(FileUtil.getElementsOf(modulePath, modulePath.length - 1, modulePath.length - 1).replace(".js", ""), module);
+						otherModule.addDependency(
+								FileUtil.getElementsOf(modulePath, modulePath.length - 1, modulePath.length - 1)
+										.replace(".js", ""),
+								module);
 					}
 				}
 			}
@@ -129,27 +137,35 @@ public class AnalysisEngine {
 	}
 
 	private void checkForBeingLibrary(Module module, AnalysisOptions analysisOption) {
-		if (analysisOption.getLibraries() != null && analysisOption.getLibraries().size() > 0)
-			for (String library : analysisOption.getLibraries())
-				if (module.getSourceFile().getOriginalPath().contains(library)) {
-					module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
-					return;
-				}
-		// for libraries with path such as Node's global modules
-		//		if (analysisOption.getLibrariesWithPath() != null && analysisOption.getLibrariesWithPath().size() > 0)
-		//			for (String library : analysisOption.getLibrariesWithPath())
-		//				if (module.getSourceFile().getOriginalPath().contains(library)) {
-		//					module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
-		//					return;
-		//				}
+		try {
+			if (analysisOption.getLibraries() != null && analysisOption.getLibraries().size() > 0)
+				for (String library : analysisOption.getLibraries())
 
-		// for libraries such as Node's built-in modules
-		if (analysisOption.getBuiltInLibraries() != null && analysisOption.getBuiltInLibraries().size() > 0)
-			for (String library : analysisOption.getBuiltInLibraries())
-				if (module.getSourceFile().getOriginalPath().contains(library)) {
-					module.setAsLibrary(LibraryType.BUILT_IN);
-					return;
-				}
+					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().contains(new File(library).getCanonicalPath())) {
+						module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
+						return;
+					}
+
+			// for libraries with path such as Node's global modules
+			// if (analysisOption.getLibrariesWithPath() != null &&
+			// analysisOption.getLibrariesWithPath().size() > 0)
+			// for (String library : analysisOption.getLibrariesWithPath())
+			// if (module.getSourceFile().getOriginalPath().contains(library)) {
+			// module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
+			// return;
+			// }
+
+			// for libraries such as Node's built-in modules
+			if (analysisOption.getBuiltInLibraries() != null && analysisOption.getBuiltInLibraries().size() > 0)
+				for (String library : analysisOption.getBuiltInLibraries())
+					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().contains(new File(library).getCanonicalPath())) {
+						module.setAsLibrary(LibraryType.BUILT_IN);
+						return;
+					}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {

@@ -12,17 +12,21 @@ import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionT
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ConditionalExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.DefaultParameterTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberLookupExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.MissingPrimaryExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NullTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectPatternTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParenExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PostfixExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.RestParameterTree;
+import com.google.javascript.jscomp.parsing.parser.trees.SpreadExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.TemplateLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.UnaryExpressionTree;
@@ -117,6 +121,14 @@ public abstract class AbstractIdentifier {
 		} else if (currentNode instanceof TemplateLiteralExpressionTree) {
 			return "";
 		} else if (currentNode instanceof ObjectPatternTree) {
+			return "";
+		} else if (currentNode instanceof MissingPrimaryExpressionTree) {
+			return "";
+		} else if (currentNode instanceof DefaultParameterTree){
+			return "";
+		} else if (currentNode instanceof RestParameterTree){
+			return "";
+		} else if (currentNode instanceof SpreadExpressionTree){
 			return "";
 		}
 
