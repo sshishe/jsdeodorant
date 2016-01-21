@@ -65,19 +65,25 @@ public class PostgresOutput {
 		executePreparedStatement(query);
 	}
 
-	public void logFunctionsAndClasses(Module module) {
+	public void logClasses(Module module) {
 		if (module.getLibraryType() != LibraryType.NONE)
 			return;
 		for (ObjectCreation creation : module.getProgram().getObjectCreationList()) {
 			if (creation.isClassDeclarationPredefined()) {
 				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getOperandOfNewName(), "", LibraryType.JS_PREDEFINED.toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");
-			}
-			if (creation.getClassDeclaration() != null) {
+			} else if (creation.getClassDeclaration() != null) {
 				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getClassDeclarationQualifiedName(), module.getLibraryType().toString(), creation.getClassDeclarationModule().getLibraryType().toString(), creation.getClassDeclaration().getKind().toString(), true, creation.getArguments().size(), creation.getClassDeclaration().getParameters().size(), LogUtil.getParametersName(creation.getClassDeclaration().getParameters()), module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), creation.getClassDeclarationModule().getCanonicalPath() + " " + creation.getClassDeclarationLocation());
+			} else {
+				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), "", "", module.getLibraryType().toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");
 			}
 		}
+	}
+
+	public void logFunctions(Module module) {
+		if (module.getLibraryType() != LibraryType.NONE)
+			return;
 		for (FunctionInvocation functionInvocation : module.getProgram().getFunctionInvocationList()) {
-			String functionDefinitionName = "";
+			String functionDefinitionName = "";	
 			String definitionModuleType = "";
 			String definitionFunctionType = "";
 			int parameterSize = -1;

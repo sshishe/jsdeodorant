@@ -71,7 +71,8 @@ public class ObjectLiteralExpression extends AbstractExpression implements Sourc
 			if (abstractExpression instanceof ObjectLiteralExpression) {
 				ObjectLiteralExpression objectLiteralExpression = (ObjectLiteralExpression) abstractExpression;
 				for (FunctionDeclaration functionDeclaration : objectLiteralExpression.getFunctionDeclarations()) {
-					functionDeclarationExpressions.add((FunctionDeclarationExpression) functionDeclaration);
+					if (functionDeclaration instanceof FunctionDeclarationExpression)
+						functionDeclarationExpressions.add((FunctionDeclarationExpression) functionDeclaration);
 				}
 			}
 		}

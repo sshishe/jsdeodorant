@@ -39,8 +39,7 @@ public class AnalysisEngine {
 		this(compiler, compilerOptions, null, null);
 	}
 
-	public AnalysisEngine(ExtendedCompiler compiler, CompilerOptions compilerOptions, ImmutableList<SourceFile> inputs,
-			ImmutableList<SourceFile> externs) {
+	public AnalysisEngine(ExtendedCompiler compiler, CompilerOptions compilerOptions, ImmutableList<SourceFile> inputs, ImmutableList<SourceFile> externs) {
 		this.compiler = compiler;
 		this.compilerOptions = compilerOptions;
 		this.compilerOptions.setIdeMode(true);
@@ -53,7 +52,7 @@ public class AnalysisEngine {
 	}
 
 	public List<Module> run(AnalysisOptions analysisOption) {
-		Result result = compiler.compile(externs, inputs, compilerOptions);
+		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		List<Module> modules = new ArrayList<>();
 
@@ -64,9 +63,7 @@ public class AnalysisEngine {
 		}
 
 		if (analysisOption.isOutputToDB()) {
-			psqlOutput = new PostgresOutput(analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(),
-					analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(),
-					analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
+			psqlOutput = new PostgresOutput(analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(), analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(), analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
 		}
 
 		for (SourceFile sourceFile : inputs) {
@@ -97,8 +94,9 @@ public class AnalysisEngine {
 				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE)
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
 
-			if (module.getLibraryType() == LibraryType.NONE)
-				CompositePostProcessor.processFunctionInvocations(module);
+			if (analysisOption.hasFunctionAnlysis())
+				if (module.getLibraryType() == LibraryType.NONE)
+					CompositePostProcessor.processFunctionInvocations(module);
 
 			if (analysisOption.isCalculateCyclomatic()) {
 				CyclomaticComplexity cyclomaticComplexity = new CyclomaticComplexity(module.getProgram());
@@ -117,7 +115,10 @@ public class AnalysisEngine {
 
 			if (analysisOption.isOutputToDB()) {
 				psqlOutput.logModuleInfo(module);
-				psqlOutput.logFunctionsAndClasses(module);
+				if (analysisOption.hasClassAnlysis())
+					psqlOutput.logClasses(module);
+				if (analysisOption.hasFunctionAnlysis())
+					psqlOutput.logFunctions(module);
 			}
 
 			AnalysisResult.addPackageInstance(module);
@@ -133,8 +134,7 @@ public class AnalysisEngine {
 		for (Module lbModule : modules) {
 			if (lbModule.getLibraryType() == LibraryType.BUILT_IN) {
 				String[] path = lbModule.getCanonicalPath().split("/");
-				module.addDependency(
-						FileUtil.getElementsOf(path, path.length - 1, path.length - 1).replace(".js", ""), lbModule);
+				module.addDependency(FileUtil.getElementsOf(path, path.length - 1, path.length - 1).replace(".js", ""), lbModule);
 			}
 		}
 	}
@@ -143,8 +143,7 @@ public class AnalysisEngine {
 		try {
 			if (analysisOption.getLibraries() != null && analysisOption.getLibraries().size() > 0)
 				for (String library : analysisOption.getLibraries())
-					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath()
-							.contains(new File(library).getCanonicalPath())) {
+					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().contains(new File(library).getCanonicalPath())) {
 						module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
 						return;
 					}
@@ -167,8 +166,7 @@ public class AnalysisEngine {
 		if (analysisOption.getBuiltInLibraries() != null && analysisOption.getBuiltInLibraries().size() > 0)
 			for (String library : analysisOption.getBuiltInLibraries())
 				try {
-					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath()
-							.contains(new File(library).getCanonicalPath())) {
+					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().contains(new File(library).getCanonicalPath())) {
 						module.setAsLibrary(LibraryType.BUILT_IN);
 						return;
 					}

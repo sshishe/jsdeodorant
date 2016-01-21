@@ -46,6 +46,7 @@ public class CLIRunner extends Runner {
 		try {
 			setAnalysisOptions(new AnalysisOptions());
 			getAnalysisOptions().setClassAnalysis(flags.classAnalysis());
+			getAnalysisOptions().setFunctionAnalysis(flags.functionAnalysis());
 			getAnalysisOptions().setModuleAnlysis(flags.moduleAnalysis());
 			getAnalysisOptions().setOutputToCSV(flags.outputToCSV());
 			getAnalysisOptions().setOutputToDB(flags.outputToDB());

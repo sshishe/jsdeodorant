@@ -20,6 +20,9 @@ public class Flags {
 	@Option(name = "-class_analysis", usage = "Advanceed static analysis")
 	private boolean classAnalysis = false;
 
+	@Option(name = "-function_analysis", usage = "Advanceed function analysis")
+	private boolean functionAnalysis = false;
+
 	@Option(name = "-output_csv", usage = "Generate a CSV file containing analysis info")
 	private boolean outputToCSV = false;
 
@@ -73,6 +76,10 @@ public class Flags {
 
 	public boolean classAnalysis() {
 		return classAnalysis;
+	}
+
+	public boolean functionAnalysis() {
+		return functionAnalysis;
 	}
 
 	public boolean moduleAnalysis() {
