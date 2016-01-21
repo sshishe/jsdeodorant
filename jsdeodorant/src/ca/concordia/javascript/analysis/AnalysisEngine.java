@@ -134,7 +134,7 @@ public class AnalysisEngine {
 			if (lbModule.getLibraryType() == LibraryType.BUILT_IN) {
 				String[] path = lbModule.getCanonicalPath().split("/");
 				module.addDependency(
-						FileUtil.getElementsOf(path, path.length - 1, path.length - 1).replace(".js", ""), module);
+						FileUtil.getElementsOf(path, path.length - 1, path.length - 1).replace(".js", ""), lbModule);
 			}
 		}
 	}

@@ -89,16 +89,16 @@ public class CompositePostProcessor {
 	private static boolean nodeSpecificFunction(FunctionInvocation functionInvocation, Map<String, Module> map) {
 		for (Map.Entry<String, Module> dependency : map.entrySet()) {
 			if (dependency.getKey().equals("module"))
-				if (inspectFunctions(functionInvocation, dependency))
+				if (inspectFunctions(functionInvocation, dependency.getValue()))
 					return true;
 		}
 		return false;
 	}
 
-	private static boolean inspectFunctions(FunctionInvocation functionInvocation, Entry<String, Module> dependency) {
-		for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
+	private static boolean inspectFunctions(FunctionInvocation functionInvocation, Module dependency) {
+		for (FunctionDeclaration functionDeclaration : dependency.getProgram().getFunctionDeclarationList()) {
 			if (functionDeclaration.getName().toLowerCase().contains(functionInvocation.getAliasedIdentifier().toString().toLowerCase())) {
-				functionInvocation.setFunctionDeclaration(functionDeclaration, dependency.getValue());
+				functionInvocation.setFunctionDeclaration(functionDeclaration, dependency);
 				if (functionInvocation.getFunctionDeclaration() != null)
 					return true;
 			}
