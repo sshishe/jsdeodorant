@@ -82,21 +82,14 @@ public class AnalysisEngine {
 		}
 
 		for (Module module : modules) {
-			checkForBeingLibrary(module, analysisOption);
-			if (module.getLibraryType() == LibraryType.BUILT_IN) {
-				for (Module otherModule : modules) {
-					if (module != otherModule) {
-						String[] modulePath = module.getCanonicalPath().split("/");
-						otherModule.addDependency(
-								FileUtil.getElementsOf(modulePath, modulePath.length - 1, modulePath.length - 1)
-										.replace(".js", ""),
-								module);
-					}
-				}
-			}
+			markBuiltinLibraries(module, analysisOption);
 		}
 
 		for (Module module : modules) {
+			if (module.getLibraryType() != LibraryType.BUILT_IN) {
+				checkForBeingLibrary(module, analysisOption);
+				addBuiltinDepdendencies(module, analysisOption, modules);
+			}
 			if (analysisOption.hasModuleAnalysis())
 				CompositePostProcessor.processModules(module, modules);
 
@@ -136,12 +129,22 @@ public class AnalysisEngine {
 		return modules;
 	}
 
+	private void addBuiltinDepdendencies(Module module, AnalysisOptions analysisOption, List<Module> modules) {
+		for (Module lbModule : modules) {
+			if (lbModule.getLibraryType() == LibraryType.BUILT_IN) {
+				String[] path = lbModule.getCanonicalPath().split("/");
+				module.addDependency(
+						FileUtil.getElementsOf(path, path.length - 1, path.length - 1).replace(".js", ""), module);
+			}
+		}
+	}
+
 	private void checkForBeingLibrary(Module module, AnalysisOptions analysisOption) {
 		try {
 			if (analysisOption.getLibraries() != null && analysisOption.getLibraries().size() > 0)
 				for (String library : analysisOption.getLibraries())
-
-					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().contains(new File(library).getCanonicalPath())) {
+					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath()
+							.contains(new File(library).getCanonicalPath())) {
 						module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
 						return;
 					}
@@ -153,19 +156,26 @@ public class AnalysisEngine {
 			// if (module.getSourceFile().getOriginalPath().contains(library)) {
 			// module.setAsLibrary(LibraryType.EXTERNAL_LIBRARY);
 			// return;
-			// }
-
-			// for libraries such as Node's built-in modules
-			if (analysisOption.getBuiltInLibraries() != null && analysisOption.getBuiltInLibraries().size() > 0)
-				for (String library : analysisOption.getBuiltInLibraries())
-					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().contains(new File(library).getCanonicalPath())) {
-						module.setAsLibrary(LibraryType.BUILT_IN);
-						return;
-					}
+			//
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private void markBuiltinLibraries(Module module, AnalysisOptions analysisOption) {
+		if (analysisOption.getBuiltInLibraries() != null && analysisOption.getBuiltInLibraries().size() > 0)
+			for (String library : analysisOption.getBuiltInLibraries())
+				try {
+					if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath()
+							.contains(new File(library).getCanonicalPath())) {
+						module.setAsLibrary(LibraryType.BUILT_IN);
+						return;
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 	}
 
 	private boolean containsError(SourceFile sourceFile, Result result) {
