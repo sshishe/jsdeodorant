@@ -9,6 +9,7 @@ import com.google.javascript.jscomp.parsing.parser.LiteralToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ArrayPatternTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ConditionalExpressionTree;
@@ -124,11 +125,13 @@ public abstract class AbstractIdentifier {
 			return "";
 		} else if (currentNode instanceof MissingPrimaryExpressionTree) {
 			return "";
-		} else if (currentNode instanceof DefaultParameterTree){
+		} else if (currentNode instanceof DefaultParameterTree) {
 			return "";
-		} else if (currentNode instanceof RestParameterTree){
+		} else if (currentNode instanceof RestParameterTree) {
 			return "";
-		} else if (currentNode instanceof SpreadExpressionTree){
+		} else if (currentNode instanceof SpreadExpressionTree) {
+			return "";
+		} else if (currentNode instanceof ArrayPatternTree) {
 			return "";
 		}
 

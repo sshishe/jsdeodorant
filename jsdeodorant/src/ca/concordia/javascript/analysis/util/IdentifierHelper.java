@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ArrayPatternTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ConditionalExpressionTree;
@@ -114,11 +115,13 @@ public class IdentifierHelper {
 			return new PlainIdentifier(node);
 		} else if (node instanceof MissingPrimaryExpressionTree) {
 			return new PlainIdentifier(node);
-		} else if (node instanceof DefaultParameterTree){
+		} else if (node instanceof DefaultParameterTree) {
 			return new PlainIdentifier(node);
-		} else if (node instanceof RestParameterTree){
+		} else if (node instanceof RestParameterTree) {
 			return new PlainIdentifier(node);
-		} else if (node instanceof SpreadExpressionTree){
+		} else if (node instanceof SpreadExpressionTree) {
+			return new PlainIdentifier(node);
+		} else if (node instanceof ArrayPatternTree) {
 			return new PlainIdentifier(node);
 		} else {
 			throw new UnsupportedOperationException(node.getClass() + " is not supported as an identifier");
