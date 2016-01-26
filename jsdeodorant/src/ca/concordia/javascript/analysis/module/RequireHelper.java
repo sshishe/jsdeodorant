@@ -55,12 +55,12 @@ public class RequireHelper {
 		try {
 			moduleCanonicalPath = moduleFile.getCanonicalPath();
 			for (Module module : modules) {
-
 				if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().equals(moduleCanonicalPath)) {
 					currentModule.addDependency(requireIdentifier.toString(), module);
 					return;
 				}
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

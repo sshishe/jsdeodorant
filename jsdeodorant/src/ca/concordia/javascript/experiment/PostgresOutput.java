@@ -14,8 +14,10 @@ import java.util.Properties;
 
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
+import ca.concordia.javascript.analysis.abstraction.ModuleType;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.module.LibraryType;
+import ca.concordia.javascript.analysis.util.FileUtil;
 import ca.concordia.javascript.analysis.util.StringUtil;
 
 public class PostgresOutput {
@@ -69,12 +71,14 @@ public class PostgresOutput {
 		if (module.getLibraryType() != LibraryType.NONE)
 			return;
 		for (ObjectCreation creation : module.getProgram().getObjectCreationList()) {
+			LibraryType definitionModuleType = LibraryType.NONE;
 			if (creation.isClassDeclarationPredefined()) {
 				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getOperandOfNewName(), "", LibraryType.JS_PREDEFINED.toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");
 			} else if (creation.getClassDeclaration() != null) {
-				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getClassDeclarationQualifiedName(), module.getLibraryType().toString(), creation.getClassDeclarationModule().getLibraryType().toString(), creation.getClassDeclaration().getKind().toString(), true, creation.getArguments().size(), creation.getClassDeclaration().getParameters().size(), LogUtil.getParametersName(creation.getClassDeclaration().getParameters()), module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), creation.getClassDeclarationModule().getCanonicalPath() + " " + creation.getClassDeclarationLocation());
+				definitionModuleType = LibraryType.NONE;
+				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getClassDeclarationQualifiedName(), LibraryType.NONE.toString(), definitionModuleType.toString(), creation.getClassDeclaration().getKind().toString(), true, creation.getArguments().size(), creation.getClassDeclaration().getParameters().size(), LogUtil.getParametersName(creation.getClassDeclaration().getParameters()), module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), creation.getClassDeclarationModule().getCanonicalPath() + " " + creation.getClassDeclarationLocation());
 			} else {
-				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), "", "", module.getLibraryType().toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");
+				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), "", "", LibraryType.NONE.toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");
 			}
 		}
 	}
@@ -83,7 +87,7 @@ public class PostgresOutput {
 		if (module.getLibraryType() != LibraryType.NONE)
 			return;
 		for (FunctionInvocation functionInvocation : module.getProgram().getFunctionInvocationList()) {
-			String functionDefinitionName = "";	
+			String functionDefinitionName = "";
 			String definitionModuleType = "";
 			String definitionFunctionType = "";
 			int parameterSize = -1;

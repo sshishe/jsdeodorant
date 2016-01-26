@@ -1,10 +1,14 @@
 package ca.concordia.javascript.launcher;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.kohsuke.args4j.CmdLineException;
 
 import ca.concordia.javascript.analysis.AnalysisOptions;
+import ca.concordia.javascript.analysis.util.FileUtil;
 
 import com.google.common.base.Strings;
 
@@ -26,9 +30,34 @@ public class CLIRunner extends Runner {
 			runner = new CLIRunner();
 			runner.configureOptions();
 			runner.performActions();
+			runToolForInnerModules(runner, flags.directoryPath() + "/node_modules");
 		} catch (CmdLineException | IOException e) {
 			log.error(e.getMessage(), e);
 		}
+	}
+
+	private static void runToolForInnerModules(CLIRunner runner, String nodeModuleFolder) throws IOException {
+		//runner.inputs
+		List<String> modules = FileUtil.getDirectoriesInDirectory(nodeModuleFolder);
+		if (modules == null)
+			return;
+		for (final String innerModulePath : modules) {
+			if (innerModulePath.contains(".bin"))
+				continue;
+			getAnalysisOptions().setDirectoryPath(innerModulePath);
+			flags.clearJS();
+			flags.setDirectoryPath(innerModulePath);
+			flags.setLibraries(new ArrayList<String>() {
+				{
+					add(innerModulePath + File.separator + "node_modules");
+					add(innerModulePath + File.separator + "lib");
+				}
+			});
+			runner.configureOptions();
+			runner.performActions();
+			runToolForInnerModules(runner, innerModulePath + File.separator + "node_modules");
+		}
+
 	}
 
 	private void configureOptions() throws IOException {

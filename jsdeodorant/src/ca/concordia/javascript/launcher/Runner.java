@@ -66,7 +66,8 @@ public abstract class Runner extends CommandLineRunner {
 	}
 
 	public List<Module> performActions() throws IOException {
-		externs.addAll(ImmutableList.<SourceFile> of());
+		inputs = ImmutableList.builder();
+		externs = ImmutableList.builder();
 		if (analysisOptions.isLogDisabled())
 			LogManager.getLoggerRepository().setThreshold(Level.OFF);
 		addInputsFromFile(analysisOptions.getJsFiles());

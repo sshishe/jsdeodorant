@@ -42,9 +42,11 @@ public class AnalysisEngine {
 	public AnalysisEngine(ExtendedCompiler compiler, CompilerOptions compilerOptions, ImmutableList<SourceFile> inputs, ImmutableList<SourceFile> externs) {
 		this.compiler = compiler;
 		this.compilerOptions = compilerOptions;
-		this.compilerOptions.setIdeMode(true);
+		this.compilerOptions.setIdeMode(false);
 		this.compilerOptions.skipAllCompilerPasses();
-		CompilationLevel.WHITESPACE_ONLY.setOptionsForCompilationLevel(this.compilerOptions);
+		this.compilerOptions.setParseJsDocDocumentation(false);
+		CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(this.compilerOptions);
+		this.compilerOptions.setNewTypeInference(false);
 		WarningLevel warningLevel = WarningLevel.QUIET;
 		warningLevel.setOptionsForWarningLevel(this.compilerOptions);
 		this.inputs = inputs;

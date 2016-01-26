@@ -48,6 +48,7 @@ public class TestRunner extends Runner {
 		getAnalysisOptions().setOutputToDB(false);
 		getAnalysisOptions().setClassAnalysis(true);
 		getAnalysisOptions().setModuleAnlysis(true);
+		getAnalysisOptions().setFunctionAnalysis(true);
 		getAnalysisOptions().setAnalyzeLibrariesForClasses(true);
 		return getAnalysisOptions();
 	}

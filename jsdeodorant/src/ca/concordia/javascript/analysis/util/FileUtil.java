@@ -2,6 +2,7 @@ package ca.concordia.javascript.analysis.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,26 @@ public class FileUtil {
 			return jsFiles;
 		}
 		return null;
+	}
+
+	public static List<String> getDirectoriesInDirectory(String directoryPath) {
+		File file = new File(directoryPath);
+		String[] names = file.list();
+		List<String> files = new ArrayList<>();
+		if (names==null)
+			return null;
+		for (String name : names) {
+			File f = new File(directoryPath + File.separator + name);
+			if (f.isDirectory()) {
+				try {
+					files.add(f.getCanonicalPath());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return files;
 	}
 
 	public static String getElementsOf(String[] source, int from, int to) {

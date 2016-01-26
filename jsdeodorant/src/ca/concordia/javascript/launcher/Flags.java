@@ -102,8 +102,16 @@ public class Flags {
 		return directoryPath;
 	}
 
+	public void setDirectoryPath(String directoryPath) {
+		this.directoryPath = directoryPath;
+	}
+
 	public boolean calculateCyclomatic() {
 		return calculateCyclomatic;
+	}
+
+	public void clearJS() {
+		js.clear();
 	}
 
 	public List<String> getJS() throws IOException {
@@ -123,6 +131,10 @@ public class Flags {
 
 	public List<String> getLibraries() {
 		return libraries;
+	}
+
+	public void setLibraries(List<String> libraries) {
+		this.libraries = libraries;
 	}
 
 	public boolean analyzeLibraryClasses() {
