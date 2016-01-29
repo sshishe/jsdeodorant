@@ -24,7 +24,7 @@ public class PostgresOutput {
 	private Connection connection;
 	private int iterationId = 1;
 
-	public PostgresOutput(String folderPath, String serverName, String portNumber, String database, String user, String password) {
+	public PostgresOutput(String name, String version, String folderPath, String serverName, String portNumber, String database, String user, String password) {
 		connection = null;
 		try {
 			String url = "jdbc:postgresql://" + serverName + ':' + portNumber + '/' + database;
@@ -34,7 +34,7 @@ public class PostgresOutput {
 			if (!StringUtil.isNullOrEmpty(password))
 				props.setProperty("password", password);
 			connection = DriverManager.getConnection(url, props);
-			setExperimentIterationId(folderPath);
+			setExperimentIterationId(name, version, folderPath);
 		} catch (SQLException e) {
 			System.out.println("Connection Failed! Check output console");
 			e.printStackTrace();
@@ -42,14 +42,16 @@ public class PostgresOutput {
 		}
 	}
 
-	private void setExperimentIterationId(String folderPath) throws SQLException {
+	private void setExperimentIterationId(String name, String version, String folderPath) throws SQLException {
 		ResultSet result = executeStatement("SELECT id FROM experiment_iteration ORDER BY time desc limit 1");
 		if (result.next())
 			iterationId = result.getInt(1) + 1;
-		PreparedStatement query = getPreparedStatement("INSERT INTO experiment_iteration VALUES (?, ?, ?)");
+		PreparedStatement query = getPreparedStatement("INSERT INTO experiment_iteration VALUES (?, ? , ?, ?, ?)");
 		query.setInt(1, iterationId);
 		query.setTimestamp(2, new Timestamp(new Date().getTime()));
-		query.setString(3, folderPath);
+		query.setString(3, name);
+		query.setString(4, version);
+		query.setString(5, folderPath);
 		executePreparedStatement(query);
 	}
 

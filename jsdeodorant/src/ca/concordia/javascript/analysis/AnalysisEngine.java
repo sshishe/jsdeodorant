@@ -13,6 +13,7 @@ import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
 import ca.concordia.javascript.analysis.module.LibraryType;
 import ca.concordia.javascript.analysis.util.FileUtil;
+import ca.concordia.javascript.analysis.util.JSONReader;
 import ca.concordia.javascript.experiment.CSVOutput;
 import ca.concordia.javascript.experiment.PostgresOutput;
 import ca.concordia.javascript.metrics.CyclomaticComplexity;
@@ -65,7 +66,19 @@ public class AnalysisEngine {
 		}
 
 		if (analysisOption.isOutputToDB()) {
-			psqlOutput = new PostgresOutput(analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(), analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(), analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
+			File packageConfigFile = new File(analysisOption.getDirectoryPath() + "/package.json");
+			JSONReader reader = new JSONReader();
+			String name = "";
+			String version = "";
+			try {
+				name = reader.getElementFromObject(packageConfigFile.getCanonicalPath(), "name");
+				version = reader.getElementFromObject(packageConfigFile.getCanonicalPath(), "version");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			psqlOutput = new PostgresOutput(name, version, analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(), analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(), analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
 		}
 
 		for (SourceFile sourceFile : inputs) {
