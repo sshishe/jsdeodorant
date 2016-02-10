@@ -117,6 +117,11 @@ public class CompositePostProcessor {
 	private static boolean findFunctionDeclaration(ObjectCreation objectCreation, Module module) {
 		boolean findMatch = false;
 		for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
+			if (functionDeclaration.getQualifiedName().contains("defaultResponseInterceptor") /*&& objectCreation.getAliasedIdentifier().toString().equals("Resource")*/) {
+				int a = 0;
+				a++;
+			}
+
 			findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getAliasedIdentifier(), functionDeclaration, module);
 			if (findMatch)
 				return true;
