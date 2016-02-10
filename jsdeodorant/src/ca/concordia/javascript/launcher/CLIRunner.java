@@ -94,6 +94,8 @@ public class CLIRunner extends Runner {
 			getAnalysisOptions().setPsqlDatabaseName(flags.getPsqlDbName());
 			getAnalysisOptions().setPsqlUser(flags.getPsqlUser());
 			getAnalysisOptions().setPsqlPassword(flags.getPsqlPassword());
+			getAnalysisOptions().setName(flags.getName());
+			getAnalysisOptions().setVersion(flags.getVersion());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

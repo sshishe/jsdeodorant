@@ -141,4 +141,11 @@ public class CompositePostProcessor {
 		}
 		return false;
 	}
+
+	public static void addDepndenciesBlindly(Module module, List<Module> modules) {
+		for (Module dependency : modules) {
+			//module.addDependency(module.get, dependency);
+		}
+
+	}
 }

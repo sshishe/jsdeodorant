@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Crawl overview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="CrawlJax">
+<link href="../css/bootstrap.min.css" rel="stylesheet">
+<link href="../css/bootstrap-responsive.min.css" rel="stylesheet">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+<link href="../css/shCore.css" rel="stylesheet" type="text/css" />
+<link href="../css/shCoreDefault.css" rel="stylesheet" type="text/css" />
+<style>
+.tooltip-inner {
+	max-width: 300px;
+	word-wrap: break-word;
+}
+
+body {
+	padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+</style>
+</head>
+<body>
+	<nav class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+							<a class="brand" href="../index.html#graph">Crawl overview</a>
+						<ul class="nav">
+									<li class="active" ><a href="#">State inspector</a></li>
+							</ul>
+			<div class="nav pull-right">
+				<a href="#" class="btn graphBtn" id='pauseButton' data-toggle="tooltip" data-placement="bottom" title="Pause the graph movement"><i class="icon-pause"></i></a>
+				<a href="#" class="btn graphBtn" rel="popover" data-placement="bottom"  data-original-title="What to do"><i class='icon-question-sign'></i></a>
+				<div style="display: none" id='popup-content'>
+					<p>You can double click a state to inspect it further.</p>
+					<p>Clicking an edge gives more details on the state transition.</p>
+					<p>Use your mouse to zoom in and out by scrolling, or drag the states and view around.</p>
+				</div>
+				<a href="result.json" class="btn" data-toggle="tooltip" data-placement="bottom" title="Download result as JSON"><i class='icon-download'></i></a>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</div>
+</nav>	<div class='container' >
+		<h1>Summary of state1</h1>
+		<table class="table table-bordered table-striped">
+			<colgroup>
+				<col class="span1">
+				<col class="span7">
+			</colgroup>
+			<tbody>
+				<tr>
+					<th>URL</th>
+					<td><a href='https://twitter.com/signup'>https://twitter.com/signup</a></td>
+				</tr>
+				<tr>
+					<th>Fan in</th>
+					<td>1</td>
+				</tr>
+				<tr>
+					<th>Fan out</th>
+					<td>0</td>
+				</tr>
+				<tr>
+					<th>Interaction elements</th>
+					<td>0</td>
+				</tr>
+				<tr>
+					<th>Failed events</th>
+					<td>-</td>
+			</tbody>
+		</table>
+		<ul id='tabs' class="nav nav-tabs">
+			<li class="active">
+				<a href="#screenshot">Screenshot</a>
+			</li>
+			<li>
+				<a href="#dom">Captured DOM</a>
+			</li>	
+			<li>
+				<a href="#interactions">Interactions</a>
+			</li>			
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" style="position: relative;" id='screenshot'>			
+				<img style='max-width: none;' border='0' src='../screenshots/state1.jpg' /> 
+							</div>
+			<div class="tab-pane" id='dom'>
+				<h2>Captured DOM</h2>
+				<pre class='brush: html'>&lt;!DOCTYPE html&gt;
+&lt;!--[if IE 8]&gt;&lt;html class=&quot;lt-ie10 ie8&quot; lang=&quot;en&quot; data-scribe-reduced-action-queue=&quot;true&quot;&gt;&lt;![endif]--&gt;
+&lt;!--[if IE 9]&gt;&lt;html class=&quot;lt-ie10 ie9&quot; lang=&quot;en&quot; data-scribe-reduced-action-queue=&quot;true&quot;&gt;&lt;![endif]--&gt;
+&lt;!--[if gt IE 9]&gt;&lt;!--&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;en&quot; data-scribe-reduced-action-queue=&quot;true&quot;&gt;&lt;!--&lt;![endif]--&gt;&lt;head&gt;
+    
+    
+    
+    
+    
+    
+    
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    
+    &lt;noscript&gt;&amp;lt;meta http-equiv=&quot;refresh&quot; content=&quot;0; URL=https://mobile.twitter.com/i/nojs_router?path=%2Fsignup&quot;&amp;gt;&lt;/noscript&gt;
+    
+    
+  
+  &lt;script async=&quot;&quot; src=&quot;//www.google-analytics.com/analytics.js&quot;&gt;&lt;/script&gt;&lt;script id=&quot;LR83&quot; type=&quot;text/javascript&quot; async=&quot;&quot; src=&quot;https://abs.twimg.com/c/swift/en/bundle/boot.918fa3f1a94d3cc1af6cc598e8e045ed3eaa3f64.js&quot;&gt;&lt;/script&gt;&lt;script id=&quot;LR5&quot; type=&quot;text/javascript&quot; async=&quot;&quot; src=&quot;https://abs.twimg.com/c/swift/en/bundle/signup.5fb6bc11a86475b13235f34876f4d57d28669252.js&quot;&gt;&lt;/script&gt;&lt;script nonce=&quot;hyXFzQWWTHUgNd1w2YQ8bA==&quot; id=&quot;bouncer_terminate_iframe&quot;&gt;
+    if (window.top != window) {
+  window.top.postMessage({'bouncer': true, 'event': 'complete'}, '*');
+}
+  &lt;/script&gt;
+  &lt;script nonce=&quot;hyXFzQWWTHUgNd1w2YQ8bA==&quot; id=&quot;swift_action_queue&quot;&gt;
+    (function(){function m(a){a||(a=window.event);if(!a)return!1;a.timestamp=(new Date).getTime();!a.target&amp;amp;&amp;amp;a.srcElement&amp;amp;&amp;amp;(a.target=a.srcElement);if(document.documentElement.getAttribute(&quot;data-scribe-reduced-action-queue&quot;)){var b=a.target;while(b&amp;amp;&amp;amp;b!=document
+.body){if(b.tagName==&quot;A&quot;)return;b=b.parentNode}}r(&quot;all&quot;,s(a));if(!q(a)){r(&quot;direct&quot;,a);return!0}document.addEventListener||(a=s(a));a.preventDefault=a.stopPropagation=a.stopImmediatePropagation=function(){};if(i){f.push(a);r(&quot;captured&quot;,a)}else r(&quot;ignored&quot;,a
+);return!1}function n($){p();for(var a=0,b;b=f[a];a++){var d=$(b.target),e=d.closest(&quot;a&quot;)[0];if(b.type==&quot;click&quot;&amp;amp;&amp;amp;e){var g=$.data(e,&quot;events&quot;),i=g&amp;amp;&amp;amp;g.click,j=!e.hostname.match(c)||!e.href.match(/#$/);if(!i&amp;amp;&amp;amp;j){window.location=e.href;continue}}d.trigger($.event
+.fix(b))}window.swiftActionQueue.wasFlushed=!0}function o(){for(var a in j){if(a==&quot;all&quot;)continue;var b=j[a];for(var c=0;c&amp;lt;b.length;c++)console.log(&quot;actionQueue&quot;,u(b[c]))}}function p(){clearTimeout(g);for(var a=0,b;b=e[a];a++)document[&quot;on&quot;+b]=null}function q
+(a){if(!a.target)return!1;var b=a.target,e=(b.tagName||&quot;&quot;).toLowerCase();if(a.metaKey)return!1;if(a.shiftKey&amp;amp;&amp;amp;e==&quot;a&quot;)return!1;if(b.hostname&amp;amp;&amp;amp;!b.hostname.match(c))return!1;if(a.type.match(d)&amp;amp;&amp;amp;w(b))return!1;if(e==&quot;label&quot;){var f=b.getAttribute(&quot;for&quot;);if(f){var g=
+document.getElementById(f);if(g&amp;amp;&amp;amp;v(g))return!1}else for(var i=0,j;j=b.childNodes[i];i++)if(v(j))return!1}return!0}function r(a,b){b.bucket=a;j[a].push(b)}function s(a){var b={};for(var c in a)b[c]=a[c];return b}function t(a){while(a&amp;amp;&amp;amp;a!=document.body){if(a
+.tagName==&quot;A&quot;)return a;a=a.parentNode}}function u(b){var c=[];b.bucket&amp;amp;&amp;amp;c.push(&quot;[&quot;+b.bucket+&quot;]&quot;);c.push(b.type);var d=b.target,e=t(d),f=&quot;&quot;,g,i,j=b.timestamp&amp;amp;&amp;amp;b.timestamp-a;if(b.type===&quot;click&quot;&amp;amp;&amp;amp;e){g=e.className.trim().replace(/\s+/g,&quot;.&quot;);i=e.id.trim();f=/[^#]$/
+.test(e.href)?&quot; (&quot;+e.href+&quot;)&quot;:&quot;&quot;;d='&quot;'+e.innerText.replace(/\n+/g,&quot; &quot;).trim()+'&quot;'}else{g=d.className.trim().replace(/\s+/g,&quot;.&quot;);i=d.id.trim();d=d.tagName.toLowerCase();b.keyCode&amp;amp;&amp;amp;(d=String.fromCharCode(b.keyCode)+&quot; : &quot;+d)}c.push(d+f+(i&amp;amp;&amp;amp;&quot;#&quot;+i)+(!i&amp;amp;&amp;amp;g?&quot;.&quot;+g
+:&quot;&quot;));j&amp;amp;&amp;amp;c.push(j);return c.join(&quot; &quot;)}function v(a){var b=(a.tagName||&quot;&quot;).toLowerCase();return b==&quot;input&quot;&amp;amp;&amp;amp;a.getAttribute(&quot;type&quot;)==&quot;checkbox&quot;}function w(a){var b=(a.tagName||&quot;&quot;).toLowerCase();return b==&quot;textarea&quot;||b==&quot;input&quot;&amp;amp;&amp;amp;a.getAttribute(&quot;type&quot;)==&quot;text&quot;||
+a.getAttribute(&quot;contenteditable&quot;)==&quot;true&quot;}var a=(new Date).getTime(),b=1e4,c=/^([^\.]+\.)*twitter\.com$/,d=/^key/,e=[&quot;click&quot;,&quot;keydown&quot;,&quot;keypress&quot;,&quot;keyup&quot;],f=[],g=null,i=!0,j={captured:[],ignored:[],direct:[],all:[]};for(var k=0,l;l=e[k];k++)document[&quot;on&quot;+l
+]=m;g=setTimeout(function(){i=!1},b);window.swiftActionQueue={buckets:j,flush:n,logActions:o,wasFlushed:!1}})();
+  &lt;/script&gt;
+  &lt;script nonce=&quot;hyXFzQWWTHUgNd1w2YQ8bA==&quot; id=&quot;composition_state&quot;&gt;
+    (function(){function a(a){a.target.setAttribute(&quot;data-in-composition&quot;,&quot;true&quot;)}function b(a){a.target.removeAttribute(&quot;data-in-composition&quot;)}if(document.addEventListener){document.addEventListener(&quot;compositionstart&quot;,a,!1);document.addEventListener(&quot;compositionend&quot;
+,b,!1)}})();
+  &lt;/script&gt;
+
+    &lt;link href=&quot;https://abs.twimg.com/a/1454375955/css/t1/twitter_core.bundle.css&quot; rel=&quot;stylesheet&quot; /&gt;
+  &lt;link href=&quot;https://abs.twimg.com/a/1454375955/css/t1/twitter_more_1.bundle.css&quot; rel=&quot;stylesheet&quot; /&gt;
+  &lt;link href=&quot;https://abs.twimg.com/a/1454375955/css/t1/twitter_more_2.bundle.css&quot; rel=&quot;stylesheet&quot; /&gt;
+
+    &lt;link href=&quot;https://pbs.twimg.com&quot; rel=&quot;dns-prefetch&quot; /&gt;
+      &lt;link as=&quot;script&quot; href=&quot;https://abs.twimg.com/c/swift/en/init.0df86b6ce6b04221405882000d2673e8ea3a4de3.js&quot; rel=&quot;preload&quot; /&gt;
+      &lt;link as=&quot;script&quot; href=&quot;https://abs.twimg.com/c/swift/en/bundle/timeline.6737929cc4f9e8001630be9ea4a4bcc51c8a1f6e.js&quot; rel=&quot;preload&quot; /&gt;
+      &lt;link as=&quot;script&quot; href=&quot;https://abs.twimg.com/c/swift/en/bundle/boot.918fa3f1a94d3cc1af6cc598e8e045ed3eaa3f64.js&quot; rel=&quot;preload&quot; /&gt;
+
+      &lt;title&gt;Sign up for Twitter&lt;/title&gt;
+      &lt;meta content=&quot;NOODP&quot; name=&quot;robots&quot; /&gt;
+  &lt;meta content=&quot;Join Twitter today - it only takes a few seconds. Connect with your friends and other fascinating people. Get in-the-moment updates on the things that interest you.&quot; name=&quot;description&quot; /&gt;
+
+
+
+&lt;meta content=&quot;//abs.twimg.com/favicons/win8-tile-144.png&quot; name=&quot;msapplication-TileImage&quot; /&gt;
+&lt;meta content=&quot;#00aced&quot; name=&quot;msapplication-TileColor&quot; /&gt;
+
+
+&lt;link color=&quot;#55acee&quot; href=&quot;https://abs.twimg.com/a/1454375955/img/t1/favicon.svg&quot; sizes=&quot;any&quot; rel=&quot;mask-icon&quot; /&gt;
+
+  &lt;link type=&quot;image/x-icon&quot; rel=&quot;shortcut icon&quot; href=&quot;//abs.twimg.com/favicons/favicon.ico&quot; /&gt;
+
+&lt;link href=&quot;/manifest.json&quot; rel=&quot;manifest&quot; /&gt;
+
+
+  &lt;meta content=&quot;signup&quot; id=&quot;swift-page-name&quot; name=&quot;swift-page-name&quot; /&gt;
+
+    &lt;link href=&quot;https://twitter.comhttps://twitter.com/signup&quot; rel=&quot;canonical&quot; /&gt;
+  &lt;link href=&quot;https://twitter.com/signup&quot; hreflang=&quot;x-default&quot; rel=&quot;alternate&quot; /&gt;
+  &lt;link href=&quot;https://twitter.com/signup?lang=fr&quot; hreflang=&quot;fr&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=en&quot; hreflang=&quot;en&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ar&quot; hreflang=&quot;ar&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ja&quot; hreflang=&quot;ja&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=es&quot; hreflang=&quot;es&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=de&quot; hreflang=&quot;de&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=it&quot; hreflang=&quot;it&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=id&quot; hreflang=&quot;id&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=pt&quot; hreflang=&quot;pt&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ko&quot; hreflang=&quot;ko&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=tr&quot; hreflang=&quot;tr&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ru&quot; hreflang=&quot;ru&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=nl&quot; hreflang=&quot;nl&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=fil&quot; hreflang=&quot;fil&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ms&quot; hreflang=&quot;ms&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=zh-tw&quot; hreflang=&quot;zh-tw&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=zh-cn&quot; hreflang=&quot;zh-cn&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=hi&quot; hreflang=&quot;hi&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=no&quot; hreflang=&quot;no&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=sv&quot; hreflang=&quot;sv&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=fi&quot; hreflang=&quot;fi&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=da&quot; hreflang=&quot;da&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=pl&quot; hreflang=&quot;pl&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=hu&quot; hreflang=&quot;hu&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=fa&quot; hreflang=&quot;fa&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=he&quot; hreflang=&quot;he&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ur&quot; hreflang=&quot;ur&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=th&quot; hreflang=&quot;th&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=uk&quot; hreflang=&quot;uk&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ca&quot; hreflang=&quot;ca&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ga&quot; hreflang=&quot;ga&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=el&quot; hreflang=&quot;el&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=eu&quot; hreflang=&quot;eu&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=cs&quot; hreflang=&quot;cs&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=gl&quot; hreflang=&quot;gl&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ro&quot; hreflang=&quot;ro&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=hr&quot; hreflang=&quot;hr&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=en-gb&quot; hreflang=&quot;en-gb&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=vi&quot; hreflang=&quot;vi&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=bn&quot; hreflang=&quot;bn&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=bg&quot; hreflang=&quot;bg&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=sr&quot; hreflang=&quot;sr&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=sk&quot; hreflang=&quot;sk&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=gu&quot; hreflang=&quot;gu&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=mr&quot; hreflang=&quot;mr&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=ta&quot; hreflang=&quot;ta&quot; rel=&quot;alternate&quot; /&gt;&lt;link href=&quot;https://twitter.com/signup?lang=kn&quot; hreflang=&quot;kn&quot; rel=&quot;alternate&quot; /&gt;
+
+
+  &lt;link href=&quot;https://mobile.twitter.com/signup&quot; media=&quot;handheld, only screen and (max-width: 640px)&quot; rel=&quot;alternate&quot; /&gt;
+
+      &lt;link href=&quot;android-app://com.twitter.android/twitter/signup?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eandroidseo%7Ctwgr%5Esignup&quot; rel=&quot;alternate&quot; /&gt;
+
+&lt;link title=&quot;Twitter&quot; href=&quot;/opensearch.xml&quot; type=&quot;application/opensearchdescription+xml&quot; rel=&quot;search&quot; /&gt;
+
+    &lt;link id=&quot;async-css-placeholder&quot; /&gt;
+
+      &lt;/head&gt;&lt;body dir=&quot;ltr&quot; data-fouc-class-names=&quot;swift-loading&quot; class=&quot;three-col logged-out phx-signup fast-signup&quot;&gt;&lt;input type=&quot;hidden&quot; value=&quot;{&amp;quot;permalinkOverlayEnabled&amp;quot;:false,&amp;quot;hasKenburnEffectOnSingleImage&amp;quot;:false,&amp;quot;maxTweetComposeCharacters&amp;quot;:140,&amp;quot;baseFoucClass&amp;quot;:&amp;quot;swift-loading&amp;quot;,&amp;quot;bodyFoucClassNames&amp;quot;:&amp;quot;swift-loading&amp;quot;,&amp;quot;macawSwift&amp;quot;:true,&amp;quot;assetsBasePath&amp;quot;:&amp;quot;https:\/\/abs.twimg.com\/a\/1454375955\/&amp;quot;,&amp;quot;assetVersionKey&amp;quot;:&amp;quot;5d7979&amp;quot;,&amp;quot;environment&amp;quot;:&amp;quot;production&amp;quot;,&amp;quot;formAuthenticityToken&amp;quot;:&amp;quot;c3805f4dee408079f361d48666876d36fd7e63a3&amp;quot;,&amp;quot;loggedIn&amp;quot;:false,&amp;quot;screenName&amp;quot;:null,&amp;quot;fullName&amp;quot;:null,&amp;quot;userId&amp;quot;:null,&amp;quot;guestId&amp;quot;:&amp;quot;145470735238146535&amp;quot;,&amp;quot;allowAdsPersonalization&amp;quot;:true,&amp;quot;scribeBufferSize&amp;quot;:3,&amp;quot;pageName&amp;quot;:&amp;quot;signup&amp;quot;,&amp;quot;sectionName&amp;quot;:&amp;quot;form&amp;quot;,&amp;quot;scribeParameters&amp;quot;:{},&amp;quot;recaptchaApiUrl&amp;quot;:&amp;quot;https:\/\/www.google.com\/recaptcha\/api\/js\/recaptcha_ajax.js&amp;quot;,&amp;quot;internalReferer&amp;quot;:&amp;quot;\/&amp;quot;,&amp;quot;geoEnabled&amp;quot;:false,&amp;quot;typeaheadData&amp;quot;:{&amp;quot;accounts&amp;quot;:{&amp;quot;enabled&amp;quot;:true,&amp;quot;localQueriesEnabled&amp;quot;:false,&amp;quot;remoteQueriesEnabled&amp;quot;:true,&amp;quot;limit&amp;quot;:6},&amp;quot;trendLocations&amp;quot;:{&amp;quot;enabled&amp;quot;:true},&amp;quot;dmConversations&amp;quot;:{&amp;quot;enabled&amp;quot;:false},&amp;quot;savedSearches&amp;quot;:{&amp;quot;enabled&amp;quot;:false,&amp;quot;items&amp;quot;:[]},&amp;quot;dmAccounts&amp;quot;:{&amp;quot;enabled&amp;quot;:false,&amp;quot;localQueriesEnabled&amp;quot;:false,&amp;quot;remoteQueriesEnabled&amp;quot;:false,&amp;quot;onlyDMable&amp;quot;:true},&amp;quot;mediaTagAccounts&amp;quot;:{&amp;quot;enabled&amp;quot;:false,&amp;quot;localQueriesEnabled&amp;quot;:true,&amp;quot;remoteQueriesEnabled&amp;quot;:false,&amp;quot;onlyShowUsersWithCanMediaTag&amp;quot;:false,&amp;quot;currentUserId&amp;quot;:-1},&amp;quot;selectedUsers&amp;quot;:{&amp;quot;enabled&amp;quot;:false},&amp;quot;prefillUsers&amp;quot;:{&amp;quot;enabled&amp;quot;:false},&amp;quot;topics&amp;quot;:{&amp;quot;enabled&amp;quot;:true,&amp;quot;localQueriesEnabled&amp;quot;:false,&amp;quot;remoteQueriesEnabled&amp;quot;:true,&amp;quot;prefetchLimit&amp;quot;:500,&amp;quot;limit&amp;quot;:4},&amp;quot;concierge&amp;quot;:{&amp;quot;enabled&amp;quot;:false,&amp;quot;localQueriesEnabled&amp;quot;:false,&amp;quot;remoteQueriesEnabled&amp;quot;:false,&amp;quot;prefetchLimit&amp;quot;:500,&amp;quot;limit&amp;quot;:6},&amp;quot;recentSearches&amp;quot;:{&amp;quot;enabled&amp;quot;:false},&amp;quot;hashtags&amp;quot;:{&amp;quot;enabled&amp;quot;:false,&amp;quot;localQueriesEnabled&amp;quot;:false,&amp;quot;remoteQueriesEnabled&amp;quot;:true,&amp;quot;prefetchLimit&amp;quot;:500},&amp;quot;useIndexedDB&amp;quot;:false,&amp;quot;showSearchAccountSocialContext&amp;quot;:false,&amp;quot;showTypeaheadTopicSocialContext&amp;quot;:false,&amp;quot;showDebugInfo&amp;quot;:false,&amp;quot;useThrottle&amp;quot;:true,&amp;quot;accountsOnTop&amp;quot;:false,&amp;quot;remoteDebounceInterval&amp;quot;:300,&amp;quot;remoteThrottleInterval&amp;quot;:300,&amp;quot;tweetContextEnabled&amp;quot;:false,&amp;quot;fullNameMatchingInCompose&amp;quot;:true,&amp;quot;topicsWithFiltersEnabled&amp;quot;:false},&amp;quot;dm&amp;quot;:{&amp;quot;notifications&amp;quot;:false,&amp;quot;participant_max&amp;quot;:50,&amp;quot;video_gif_render&amp;quot;:false,&amp;quot;video_gif_upload&amp;quot;:false,&amp;quot;poll_options&amp;quot;:{&amp;quot;foreground_poll_interval&amp;quot;:3000,&amp;quot;burst_poll_interval&amp;quot;:3000,&amp;quot;burst_poll_duration&amp;quot;:300000,&amp;quot;max_poll_interval&amp;quot;:60000}},&amp;quot;whitelistedVideoUser&amp;quot;:false,&amp;quot;pushStatePageLimit&amp;quot;:500000,&amp;quot;routes&amp;quot;:{&amp;quot;profile&amp;quot;:&amp;quot;\/&amp;quot;},&amp;quot;pushState&amp;quot;:true,&amp;quot;viewContainer&amp;quot;:&amp;quot;#page-container&amp;quot;,&amp;quot;dragAndDropPhotoUpload&amp;quot;:true,&amp;quot;href&amp;quot;:&amp;quot;\/signup&amp;quot;,&amp;quot;searchPathWithQuery&amp;quot;:&amp;quot;\/search?q=query&amp;amp;src=typd&amp;quot;,&amp;quot;timelineCardsGallery&amp;quot;:true,&amp;quot;deciders&amp;quot;:{&amp;quot;bulkUnfollowEnabled&amp;quot;:true,&amp;quot;custom_timeline_curation&amp;quot;:false,&amp;quot;disable_profile_popup&amp;quot;:false,&amp;quot;native_notifications&amp;quot;:true,&amp;quot;dm_polling_frequency_in_seconds&amp;quot;:3000,&amp;quot;enable_media_tag_prefetch&amp;quot;:true,&amp;quot;enableMacawNymizerConversionLanding&amp;quot;:false,&amp;quot;geoStructuredLocationEnabled&amp;quot;:true,&amp;quot;hqImageUploads&amp;quot;:false,&amp;quot;largeHeaderImageUpload&amp;quot;:true,&amp;quot;mqImageUploads&amp;quot;:false,&amp;quot;partnerIdSyncEnabled&amp;quot;:true,&amp;quot;photoSruGifLimitMb&amp;quot;:5,&amp;quot;promoted_video_logging_enabled&amp;quot;:true,&amp;quot;pushState&amp;quot;:true,&amp;quot;scribeReducedActionQueue&amp;quot;:true,&amp;quot;useHtml5Webcam&amp;quot;:true,&amp;quot;web_perftown_stats&amp;quot;:true,&amp;quot;web_perftown_ttft&amp;quot;:true,&amp;quot;web_sru_stats&amp;quot;:false,&amp;quot;web_upload_direct&amp;quot;:true,&amp;quot;web_upload_video&amp;quot;:true,&amp;quot;upload_video_size&amp;quot;:500,&amp;quot;internationalShippingEnabled&amp;quot;:true,&amp;quot;useV2EndpointsEnabled&amp;quot;:true,&amp;quot;autoplayMediaInTimeline&amp;quot;:true,&amp;quot;useVmapVariants&amp;quot;:false,&amp;quot;autoplayPreviewPreroll&amp;quot;:true,&amp;quot;moments_lohp_enabled&amp;quot;:true,&amp;quot;overlayPermalink&amp;quot;:true,&amp;quot;momentsExperienceEnabled&amp;quot;:false,&amp;quot;composeLimits&amp;quot;:{&amp;quot;enabled&amp;quot;:false,&amp;quot;hashtags&amp;quot;:50,&amp;quot;mentions&amp;quot;:50,&amp;quot;links&amp;quot;:10}},&amp;quot;experiments&amp;quot;:{},&amp;quot;toasts_dm&amp;quot;:false,&amp;quot;toasts_spoonbill&amp;quot;:false,&amp;quot;toasts_timeline&amp;quot;:false,&amp;quot;toasts_dm_poll_scale&amp;quot;:60,&amp;quot;uploadDomain&amp;quot;:&amp;quot;upload.twitter.com&amp;quot;,&amp;quot;promptbirdData&amp;quot;:{&amp;quot;promptbirdEnabled&amp;quot;:false,&amp;quot;immediateTriggers&amp;quot;:[&amp;quot;PullToRefresh&amp;quot;,&amp;quot;Navigate&amp;quot;],&amp;quot;format&amp;quot;:null},&amp;quot;freezeDashboard&amp;quot;:false,&amp;quot;passwordResetAdvancedLoginForm&amp;quot;:true,&amp;quot;skipAutoSignupDialog&amp;quot;:false,&amp;quot;shouldReplaceSignupWithLogin&amp;quot;:false,&amp;quot;bannedPasswords&amp;quot;:[&amp;quot;000000&amp;quot;,&amp;quot;111111&amp;quot;,&amp;quot;11111111&amp;quot;,&amp;quot;112233&amp;quot;,&amp;quot;121212&amp;quot;,&amp;quot;123123&amp;quot;,&amp;quot;123456&amp;quot;,&amp;quot;1234567&amp;quot;,&amp;quot;12345678&amp;quot;,&amp;quot;123456789&amp;quot;,&amp;quot;131313&amp;quot;,&amp;quot;232323&amp;quot;,&amp;quot;654321&amp;quot;,&amp;quot;666666&amp;quot;,&amp;quot;696969&amp;quot;,&amp;quot;777777&amp;quot;,&amp;quot;7777777&amp;quot;,&amp;quot;8675309&amp;quot;,&amp;quot;987654&amp;quot;,&amp;quot;nnnnnn&amp;quot;,&amp;quot;nop123&amp;quot;,&amp;quot;nop123&amp;quot;,&amp;quot;nopqrs&amp;quot;,&amp;quot;noteglh&amp;quot;,&amp;quot;npprff&amp;quot;,&amp;quot;npprff14&amp;quot;,&amp;quot;npgvba&amp;quot;,&amp;quot;nyoreg&amp;quot;,&amp;quot;nyoregb&amp;quot;,&amp;quot;nyrkvf&amp;quot;,&amp;quot;nyrwnaqen&amp;quot;,&amp;quot;nyrwnaqeb&amp;quot;,&amp;quot;nznaqn&amp;quot;,&amp;quot;nzngrhe&amp;quot;,&amp;quot;nzrevpn&amp;quot;,&amp;quot;naqern&amp;quot;,&amp;quot;naqerj&amp;quot;,&amp;quot;natryn&amp;quot;,&amp;quot;natryf&amp;quot;,&amp;quot;navzny&amp;quot;,&amp;quot;nagubal&amp;quot;,&amp;quot;ncbyyb&amp;quot;,&amp;quot;nccyrf&amp;quot;,&amp;quot;nefrany&amp;quot;,&amp;quot;neguhe&amp;quot;,&amp;quot;nfqstu&amp;quot;,&amp;quot;nfqstu&amp;quot;,&amp;quot;nfuyrl&amp;quot;,&amp;quot;nffubyr&amp;quot;,&amp;quot;nhthfg&amp;quot;,&amp;quot;nhfgva&amp;quot;,&amp;quot;onqobl&amp;quot;,&amp;quot;onvyrl&amp;quot;,&amp;quot;onanan&amp;quot;,&amp;quot;onearl&amp;quot;,&amp;quot;onfronyy&amp;quot;,&amp;quot;ongzna&amp;quot;,&amp;quot;orngevm&amp;quot;,&amp;quot;ornire&amp;quot;,&amp;quot;ornivf&amp;quot;,&amp;quot;ovtpbpx&amp;quot;,&amp;quot;ovtqnqql&amp;quot;,&amp;quot;ovtqvpx&amp;quot;,&amp;quot;ovtqbt&amp;quot;,&amp;quot;ovtgvgf&amp;quot;,&amp;quot;oveqvr&amp;quot;,&amp;quot;ovgpurf&amp;quot;,&amp;quot;ovgrzr&amp;quot;,&amp;quot;oynmre&amp;quot;,&amp;quot;oybaqr&amp;quot;,&amp;quot;oybaqrf&amp;quot;,&amp;quot;oybjwbo&amp;quot;,&amp;quot;oybjzr&amp;quot;,&amp;quot;obaq007&amp;quot;,&amp;quot;obavgn&amp;quot;,&amp;quot;obaavr&amp;quot;,&amp;quot;obbobb&amp;quot;,&amp;quot;obbtre&amp;quot;,&amp;quot;obbzre&amp;quot;,&amp;quot;obfgba&amp;quot;,&amp;quot;oenaqba&amp;quot;,&amp;quot;oenaql&amp;quot;,&amp;quot;oenirf&amp;quot;,&amp;quot;oenmvy&amp;quot;,&amp;quot;oebapb&amp;quot;,&amp;quot;oebapbf&amp;quot;,&amp;quot;ohyyqbt&amp;quot;,&amp;quot;ohfgre&amp;quot;,&amp;quot;ohggre&amp;quot;,&amp;quot;ohggurnq&amp;quot;,&amp;quot;pnyiva&amp;quot;,&amp;quot;pnzneb&amp;quot;,&amp;quot;pnzreba&amp;quot;,&amp;quot;pnanqn&amp;quot;,&amp;quot;pncgnva&amp;quot;,&amp;quot;pneybf&amp;quot;,&amp;quot;pnegre&amp;quot;,&amp;quot;pnfcre&amp;quot;,&amp;quot;puneyrf&amp;quot;,&amp;quot;puneyvr&amp;quot;,&amp;quot;purrfr&amp;quot;,&amp;quot;puryfrn&amp;quot;,&amp;quot;purfgre&amp;quot;,&amp;quot;puvpntb&amp;quot;,&amp;quot;puvpxra&amp;quot;,&amp;quot;pbpnpbyn&amp;quot;,&amp;quot;pbssrr&amp;quot;,&amp;quot;pbyyrtr&amp;quot;,&amp;quot;pbzcnd&amp;quot;,&amp;quot;pbzchgre&amp;quot;,&amp;quot;pbafhzre&amp;quot;,&amp;quot;pbbxvr&amp;quot;,&amp;quot;pbbcre&amp;quot;,&amp;quot;pbeirggr&amp;quot;,&amp;quot;pbjobl&amp;quot;,&amp;quot;pbjoblf&amp;quot;,&amp;quot;pelfgny&amp;quot;,&amp;quot;phzzvat&amp;quot;,&amp;quot;phzfubg&amp;quot;,&amp;quot;qnxbgn&amp;quot;,&amp;quot;qnyynf&amp;quot;,&amp;quot;qnavry&amp;quot;,&amp;quot;qnavryyr&amp;quot;,&amp;quot;qroovr&amp;quot;,&amp;quot;qraavf&amp;quot;,&amp;quot;qvnoyb&amp;quot;,&amp;quot;qvnzbaq&amp;quot;,&amp;quot;qbpgbe&amp;quot;,&amp;quot;qbttvr&amp;quot;,&amp;quot;qbycuva&amp;quot;,&amp;quot;qbycuvaf&amp;quot;,&amp;quot;qbanyq&amp;quot;,&amp;quot;qentba&amp;quot;,&amp;quot;qernzf&amp;quot;,&amp;quot;qevire&amp;quot;,&amp;quot;rntyr1&amp;quot;,&amp;quot;rntyrf&amp;quot;,&amp;quot;rqjneq&amp;quot;,&amp;quot;rvafgrva&amp;quot;,&amp;quot;rebgvp&amp;quot;,&amp;quot;rfgeryyn&amp;quot;,&amp;quot;rkgerzr&amp;quot;,&amp;quot;snypba&amp;quot;,&amp;quot;sraqre&amp;quot;,&amp;quot;sreenev&amp;quot;,&amp;quot;sveroveq&amp;quot;,&amp;quot;svfuvat&amp;quot;,&amp;quot;sybevqn&amp;quot;,&amp;quot;sybjre&amp;quot;,&amp;quot;sylref&amp;quot;,&amp;quot;sbbgonyy&amp;quot;,&amp;quot;sberire&amp;quot;,&amp;quot;serqql&amp;quot;,&amp;quot;serrqbz&amp;quot;,&amp;quot;shpxrq&amp;quot;,&amp;quot;shpxre&amp;quot;,&amp;quot;shpxvat&amp;quot;,&amp;quot;shpxzr&amp;quot;,&amp;quot;shpxlbh&amp;quot;,&amp;quot;tnaqnys&amp;quot;,&amp;quot;tngrjnl&amp;quot;,&amp;quot;tngbef&amp;quot;,&amp;quot;trzvav&amp;quot;,&amp;quot;trbetr&amp;quot;,&amp;quot;tvnagf&amp;quot;,&amp;quot;tvatre&amp;quot;,&amp;quot;tvmzbqb&amp;quot;,&amp;quot;tbyqra&amp;quot;,&amp;quot;tbysre&amp;quot;,&amp;quot;tbeqba&amp;quot;,&amp;quot;tertbel&amp;quot;,&amp;quot;thvgne&amp;quot;,&amp;quot;thaare&amp;quot;,&amp;quot;unzzre&amp;quot;,&amp;quot;unaanu&amp;quot;,&amp;quot;uneqpber&amp;quot;,&amp;quot;uneyrl&amp;quot;,&amp;quot;urngure&amp;quot;,&amp;quot;uryczr&amp;quot;,&amp;quot;uragnv&amp;quot;,&amp;quot;ubpxrl&amp;quot;,&amp;quot;ubbgref&amp;quot;,&amp;quot;ubearl&amp;quot;,&amp;quot;ubgqbt&amp;quot;,&amp;quot;uhagre&amp;quot;,&amp;quot;uhagvat&amp;quot;,&amp;quot;vprzna&amp;quot;,&amp;quot;vybirlbh&amp;quot;,&amp;quot;vagrearg&amp;quot;,&amp;quot;vjnagh&amp;quot;,&amp;quot;wnpxvr&amp;quot;,&amp;quot;wnpxfba&amp;quot;,&amp;quot;wnthne&amp;quot;,&amp;quot;wnfzvar&amp;quot;,&amp;quot;wnfcre&amp;quot;,&amp;quot;wraavsre&amp;quot;,&amp;quot;wrerzl&amp;quot;,&amp;quot;wrffvpn&amp;quot;,&amp;quot;wbuaal&amp;quot;,&amp;quot;wbuafba&amp;quot;,&amp;quot;wbeqna&amp;quot;,&amp;quot;wbfrcu&amp;quot;,&amp;quot;wbfuhn&amp;quot;,&amp;quot;whavbe&amp;quot;,&amp;quot;whfgva&amp;quot;,&amp;quot;xvyyre&amp;quot;,&amp;quot;xavtug&amp;quot;,&amp;quot;ynqvrf&amp;quot;,&amp;quot;ynxref&amp;quot;,&amp;quot;ynhera&amp;quot;,&amp;quot;yrngure&amp;quot;,&amp;quot;yrtraq&amp;quot;,&amp;quot;yrgzrva&amp;quot;,&amp;quot;yrgzrva&amp;quot;,&amp;quot;yvggyr&amp;quot;,&amp;quot;ybaqba&amp;quot;,&amp;quot;ybiref&amp;quot;,&amp;quot;znqqbt&amp;quot;,&amp;quot;znqvfba&amp;quot;,&amp;quot;znttvr&amp;quot;,&amp;quot;zntahz&amp;quot;,&amp;quot;znevar&amp;quot;,&amp;quot;znevcbfn&amp;quot;,&amp;quot;zneyobeb&amp;quot;,&amp;quot;znegva&amp;quot;,&amp;quot;zneiva&amp;quot;,&amp;quot;znfgre&amp;quot;,&amp;quot;zngevk&amp;quot;,&amp;quot;znggurj&amp;quot;,&amp;quot;znirevpx&amp;quot;,&amp;quot;znkjryy&amp;quot;,&amp;quot;zryvffn&amp;quot;,&amp;quot;zrzore&amp;quot;,&amp;quot;zreprqrf&amp;quot;,&amp;quot;zreyva&amp;quot;,&amp;quot;zvpunry&amp;quot;,&amp;quot;zvpuryyr&amp;quot;,&amp;quot;zvpxrl&amp;quot;,&amp;quot;zvqavtug&amp;quot;,&amp;quot;zvyyre&amp;quot;,&amp;quot;zvfgerff&amp;quot;,&amp;quot;zbavpn&amp;quot;,&amp;quot;zbaxrl&amp;quot;,&amp;quot;zbaxrl&amp;quot;,&amp;quot;zbafgre&amp;quot;,&amp;quot;zbetna&amp;quot;,&amp;quot;zbgure&amp;quot;,&amp;quot;zbhagnva&amp;quot;,&amp;quot;zhssva&amp;quot;,&amp;quot;zhecul&amp;quot;,&amp;quot;zhfgnat&amp;quot;,&amp;quot;anxrq&amp;quot;,&amp;quot;anfpne&amp;quot;,&amp;quot;anguna&amp;quot;,&amp;quot;anhtugl&amp;quot;,&amp;quot;app1701&amp;quot;,&amp;quot;arjlbex&amp;quot;,&amp;quot;avpubynf&amp;quot;,&amp;quot;avpbyr&amp;quot;,&amp;quot;avccyr&amp;quot;,&amp;quot;avccyrf&amp;quot;,&amp;quot;byvire&amp;quot;,&amp;quot;benatr&amp;quot;,&amp;quot;cnpxref&amp;quot;,&amp;quot;cnagure&amp;quot;,&amp;quot;cnagvrf&amp;quot;,&amp;quot;cnexre&amp;quot;,&amp;quot;cnffjbeq&amp;quot;,&amp;quot;cnffjbeq&amp;quot;,&amp;quot;cnffjbeq1&amp;quot;,&amp;quot;cnffjbeq12&amp;quot;,&amp;quot;cnffjbeq123&amp;quot;,&amp;quot;cngevpx&amp;quot;,&amp;quot;crnpurf&amp;quot;,&amp;quot;crnahg&amp;quot;,&amp;quot;crccre&amp;quot;,&amp;quot;cunagbz&amp;quot;,&amp;quot;cubravk&amp;quot;,&amp;quot;cynlre&amp;quot;,&amp;quot;cyrnfr&amp;quot;,&amp;quot;cbbxvr&amp;quot;,&amp;quot;cbefpur&amp;quot;,&amp;quot;cevapr&amp;quot;,&amp;quot;cevaprff&amp;quot;,&amp;quot;cevingr&amp;quot;,&amp;quot;checyr&amp;quot;,&amp;quot;chffvrf&amp;quot;,&amp;quot;dnmjfk&amp;quot;,&amp;quot;djregl&amp;quot;,&amp;quot;djreglhv&amp;quot;,&amp;quot;enoovg&amp;quot;,&amp;quot;enpury&amp;quot;,&amp;quot;enpvat&amp;quot;,&amp;quot;envqref&amp;quot;,&amp;quot;envaobj&amp;quot;,&amp;quot;enatre&amp;quot;,&amp;quot;enatref&amp;quot;,&amp;quot;erorppn&amp;quot;,&amp;quot;erqfxvaf&amp;quot;,&amp;quot;erqfbk&amp;quot;,&amp;quot;erqjvatf&amp;quot;,&amp;quot;evpuneq&amp;quot;,&amp;quot;eboreg&amp;quot;,&amp;quot;eboregb&amp;quot;,&amp;quot;ebpxrg&amp;quot;,&amp;quot;ebfrohq&amp;quot;,&amp;quot;ehaare&amp;quot;,&amp;quot;ehfu2112&amp;quot;,&amp;quot;ehffvn&amp;quot;,&amp;quot;fnznagun&amp;quot;,&amp;quot;fnzzl&amp;quot;,&amp;quot;fnzfba&amp;quot;,&amp;quot;fnaqen&amp;quot;,&amp;quot;fnghea&amp;quot;,&amp;quot;fpbbol&amp;quot;,&amp;quot;fpbbgre&amp;quot;,&amp;quot;fpbecvb&amp;quot;,&amp;quot;fpbecvba&amp;quot;,&amp;quot;fronfgvna&amp;quot;,&amp;quot;frperg&amp;quot;,&amp;quot;frkfrk&amp;quot;,&amp;quot;funqbj&amp;quot;,&amp;quot;funaaba&amp;quot;,&amp;quot;funirq&amp;quot;,&amp;quot;fvreen&amp;quot;,&amp;quot;fvyire&amp;quot;,&amp;quot;fxvccl&amp;quot;,&amp;quot;fynlre&amp;quot;,&amp;quot;fzbxrl&amp;quot;,&amp;quot;fabbcl&amp;quot;,&amp;quot;fbppre&amp;quot;,&amp;quot;fbcuvr&amp;quot;,&amp;quot;fcnaxl&amp;quot;,&amp;quot;fcnexl&amp;quot;,&amp;quot;fcvqre&amp;quot;,&amp;quot;fdhveg&amp;quot;,&amp;quot;fevavinf&amp;quot;,&amp;quot;fgnegerx&amp;quot;,&amp;quot;fgnejnef&amp;quot;,&amp;quot;fgrryref&amp;quot;,&amp;quot;fgrira&amp;quot;,&amp;quot;fgvpxl&amp;quot;,&amp;quot;fghcvq&amp;quot;,&amp;quot;fhpprff&amp;quot;,&amp;quot;fhpxvg&amp;quot;,&amp;quot;fhzzre&amp;quot;,&amp;quot;fhafuvar&amp;quot;,&amp;quot;fhcrezna&amp;quot;,&amp;quot;fhesre&amp;quot;,&amp;quot;fjvzzvat&amp;quot;,&amp;quot;flqarl&amp;quot;,&amp;quot;grdhvreb&amp;quot;,&amp;quot;gnlybe&amp;quot;,&amp;quot;graavf&amp;quot;,&amp;quot;grerfn&amp;quot;,&amp;quot;grfgre&amp;quot;,&amp;quot;grfgvat&amp;quot;,&amp;quot;gurzna&amp;quot;,&amp;quot;gubznf&amp;quot;,&amp;quot;guhaqre&amp;quot;,&amp;quot;guk1138&amp;quot;,&amp;quot;gvssnal&amp;quot;,&amp;quot;gvtref&amp;quot;,&amp;quot;gvttre&amp;quot;,&amp;quot;gbzpng&amp;quot;,&amp;quot;gbctha&amp;quot;,&amp;quot;gblbgn&amp;quot;,&amp;quot;genivf&amp;quot;,&amp;quot;gebhoyr&amp;quot;,&amp;quot;gehfgab1&amp;quot;,&amp;quot;ghpxre&amp;quot;,&amp;quot;ghegyr&amp;quot;,&amp;quot;gjvggre&amp;quot;,&amp;quot;havgrq&amp;quot;,&amp;quot;intvan&amp;quot;,&amp;quot;ivpgbe&amp;quot;,&amp;quot;ivpgbevn&amp;quot;,&amp;quot;ivxvat&amp;quot;,&amp;quot;ibbqbb&amp;quot;,&amp;quot;iblntre&amp;quot;,&amp;quot;jnygre&amp;quot;,&amp;quot;jneevbe&amp;quot;,&amp;quot;jrypbzr&amp;quot;,&amp;quot;jungrire&amp;quot;,&amp;quot;jvyyvnz&amp;quot;,&amp;quot;jvyyvr&amp;quot;,&amp;quot;jvyfba&amp;quot;,&amp;quot;jvaare&amp;quot;,&amp;quot;jvafgba&amp;quot;,&amp;quot;jvagre&amp;quot;,&amp;quot;jvmneq&amp;quot;,&amp;quot;knivre&amp;quot;,&amp;quot;kkkkkk&amp;quot;,&amp;quot;kkkkkkkk&amp;quot;,&amp;quot;lnznun&amp;quot;,&amp;quot;lnaxrr&amp;quot;,&amp;quot;lnaxrrf&amp;quot;,&amp;quot;lryybj&amp;quot;,&amp;quot;mkpioa&amp;quot;,&amp;quot;mkpioaz&amp;quot;,&amp;quot;mmmmmm&amp;quot;],&amp;quot;isDeviceCompletion&amp;quot;:false,&amp;quot;smsDeviceVerified&amp;quot;:false,&amp;quot;validationFields&amp;quot;:{&amp;quot;email&amp;quot;:false,&amp;quot;password&amp;quot;:false,&amp;quot;name&amp;quot;:false},&amp;quot;initialState&amp;quot;:{&amp;quot;title&amp;quot;:&amp;quot;Sign up for Twitter&amp;quot;,&amp;quot;section&amp;quot;:null,&amp;quot;module&amp;quot;:&amp;quot;app\/pages\/signup\/signup&amp;quot;,&amp;quot;cache_ttl&amp;quot;:300,&amp;quot;body_class_names&amp;quot;:&amp;quot;three-col logged-out phx-signup fast-signup&amp;quot;,&amp;quot;doc_class_names&amp;quot;:&amp;quot;route-signup&amp;quot;,&amp;quot;route_name&amp;quot;:&amp;quot;signup&amp;quot;,&amp;quot;page_container_class_names&amp;quot;:&amp;quot;AppContent wrapper wrapper-signup&amp;quot;,&amp;quot;ttft_navigation&amp;quot;:false}}&quot; class=&quot;json-data&quot; id=&quot;init-data&quot; /&gt;
+
+  
+
+    &lt;input type=&quot;hidden&quot; value=&quot;app/pages/signup/signup&quot; class=&quot;swift-boot-module&quot; /&gt;
+  &lt;input type=&quot;hidden&quot; value=&quot;https://abs.twimg.com/c/swift/en&quot; id=&quot;swift-module-path&quot; /&gt;
+
+  
+    &lt;script async=&quot;&quot; src=&quot;https://abs.twimg.com/c/swift/en/init.0df86b6ce6b04221405882000d2673e8ea3a4de3.js&quot;&gt;&lt;/script&gt;
+
+  
+  
+      &lt;script nonce=&quot;hyXFzQWWTHUgNd1w2YQ8bA==&quot; id=&quot;swift_loading_indicator&quot;&gt;
+        document.body.className=document.body.className+&quot; &quot;+document.body.getAttribute(&quot;data-fouc-class-names&quot;);
+      &lt;/script&gt;
+    &lt;div class=&quot;route-signup&quot; id=&quot;doc&quot;&gt;
+        &lt;div class=&quot;topbar js-topbar&quot;&gt;
+
+
+  &lt;div data-section-term=&quot;top_nav&quot; class=&quot;global-nav global-nav--newLoggedOut&quot;&gt;
+    &lt;div class=&quot;global-nav-inner&quot;&gt;
+      &lt;div class=&quot;container&quot;&gt;
+
+        
+&lt;ul id=&quot;global-actions&quot; role=&quot;navigation&quot; class=&quot;nav js-global-actions&quot;&gt;
+  &lt;li data-global-action=&quot;home&quot; class=&quot;home&quot; id=&quot;global-nav-home&quot;&gt;
+    &lt;a data-nav=&quot;home&quot; data-component-context=&quot;home_nav&quot; href=&quot;/&quot; data-placement=&quot;bottom&quot; class=&quot;js-nav js-tooltip js-dynamic-tooltip&quot;&gt;
+      &lt;span class=&quot;Icon Icon--bird Icon--large&quot;&gt;&lt;/span&gt;
+      &lt;span class=&quot;text&quot;&gt;Home&lt;/span&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+    &lt;li data-global-action=&quot;about&quot; class=&quot;about&quot; id=&quot;global-nav-about&quot;&gt;
+      &lt;a data-nav=&quot;about&quot; data-component-context=&quot;about_nav&quot; target=&quot;_blank&quot; href=&quot;/about&quot; data-placement=&quot;bottom&quot; class=&quot;js-tooltip js-dynamic-tooltip&quot;&gt;
+        &lt;span class=&quot;text&quot;&gt;About&lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;pull-right&quot;&gt;
+    &lt;div role=&quot;search&quot;&gt;
+  &lt;form id=&quot;global-nav-search&quot; action=&quot;/search&quot; class=&quot;t1-form form-search js-search-form&quot;&gt;
+    &lt;label for=&quot;search-query&quot; class=&quot;visuallyhidden&quot;&gt;Search query&lt;/label&gt;
+    &lt;input type=&quot;text&quot; spellcheck=&quot;false&quot; autocomplete=&quot;off&quot; name=&quot;q&quot; placeholder=&quot;Search Twitter&quot; id=&quot;search-query&quot; class=&quot;search-input&quot; aria-autocomplete=&quot;list&quot; aria-expanded=&quot;false&quot; aria-owns=&quot;typeahead-dropdown-1&quot; /&gt;
+    &lt;span class=&quot;search-icon js-search-action&quot;&gt;
+      &lt;button class=&quot;Icon Icon--search nav-search&quot; type=&quot;submit&quot; tabindex=&quot;-1&quot;&gt;
+        &lt;span class=&quot;visuallyhidden&quot;&gt;Search Twitter&lt;/span&gt;
+      &lt;/button&gt;
+    &lt;/span&gt;
+      
+
+
+&lt;div class=&quot;dropdown-menu typeahead&quot; role=&quot;listbox&quot; id=&quot;typeahead-dropdown-1&quot;&gt;
+  &lt;div class=&quot;dropdown-caret&quot; aria-hidden=&quot;true&quot;&gt;
+    &lt;div class=&quot;caret-outer&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;caret-inner&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;dropdown-inner js-typeahead-results&quot; role=&quot;presentation&quot;&gt;&lt;div class=&quot;typeahead-saved-searches block1&quot; role=&quot;presentation&quot;&gt;
+  &lt;h3 class=&quot;typeahead-category-title saved-searches-title&quot; id=&quot;saved-searches-heading&quot;&gt;Saved searches&lt;/h3&gt;
+  &lt;ul class=&quot;typeahead-items saved-searches-list&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;li class=&quot;typeahead-item typeahead-saved-search-item&quot; role=&quot;presentation&quot;&gt;
+      &lt;span aria-hidden=&quot;true&quot; class=&quot;Icon Icon--close&quot;&gt;&lt;span class=&quot;visuallyhidden&quot;&gt;Remove&lt;/span&gt;&lt;/span&gt;
+      &lt;a tabindex=&quot;-1&quot; data-ds=&quot;saved_search&quot; data-query-source=&quot;&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; aria-describedby=&quot;saved-searches-heading&quot; role=&quot;option&quot;&gt;&lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;&lt;ul class=&quot;typeahead-items typeahead-topics block2&quot; role=&quot;presentation&quot; style=&quot;display: none;&quot;&gt;
+  
+  &lt;li class=&quot;typeahead-item typeahead-topic-item&quot; role=&quot;presentation&quot;&gt;
+    &lt;a tabindex=&quot;-1&quot; data-ds=&quot;topics&quot; data-query-source=&quot;typeahead_click&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;&lt;ul class=&quot;typeahead-items typeahead-accounts js-typeahead-accounts block3&quot; role=&quot;presentation&quot; style=&quot;display: none;&quot;&gt;
+  
+  &lt;li class=&quot;typeahead-item typeahead-account-item js-selectable&quot; data-score=&quot;&quot; data-remote=&quot;true&quot; data-user-screenname=&quot;&quot; data-user-id=&quot;&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;a data-ds=&quot;account&quot; data-search-query=&quot;&quot; data-query-source=&quot;typeahead_click&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+      &lt;img alt=&quot;&quot; class=&quot;avatar size32&quot; /&gt;
+      &lt;span class=&quot;typeahead-user-item-info&quot;&gt;
+        &lt;span class=&quot;fullname&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;js-verified hidden&quot;&gt;&lt;span class=&quot;Icon Icon--verified Icon--small&quot;&gt;
+  &lt;span class=&quot;u-hiddenVisually&quot;&gt;Verified account&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;
+        &lt;span class=&quot;username&quot;&gt;&lt;s&gt;@&lt;/s&gt;&lt;b&gt;&lt;/b&gt;&lt;/span&gt;
+      &lt;/span&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+  &lt;li class=&quot;js-selectable typeahead-accounts-shortcut js-shortcut&quot; role=&quot;presentation&quot;&gt;&lt;a data-ds=&quot;account_search&quot; data-shortcut=&quot;true&quot; data-query-source=&quot;typeahead_click&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;/form&gt;
+&lt;/div&gt;
+
+
+  &lt;ul class=&quot;nav secondary-nav language-dropdown&quot;&gt;
+    &lt;li class=&quot;dropdown js-language-dropdown&quot;&gt;
+      &lt;a class=&quot;dropdown-toggle js-dropdown-toggle&quot; href=&quot;#supported_languages&quot; role=&quot;button&quot; aria-haspopup=&quot;true&quot;&gt;
+        &lt;small&gt;Language:&lt;/small&gt; &lt;span class=&quot;js-current-language&quot;&gt;English&lt;/span&gt; &lt;b class=&quot;caret&quot;&gt;&lt;/b&gt;
+      &lt;/a&gt;
+      &lt;div class=&quot;dropdown-menu&quot;&gt;
+        &lt;div class=&quot;dropdown-caret right&quot;&gt;
+          &lt;span class=&quot;caret-outer&quot;&gt; &lt;/span&gt;
+          &lt;span class=&quot;caret-inner&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;ul id=&quot;supported_languages&quot;&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Indonesian&quot; data-lang-code=&quot;id&quot; href=&quot;?lang=id&quot;&gt;Bahasa Indonesia&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Malay&quot; data-lang-code=&quot;msa&quot; href=&quot;?lang=msa&quot;&gt;Bahasa Melayu&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Czech&quot; data-lang-code=&quot;cs&quot; href=&quot;?lang=cs&quot;&gt;Če&scaron;tina&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Danish&quot; data-lang-code=&quot;da&quot; href=&quot;?lang=da&quot;&gt;Dansk&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;German&quot; data-lang-code=&quot;de&quot; href=&quot;?lang=de&quot;&gt;Deutsch&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;British English&quot; data-lang-code=&quot;en-gb&quot; href=&quot;?lang=en-gb&quot;&gt;English UK&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Spanish&quot; data-lang-code=&quot;es&quot; href=&quot;?lang=es&quot;&gt;Espa&ntilde;ol&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Filipino&quot; data-lang-code=&quot;fil&quot; href=&quot;?lang=fil&quot;&gt;Filipino&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;French&quot; data-lang-code=&quot;fr&quot; href=&quot;?lang=fr&quot;&gt;Fran&ccedil;ais&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Italian&quot; data-lang-code=&quot;it&quot; href=&quot;?lang=it&quot;&gt;Italiano&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Hungarian&quot; data-lang-code=&quot;hu&quot; href=&quot;?lang=hu&quot;&gt;Magyar&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Dutch&quot; data-lang-code=&quot;nl&quot; href=&quot;?lang=nl&quot;&gt;Nederlands&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Norwegian&quot; data-lang-code=&quot;no&quot; href=&quot;?lang=no&quot;&gt;Norsk&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Polish&quot; data-lang-code=&quot;pl&quot; href=&quot;?lang=pl&quot;&gt;Polski&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Portuguese&quot; data-lang-code=&quot;pt&quot; href=&quot;?lang=pt&quot;&gt;Portugu&ecirc;s&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Romanian&quot; data-lang-code=&quot;ro&quot; href=&quot;?lang=ro&quot;&gt;Rom&acirc;nă&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Finnish&quot; data-lang-code=&quot;fi&quot; href=&quot;?lang=fi&quot;&gt;Suomi&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Swedish&quot; data-lang-code=&quot;sv&quot; href=&quot;?lang=sv&quot;&gt;Svenska&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Vietnamese&quot; data-lang-code=&quot;vi&quot; href=&quot;?lang=vi&quot;&gt;Tiếng Việt&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Turkish&quot; data-lang-code=&quot;tr&quot; href=&quot;?lang=tr&quot;&gt;T&uuml;rk&ccedil;e&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Greek&quot; data-lang-code=&quot;el&quot; href=&quot;?lang=el&quot;&gt;&Epsilon;&lambda;&lambda;&eta;&nu;&iota;&kappa;ά&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Russian&quot; data-lang-code=&quot;ru&quot; href=&quot;?lang=ru&quot;&gt;Русский&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Ukrainian&quot; data-lang-code=&quot;uk&quot; href=&quot;?lang=uk&quot;&gt;Українська мова&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Hebrew&quot; data-lang-code=&quot;he&quot; href=&quot;?lang=he&quot;&gt;עִבְרִית&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Arabic&quot; data-lang-code=&quot;ar&quot; href=&quot;?lang=ar&quot;&gt;العربية&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Persian&quot; data-lang-code=&quot;fa&quot; href=&quot;?lang=fa&quot;&gt;فارسی&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Marathi&quot; data-lang-code=&quot;mr&quot; href=&quot;?lang=mr&quot;&gt;मराठी&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Hindi&quot; data-lang-code=&quot;hi&quot; href=&quot;?lang=hi&quot;&gt;हिन्दी&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Bengali&quot; data-lang-code=&quot;bn&quot; href=&quot;?lang=bn&quot;&gt;বাংলা&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Gujarati&quot; data-lang-code=&quot;gu&quot; href=&quot;?lang=gu&quot;&gt;ગુજરાતી&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Tamil&quot; data-lang-code=&quot;ta&quot; href=&quot;?lang=ta&quot;&gt;தமிழ்&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Kannada&quot; data-lang-code=&quot;kn&quot; href=&quot;?lang=kn&quot;&gt;ಕನ್ನಡ&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Thai&quot; data-lang-code=&quot;th&quot; href=&quot;?lang=th&quot;&gt;ภาษาไทย&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Korean&quot; data-lang-code=&quot;ko&quot; href=&quot;?lang=ko&quot;&gt;한국어&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Japanese&quot; data-lang-code=&quot;ja&quot; href=&quot;?lang=ja&quot;&gt;日本語&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Simplified Chinese&quot; data-lang-code=&quot;zh-cn&quot; href=&quot;?lang=zh-cn&quot;&gt;简体中文&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a class=&quot;js-language-link js-tooltip&quot; title=&quot;Traditional Chinese&quot; data-lang-code=&quot;zh-tw&quot; href=&quot;?lang=zh-tw&quot;&gt;繁體中文&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;js-front-language&quot;&gt;
+        &lt;form method=&quot;POST&quot; class=&quot;t1-form language&quot; action=&quot;/sessions/change_locale&quot;&gt;
+          &lt;input type=&quot;hidden&quot; name=&quot;lang&quot; /&gt; &lt;input type=&quot;hidden&quot; name=&quot;redirect&quot; /&gt;
+          &lt;input type=&quot;hidden&quot; value=&quot;c3805f4dee408079f361d48666876d36fd7e63a3&quot; name=&quot;authenticity_token&quot; /&gt;
+        &lt;/form&gt;
+      &lt;/div&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+
+    &lt;ul id=&quot;session&quot; class=&quot;nav secondary-nav session-dropdown&quot;&gt;
+      &lt;li class=&quot;dropdown js-session&quot;&gt;
+          &lt;a data-nav=&quot;login&quot; id=&quot;signin-link&quot; class=&quot;dropdown-toggle js-dropdown-toggle dropdown-signin&quot; href=&quot;/login&quot; role=&quot;button&quot; aria-haspopup=&quot;true&quot;&gt;
+            &lt;small&gt;Have an account?&lt;/small&gt; &lt;span class=&quot;emphasize&quot;&gt; Log in&lt;/span&gt;&lt;span class=&quot;caret&quot;&gt;&lt;/span&gt;
+          &lt;/a&gt;
+          &lt;div id=&quot;signin-dropdown&quot; class=&quot;dropdown-menu dropdown-form&quot;&gt;
+            &lt;div class=&quot;dropdown-caret right&quot;&gt; &lt;span class=&quot;caret-outer&quot;&gt;&lt;/span&gt; &lt;span class=&quot;caret-inner&quot;&gt;&lt;/span&gt; &lt;/div&gt;
+            &lt;div class=&quot;signin-dialog-body&quot;&gt;
+              &lt;div&gt;Have an account?&lt;/div&gt;
+              &lt;form data-element=&quot;form&quot; data-component=&quot;login_callout&quot; method=&quot;post&quot; class=&quot;LoginForm js-front-signin&quot; action=&quot;https://twitter.com/sessions&quot;&gt;
+  &lt;div class=&quot;LoginForm-input LoginForm-username&quot;&gt;
+    &lt;input type=&quot;text&quot; placeholder=&quot;Phone, email or username&quot; autocomplete=&quot;username&quot; name=&quot;session[username_or_email]&quot; class=&quot;text-input email-input js-signin-email&quot; /&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;LoginForm-input LoginForm-password&quot;&gt;
+    &lt;input type=&quot;password&quot; autocomplete=&quot;current-password&quot; placeholder=&quot;Password&quot; name=&quot;session[password]&quot; class=&quot;text-input&quot; /&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;LoginForm-rememberForgot&quot;&gt;
+    &lt;label&gt;
+      &lt;input type=&quot;checkbox&quot; name=&quot;remember_me&quot; value=&quot;1&quot; /&gt;
+      &lt;span&gt;Remember me&lt;/span&gt;
+    &lt;/label&gt;
+    &lt;span class=&quot;separator&quot;&gt;&middot;&lt;/span&gt;
+    &lt;a href=&quot;/account/begin_password_reset&quot; class=&quot;forgot&quot;&gt;Forgot password?&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;input type=&quot;submit&quot; value=&quot;Log in&quot; class=&quot;submit btn primary-btn js-submit&quot; /&gt;
+
+    &lt;input type=&quot;hidden&quot; value=&quot;true&quot; name=&quot;return_to_ssl&quot; /&gt;
+
+  &lt;input type=&quot;hidden&quot; name=&quot;scribe_log&quot; /&gt;
+  &lt;input type=&quot;hidden&quot; value=&quot;/signup&quot; name=&quot;redirect_after_login&quot; /&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;authenticity_token&quot; value=&quot;c3805f4dee408079f361d48666876d36fd7e63a3&quot; /&gt;
+      &lt;input type=&quot;hidden&quot; autocomplete=&quot;off&quot; name=&quot;ui_metrics&quot; value=&quot;&quot; /&gt;
+      &lt;input type=&quot;hidden&quot; autocomplete=&quot;off&quot; value=&quot;1454707432802&quot; name=&quot;ui_metrics_seed&quot; id=&quot;ui_metrics_seed&quot; /&gt;
+      &lt;input type=&quot;hidden&quot; autocomplete=&quot;off&quot; name=&quot;js_inst&quot; value=&quot;1&quot; /&gt;
+      &lt;script async=&quot;&quot; src=&quot;/i/js_inst&quot;&gt;&lt;/script&gt;
+&lt;/form&gt;
+
+              &lt;hr /&gt;
+              &lt;div class=&quot;signup SignupForm&quot;&gt;
+                &lt;div class=&quot;SignupForm-header&quot;&gt;New to Twitter?&lt;/div&gt;
+                &lt;a data-element=&quot;dropdown&quot; data-component=&quot;signup_callout&quot; class=&quot;SignupForm-submit u-block u-textCenter js-signup btn&quot; role=&quot;button&quot; href=&quot;https://twitter.com/signup&quot;&gt;Sign up
+                &lt;/a&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+        &lt;div id=&quot;page-outer&quot;&gt;
+          &lt;div class=&quot;AppContent wrapper wrapper-signup&quot; id=&quot;page-container&quot;&gt;
+              
+            &lt;link rel=&quot;stylesheet&quot; href=&quot;https://abs.twimg.com/a/1454375955/css/t1/t1_signup.bundle.css&quot; /&gt;
+&lt;div class=&quot;page-canvas&quot;&gt;
+  &lt;div class=&quot;signup-wrapper&quot;&gt;
+        &lt;h1&gt;
+          Join Twitter today.
+        &lt;/h1&gt;
+
+    &lt;form class=&quot;t1-form signup &quot; action=&quot;https://twitter.com/account/create&quot; method=&quot;POST&quot; id=&quot;phx-signup-form&quot;&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;authenticity_token&quot; value=&quot;c3805f4dee408079f361d48666876d36fd7e63a3&quot; /&gt;
+
+  &lt;input type=&quot;hidden&quot; name=&quot;signup_ui_metrics&quot; value=&quot;&quot; /&gt;
+  &lt;div class=&quot;ui-metrics-seed&quot; id=&quot;ui_metrics&quot;&gt;1454707432798&lt;/div&gt;
+
+
+  &lt;div class=&quot;textbox&quot;&gt;
+
+    &lt;div class=&quot;prompt name&quot;&gt;
+  &lt;div data-fieldname=&quot;name&quot; class=&quot;field&quot;&gt;
+    &lt;div class=&quot;sidetip&quot;&gt;
+      &lt;p class=&quot;ok isaok&quot;&gt;&nbsp;&lt;/p&gt;
+      &lt;p role=&quot;alert&quot; class=&quot;blank invalid error&quot;&gt;What's your name?&lt;/p&gt;
+      &lt;p role=&quot;alert&quot; class=&quot;notwitter error&quot;&gt;Your full name can't include the word &quot;Twitter&quot;.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;input type=&quot;text&quot; placeholder=&quot;Full name&quot; aria-required=&quot;true&quot; maxlength=&quot;20&quot; name=&quot;user[name]&quot; value=&quot;&quot; autocomplete=&quot;off&quot; id=&quot;full-name&quot; /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;div class=&quot;prompt email&quot;&gt;
+  &lt;div data-fieldname=&quot;email&quot; class=&quot;field&quot;&gt;
+    &lt;div class=&quot;sidetip&quot;&gt;
+      &lt;p class=&quot;ok isaok&quot;&gt;&nbsp;&lt;/p&gt;
+      &lt;p class=&quot;checking&quot;&gt;Validating...&lt;/p&gt;
+      &lt;p role=&quot;alert&quot; class=&quot;invalid error&quot;&gt;Please enter a valid email.&lt;/p&gt;
+      &lt;p role=&quot;alert&quot; class=&quot;invalid_phone error&quot;&gt;Please enter a valid phone number.&lt;/p&gt;
+      &lt;p role=&quot;alert&quot; class=&quot;blank error&quot;&gt;Please enter a valid phone number or email.&lt;/p&gt;
+      &lt;p role=&quot;alert&quot; class=&quot;taken error &quot;&gt;This email is already registered. Want to &lt;a href=&quot;/login&quot;&gt;login&lt;/a&gt; or &lt;a href=&quot;/account/begin_password_reset&quot;&gt;recover your password&lt;/a&gt;?&lt;/p&gt;
+      &lt;p role=&quot;alert&quot; class=&quot;phone_taken error&quot;&gt;We cannot currently register this phone number. Please try signing up with email instead.&lt;/p&gt;
+      &lt;p class=&quot;domain&quot;&gt;Did you mean &lt;em&gt;&lt;a href=&quot;#&quot; class=&quot;js-email-correction&quot; role=&quot;button&quot;&gt;&lt;/a&gt;&lt;/em&gt;?&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;input type=&quot;text&quot; placeholder=&quot;Phone or Email&quot; aria-required=&quot;true&quot; name=&quot;user[email]&quot; value=&quot;&quot; autocomplete=&quot;off&quot; class=&quot;email-input&quot; id=&quot;email&quot; /&gt;
+    &lt;div class=&quot;sms-consent&quot;&gt;We will text a verification code to this number. Standard SMS fees may apply.&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+    &lt;div class=&quot;prompt password&quot;&gt;
+  &lt;div data-fieldname=&quot;password&quot; class=&quot;field&quot;&gt;
+    &lt;div class=&quot;sidetip&quot;&gt;
+        &lt;p class=&quot;ok isaok perfect weak&quot;&gt;&nbsp;&lt;/p&gt;
+        &lt;p role=&quot;alert&quot; class=&quot;weak error&quot;&gt;Please enter a stronger password.&lt;/p&gt;
+        &lt;p role=&quot;alert&quot; class=&quot;obvious error&quot;&gt;Please enter a stronger password.&lt;/p&gt;
+        &lt;p role=&quot;alert&quot; class=&quot;invalid error&quot;&gt;Your password must be at least 6 characters.&lt;/p&gt;
+        &lt;p role=&quot;alert&quot; class=&quot;blank error&quot;&gt;Please enter a password.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;input type=&quot;password&quot; placeholder=&quot;Password&quot; aria-required=&quot;true&quot; name=&quot;user[user_password]&quot; value=&quot;&quot; id=&quot;password&quot; /&gt;
+  &lt;/div&gt;
+    &lt;div class=&quot;score&quot;&gt;&lt;span&gt;&lt;b class=&quot;fill&quot;&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;div class=&quot;prompt optin&quot;&gt;
+  &lt;label class=&quot;t1-label&quot;&gt;
+    &lt;input type=&quot;checkbox&quot; value=&quot;1&quot; name=&quot;user[use_cookie_personalization]&quot; checked=&quot;checked&quot; /&gt;
+    &lt;input type=&quot;hidden&quot; value=&quot;1&quot; name=&quot;asked_cookie_personalization_setting&quot; /&gt;
+    &lt;span&gt;Tailor Twitter based on my recent website visits. &lt;a target=&quot;_blank&quot; href=&quot;https://support.twitter.com/articles/20169421&quot; class=&quot;cookie-personalization-support&quot;&gt;Learn more&lt;/a&gt;.&lt;/span&gt;
+  &lt;/label&gt;
+&lt;/div&gt;
+
+    &lt;input type=&quot;hidden&quot; value=&quot;&quot; name=&quot;ad_ref&quot; /&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;standby&quot;&gt;
+    &lt;p&gt;Creating your account&hellip;&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;doit&quot;&gt;
+    &lt;div class=&quot;sign-up-box&quot;&gt;
+      &lt;input type=&quot;submit&quot; value=&quot;Sign up&quot; id=&quot;submit_button&quot; class=&quot;submit button signup&quot; /&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;befound&quot;&gt;
+  &lt;p&gt;By signing up, you agree to the &lt;a target=&quot;_blank&quot; class=&quot;legal-link&quot; href=&quot;/tos&quot;&gt;Terms of Service&lt;/a&gt; and &lt;a target=&quot;_blank&quot; class=&quot;legal-link&quot; href=&quot;/privacy&quot;&gt;Privacy Policy&lt;/a&gt;, including &lt;a target=&quot;_blank&quot; class=&quot;legal-link&quot; href=&quot;https://support.twitter.com/articles/20170514&quot;&gt;Cookie Use&lt;/a&gt;. Others will be able to find you by email or phone number when provided.&lt;/p&gt;
+&lt;/div&gt;
+
+  &lt;div class=&quot;advanced-options&quot;&gt;
+&lt;div class=&quot;SlidedownOptions is-content-hidden&quot;&gt;
+  &lt;div&gt;
+    &lt;a aria-haspopup=&quot;true&quot; role=&quot;menu&quot; href=&quot;#&quot; class=&quot;SlidedownOptions-headerLink&quot;&gt;Advanced options&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;SlidedownOptions-content&quot;&gt;
+          &lt;div class=&quot;prompt optin&quot;&gt;
+        &lt;label class=&quot;t1-label&quot;&gt;
+          &lt;input type=&quot;checkbox&quot; checked=&quot;checked&quot; value=&quot;1&quot; name=&quot;user[discoverable_by_email]&quot; id=&quot;user_discoverable_by_email&quot; /&gt;
+          Let others find me by my email address
+          &lt;input type=&quot;hidden&quot; value=&quot;1&quot; name=&quot;asked_discoverable_by_email&quot; /&gt;
+        &lt;/label&gt;
+        &lt;label class=&quot;t1-label&quot;&gt;
+          &lt;input type=&quot;checkbox&quot; value=&quot;1&quot; checked=&quot;checked&quot; name=&quot;user[discoverable_by_mobile_phone]&quot; id=&quot;user_mobile_discoverable&quot; /&gt;
+          Let others find me by my phone number
+          &lt;input type=&quot;hidden&quot; value=&quot;1&quot; name=&quot;asked_discoverable_by_mobile_phone&quot; /&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;
+
+
+  &lt;script type=&quot;text/javascript&quot; src=&quot;/i/js_inst&quot;&gt;&lt;/script&gt;
+&lt;/form&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      
+    &lt;/div&gt;
+    &lt;div id=&quot;message-drawer&quot; class=&quot;alert-messages hidden&quot; style=&quot;top: -40px;&quot;&gt;
+    &lt;div class=&quot;message &quot;&gt;
+  &lt;div class=&quot;message-inside&quot;&gt;
+    &lt;span class=&quot;message-text&quot;&gt;&lt;/span&gt;
+      &lt;a href=&quot;#&quot; class=&quot;Icon Icon--close Icon--medium dismiss&quot; role=&quot;button&quot;&gt;
+        &lt;span class=&quot;visuallyhidden&quot;&gt;Dismiss&lt;/span&gt;
+      &lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+    
+
+
+&lt;div class=&quot;gallery-overlay&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;Gallery&quot;&gt;
+  &lt;div class=&quot;Gallery-closeTarget&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;Gallery-content&quot;&gt;
+    &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--large&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+    &lt;div class=&quot;Gallery-media&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;GalleryNav GalleryNav--prev&quot;&gt;
+      &lt;span class=&quot;GalleryNav-handle GalleryNav-handle--prev&quot;&gt;
+        &lt;span class=&quot;Icon Icon--caretLeft Icon--large&quot;&gt;
+          &lt;span class=&quot;u-hiddenVisually&quot;&gt;
+            Previous
+          &lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;GalleryNav GalleryNav--next&quot;&gt;
+      &lt;span class=&quot;GalleryNav-handle GalleryNav-handle--next&quot;&gt;
+        &lt;span class=&quot;Icon Icon--caretRight Icon--large&quot;&gt;
+          &lt;span class=&quot;u-hiddenVisually&quot;&gt;
+            Next
+          &lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;GalleryTweet&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+&lt;div class=&quot;modal-overlay&quot;&gt;&lt;/div&gt;
+
+&lt;div id=&quot;profile-hover-container&quot;&gt;&lt;/div&gt;
+
+
+
+&lt;div class=&quot;modal-container&quot; id=&quot;goto-user-dialog&quot;&gt;
+  &lt;div class=&quot;modal modal-small draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Go to a person's profile&lt;/h3&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;modal-inner&quot;&gt;
+          &lt;form class=&quot;t1-form goto-user-form&quot;&gt;
+            &lt;input type=&quot;text&quot; aria-label=&quot;User&quot; placeholder=&quot;Start typing a name to jump to a profile&quot; class=&quot;input-block username-input&quot; /&gt;
+            
+
+
+&lt;div class=&quot;dropdown-menu typeahead&quot; role=&quot;listbox&quot;&gt;
+  &lt;div class=&quot;dropdown-caret&quot; aria-hidden=&quot;true&quot;&gt;
+    &lt;div class=&quot;caret-outer&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;caret-inner&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;dropdown-inner js-typeahead-results&quot; role=&quot;presentation&quot;&gt;
+    &lt;div class=&quot;typeahead-saved-searches&quot; role=&quot;presentation&quot;&gt;
+  &lt;h3 class=&quot;typeahead-category-title saved-searches-title&quot; id=&quot;saved-searches-heading&quot;&gt;Saved searches&lt;/h3&gt;
+  &lt;ul class=&quot;typeahead-items saved-searches-list&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;li class=&quot;typeahead-item typeahead-saved-search-item&quot; role=&quot;presentation&quot;&gt;
+      &lt;span aria-hidden=&quot;true&quot; class=&quot;Icon Icon--close&quot;&gt;&lt;span class=&quot;visuallyhidden&quot;&gt;Remove&lt;/span&gt;&lt;/span&gt;
+      &lt;a tabindex=&quot;-1&quot; data-ds=&quot;saved_search&quot; data-query-source=&quot;&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; aria-describedby=&quot;saved-searches-heading&quot; role=&quot;option&quot;&gt;&lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+    &lt;ul class=&quot;typeahead-items typeahead-topics&quot; role=&quot;presentation&quot;&gt;
+  
+  &lt;li class=&quot;typeahead-item typeahead-topic-item&quot; role=&quot;presentation&quot;&gt;
+    &lt;a tabindex=&quot;-1&quot; data-ds=&quot;topics&quot; data-query-source=&quot;typeahead_click&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+
+    
+
+
+&lt;ul class=&quot;typeahead-items typeahead-accounts js-typeahead-accounts&quot; role=&quot;presentation&quot;&gt;
+  
+  &lt;li class=&quot;typeahead-item typeahead-account-item js-selectable&quot; data-score=&quot;&quot; data-remote=&quot;true&quot; data-user-screenname=&quot;&quot; data-user-id=&quot;&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;a data-ds=&quot;account&quot; data-search-query=&quot;&quot; data-query-source=&quot;typeahead_click&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+      &lt;img alt=&quot;&quot; class=&quot;avatar size32&quot; /&gt;
+      &lt;span class=&quot;typeahead-user-item-info&quot;&gt;
+        &lt;span class=&quot;fullname&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;js-verified hidden&quot;&gt;&lt;span class=&quot;Icon Icon--verified Icon--small&quot;&gt;
+  &lt;span class=&quot;u-hiddenVisually&quot;&gt;Verified account&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;
+        &lt;span class=&quot;username&quot;&gt;&lt;s&gt;@&lt;/s&gt;&lt;b&gt;&lt;/b&gt;&lt;/span&gt;
+      &lt;/span&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+  &lt;li class=&quot;js-selectable typeahead-accounts-shortcut js-shortcut&quot; role=&quot;presentation&quot;&gt;&lt;a data-ds=&quot;account_search&quot; data-shortcut=&quot;true&quot; data-query-source=&quot;typeahead_click&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+    &lt;ul class=&quot;typeahead-items typeahead-trend-locations-list&quot; role=&quot;presentation&quot;&gt;
+  
+  &lt;li class=&quot;typeahead-item typeahead-trend-locations-item&quot; role=&quot;presentation&quot;&gt;&lt;a tabindex=&quot;-1&quot; data-search-query=&quot;&quot; data-ds=&quot;trend_location&quot; href=&quot;&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+    &lt;div class=&quot;typeahead-user-select&quot; role=&quot;presentation&quot;&gt;
+  &lt;div class=&quot;typeahead-empty-suggestions&quot; role=&quot;presentation&quot;&gt;
+    Suggested users
+  &lt;/div&gt;
+  &lt;ul class=&quot;typeahead-items typeahead-selected js-typeahead-selected&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;li class=&quot;typeahead-item typeahead-selected-item js-selectable&quot; data-score=&quot;&quot; data-remote=&quot;true&quot; data-user-screenname=&quot;&quot; data-user-id=&quot;&quot; role=&quot;presentation&quot;&gt;
+      
+      &lt;a data-ds=&quot;account&quot; data-search-query=&quot;&quot; data-query-source=&quot;typeahead_click&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+        &lt;img alt=&quot;&quot; class=&quot;avatar size32&quot; /&gt;
+        &lt;span class=&quot;typeahead-user-item-info&quot;&gt;
+          &lt;span class=&quot;select-status deselect-user js-deselect-user Icon Icon--check&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;select-status select-disabled Icon Icon--unfollow&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;fullname&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;js-verified hidden&quot;&gt;&lt;span class=&quot;Icon Icon--verified Icon--small&quot;&gt;
+  &lt;span class=&quot;u-hiddenVisually&quot;&gt;Verified account&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;
+          &lt;span class=&quot;username&quot;&gt;&lt;s&gt;@&lt;/s&gt;&lt;b&gt;&lt;/b&gt;&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li class=&quot;typeahead-selected-end&quot; role=&quot;presentation&quot;&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;ul class=&quot;typeahead-items typeahead-accounts js-typeahead-accounts&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;li class=&quot;typeahead-item typeahead-account-item js-selectable&quot; data-score=&quot;&quot; data-remote=&quot;true&quot; data-user-screenname=&quot;&quot; data-user-id=&quot;&quot; role=&quot;presentation&quot;&gt;
+      
+      &lt;a data-ds=&quot;account&quot; data-search-query=&quot;&quot; data-query-source=&quot;typeahead_click&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+        &lt;img alt=&quot;&quot; class=&quot;avatar size32&quot; /&gt;
+        &lt;span class=&quot;typeahead-user-item-info&quot;&gt;
+          &lt;span class=&quot;select-status deselect-user js-deselect-user Icon Icon--check&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;select-status select-disabled Icon Icon--unfollow&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;fullname&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;js-verified hidden&quot;&gt;&lt;span class=&quot;Icon Icon--verified Icon--small&quot;&gt;
+  &lt;span class=&quot;u-hiddenVisually&quot;&gt;Verified account&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;
+          &lt;span class=&quot;username&quot;&gt;&lt;s&gt;@&lt;/s&gt;&lt;b&gt;&lt;/b&gt;&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li class=&quot;typeahead-accounts-end&quot; role=&quot;presentation&quot;&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+    &lt;div class=&quot;typeahead-dm-conversations&quot; role=&quot;presentation&quot;&gt;
+  &lt;ul class=&quot;typeahead-items typeahead-dm-conversation-items&quot; role=&quot;presentation&quot;&gt;
+    &lt;li class=&quot;typeahead-item typeahead-dm-conversation-item&quot; role=&quot;presentation&quot;&gt;
+      &lt;a tabindex=&quot;-1&quot; role=&quot;option&quot;&gt;&lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+          &lt;/form&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+  &lt;div class=&quot;RetweetDialog modal-container&quot; id=&quot;retweet-tweet-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;RetweetDialog-modal modal draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Retweet this to your followers?&lt;/h3&gt;
+      &lt;/div&gt;
+
+      &lt;form data-condensed-text=&quot;Add a comment...&quot; class=&quot;t1-form tweet-form condensed RetweetDialog-tweetForm isWithoutComment&quot;&gt;
+        &lt;div class=&quot;RetweetDialog-commentBox&quot;&gt;
+          &lt;span id=&quot;-label&quot; class=&quot;visuallyhidden&quot;&gt;Optional comment for Retweet&lt;/span&gt;
+          &lt;div class=&quot;tweet-content&quot;&gt;
+            &lt;div contenteditable=&quot;true&quot; aria-multiline=&quot;true&quot; role=&quot;textbox&quot; spellcheck=&quot;true&quot; class=&quot;tweet-box rich-editor&quot; id=&quot;&quot; aria-labelledby=&quot;-label&quot;&gt;&lt;/div&gt;
+          &lt;/div&gt;
+          
+
+
+&lt;div class=&quot;dropdown-menu typeahead&quot; role=&quot;listbox&quot;&gt;
+  &lt;div class=&quot;dropdown-caret&quot; aria-hidden=&quot;true&quot;&gt;
+    &lt;div class=&quot;caret-outer&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;caret-inner&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;dropdown-inner js-typeahead-results&quot; role=&quot;presentation&quot;&gt;
+    &lt;div class=&quot;typeahead-saved-searches&quot; role=&quot;presentation&quot;&gt;
+  &lt;h3 class=&quot;typeahead-category-title saved-searches-title&quot; id=&quot;saved-searches-heading&quot;&gt;Saved searches&lt;/h3&gt;
+  &lt;ul class=&quot;typeahead-items saved-searches-list&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;li class=&quot;typeahead-item typeahead-saved-search-item&quot; role=&quot;presentation&quot;&gt;
+      &lt;span aria-hidden=&quot;true&quot; class=&quot;Icon Icon--close&quot;&gt;&lt;span class=&quot;visuallyhidden&quot;&gt;Remove&lt;/span&gt;&lt;/span&gt;
+      &lt;a tabindex=&quot;-1&quot; data-ds=&quot;saved_search&quot; data-query-source=&quot;&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; aria-describedby=&quot;saved-searches-heading&quot; role=&quot;option&quot;&gt;&lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+    &lt;ul class=&quot;typeahead-items typeahead-topics&quot; role=&quot;presentation&quot;&gt;
+  
+  &lt;li class=&quot;typeahead-item typeahead-topic-item&quot; role=&quot;presentation&quot;&gt;
+    &lt;a tabindex=&quot;-1&quot; data-ds=&quot;topics&quot; data-query-source=&quot;typeahead_click&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+
+    
+
+
+&lt;ul class=&quot;typeahead-items typeahead-accounts js-typeahead-accounts&quot; role=&quot;presentation&quot;&gt;
+  
+  &lt;li class=&quot;typeahead-item typeahead-account-item js-selectable&quot; data-score=&quot;&quot; data-remote=&quot;true&quot; data-user-screenname=&quot;&quot; data-user-id=&quot;&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;a data-ds=&quot;account&quot; data-search-query=&quot;&quot; data-query-source=&quot;typeahead_click&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+      &lt;img alt=&quot;&quot; class=&quot;avatar size32&quot; /&gt;
+      &lt;span class=&quot;typeahead-user-item-info&quot;&gt;
+        &lt;span class=&quot;fullname&quot;&gt;&lt;/span&gt;
+        &lt;span class=&quot;js-verified hidden&quot;&gt;&lt;span class=&quot;Icon Icon--verified Icon--small&quot;&gt;
+  &lt;span class=&quot;u-hiddenVisually&quot;&gt;Verified account&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;
+        &lt;span class=&quot;username&quot;&gt;&lt;s&gt;@&lt;/s&gt;&lt;b&gt;&lt;/b&gt;&lt;/span&gt;
+      &lt;/span&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+  &lt;li class=&quot;js-selectable typeahead-accounts-shortcut js-shortcut&quot; role=&quot;presentation&quot;&gt;&lt;a data-ds=&quot;account_search&quot; data-shortcut=&quot;true&quot; data-query-source=&quot;typeahead_click&quot; data-search-query=&quot;&quot; href=&quot;&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+    &lt;ul class=&quot;typeahead-items typeahead-trend-locations-list&quot; role=&quot;presentation&quot;&gt;
+  
+  &lt;li class=&quot;typeahead-item typeahead-trend-locations-item&quot; role=&quot;presentation&quot;&gt;&lt;a tabindex=&quot;-1&quot; data-search-query=&quot;&quot; data-ds=&quot;trend_location&quot; href=&quot;&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+    &lt;div class=&quot;typeahead-user-select&quot; role=&quot;presentation&quot;&gt;
+  &lt;div class=&quot;typeahead-empty-suggestions&quot; role=&quot;presentation&quot;&gt;
+    Suggested users
+  &lt;/div&gt;
+  &lt;ul class=&quot;typeahead-items typeahead-selected js-typeahead-selected&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;li class=&quot;typeahead-item typeahead-selected-item js-selectable&quot; data-score=&quot;&quot; data-remote=&quot;true&quot; data-user-screenname=&quot;&quot; data-user-id=&quot;&quot; role=&quot;presentation&quot;&gt;
+      
+      &lt;a data-ds=&quot;account&quot; data-search-query=&quot;&quot; data-query-source=&quot;typeahead_click&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+        &lt;img alt=&quot;&quot; class=&quot;avatar size32&quot; /&gt;
+        &lt;span class=&quot;typeahead-user-item-info&quot;&gt;
+          &lt;span class=&quot;select-status deselect-user js-deselect-user Icon Icon--check&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;select-status select-disabled Icon Icon--unfollow&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;fullname&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;js-verified hidden&quot;&gt;&lt;span class=&quot;Icon Icon--verified Icon--small&quot;&gt;
+  &lt;span class=&quot;u-hiddenVisually&quot;&gt;Verified account&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;
+          &lt;span class=&quot;username&quot;&gt;&lt;s&gt;@&lt;/s&gt;&lt;b&gt;&lt;/b&gt;&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li class=&quot;typeahead-selected-end&quot; role=&quot;presentation&quot;&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;ul class=&quot;typeahead-items typeahead-accounts js-typeahead-accounts&quot; role=&quot;presentation&quot;&gt;
+    
+    &lt;li class=&quot;typeahead-item typeahead-account-item js-selectable&quot; data-score=&quot;&quot; data-remote=&quot;true&quot; data-user-screenname=&quot;&quot; data-user-id=&quot;&quot; role=&quot;presentation&quot;&gt;
+      
+      &lt;a data-ds=&quot;account&quot; data-search-query=&quot;&quot; data-query-source=&quot;typeahead_click&quot; class=&quot;js-nav&quot; role=&quot;option&quot;&gt;
+        &lt;img alt=&quot;&quot; class=&quot;avatar size32&quot; /&gt;
+        &lt;span class=&quot;typeahead-user-item-info&quot;&gt;
+          &lt;span class=&quot;select-status deselect-user js-deselect-user Icon Icon--check&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;select-status select-disabled Icon Icon--unfollow&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;fullname&quot;&gt;&lt;/span&gt;
+          &lt;span class=&quot;js-verified hidden&quot;&gt;&lt;span class=&quot;Icon Icon--verified Icon--small&quot;&gt;
+  &lt;span class=&quot;u-hiddenVisually&quot;&gt;Verified account&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;
+          &lt;span class=&quot;username&quot;&gt;&lt;s&gt;@&lt;/s&gt;&lt;b&gt;&lt;/b&gt;&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li class=&quot;typeahead-accounts-end&quot; role=&quot;presentation&quot;&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+    &lt;div class=&quot;typeahead-dm-conversations&quot; role=&quot;presentation&quot;&gt;
+  &lt;ul class=&quot;typeahead-items typeahead-dm-conversation-items&quot; role=&quot;presentation&quot;&gt;
+    &lt;li class=&quot;typeahead-item typeahead-dm-conversation-item&quot; role=&quot;presentation&quot;&gt;
+      &lt;a tabindex=&quot;-1&quot; role=&quot;option&quot;&gt;&lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+        &lt;/div&gt;
+
+        &lt;div class=&quot;RetweetDialog-footer u-cf&quot;&gt;
+          &lt;div class=&quot;tweet-loading&quot;&gt;
+  &lt;div class=&quot;spinner-bigger&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+          &lt;div class=&quot;RetweetDialog-tweet modal-body modal-tweet tweet&quot;&gt;&lt;/div&gt;
+          &lt;div class=&quot;tweet-button&quot;&gt;
+            &lt;span class=&quot;spinner&quot;&gt;&lt;/span&gt;
+            &lt;span class=&quot;RetweetDialog-counter tweet-counter&quot;&gt;140&lt;/span&gt;
+            &lt;button type=&quot;button&quot; class=&quot;btn primary-btn retweet-action&quot;&gt;
+              &lt;span class=&quot;RetweetDialog-retweetActionLabel&quot;&gt;
+                &lt;span class=&quot;Icon Icon--retweet&quot;&gt;&lt;/span&gt;
+                Retweet
+              &lt;/span&gt;
+              &lt;span class=&quot;RetweetDialog-tweetActionLabel&quot;&gt;
+                &lt;span class=&quot;Icon Icon--tweet&quot;&gt;&lt;/span&gt;
+                Tweet
+              &lt;/span&gt;
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;div class=&quot;modal-container&quot; id=&quot;delete-tweet-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Are you sure you want to delete this Tweet?&lt;/h3&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;tweet-loading&quot;&gt;
+  &lt;div class=&quot;spinner-bigger&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;div class=&quot;modal-body modal-tweet&quot;&gt;&lt;/div&gt;
+
+      &lt;div class=&quot;modal-footer&quot;&gt;
+        &lt;button class=&quot;btn cancel-action js-close&quot;&gt;Cancel&lt;/button&gt;
+        &lt;button class=&quot;btn primary-btn delete-action&quot;&gt;Delete&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;div class=&quot;QuickPromoteDialog modal-container&quot; id=&quot;quick-promote-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--large&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Promote this Tweet&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;quick-promote-view-container&quot;&gt;
+          &lt;div class=&quot;media&quot;&gt;
+            &lt;iframe frameborder=&quot;0&quot; src=&quot;&quot; scrolling=&quot;no&quot; class=&quot;quick-promote-iframe js-initial-focus&quot;&gt;
+            &lt;/iframe&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div class=&quot;modal-container&quot; id=&quot;block-user-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Block&lt;/h3&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;tweet-loading&quot;&gt;
+  &lt;div class=&quot;spinner-bigger&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;div class=&quot;modal-body modal-tweet&quot;&gt;&lt;/div&gt;
+
+      &lt;div class=&quot;modal-footer&quot;&gt;
+        &lt;button class=&quot;btn cancel-action js-close&quot;&gt;Cancel&lt;/button&gt;
+        &lt;button class=&quot;btn primary-btn block-action&quot;&gt;Block&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+  
+  
+
+     &lt;div id=&quot;geo-disabled-dropdown&quot;&gt;
+      &lt;div tabindex=&quot;-1&quot; class=&quot;GeoSearch-dropdownMenu&quot;&gt;
+  &lt;div class=&quot;dropdown-caret&quot;&gt;
+    &lt;span class=&quot;caret-outer&quot;&gt;&lt;/span&gt;
+    &lt;span class=&quot;caret-inner&quot;&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;ul&gt;
+    &lt;li class=&quot;geo-not-enabled-yet&quot;&gt;
+      &lt;h2&gt;Add a location to your Tweets&lt;/h2&gt;
+      &lt;p&gt;
+        When you tweet with a location, Twitter stores that location. 
+        You can switch location on/off before each Tweet and always have the option to delete your location history.
+        &lt;a target=&quot;_blank&quot; href=&quot;http://support.twitter.com/forums/26810/entries/78525&quot;&gt;Learn more&lt;/a&gt;
+      &lt;/p&gt;
+      &lt;div&gt;
+        &lt;button class=&quot;geo-turn-on btn primary-btn&quot; type=&quot;button&quot;&gt;Turn location on&lt;/button&gt;
+        &lt;button class=&quot;geo-not-now btn-link&quot; type=&quot;button&quot;&gt;Not now&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+    &lt;/div&gt;
+
+  &lt;div id=&quot;geo-enabled-dropdown&quot;&gt;
+    &lt;div tabindex=&quot;-1&quot; class=&quot;GeoSearch-dropdownMenu&quot;&gt;
+  &lt;div class=&quot;dropdown-caret&quot;&gt;
+    &lt;span class=&quot;caret-outer&quot;&gt;&lt;/span&gt;
+    &lt;span class=&quot;caret-inner&quot;&gt;&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;ul&gt;
+    &lt;li class=&quot;geo-query-location&quot;&gt;
+      &lt;input type=&quot;text&quot; placeholder=&quot;Search for a neighborhood or city&quot; autocomplete=&quot;off&quot; class=&quot;GeoSearch-queryInput&quot; /&gt;
+      &lt;span class=&quot;icon generic-search&quot;&gt;&lt;/span&gt;
+    &lt;/li&gt;
+    &lt;li class=&quot;geo-dropdown-status&quot;&gt;&lt;/li&gt;
+    &lt;li class=&quot;dropdown-link geo-turn-off-item GeoSearch-focusable&quot;&gt;
+      &lt;span class=&quot;icon close&quot;&gt;&lt;/span&gt;Turn off location
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+  &lt;/div&gt;
+
+
+  &lt;div class=&quot;modal-container ProfilePopupContainer--bellbird&quot; id=&quot;profile_popup&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal modal-small draggable&quot;&gt;
+    &lt;div class=&quot;modal-content clearfix&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Profile summary&lt;/h3&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;modal-body profile-modal&quot;&gt;
+
+      &lt;/div&gt;
+
+      &lt;div class=&quot;loading&quot;&gt;
+        &lt;span class=&quot;spinner-bigger&quot;&gt;&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;div class=&quot;modal-container&quot; id=&quot;list-membership-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal modal-small draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Your lists&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;list-membership-content&quot;&gt;&lt;/div&gt;
+        &lt;span title=&quot;Loading&hellip;&quot; class=&quot;spinner lists-spinner&quot;&gt;&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+  &lt;div class=&quot;modal-container&quot; id=&quot;list-operations-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal modal-medium draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Create a new list&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        
+&lt;div class=&quot;list-editor&quot;&gt;
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;label for=&quot;list-name&quot; class=&quot;t1-label&quot;&gt;List name&lt;/label&gt;
+    &lt;input type=&quot;text&quot; value=&quot;&quot; name=&quot;name&quot; class=&quot;text&quot; id=&quot;list-name&quot; /&gt;
+  &lt;/div&gt;
+  &lt;hr /&gt;
+
+  &lt;div class=&quot;field&quot;&gt;
+    &lt;label for=&quot;list-description&quot; class=&quot;t1-label&quot;&gt;Description&lt;/label&gt;
+    &lt;textarea name=&quot;description&quot; id=&quot;list-description&quot;&gt;&lt;/textarea&gt;
+    &lt;span class=&quot;help-text&quot;&gt;Under 100 characters, optional&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;hr /&gt;
+
+  &lt;fieldset class=&quot;field&quot;&gt;
+    &lt;legend class=&quot;t1-legend&quot;&gt;Privacy&lt;/legend&gt;
+    &lt;div class=&quot;options&quot;&gt;
+      &lt;label for=&quot;list-public-radio&quot; class=&quot;t1-label&quot;&gt;
+        &lt;input type=&quot;radio&quot; checked=&quot;checked&quot; value=&quot;public&quot; id=&quot;list-public-radio&quot; name=&quot;mode&quot; class=&quot;radio&quot; /&gt;
+        &lt;b&gt;Public&lt;/b&gt; &middot; Anyone can follow this list
+      &lt;/label&gt;
+      &lt;label for=&quot;list-private-radio&quot; class=&quot;t1-label&quot;&gt;
+        &lt;input type=&quot;radio&quot; value=&quot;private&quot; id=&quot;list-private-radio&quot; name=&quot;mode&quot; class=&quot;radio&quot; /&gt;
+        &lt;b&gt;Private&lt;/b&gt; &middot; Only you can access this list
+      &lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  &lt;hr /&gt;
+
+  &lt;div class=&quot;list-editor-save&quot;&gt;
+    &lt;button data-list-id=&quot;&quot; class=&quot;btn btn-primary update-list-button&quot; type=&quot;button&quot;&gt;Save list&lt;/button&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;modal-container&quot; id=&quot;activity-popup-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal draggable&quot;&gt;
+    &lt;div class=&quot;modal-content clearfix&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;&lt;/h3&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;tweet-loading&quot;&gt;
+  &lt;div class=&quot;spinner-bigger&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+        &lt;div class=&quot;activity-tweet modal-tweet clearfix&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;loading&quot;&gt;
+          &lt;span class=&quot;spinner-bigger&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;activity-content clearfix&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+  &lt;div class=&quot;modal-container&quot; id=&quot;copy-link-to-tweet-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal modal-medium draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Copy link to Tweet&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;copy-link-to-tweet-container&quot;&gt;
+          &lt;p class=&quot;copy-link-to-tweet-instructions&quot;&gt;The URL of this tweet is below. Copy it to easily share with friends.&lt;/p&gt;
+          &lt;textarea readonly=&quot;readonly&quot; dir=&quot;ltr&quot; class=&quot;link-to-tweet-destination js-initial-focus u-dir&quot;&gt;&lt;/textarea&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div class=&quot;modal-container&quot; id=&quot;embed-tweet-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal modal-medium draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title embed-tweet-title&quot;&gt;Embed this Tweet&lt;/h3&gt;
+        &lt;h3 class=&quot;modal-title embed-video-title&quot;&gt;Embed this Video&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;embed-code-container&quot;&gt;
+  &lt;p class=&quot;embed-tweet-instructions&quot;&gt;Add this Tweet to your website by copying the code below. &lt;a href=&quot;//dev.twitter.com/docs/embedded-tweets&quot;&gt;Learn more&lt;/a&gt;&lt;/p&gt;
+  &lt;p class=&quot;embed-video-instructions&quot;&gt;Add this video to your website by copying the code below. &lt;a href=&quot;//dev.twitter.com/docs/embedded-tweets&quot;&gt;Learn more&lt;/a&gt;&lt;/p&gt;
+  &lt;form class=&quot;t1-form&quot;&gt;
+
+    &lt;div class=&quot;embed-destination-wrapper&quot;&gt;
+      &lt;div class=&quot;embed-overlay embed-overlay-spinner&quot;&gt;&lt;div class=&quot;embed-overlay-content&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+      &lt;div class=&quot;embed-overlay embed-overlay-error&quot;&gt;
+        &lt;p class=&quot;embed-overlay-content&quot;&gt;Hmm, there was a problem reaching the server. &lt;button class=&quot;btn-link retry-embed&quot; type=&quot;button&quot;&gt;Try again?&lt;/button&gt;&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;textarea class=&quot;embed-destination js-initial-focus&quot;&gt;&lt;/textarea&gt;
+      &lt;div class=&quot;embed-options&quot;&gt;
+        &lt;div class=&quot;embed-include-parent-tweet&quot;&gt;
+          &lt;label for=&quot;include-parent-tweet&quot; class=&quot;t1-label&quot;&gt;
+            &lt;input type=&quot;checkbox&quot; checked=&quot;checked&quot; class=&quot;include-parent-tweet&quot; id=&quot;include-parent-tweet&quot; /&gt;
+            Include parent Tweet
+          &lt;/label&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;embed-include-card&quot;&gt;
+          &lt;label for=&quot;include-card&quot; class=&quot;t1-label&quot;&gt;
+            &lt;input type=&quot;checkbox&quot; checked=&quot;checked&quot; class=&quot;include-card&quot; id=&quot;include-card&quot; /&gt;
+            Include media
+          &lt;/label&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+  &lt;div class=&quot;embed-preview&quot;&gt;
+    &lt;h3&gt;Preview&lt;/h3&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+  &lt;div class=&quot;LoginDialog modal-container u-textCenter&quot; id=&quot;login-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal modal-large draggable&quot;&gt;
+    &lt;div class=&quot;LoginDialog-content modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Log in to Twitter&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;LoginDialog-body modal-body&quot;&gt;
+        &lt;div class=&quot;LoginDialog-bird&quot;&gt;
+          &lt;span class=&quot;Icon Icon--bird Icon--large&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;LoginDialog-form&quot;&gt;
+&lt;form data-element=&quot;login&quot; data-component=&quot;dialog&quot; method=&quot;post&quot; class=&quot;LoginForm js-front-signin&quot; action=&quot;https://twitter.com/sessions&quot;&gt;
+  &lt;div class=&quot;LoginForm-input LoginForm-username&quot;&gt;
+    &lt;input type=&quot;text&quot; placeholder=&quot;Phone, email or username&quot; autocomplete=&quot;username&quot; name=&quot;session[username_or_email]&quot; class=&quot;text-input email-input js-signin-email&quot; /&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;LoginForm-input LoginForm-password&quot;&gt;
+    &lt;input type=&quot;password&quot; autocomplete=&quot;current-password&quot; placeholder=&quot;Password&quot; name=&quot;session[password]&quot; class=&quot;text-input&quot; /&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;LoginForm-rememberForgot&quot;&gt;
+    &lt;label&gt;
+      &lt;input type=&quot;checkbox&quot; name=&quot;remember_me&quot; value=&quot;1&quot; /&gt;
+      &lt;span&gt;Remember me&lt;/span&gt;
+    &lt;/label&gt;
+    &lt;span class=&quot;separator&quot;&gt;&middot;&lt;/span&gt;
+    &lt;a href=&quot;/account/begin_password_reset&quot; class=&quot;forgot&quot;&gt;Forgot password?&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;input type=&quot;submit&quot; value=&quot;Log in&quot; class=&quot;submit btn primary-btn js-submit&quot; /&gt;
+
+    &lt;input type=&quot;hidden&quot; value=&quot;true&quot; name=&quot;return_to_ssl&quot; /&gt;
+
+  &lt;input type=&quot;hidden&quot; name=&quot;scribe_log&quot; /&gt;
+  &lt;input type=&quot;hidden&quot; value=&quot;/signup&quot; name=&quot;redirect_after_login&quot; /&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;authenticity_token&quot; value=&quot;c3805f4dee408079f361d48666876d36fd7e63a3&quot; /&gt;
+      &lt;input type=&quot;hidden&quot; autocomplete=&quot;off&quot; name=&quot;ui_metrics&quot; value=&quot;&quot; /&gt;
+      &lt;input type=&quot;hidden&quot; autocomplete=&quot;off&quot; value=&quot;1454707432802&quot; name=&quot;ui_metrics_seed&quot; id=&quot;ui_metrics_seed&quot; /&gt;
+      &lt;input type=&quot;hidden&quot; autocomplete=&quot;off&quot; name=&quot;js_inst&quot; value=&quot;1&quot; /&gt;
+      &lt;script async=&quot;&quot; src=&quot;/i/js_inst&quot;&gt;&lt;/script&gt;
+&lt;/form&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;LoginDialog-footer modal-footer u-textCenter&quot;&gt;
+        Don't have an account? &lt;a href=&quot;https://twitter.com/signup&quot; class=&quot;LoginDialog-signupLink&quot;&gt;Sign up &raquo;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;div class=&quot;SignupDialog modal-container u-textCenter&quot; id=&quot;signup-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal modal-large draggable&quot;&gt;
+    &lt;div class=&quot;SignupDialog-content modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Sign up for Twitter&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;SignupDialog-body modal-body&quot;&gt;
+        &lt;div class=&quot;SignupDialog-icon&quot;&gt;
+          &lt;span class=&quot;Icon Icon--bird Icon--extraLarge&quot;&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;h2 class=&quot;SignupDialog-heading&quot;&gt;Not on Twitter? Sign up, tune into the things you care about, and get updates as they happen.&lt;/h2&gt;
+        &lt;div class=&quot;SignupDialog-form&quot;&gt;
+  &lt;div class=&quot;signup SignupForm
+    &quot;&gt;
+    &lt;a data-element=&quot;signup&quot; data-component=&quot;dialog&quot; class=&quot;SignupForm-submit u-block u-textCenter js-signup btn primary-btn&quot; role=&quot;button&quot; href=&quot;https://twitter.com/signup&quot;&gt;Sign up&lt;/a&gt;
+  &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;SignupDialog-footer modal-footer u-textCenter&quot;&gt;
+        Have an account? &lt;a href=&quot;/login&quot; class=&quot;SignupDialog-signinLink&quot;&gt;Log in &raquo;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+  &lt;div class=&quot;modal-container&quot; id=&quot;sms-codes-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal modal-medium draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Two-way (sending and receiving) short codes:&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        
+&lt;table cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; id=&quot;sms_codes&quot;&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Country&lt;/th&gt;
+      &lt;th&gt;Code&lt;/th&gt;
+      &lt;th&gt;For customers of&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;United States&lt;/td&gt;
+      &lt;td&gt;40404&lt;/td&gt;
+      &lt;td&gt;(any)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Canada&lt;/td&gt;
+      &lt;td&gt;21212&lt;/td&gt;
+      &lt;td&gt;(any)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;United Kingdom&lt;/td&gt;
+      &lt;td&gt;86444&lt;/td&gt;
+      &lt;td&gt;Vodafone, Orange, 3, O2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Brazil&lt;/td&gt;
+      &lt;td&gt;40404&lt;/td&gt;
+      &lt;td&gt;Nextel, TIM&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Haiti&lt;/td&gt;
+      &lt;td&gt;40404&lt;/td&gt;
+      &lt;td&gt;Digicel, Voila&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Ireland&lt;/td&gt;
+      &lt;td&gt;51210&lt;/td&gt;
+      &lt;td&gt;Vodafone, O2&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;India&lt;/td&gt;
+      &lt;td&gt;53000&lt;/td&gt;
+      &lt;td&gt;Bharti Airtel, Videocon, Reliance&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Indonesia&lt;/td&gt;
+      &lt;td&gt;89887&lt;/td&gt;
+      &lt;td&gt;AXIS, 3, Telkomsel, Indosat, XL Axiata&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td rowspan=&quot;2&quot;&gt;Italy&lt;/td&gt;
+      &lt;td&gt;4880804&lt;/td&gt;
+      &lt;td&gt;Wind&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3424486444&lt;/td&gt;
+      &lt;td&gt;Vodafone&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tfoot&gt;
+    &lt;tr&gt;
+      &lt;td colspan=&quot;3&quot;&gt;
+        &raquo; &lt;a href=&quot;http://support.twitter.com/articles/14226-how-to-find-your-twitter-short-code-or-long-code&quot; target=&quot;_blank&quot; class=&quot;js-initial-focus&quot;&gt;See SMS short codes for other countries&lt;/a&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;modal-container&quot; id=&quot;leadgen-confirm-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Confirmation&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;leadgen-card-container&quot;&gt;
+          &lt;div class=&quot;media&quot;&gt;
+            &lt;iframe frameborder=&quot;0&quot; src=&quot;&quot; scrolling=&quot;no&quot; class=&quot;cards2-promotion-iframe&quot;&gt;
+            &lt;/iframe&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div data-card-name=&quot;promotion&quot; class=&quot;js-macaw-cards-iframe-container&quot;&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+&lt;div class=&quot;AuthWebViewDialog modal-container&quot; id=&quot;auth-webview-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--large&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;&nbsp;&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;auth-webview-view-container&quot;&gt;
+          &lt;div class=&quot;media&quot;&gt;
+            &lt;iframe width=&quot;590px&quot; height=&quot;500px&quot; frameborder=&quot;0&quot; src=&quot;&quot; scrolling=&quot;no&quot; class=&quot;auth-webview-card-iframe js-initial-focus&quot;&gt;
+            &lt;/iframe&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+&lt;div class=&quot;modal-container&quot; id=&quot;promptbird-modal-prompt&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal&quot;&gt;
+    
+    &lt;button class=&quot;modal-btn js-promptDismiss modal-close js-close&quot; type=&quot;button&quot;&gt;
+      &lt;span class=&quot;Icon Icon--close Icon--medium&quot;&gt;
+        &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+      &lt;/span&gt;
+    &lt;/button&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+   &lt;div class=&quot;PaymentOrderDialog modal-container&quot; id=&quot;payment-order-detail-dialog&quot;&gt;
+  &lt;div class=&quot;close-modal-background-target&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;modal draggable&quot;&gt;
+    &lt;div class=&quot;modal-content&quot;&gt;
+      &lt;button class=&quot;modal-btn modal-close js-close&quot; type=&quot;button&quot;&gt;
+  &lt;span class=&quot;Icon Icon--close Icon--large&quot;&gt;
+    &lt;span class=&quot;visuallyhidden&quot;&gt;Close&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/button&gt;
+
+      &lt;div class=&quot;modal-header&quot;&gt;
+        &lt;h3 class=&quot;modal-title&quot;&gt;Buy Now&lt;/h3&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;modal-body&quot;&gt;
+        &lt;div class=&quot;alert&quot;&gt;
+          &lt;h4&gt;Hmm... Something went wrong. Please try again.&lt;/h4&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;spinner-bigger&quot;&gt;&lt;/div&gt;
+        &lt;div class=&quot;PaymentOrderDialog-orderDetails&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+
+&lt;div class=&quot;modal-container&quot; id=&quot;create-custom-timeline-dialog&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;modal-container&quot; id=&quot;edit-custom-timeline-dialog&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;modal-container&quot; id=&quot;curate-dialog&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;modal-container&quot; id=&quot;media-edit-dialog&quot;&gt;&lt;/div&gt;
+
+
+      &lt;div id=&quot;permalink-overlay&quot; class=&quot;PermalinkOverlay PermalinkOverlay-with-background &quot;&gt;
+  &lt;button type=&quot;button&quot; class=&quot;PermalinkOverlay-next PermalinkOverlay-button u-posFixed js-next&quot;&gt;
+    &lt;span class=&quot;Icon Icon--caretLeft Icon--large&quot;&gt;&lt;/span&gt;
+    &lt;span class=&quot;u-hiddenVisually&quot;&gt;Next Tweet from user&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;div class=&quot;PermalinkOverlay-modal&quot;&gt;
+    &lt;div class=&quot;PermalinkOverlay-spinnerContainer u-hidden&quot;&gt;
+      &lt;div class=&quot;PermalinkOverlay-spinner&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;PermalinkOverlay-content&quot;&gt;
+      &lt;div class=&quot;PermalinkOverlay-body&quot;&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+    &lt;div id=&quot;hidden-content&quot; class=&quot;hidden&quot;&gt;
+  &lt;iframe name=&quot;tweet-post-iframe&quot; class=&quot;tweet-post-iframe&quot; aria-hidden=&quot;true&quot;&gt;&lt;/iframe&gt;
+  &lt;iframe name=&quot;dm-post-iframe&quot; class=&quot;dm-post-iframe&quot; aria-hidden=&quot;true&quot;&gt;&lt;/iframe&gt;
+
+&lt;/div&gt;
+
+    
+    &lt;div id=&quot;spoonbill-outer&quot;&gt;&lt;/div&gt;
+  
+
+&lt;div aria-live=&quot;assertive&quot; class=&quot;visuallyhidden&quot; id=&quot;sr-event-log&quot;&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</pre>
+			</div>
+			<div class="tab-pane" id='interactions'>
+				<h2>Interactions</h2>
+				<table class="table table-bordered table-striped">
+					<tbody>
+						<tr>
+							<th>Xpath</th>
+							<th>Destination</tg>
+						</tr>
+											</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../lib/shCore.js"></script>
+	<script type="text/javascript" src="../lib/shBrushXml.js"></script>
+	<script type="text/javascript" src="../lib/jquery-2.0.3.min.js"></script>
+	<script type="text/javascript" src="../lib/bootstrap.min.js"></script>
+	<script type="text/javascript">
+    	$(document).ready(function() {
+			SyntaxHighlighter.all()
+
+			$('#tabs a').click(function (e) {
+		  		e.preventDefault();
+		  		$(this).tab('show');
+			})
+		});
+    	
+    	$('.hovers').tooltip({
+    	    placement: function(a, element) {
+    	        var position = $(element).position();
+    	        if (position.left > 515) {
+    	            return "left";
+    	        }
+    	        if (position.left < 515) {
+    	            return "right";
+    	        }
+    	        if (position.top < 110){
+    	            return "bottom";
+    	        }
+    	        return "top";
+    	    }
+    	});
+	</script>
+</body>
+</html>

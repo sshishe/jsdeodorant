@@ -17,6 +17,7 @@ import ca.concordia.javascript.analysis.decomposition.StatementType;
 import ca.concordia.javascript.analysis.decomposition.TryStatement;
 
 import com.google.common.collect.ImmutableList;
+import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BreakStatementTree;
@@ -311,7 +312,12 @@ public class StatementProcessor {
 					}
 
 				}
-
+				for (ParseTree node : callExpressionTree.arguments.arguments) {
+					if (node instanceof FunctionDeclarationTree) {
+						FunctionDeclarationTree functionDeclarationTree = node.asFunctionDeclaration();
+						functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.PARAMETER, parent);
+					}
+				}
 			}
 			Statement child = new Statement(expressionStatement, StatementType.EXPRESSION, parent);
 			if (functionDeclarationExpression != null)

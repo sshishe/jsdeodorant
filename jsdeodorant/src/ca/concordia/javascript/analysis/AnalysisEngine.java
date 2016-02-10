@@ -8,16 +8,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.abstraction.Module;
-import ca.concordia.javascript.analysis.abstraction.Program;
-import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
-import ca.concordia.javascript.analysis.module.LibraryType;
-import ca.concordia.javascript.analysis.util.FileUtil;
-import ca.concordia.javascript.analysis.util.JSONReader;
-import ca.concordia.javascript.experiment.CSVOutput;
-import ca.concordia.javascript.experiment.PostgresOutput;
-import ca.concordia.javascript.metrics.CyclomaticComplexity;
-
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.CompilerOptions;
@@ -27,6 +17,18 @@ import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.WarningLevel;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ProgramTree;
+
+import ca.concordia.javascript.analysis.abstraction.Module;
+import ca.concordia.javascript.analysis.abstraction.Program;
+import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
+import ca.concordia.javascript.analysis.module.LibraryType;
+import ca.concordia.javascript.analysis.util.FileUtil;
+import ca.concordia.javascript.analysis.util.JSONReader;
+import ca.concordia.javascript.analysis.util.StringUtil;
+import ca.concordia.javascript.crawler.Crawler;
+import ca.concordia.javascript.experiment.CSVOutput;
+import ca.concordia.javascript.experiment.PostgresOutput;
+import ca.concordia.javascript.metrics.CyclomaticComplexity;
 
 public class AnalysisEngine {
 	static Logger log = Logger.getLogger(AnalysisEngine.class.getName());
@@ -58,28 +60,15 @@ public class AnalysisEngine {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		List<Module> modules = new ArrayList<>();
+		
+//		Crawler crawler = new Crawler("http://www.dw.com/fa-ir/%D8%AF%D9%88%DB%8C%DA%86%D9%87-%D9%88%D9%84%D9%87-%D9%81%D8%A7%D8%B1%D8%B3%DB%8C/s-9993","files");
+//		crawler.start();
 
-		if (analysisOption.isOutputToCSV()) {
-			CSVOutput.createAndClearFolder("log/functions");
-			CSVOutput.createAndClearFolder("log/classes");
-			CSVOutput.createAndClearFolder("log/aggregate");
-		}
+		if (analysisOption.isOutputToCSV())
+			prepareOutputToCSV();
 
-		if (analysisOption.isOutputToDB()) {
-			File packageConfigFile = new File(analysisOption.getDirectoryPath() + "/package.json");
-			JSONReader reader = new JSONReader();
-			String name = "";
-			String version = "";
-			try {
-				name = reader.getElementFromObject(packageConfigFile.getCanonicalPath(), "name");
-				version = reader.getElementFromObject(packageConfigFile.getCanonicalPath(), "version");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			psqlOutput = new PostgresOutput(name, version, analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(), analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(), analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
-		}
+		if (analysisOption.isOutputToDB())
+			prepareOutputToPsql(analysisOption);
 
 		for (SourceFile sourceFile : inputs) {
 			// if (containsError(sourceFile, result))
@@ -104,7 +93,8 @@ public class AnalysisEngine {
 			}
 			if (analysisOption.hasModuleAnalysis())
 				CompositePostProcessor.processModules(module, modules);
-
+			else
+				CompositePostProcessor.addDepndenciesBlindly(module, modules);
 			if (analysisOption.hasClassAnlysis())
 				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE)
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
@@ -143,6 +133,32 @@ public class AnalysisEngine {
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
 		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
 		return modules;
+	}
+
+	private void prepareOutputToCSV() {
+		CSVOutput.createAndClearFolder("log/functions");
+		CSVOutput.createAndClearFolder("log/classes");
+		CSVOutput.createAndClearFolder("log/aggregate");
+	}
+
+	private void prepareOutputToPsql(AnalysisOptions analysisOption) {
+		String name = "";
+		String version = "";
+		File packageConfigFile = new File(analysisOption.getDirectoryPath() + "/package.json");
+		JSONReader reader = new JSONReader();
+		if (!StringUtil.isNullOrEmpty(analysisOption.getName()))
+			name = analysisOption.getName();
+		if (!StringUtil.isNullOrEmpty(analysisOption.getVersion()))
+			version = analysisOption.getVersion();
+		if (StringUtil.isNullOrEmpty(name) && StringUtil.isNullOrEmpty(version))
+			try {
+				name = reader.getElementFromObject(packageConfigFile.getCanonicalPath(), "name");
+				version = reader.getElementFromObject(packageConfigFile.getCanonicalPath(), "version");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		psqlOutput = new PostgresOutput(name, version, analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(), analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(), analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
 	}
 
 	private void addBuiltinDepdendencies(Module module, AnalysisOptions analysisOption, List<Module> modules) {

@@ -79,5 +79,15 @@
 			<artifactId>postgresql</artifactId>
 			<version>9.4.1207.jre7</version>
 		</dependency>
+		<dependency>
+			<groupId>com.crawljax</groupId>
+			<artifactId>crawljax-core</artifactId>
+			<version>3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.crawljax.plugins</groupId>
+			<artifactId>crawloverview-plugin</artifactId>
+			<version>3.6</version>
+		</dependency>
 	</dependencies>
 </project>

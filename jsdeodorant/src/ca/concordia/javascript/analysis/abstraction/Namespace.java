@@ -39,7 +39,8 @@ public class Namespace {
 		do {
 			if (currentLevel.part instanceof ObjectLiteralExpression) {
 				AbstractIdentifier identifier = ((ObjectLiteralExpression) currentLevel.part).getPublicIdentifier();
-				namespaceStack.push(identifier.toString());
+				if (identifier != null)
+					namespaceStack.push(identifier.toString());
 			} else if (currentLevel.part instanceof FunctionDeclarationExpression) {
 				FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) currentLevel.part;
 				AbstractIdentifier identifier = functionDeclarationExpression.getPublicIdentifier();
@@ -55,8 +56,6 @@ public class Namespace {
 
 		return namespaceName.toString();
 	}
-
-
 
 	public boolean hasParent() {
 		return parent != null;
