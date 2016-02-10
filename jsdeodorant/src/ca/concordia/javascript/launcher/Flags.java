@@ -74,6 +74,12 @@ public class Flags {
 	@Option(name = "-psqlPassword", hidden = true, usage = "Postgres password")
 	private String psqlPassword;
 
+	@Option(name = "-name", hidden = true, usage = "Project name")
+	private String name;
+
+	@Option(name = "-version", hidden = true, usage = "Project version")
+	private String version;
+
 	public boolean classAnalysis() {
 		return classAnalysis;
 	}
@@ -171,5 +177,13 @@ public class Flags {
 
 	public String getPsqlPort() {
 		return psqlPort;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getVersion() {
+		return version;
 	}
 }

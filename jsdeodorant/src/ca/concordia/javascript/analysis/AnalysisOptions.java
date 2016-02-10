@@ -24,6 +24,8 @@ public class AnalysisOptions {
 	private String psqlDatabase;
 	private String psqlUser;
 	private String psqlPassword;
+	private String name;
+	private String version;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -179,5 +181,21 @@ public class AnalysisOptions {
 
 	public void setPsqlPassword(String password) {
 		this.psqlPassword = password;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 }
