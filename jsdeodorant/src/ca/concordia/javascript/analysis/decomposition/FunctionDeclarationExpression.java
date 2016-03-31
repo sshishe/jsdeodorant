@@ -7,12 +7,15 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Strings;
 import com.google.javascript.jscomp.parsing.parser.Token;
+import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
+import ca.concordia.javascript.analysis.abstraction.Namespace;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
@@ -133,9 +136,10 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	 * time it's not possible to access the lValue
 	 */
 	private AbstractIdentifier buildInternalIdentifier() {
-		if (leftValueExpression != null)
-			return normalizePrototype(IdentifierHelper.getIdentifier(leftValueExpression));
-		else if (getParent() instanceof ObjectLiteralExpression) {
+		if (leftValueExpression != null) {
+			AbstractIdentifier normalizedIdentifier = normalizePrototype(IdentifierHelper.getIdentifier(leftValueExpression));
+			return inspectParentNamespacing(normalizedIdentifier);
+		} else if (getParent() instanceof ObjectLiteralExpression) {
 			ObjectLiteralExpression objectLiteralExpression = (ObjectLiteralExpression) getParent();
 			for (Token key : objectLiteralExpression.getPropertyMap().keySet())
 				if (objectLiteralExpression.getPropertyMap().get(key).equals(this))
@@ -157,6 +161,31 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		} else if (leftValueToken != null)
 			return new PlainIdentifier(leftValueToken);
 		return null;
+	}
+
+	private AbstractIdentifier inspectParentNamespacing(AbstractIdentifier normalizedIdentifier) {
+		SourceContainer parent = this.getParent();
+		if (parent instanceof Program) {
+
+		}
+
+		if (parent instanceof CompositeStatement) {
+			CompositeStatement composite = (CompositeStatement) parent;
+			for (AbstractStatement statement : composite.getStatements()) {
+				if (statement.getStatement() instanceof ExpressionStatementTree) {
+					ExpressionStatementTree expressionStatementTree = statement.getStatement().asExpressionStatement();
+					if (expressionStatementTree.expression instanceof BinaryOperatorTree) {
+						BinaryOperatorTree binaryOperator = expressionStatementTree.expression.asBinaryOperator();
+						AbstractIdentifier rightPart = IdentifierHelper.getIdentifier(binaryOperator.right);
+
+						if (normalizedIdentifier.toString().equals(rightPart.toString()))
+							return IdentifierHelper.getIdentifier(binaryOperator.left);
+					}
+				}
+			}
+		}
+		return normalizedIdentifier;
+
 	}
 
 	private AbstractIdentifier normalizePrototype(AbstractIdentifier identifierToBeNormalized) {

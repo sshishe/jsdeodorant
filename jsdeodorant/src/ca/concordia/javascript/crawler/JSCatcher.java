@@ -51,18 +51,25 @@ public class JSCatcher implements OnNewStatePlugin, GeneratesOutput {
 		EmbeddedBrowser browser = arg0.getBrowser();
 		int javaScriptLength = Integer.valueOf(browser.executeJavaScript("return document.scripts.length").toString());
 		for (int i = 0; i < javaScriptLength; i++) {
+			System.out.println("SCRIPT " +i);
 			Object hrefObj = browser.executeJavaScript("return document.scripts[" + i + "].src");
-			if (StringUtil.isNullOrEmpty(hrefObj.toString()))
-				continue;
-			if (hrefObj instanceof RemoteWebElement) {
-				RemoteWebElement remoteWebElement = ((RemoteWebElement) hrefObj);
-				int a = 10;
-				a++;
-
+			if (StringUtil.isNullOrEmpty(hrefObj.toString())) {
+				File rootFile = new File(getOutputFolder());
+				if (!rootFile.exists() || !rootFile.isDirectory())
+					rootFile.mkdir();
+				File path = new File(getOutputFolder() + "/" +  arg1.getName());
+				if (!path.exists() || !path.isDirectory())
+					path.mkdir();
+				String content = browser.executeJavaScript("return document.scripts[" + i + "].text").toString();
+				IOHelper.writeStringToFile(content, getOutputFolder() + "/" +  arg1.getName() + File.separator + i + ".js");
 			} else {
-				String href = hrefObj.toString();
-				jsHrefs.add(href);
-				fetchAndWriteFile(href, arg1.getName(), arg1.getUrl());
+				if (hrefObj instanceof RemoteWebElement) {
+					RemoteWebElement remoteWebElement = ((RemoteWebElement) hrefObj);
+				} else {
+					String href = hrefObj.toString();
+					jsHrefs.add(href);
+					fetchAndWriteFile(href, arg1.getName(), arg1.getUrl());
+				}
 			}
 		}
 	}
@@ -74,6 +81,7 @@ public class JSCatcher implements OnNewStatePlugin, GeneratesOutput {
 
 		String folderPath = getOutputFolder() + "/" + stateName;
 
+		// Create the desired folder. One folder for each state
 		File outputFolder = new File(folderPath);
 		if (!outputFolder.exists() || !outputFolder.isDirectory())
 			outputFolder.mkdir();
@@ -84,17 +92,18 @@ public class JSCatcher implements OnNewStatePlugin, GeneratesOutput {
 
 		int lastSlashPosition = href.lastIndexOf('/');
 
-		String cssFileName = href.substring(lastSlashPosition + 1).replaceAll("[\\\\\\/:\\*\\?\\\"\\<\\>\\|]", "_");
-		if (cssFileName.length() > 128)
-			cssFileName = cssFileName.substring(0, 128);
+		// Get the name of file and append it to the desired folder
+		String jsFileName = href.substring(lastSlashPosition + 1).replaceAll("[\\\\\\/:\\*\\?\\\"\\<\\>\\|]", "_");
+		if (jsFileName.length() > 128)
+			jsFileName = jsFileName.substring(0, 128);
 
-		if (!cssFileName.endsWith(".js"))
-			cssFileName = cssFileName + ".js";
+		if (!jsFileName.endsWith(".js"))
+			jsFileName = jsFileName + ".js";
 
-		String cssFilePath = folderPath + "/" + cssFileName;
+		String jsFilePath = folderPath + "/" + jsFileName;
 
-		while ((new File(cssFilePath)).exists())
-			cssFilePath += "_.js";
+		while ((new File(jsFilePath)).exists())
+			jsFilePath += "_.js";
 
 		try {
 			StringBuilder builder = new StringBuilder();
@@ -108,7 +117,7 @@ public class JSCatcher implements OnNewStatePlugin, GeneratesOutput {
 				final String EOL_CHAR = "\n";
 				// Lets add some information to the head of this CSS file
 				String headerText = String.format("/* " + EOL_CHAR + " * Created by JSCatcher plugin for Crawljax" + EOL_CHAR + " * JS file is for Crawljax DOM state %s" + EOL_CHAR + " * JS file was contained in %s" + EOL_CHAR + " * Downloaded from %s" + EOL_CHAR + " */" + EOL_CHAR + EOL_CHAR, forWebSite, stateName, href);
-				IOHelper.writeStringToFile(headerText + builder.toString().replace("\r\n", EOL_CHAR), cssFilePath);
+				IOHelper.writeStringToFile(headerText + builder.toString().replace("\r\n", EOL_CHAR), jsFilePath);
 			}
 		} catch (MalformedURLException e) {
 			LOGGER.warn("Malformed url for file:" + href);
@@ -122,8 +131,12 @@ public class JSCatcher implements OnNewStatePlugin, GeneratesOutput {
 	private void getRemoteFileContents(String href, StringBuilder builder) {
 		try {
 			URLConnection urlConnection = (new URL(href)).openConnection();
+			urlConnection.connect();
 			int contentLength = urlConnection.getContentLength();
-			if (!"application/javascript".equals(urlConnection.getContentType()) || contentLength == -1) {
+			if (!urlConnection.getContentType().contains("application/javascript") &&
+					!urlConnection.getContentType().contains("application/x-javascript") &&
+					!urlConnection.getContentType().contains("text/javascript") ||
+					contentLength == -1) {
 				LOGGER.warn("{} is not a js file, skipping", href);
 			} else {
 				InputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());

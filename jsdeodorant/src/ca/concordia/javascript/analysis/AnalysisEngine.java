@@ -25,7 +25,6 @@ import ca.concordia.javascript.analysis.module.LibraryType;
 import ca.concordia.javascript.analysis.util.FileUtil;
 import ca.concordia.javascript.analysis.util.JSONReader;
 import ca.concordia.javascript.analysis.util.StringUtil;
-import ca.concordia.javascript.crawler.Crawler;
 import ca.concordia.javascript.experiment.CSVOutput;
 import ca.concordia.javascript.experiment.PostgresOutput;
 import ca.concordia.javascript.metrics.CyclomaticComplexity;
@@ -60,9 +59,8 @@ public class AnalysisEngine {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		List<Module> modules = new ArrayList<>();
-		
-//		Crawler crawler = new Crawler("http://www.dw.com/fa-ir/%D8%AF%D9%88%DB%8C%DA%86%D9%87-%D9%88%D9%84%D9%87-%D9%81%D8%A7%D8%B1%D8%B3%DB%8C/s-9993","files");
-//		crawler.start();
+
+		// crawl();
 
 		if (analysisOption.isOutputToCSV())
 			prepareOutputToCSV();
@@ -222,4 +220,5 @@ public class AnalysisEngine {
 	public void setInputs(ImmutableList<SourceFile> inputs) {
 		this.inputs = inputs;
 	}
+
 }

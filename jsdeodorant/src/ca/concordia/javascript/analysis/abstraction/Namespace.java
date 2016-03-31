@@ -44,7 +44,8 @@ public class Namespace {
 			} else if (currentLevel.part instanceof FunctionDeclarationExpression) {
 				FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) currentLevel.part;
 				AbstractIdentifier identifier = functionDeclarationExpression.getPublicIdentifier();
-				namespaceStack.push(identifier.toString());
+				if (identifier != null)
+					namespaceStack.push(identifier.toString());
 			}
 			if (currentLevel.hasParent())
 				namespaceStack.push(".");

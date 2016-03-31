@@ -289,7 +289,7 @@ public class StatementProcessor {
 							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
 						}
 					}
-				} else if (binaryOperatorTree.right instanceof ArrayLiteralExpressionTree){
+				} else if (binaryOperatorTree.right instanceof ArrayLiteralExpressionTree) {
 					ArrayLiteralExpressionTree arrayLiteralExpression = binaryOperatorTree.right.asArrayLiteralExpression();
 					for (ParseTree node : arrayLiteralExpression.elements) {
 						if (node instanceof FunctionDeclarationTree) {
@@ -351,7 +351,7 @@ public class StatementProcessor {
 
 			parent.addElement(child);
 		}
-
+		
 		else if (statement instanceof ReturnStatementTree) {
 			ReturnStatementTree returnStatement = statement.asReturnStatement();
 			Statement child = new Statement(returnStatement, StatementType.RETURN, parent);
@@ -408,6 +408,15 @@ public class StatementProcessor {
 					FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asParenExpression().expression.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
 					return functionDeclarationExpression;
 				}
+		} else if (variableDeclarationTree.initializer instanceof ParenExpressionTree) {
+			ParenExpressionTree parenExpression = variableDeclarationTree.initializer.asParenExpression();
+			if (parenExpression.expression instanceof CallExpressionTree) {
+				CallExpressionTree callExpressionTree = parenExpression.expression.asCallExpression();
+					if (callExpressionTree.operand instanceof FunctionDeclarationTree) {
+						FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
+						return functionDeclarationExpression;
+					}
+			}
 		}
 		return null;
 	}
