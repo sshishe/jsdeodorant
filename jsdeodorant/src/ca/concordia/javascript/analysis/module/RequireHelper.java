@@ -51,19 +51,29 @@ public class RequireHelper {
 	}
 
 	private void matchModules() {
-		String moduleCanonicalPath;
 		try {
-			moduleCanonicalPath = moduleFile.getCanonicalPath();
-			for (Module module : modules) {
-				if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().equals(moduleCanonicalPath)) {
-					currentModule.addDependency(requireIdentifier.toString(), module);
-					return;
+			List<String> files = null;
+			if (moduleFile.isDirectory()) {
+				files = FileUtil.getFilesInDirectory(moduleFile.getPath());
+				for (String file : files) {
+					matchWithCanonicalPath(new File(file).getCanonicalPath());
 				}
-			}
+			} else
+				matchWithCanonicalPath(moduleFile.getCanonicalPath());
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void matchWithCanonicalPath(String moduleCanonicalPath) throws IOException {
+		for (Module module : modules) {
+			if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().equals(moduleCanonicalPath)) {
+				currentModule.addDependency(requireIdentifier.toString(), module);
+				return;
+			}
+		}
+
 	}
 
 	private boolean checkIfRValueIsRequireStatement(BinaryOperatorTree binaryOperator) {

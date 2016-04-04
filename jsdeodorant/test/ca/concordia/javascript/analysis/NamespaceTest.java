@@ -199,4 +199,15 @@ public class NamespaceTest {
 			e.printStackTrace();
 		}
 	}
+
+	@Test
+	public void testTypeScriptStyleNamespace() {
+		try {
+			Module result = setAnalysisForNestedObjectLiterals("test/namespace/typescript-namespace-class.js");
+			assertTrue(result.getProgram().getClassDeclarationList().size() == 1);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }
