@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
+import com.google.common.collect.Multimap;
+
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
@@ -74,7 +76,7 @@ public class CompositePostProcessor {
 				if (nodeSpecificFunction(functionInvocation, module.getDependencies()))
 					continue;
 			} else
-				for (Map.Entry<String, Module> dependency : module.getDependencies().entrySet()) {
+				for (Map.Entry<String, Module> dependency : module.getDependencies().entries()) {
 					if (dependency.getKey().equals(functionInvocation.getIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
 						for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
 							if (functionDeclaration.getName().contains(functionInvocation.getAliasedIdentifier().asCompositeIdentifier().getRightPart().toString()))
@@ -86,8 +88,8 @@ public class CompositePostProcessor {
 		}
 	}
 
-	private static boolean nodeSpecificFunction(FunctionInvocation functionInvocation, Map<String, Module> map) {
-		for (Map.Entry<String, Module> dependency : map.entrySet()) {
+	private static boolean nodeSpecificFunction(FunctionInvocation functionInvocation, Multimap<String, Module> map) {
+		for (Map.Entry<String, Module> dependency : map.entries()) {
 			if (dependency.getKey().equals("module"))
 				if (inspectFunctions(functionInvocation, dependency.getValue()))
 					return true;
@@ -121,7 +123,7 @@ public class CompositePostProcessor {
 			if (findMatch)
 				return true;
 		}
-		for (Entry<String, Module> dependency : module.getDependencies().entrySet()) {
+		for (Entry<String, Module> dependency : module.getDependencies().entries()) {
 			if (objectCreation.getIdentifier() instanceof CompositeIdentifier && objectCreation.getIdentifier().asCompositeIdentifier().getMostLeftPart().equals(dependency.getKey()))
 				for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
 					findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getIdentifier().asCompositeIdentifier().getRightPart(), functionDeclaration, dependency.getValue());

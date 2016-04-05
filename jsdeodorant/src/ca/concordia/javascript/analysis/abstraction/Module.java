@@ -3,10 +3,10 @@ package ca.concordia.javascript.analysis.abstraction;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.javascript.jscomp.SourceFile;
 
 import ca.concordia.javascript.analysis.module.LibraryType;
@@ -23,7 +23,7 @@ public class Module {
 		return "Module [sourceFile=" + sourceFile + ", moduleType=" + moduleType + ", libraryType=" + libraryType + "]";
 	}
 
-	private Map<String, Module> dependencies;
+	private Multimap<String, Module> dependencies;
 	private List<Export> exports;
 
 	public Module(Program program, SourceFile sourceFile, List<String> messages) {
@@ -31,7 +31,7 @@ public class Module {
 		this.sourceFile = sourceFile;
 		this.moduleType = ModuleType.File;
 		this.messages = messages;
-		this.dependencies = new HashMap<>();
+		this.dependencies = ArrayListMultimap.create();
 		this.exports = new ArrayList<>();
 		this.libraryType = LibraryType.NONE;
 	}
@@ -41,7 +41,7 @@ public class Module {
 		this.program = program;
 		this.sourceFile = sourceFile;
 		this.messages = messages;
-		this.dependencies = new HashMap<>();
+		this.dependencies = ArrayListMultimap.create();
 		this.exports = new ArrayList<>();
 		this.libraryType = LibraryType.NONE;
 	}
@@ -70,7 +70,7 @@ public class Module {
 		this.moduleType = packageType;
 	}
 
-	public Map<String, Module> getDependencies() {
+	public Multimap<String, Module> getDependencies() {
 		return dependencies;
 	}
 
