@@ -43,6 +43,7 @@ public class AbstractExpression extends AbstractFunctionFragment {
 		processVariableDeclarations(expressionExtractor.getVariableDeclarationExpressions(expression));
 		processNewExpressions(expressionExtractor.getNewExpressions(expression));
 		processArrayLiteralExpressions(expressionExtractor.getArrayLiteralExpressions(expression));
+		processAssignmentExpressions(expressionExtractor.getBinaryOperators(expression));
 	}
 
 	public AbstractExpression(ParseTree expression, SourceContainer parent, boolean processInside) {
@@ -54,6 +55,7 @@ public class AbstractExpression extends AbstractFunctionFragment {
 			processVariableDeclarations(expressionExtractor.getVariableDeclarationExpressions(expression));
 			processNewExpressions(expressionExtractor.getNewExpressions(expression));
 			processArrayLiteralExpressions(expressionExtractor.getArrayLiteralExpressions(expression));
+			processAssignmentExpressions(expressionExtractor.getBinaryOperators(expression));
 		}
 	}
 

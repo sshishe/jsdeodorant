@@ -44,8 +44,6 @@ public class CSVOutput {
 	}
 
 	public void uniqueClassDeclaration() {
-		if (currentModule.getProgram().getObjectCreationList().size() == 0)
-			return;
 		String currentFilePath = "log/classes/" + getFileName() + ".csv";
 		csvWriter = new CSVFileWriter(currentFilePath);
 		String fileHeader = "Object Creation Name, Class FQN, Is Declaration Predefined?, DeclarationType, Number of Arguments, Number of Parameters, Parameter Names, Invocation Location, Declaration Location, Is invocation in a library?, Is definition in a library?";
@@ -64,6 +62,13 @@ public class CSVOutput {
 					writeClassDeclarationToFile(creation);
 					log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclaration().getFunctionDeclarationTree().location + " And the invocation is at: " + creation.getNewExpressionTree().location);
 				}
+				classExists = true;
+			}
+		}
+		for (FunctionDeclaration functionDeclaration : currentModule.getProgram().getFunctionDeclarationList()) {
+			if (functionDeclaration.isClassDeclaration()) {
+				log.info("Classname is:" + functionDeclaration.getIdentifier().toString() + " " + functionDeclaration.getFunctionDeclarationTree().location);
+				classes.add(functionDeclaration);
 				classExists = true;
 			}
 		}

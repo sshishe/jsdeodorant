@@ -210,4 +210,14 @@ public class NamespaceTest {
 		}
 	}
 
+	@Test
+	public void testClassInferedWithMethod() {
+		try {
+			Module result = setAnalysisForNestedObjectLiterals("test/namespace/class-with-method.js");
+			assertTrue(result.getProgram().getClassDeclarationList().size() == 2);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

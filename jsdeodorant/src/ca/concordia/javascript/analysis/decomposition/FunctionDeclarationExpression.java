@@ -255,4 +255,16 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	public List<AbstractStatement> getStatements() {
 		return statementList;
 	}
+
+	@Override
+	public List<AbstractExpression> getAssignments() {
+		return getAssignmentExpressionList();
+	}
+
+	@Override
+	public AbstractIdentifier getRawIdentifier() {
+		if (leftValueExpression == null)
+			return null;
+		return IdentifierHelper.getIdentifier(leftValueExpression);
+	}
 }

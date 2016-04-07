@@ -5,19 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
-import ca.concordia.javascript.analysis.decomposition.CompositeStatement;
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpressionNature;
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationStatement;
-import ca.concordia.javascript.analysis.decomposition.LabelledStatement;
-import ca.concordia.javascript.analysis.decomposition.ObjectLiteralExpression;
-import ca.concordia.javascript.analysis.decomposition.Statement;
-import ca.concordia.javascript.analysis.decomposition.StatementType;
-import ca.concordia.javascript.analysis.decomposition.TryStatement;
-
 import com.google.common.collect.ImmutableList;
-import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
@@ -52,6 +40,17 @@ import com.google.javascript.jscomp.parsing.parser.trees.VariableDeclarationTree
 import com.google.javascript.jscomp.parsing.parser.trees.VariableStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.WhileStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.WithStatementTree;
+
+import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
+import ca.concordia.javascript.analysis.decomposition.CompositeStatement;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpressionNature;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationStatement;
+import ca.concordia.javascript.analysis.decomposition.LabelledStatement;
+import ca.concordia.javascript.analysis.decomposition.ObjectLiteralExpression;
+import ca.concordia.javascript.analysis.decomposition.Statement;
+import ca.concordia.javascript.analysis.decomposition.StatementType;
+import ca.concordia.javascript.analysis.decomposition.TryStatement;
 
 public class StatementProcessor {
 	private static final Logger log = Logger.getLogger(StatementProcessor.class.getName());
@@ -351,7 +350,7 @@ public class StatementProcessor {
 
 			parent.addElement(child);
 		}
-		
+
 		else if (statement instanceof ReturnStatementTree) {
 			ReturnStatementTree returnStatement = statement.asReturnStatement();
 			Statement child = new Statement(returnStatement, StatementType.RETURN, parent);
@@ -412,10 +411,10 @@ public class StatementProcessor {
 			ParenExpressionTree parenExpression = variableDeclarationTree.initializer.asParenExpression();
 			if (parenExpression.expression instanceof CallExpressionTree) {
 				CallExpressionTree callExpressionTree = parenExpression.expression.asCallExpression();
-					if (callExpressionTree.operand instanceof FunctionDeclarationTree) {
-						FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
-						return functionDeclarationExpression;
-					}
+				if (callExpressionTree.operand instanceof FunctionDeclarationTree) {
+					FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
+					return functionDeclarationExpression;
+				}
 			}
 		}
 		return null;

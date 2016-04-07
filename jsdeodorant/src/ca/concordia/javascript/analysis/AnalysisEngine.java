@@ -60,8 +60,6 @@ public class AnalysisEngine {
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		List<Module> modules = new ArrayList<>();
 
-		// crawl();
-
 		if (analysisOption.isOutputToCSV())
 			prepareOutputToCSV();
 
@@ -93,6 +91,7 @@ public class AnalysisEngine {
 				CompositePostProcessor.processModules(module, modules);
 			else
 				CompositePostProcessor.addDepndenciesBlindly(module, modules);
+			
 			if (analysisOption.hasClassAnlysis())
 				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE)
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);

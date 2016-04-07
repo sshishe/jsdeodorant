@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
@@ -145,5 +146,17 @@ public class Program implements SourceContainer {
 			}
 		}
 		return classDeclarations;
+	}
+
+	public List<AbstractExpression> getAssignmentExpressionList() {
+		List<AbstractExpression> assignmentExpressions = new ArrayList<>();
+		for (SourceElement sourceElement : sourceElements) {
+			if (sourceElement instanceof AbstractFunctionFragment) {
+				AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) sourceElement;
+				for (AbstractExpression assignmentExpression : abstractFunctionFragment.getAssignmentExpressionList())
+					assignmentExpressions.add(assignmentExpression);
+			}
+		}
+		return assignmentExpressions;
 	}
 }

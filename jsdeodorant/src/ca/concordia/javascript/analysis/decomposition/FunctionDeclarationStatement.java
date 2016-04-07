@@ -38,8 +38,8 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 	public String getName() {
 		return Strings.isNullOrEmpty(identifier.toString()) ? "<Anonymous>" : identifier.toString();
 	}
-	
-	public String getQualifiedName(){
+
+	public String getQualifiedName() {
 		return getName();
 	}
 
@@ -79,6 +79,16 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 
 	public List<AbstractStatement> getReturnStatementList() {
 		return getReturnStatementListExtracted(getStatements());
+	}
+
+	@Override
+	public List<AbstractExpression> getAssignments() {
+		return getAssignmentExpressionList();
+	}
+
+	@Override
+	public AbstractIdentifier getRawIdentifier() {
+		return IdentifierHelper.getIdentifier(functionDeclarationTree);
 	}
 
 }

@@ -35,6 +35,10 @@ public class CompositePostProcessor {
 				findFunctionDeclaration(objectCreation, module);
 			}
 		}
+
+		// Class inference
+		ClassInferenceEngine.run(program);
+
 	}
 
 	public static void processModules(Module module, List<Module> modules) {

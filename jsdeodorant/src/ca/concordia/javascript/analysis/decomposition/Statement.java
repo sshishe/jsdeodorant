@@ -3,13 +3,11 @@ package ca.concordia.javascript.analysis.decomposition;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
-import ca.concordia.javascript.analysis.abstraction.SourceContainer;
-import ca.concordia.javascript.analysis.util.ExpressionExtractor;
-import ca.concordia.javascript.analysis.util.DebugHelper;
-
-import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+
+import ca.concordia.javascript.analysis.abstraction.SourceContainer;
+import ca.concordia.javascript.analysis.util.DebugHelper;
+import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 public class Statement extends AbstractStatement {
 	public Statement(ParseTree statement, StatementType type, SourceContainer parent) {
@@ -19,6 +17,7 @@ public class Statement extends AbstractStatement {
 		processVariableDeclarations(expressionExtractor.getVariableDeclarationExpressions(statement));
 		processNewExpressions(expressionExtractor.getNewExpressions(statement));
 		processArrayLiteralExpressions(expressionExtractor.getArrayLiteralExpressions(statement));
+		processAssignmentExpressions(expressionExtractor.getBinaryOperators(statement));
 	}
 
 	@Override

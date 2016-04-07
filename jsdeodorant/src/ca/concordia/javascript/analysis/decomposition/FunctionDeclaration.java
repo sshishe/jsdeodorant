@@ -26,4 +26,8 @@ public interface FunctionDeclaration {
 	public boolean isClassDeclaration();
 
 	public void setClassDeclaration(boolean state);
+
+	public List<AbstractExpression> getAssignments();
+	
+	public AbstractIdentifier getRawIdentifier();
 }

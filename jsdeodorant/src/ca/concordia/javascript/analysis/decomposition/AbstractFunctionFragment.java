@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.parsing.parser.trees.ArgumentListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ArrayLiteralExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
@@ -35,6 +36,7 @@ public abstract class AbstractFunctionFragment {
 	private List<FunctionInvocation> functionInvocationList;
 	private List<FunctionDeclarationExpression> functionDeclarationExpressionList;
 	private List<ObjectLiteralExpression> objectLiteralExpressionList;
+	private List<AbstractExpression> assignmentExpressionList;
 	private List<VariableDeclaration> variableDeclarationList;
 
 	protected AbstractFunctionFragment(SourceContainer parent) {
@@ -44,6 +46,7 @@ public abstract class AbstractFunctionFragment {
 		functionDeclarationExpressionList = new ArrayList<>();
 		objectLiteralExpressionList = new ArrayList<>();
 		variableDeclarationList = new ArrayList<>();
+		assignmentExpressionList = new ArrayList<>();
 	}
 
 	protected void processFunctionInvocations(List<ParseTree> functionInvocations) {
@@ -115,6 +118,10 @@ public abstract class AbstractFunctionFragment {
 		objectLiteralExpressionList.add(objectLiteral);
 	}
 
+	public void addAssignmentExpression(AbstractExpression assignment) {
+		assignmentExpressionList.add(assignment);
+	}
+
 	protected void processNewExpressions(List<ParseTree> newExpressions) {
 		for (ParseTree expression : newExpressions) {
 			NewExpressionTree newExpression = expression.asNewExpression();
@@ -161,6 +168,16 @@ public abstract class AbstractFunctionFragment {
 		}
 	}
 
+	protected void processAssignmentExpressions(List<ParseTree> binaryOperatorExpressions) {
+		for (ParseTree expression : binaryOperatorExpressions) {
+			if (expression instanceof BinaryOperatorTree) {
+				BinaryOperatorTree binaryOperatorTree = expression.asBinaryOperator();
+				if (binaryOperatorTree.operator.toString().equals("="))
+					addAssignmentExpression(new AbstractExpression(expression, parent, false));
+			}
+		}
+	}
+
 	protected void addCreation(Creation creation) {
 		creationList.add(creation);
 		if (parent != null && parent instanceof CompositeStatement) {
@@ -194,6 +211,9 @@ public abstract class AbstractFunctionFragment {
 		if (element instanceof AbstractStatement) {
 			return findParentFunction(((AbstractStatement) element).getParent());
 		}
+		if (element instanceof ObjectLiteralExpression) {
+			return findParentFunction(((AbstractExpression) element).getParent());
+		}
 		return null;
 	}
 
@@ -224,6 +244,10 @@ public abstract class AbstractFunctionFragment {
 
 	public List<VariableDeclaration> getVariableDeclarationList() {
 		return variableDeclarationList;
+	}
+
+	public List<AbstractExpression> getAssignmentExpressionList() {
+		return assignmentExpressionList;
 	}
 
 	protected List<AbstractStatement> getReturnStatementListExtracted(List<AbstractStatement> statementsList) {
