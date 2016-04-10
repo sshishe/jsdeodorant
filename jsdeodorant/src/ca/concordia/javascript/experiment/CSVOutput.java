@@ -53,21 +53,21 @@ public class CSVOutput {
 		for (ObjectCreation creation : currentModule.getProgram().getObjectCreationList()) {
 			if (creation.isClassDeclarationPredefined()) {
 				writeClassDeclarationToFile(creation);
-				log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclarationLocation() + " And the invocation is at: " + creation.getObjectCreationLocation());
+				//log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclarationLocation() + " And the invocation is at: " + creation.getObjectCreationLocation());
 				classExists = true;
 			}
 			if (creation.getClassDeclaration() != null) {
 				if (!classes.contains(creation.getClassDeclaration())) {
 					classes.add(creation.getClassDeclaration());
 					writeClassDeclarationToFile(creation);
-					log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclaration().getFunctionDeclarationTree().location + " And the invocation is at: " + creation.getNewExpressionTree().location);
+					//log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclaration().getFunctionDeclarationTree().location + " And the invocation is at: " + creation.getNewExpressionTree().location);
 				}
 				classExists = true;
 			}
 		}
 		for (FunctionDeclaration functionDeclaration : currentModule.getProgram().getFunctionDeclarationList()) {
 			if (functionDeclaration.isClassDeclaration()) {
-				log.info("Classname is:" + functionDeclaration.getIdentifier().toString() + " " + functionDeclaration.getFunctionDeclarationTree().location);
+				//log.info("Classname is:" + functionDeclaration.getIdentifier().toString() + " " + functionDeclaration.getFunctionDeclarationTree().location);
 				classes.add(functionDeclaration);
 				classExists = true;
 			}
@@ -79,7 +79,7 @@ public class CSVOutput {
 			AnalysisResult.increaseTotalNumberOfFiles();
 
 		if (classes.size() > 0) {
-			log.info("Number of unique classes in this file:" + classes.size());
+			//	log.info("Number of unique classes in this file:" + classes.size());
 			AnalysisResult.increaseTotalNumberOfClasses(classes.size());
 		}
 	}

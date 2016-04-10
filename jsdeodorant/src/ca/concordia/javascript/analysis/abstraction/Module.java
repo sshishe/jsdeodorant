@@ -9,6 +9,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.javascript.jscomp.SourceFile;
 
+import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.module.LibraryType;
 
 public class Module {
@@ -25,6 +26,7 @@ public class Module {
 
 	private Multimap<String, Module> dependencies;
 	private List<Export> exports;
+	private List<ClassDeclaration> classes;
 
 	public Module(Program program, SourceFile sourceFile, List<String> messages) {
 		this.program = program;
@@ -33,6 +35,7 @@ public class Module {
 		this.messages = messages;
 		this.dependencies = ArrayListMultimap.create();
 		this.exports = new ArrayList<>();
+		this.classes = new ArrayList<>();
 		this.libraryType = LibraryType.NONE;
 	}
 
@@ -43,11 +46,16 @@ public class Module {
 		this.messages = messages;
 		this.dependencies = ArrayListMultimap.create();
 		this.exports = new ArrayList<>();
+		this.classes = new ArrayList<>();
 		this.libraryType = LibraryType.NONE;
 	}
 
 	public List<String> getMessages() {
 		return messages;
+	}
+
+	public List<ClassDeclaration> getClasses() {
+		return classes;
 	}
 
 	public Program getProgram() {
@@ -76,6 +84,17 @@ public class Module {
 
 	public void addDependency(String name, Module dependency) {
 		this.dependencies.put(name, dependency);
+	}
+
+	public void addClass(ClassDeclaration classDeclaration) {
+		for (ClassDeclaration existingClass : classes) {
+			if (existingClass.getName().equals(classDeclaration.getName()))
+				if (existingClass.getFunctionDeclaration().getFunctionDeclarationTree().equals(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree())) {
+					existingClass.incrementInstantiationCount();
+					return;
+				}
+		}
+		this.classes.add(classDeclaration);
 	}
 
 	public List<Export> getExports() {

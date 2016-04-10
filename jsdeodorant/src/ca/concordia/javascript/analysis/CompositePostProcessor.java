@@ -16,10 +16,12 @@ import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
+import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.module.ExportHelper;
 import ca.concordia.javascript.analysis.module.RequireHelper;
+import ca.concordia.javascript.experiment.ClassAnalysisReport;
 import ca.concordia.javascript.language.PredefinedClasses;
 import ca.concordia.javascript.language.PredefinedFunctions;
 
@@ -31,13 +33,13 @@ public class CompositePostProcessor {
 		for (ObjectCreation objectCreation : program.getObjectCreationList()) {
 			if (objectCreation.getOperandOfNewName() == null || objectCreation.isFunctionObject())
 				continue;
-			if (!findPredefinedClasses(program, objectCreation)) {
+			if (!findPredefinedClasses(program, objectCreation, module)) {
 				findFunctionDeclaration(objectCreation, module);
 			}
 		}
 
 		// Class inference
-		ClassInferenceEngine.run(program);
+		ClassInferenceEngine.run(module);
 
 	}
 
@@ -112,9 +114,10 @@ public class CompositePostProcessor {
 		return false;
 	}
 
-	private static boolean findPredefinedClasses(Program program, ObjectCreation objectCreation) {
+	private static boolean findPredefinedClasses(Program program, ObjectCreation objectCreation, Module module) {
 		if (PredefinedClasses.contains(objectCreation.getOperandOfNewName())) {
 			objectCreation.setClassDeclarationPredefined(true);
+			ClassAnalysisReport.addPredefinedClass(objectCreation, module);
 			return true;
 		}
 		return false;
@@ -143,6 +146,19 @@ public class CompositePostProcessor {
 		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
 			functionDeclaration.setClassDeclaration(true);
 			objectCreation.setClassDeclaration(functionDeclaration, module);
+			ClassAnalysisReport.addClass(objectCreation, module);
+
+			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false);
+			module.addClass(classDeclaration);
+			return true;
+		}
+		if (functionQualifiedName.equals(objectCreation.getIdentifier().toString())) {
+			functionDeclaration.setClassDeclaration(true);
+			objectCreation.setClassDeclaration(functionDeclaration, module);
+			ClassAnalysisReport.addClass(objectCreation, module);
+
+			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false);
+			module.addClass(classDeclaration);
 			return true;
 		}
 		return false;

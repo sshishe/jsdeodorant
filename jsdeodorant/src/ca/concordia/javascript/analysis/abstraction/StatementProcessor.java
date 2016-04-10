@@ -318,12 +318,26 @@ public class StatementProcessor {
 							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
 						}
 					}
-
 				}
 				for (ParseTree node : callExpressionTree.arguments.arguments) {
 					if (node instanceof FunctionDeclarationTree) {
 						FunctionDeclarationTree functionDeclarationTree = node.asFunctionDeclaration();
 						functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.PARAMETER, parent);
+					}
+				}
+			} else if (expressionStatement.expression instanceof ParenExpressionTree) {
+				ParenExpressionTree parenExpression = expressionStatement.expression.asParenExpression();
+				if (parenExpression.expression instanceof CallExpressionTree) {
+					CallExpressionTree callExpression = parenExpression.expression.asCallExpression();
+					if (callExpression.operand instanceof FunctionDeclarationTree) {
+						FunctionDeclarationTree functionDeclarationTree = callExpression.operand.asFunctionDeclaration();
+						functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
+					}
+					for (ParseTree argument : callExpression.arguments.arguments) {
+						if (argument instanceof FunctionDeclarationTree) {
+							FunctionDeclarationTree functionDeclarationTree = argument.asFunctionDeclaration();
+							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
+						}
 					}
 				}
 			}

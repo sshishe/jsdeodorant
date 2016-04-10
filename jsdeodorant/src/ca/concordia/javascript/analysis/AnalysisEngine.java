@@ -21,11 +21,13 @@ import com.google.javascript.jscomp.parsing.parser.trees.ProgramTree;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
+import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.module.LibraryType;
 import ca.concordia.javascript.analysis.util.FileUtil;
 import ca.concordia.javascript.analysis.util.JSONReader;
 import ca.concordia.javascript.analysis.util.StringUtil;
 import ca.concordia.javascript.experiment.CSVOutput;
+import ca.concordia.javascript.experiment.ClassAnalysisReport;
 import ca.concordia.javascript.experiment.PostgresOutput;
 import ca.concordia.javascript.metrics.CyclomaticComplexity;
 
@@ -91,7 +93,7 @@ public class AnalysisEngine {
 				CompositePostProcessor.processModules(module, modules);
 			else
 				CompositePostProcessor.addDepndenciesBlindly(module, modules);
-			
+
 			if (analysisOption.hasClassAnlysis())
 				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE)
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
@@ -107,6 +109,8 @@ public class AnalysisEngine {
 					log.warn("Cyclomatic Complexity of " + entry.getKey() + " is: " + entry.getValue());
 				}
 			}
+
+			ClassInferenceEngine.analyzeMethodsAndAttributes(module);
 
 			if (analysisOption.isOutputToCSV()) {
 				CSVOutput csvOutput = new CSVOutput(module);
@@ -125,6 +129,16 @@ public class AnalysisEngine {
 
 			AnalysisResult.addPackageInstance(module);
 		}
+
+		int count = 0;
+		for (Module module : modules) {
+			for (ClassDeclaration classDeclaration : module.getClasses()) {
+				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + classDeclaration.getAttributes().size() + " / methods:" + classDeclaration.getMethods().size() + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount());
+			}
+			count += module.getClasses().size();
+		}
+
+		ClassAnalysisReport.updateReport(modules);
 		CSVOutput experimentOutput = new CSVOutput();
 		experimentOutput.aggregateReportForModule(modules);
 		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
