@@ -11,6 +11,7 @@ import com.google.javascript.jscomp.SourceFile;
 
 import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.module.LibraryType;
+import ca.concordia.javascript.experiment.ClassAnalysisReport.ClassInstance;
 
 public class Module {
 	private List<String> messages;
@@ -88,11 +89,11 @@ public class Module {
 
 	public void addClass(ClassDeclaration classDeclaration) {
 		for (ClassDeclaration existingClass : classes) {
-			if (existingClass.getName().equals(classDeclaration.getName()))
-				if (existingClass.getFunctionDeclaration().getFunctionDeclarationTree().equals(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree())) {
+			if (existingClass.getFunctionDeclaration().getFunctionDeclarationTree().equals(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree())) {
+				if (!classDeclaration.isInfered())
 					existingClass.incrementInstantiationCount();
-					return;
-				}
+				return;
+			}
 		}
 		this.classes.add(classDeclaration);
 	}

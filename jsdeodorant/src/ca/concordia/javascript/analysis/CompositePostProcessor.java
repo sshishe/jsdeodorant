@@ -18,6 +18,7 @@ import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.module.ExportHelper;
 import ca.concordia.javascript.analysis.module.RequireHelper;
@@ -33,8 +34,9 @@ public class CompositePostProcessor {
 		for (ObjectCreation objectCreation : program.getObjectCreationList()) {
 			if (objectCreation.getOperandOfNewName() == null || objectCreation.isFunctionObject())
 				continue;
-			if (!findPredefinedClasses(program, objectCreation, module)) {
-				findFunctionDeclaration(objectCreation, module);
+
+			if (!findFunctionDeclaration(objectCreation, module)) {
+				findPredefinedClasses(program, objectCreation, module);
 			}
 		}
 
@@ -145,19 +147,26 @@ public class CompositePostProcessor {
 		String functionQualifiedName = functionDeclaration.getQualifiedName();
 		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
 			functionDeclaration.setClassDeclaration(true);
-			objectCreation.setClassDeclaration(functionDeclaration, module);
-			ClassAnalysisReport.addClass(objectCreation, module);
 
-			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false);
+			//ClassAnalysisReport.addClass(objectCreation, module);
+			boolean hasNamespace = false;
+			if (functionDeclaration instanceof FunctionDeclarationExpression)
+				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false, hasNamespace);
+			objectCreation.setClassDeclaration(classDeclaration, module);
 			module.addClass(classDeclaration);
 			return true;
 		}
 		if (functionQualifiedName.equals(objectCreation.getIdentifier().toString())) {
 			functionDeclaration.setClassDeclaration(true);
-			objectCreation.setClassDeclaration(functionDeclaration, module);
-			ClassAnalysisReport.addClass(objectCreation, module);
 
-			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false);
+			//ClassAnalysisReport.addClass(objectCreation, module);
+
+			boolean hasNamespace = false;
+			if (functionDeclaration instanceof FunctionDeclarationExpression)
+				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false, hasNamespace);
+			objectCreation.setClassDeclaration(classDeclaration, module);
 			module.addClass(classDeclaration);
 			return true;
 		}

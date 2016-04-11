@@ -173,7 +173,7 @@ public abstract class AbstractFunctionFragment {
 			if (expression instanceof BinaryOperatorTree) {
 				BinaryOperatorTree binaryOperatorTree = expression.asBinaryOperator();
 				if (binaryOperatorTree.operator.toString().equals("="))
-					addAssignmentExpression(new AbstractExpression(expression, parent, false));
+					addAssignmentExpression(new AbstractExpression(expression));
 			}
 		}
 	}

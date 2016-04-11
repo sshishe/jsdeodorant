@@ -10,7 +10,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.util.DebugHelper;
 import ca.concordia.javascript.analysis.util.ExternalAliasHelper;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
@@ -22,7 +22,7 @@ public class ObjectCreation extends Creation {
 	private NewExpressionTree newExpressionTree;
 	// In one scope we can have two functions with exact same names. but the
 	// last one is executed in run-time because the last one is redeclared
-	private FunctionDeclaration classDeclaration;
+	private ClassDeclaration classDeclaration;
 	private AbstractExpression operandOfNew;
 	private List<AbstractExpression> arguments;
 	private boolean isClassDeclarationPredefined = false;
@@ -54,12 +54,12 @@ public class ObjectCreation extends Creation {
 			setFunctionObject(true);
 	}
 
-	public FunctionDeclaration getClassDeclaration() {
+	public ClassDeclaration getClassDeclaration() {
 		return classDeclaration;
 	}
 
-	public void setClassDeclaration(FunctionDeclaration functionDeclaration, Module module) {
-		classDeclaration = functionDeclaration;
+	public void setClassDeclaration(ClassDeclaration classDeclaration, Module module) {
+		this.classDeclaration = classDeclaration;
 		this.classDeclarationModule = module;
 	}
 
@@ -152,23 +152,23 @@ public class ObjectCreation extends Creation {
 		if (this.isClassDeclarationPredefined)
 			return getIdentifier().toString();
 		else
-			return this.getClassDeclaration().getQualifiedName();
+			return this.getClassDeclaration().getFunctionDeclaration().getQualifiedName();
 	}
 
 	public String getClassDeclarationKind() {
 		if (this.getClassDeclaration() != null)
-			return this.getClassDeclaration().getKind().toString();
+			return this.getClassDeclaration().getFunctionDeclaration().getKind().toString();
 		else
 			return "";
 	}
-	
+
 	public String getObjectCreationLocation() {
 		return SourceLocationHelper.getLocation(this.newExpressionTree.location);
 	}
 
 	public String getClassDeclarationLocation() {
 		if (this.getClassDeclaration() != null) {
-			return SourceLocationHelper.getLocation(this.getClassDeclaration().getFunctionDeclarationTree().location);
+			return SourceLocationHelper.getLocation(this.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree().location);
 		}
 
 		else

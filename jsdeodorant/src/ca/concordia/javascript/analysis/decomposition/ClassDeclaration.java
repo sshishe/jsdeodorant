@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
-import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 
 public class ClassDeclaration {
 	private AbstractIdentifier identifier;
@@ -12,22 +11,25 @@ public class ClassDeclaration {
 	private Map<String, AbstractExpression> methods;
 	private Map<String, AbstractExpression> attributes;
 	private boolean isInfered;
+	private boolean hasNamespace;
 	private int instantiationCount;
 
-	public ClassDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, boolean isInfered) {
+	public ClassDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, boolean isInfered, boolean hasNamespace) {
 		this.identifier = identifier;
 		this.functionDeclaration = functionDeclaration;
 		this.attributes = new TreeMap<String, AbstractExpression>();
 		this.methods = new TreeMap<String, AbstractExpression>();
 		this.isInfered = isInfered;
-		instantiationCount = 0;
+		this.hasNamespace = hasNamespace;
+		this.instantiationCount = 0;
 	}
 
 	public String getName() {
-		if (identifier instanceof CompositeIdentifier)
-			if (identifier.asCompositeIdentifier().getMostLeftPart().toString().equals("exports") || identifier.asCompositeIdentifier().getMostLeftPart().toString().equals("module.exports"))
-				return identifier.asCompositeIdentifier().getRightPart().toString();
-		return identifier.toString();
+		//		if (identifier instanceof CompositeIdentifier)
+		//			if (identifier.asCompositeIdentifier().getMostLeftPart().toString().equals("exports") || identifier.asCompositeIdentifier().getMostLeftPart().toString().equals("module.exports"))
+		//				return identifier.asCompositeIdentifier().getRightPart().toString();
+		//		return identifier.toString();
+		return functionDeclaration.getQualifiedName();
 	}
 
 	public void setName(AbstractIdentifier identifier) {
@@ -84,6 +86,14 @@ public class ClassDeclaration {
 
 	public void incrementInstantiationCount() {
 		this.instantiationCount++;
+	}
+
+	public boolean hasNamespace() {
+		return hasNamespace;
+	}
+
+	public void setHasNamespace(boolean hasNamespace) {
+		this.hasNamespace = hasNamespace;
 	}
 
 }

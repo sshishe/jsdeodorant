@@ -3,12 +3,15 @@ package ca.concordia.javascript.experiment;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.util.SourceLocationHelper;
 
 public class ClassAnalysisReport {
+	static Logger log = Logger.getLogger(ClassAnalysisReport.class.getName());
 	private static List<ClassInstance> classes;
 
 	private static void checkForInitialization() {
@@ -19,57 +22,42 @@ public class ClassAnalysisReport {
 	public static void updateReport(List<Module> modules) {
 		checkForInitialization();
 		for (Module module : modules) {
-			for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
-				if (functionDeclaration.isClassDeclaration()) {
-					addClass(functionDeclaration, module);
-				}
+			for (ClassDeclaration classDeclaration : module.getClasses()) {
+				addClass(classDeclaration, module);
 			}
 		}
-		int a = 10;
-		a++;
 	}
 
-	public static void addClass(FunctionDeclaration functionDeclaration, Module module) {
-		ClassInstance classInstance = new ClassInstance(module);
-		classInstance.setClassName(functionDeclaration.getName());
-		classInstance.setClassOffset(SourceLocationHelper.getLocation(functionDeclaration.getFunctionDeclarationTree().location));
-		classInstance.setClassLOC(functionDeclaration.getFunctionDeclarationTree().location.start.line);
+	public static void addClass(ClassDeclaration classDeclaration, Module module) {
+		ClassInstance classInstance = new ClassInstance(module, classDeclaration);
+		classInstance.setClassName(classDeclaration.getName());
+		classInstance.setClassOffset(SourceLocationHelper.getLocation(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location));
+		classInstance.setClassLOC(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line);
 		classInstance.setPredefined(false);
 		classInstance.setHasNewExpression(false);
 		classInstance.setHasInfered(true);
+		classInstance.setHasNamespace(classDeclaration.hasNamespace());
 		add(classInstance);
 	}
 
 	public static void addPredefinedClass(ObjectCreation creation, Module module) {
-		ClassInstance classInstance = new ClassInstance(module);
+		ClassInstance classInstance = new ClassInstance(module, creation.getClassDeclaration());
 		classInstance.setClassName(creation.getIdentifier().toString());
 		classInstance.setPredefined(true);
-		classInstance.setNewExpressionFile(module.getCanonicalPath());
-		classInstance.setNewExpressionOffset(SourceLocationHelper.getLocation(creation.getOperandOfNew().getExpression().location));
+		//		classInstance.setNewExpressionFile(module.getCanonicalPath());
+		//		classInstance.setNewExpressionOffset(SourceLocationHelper.getLocation(creation.getOperandOfNew().getExpression().location));
 		classInstance.setHasNewExpression(true);
 		classInstance.setHasInfered(false);
-		add(classInstance);
-	}
-
-	public static void addClass(ObjectCreation creation, Module module) {
-		ClassInstance classInstance = new ClassInstance(module);
-		classInstance.setClassName(creation.getIdentifier().toString());
-		classInstance.setClassOffset(SourceLocationHelper.getLocation(creation.getClassDeclaration().getFunctionDeclarationTree().location));
-		classInstance.setClassLOC(creation.getClassDeclaration().getFunctionDeclarationTree().location.start.line);
-		classInstance.setPredefined(false);
-		classInstance.setNewExpressionFile(module.getCanonicalPath());
-		classInstance.setNewExpressionOffset(SourceLocationHelper.getLocation(creation.getOperandOfNew().getExpression().location));
-		classInstance.setHasNewExpression(true);
-		classInstance.setHasInfered(false);
+		classInstance.setHasNamespace(false);
 		add(classInstance);
 	}
 
 	public static void add(ClassInstance instance) {
 		for (ClassInstance classInstance : classes) {
-			if (classInstance.getFileName().equals(instance.getFileName()))
-				if (classInstance.getClassName().equals(instance.getClassName())) {
-					// duplicate, don't add it to the list
-					classInstance.incrementClassInstantiation();
+			if (!instance.isPredefined() && !classInstance.isPredefined())
+				if (classInstance.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree().equals(instance.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree())) {
+					if (classInstance.hasNewExpression)
+						classInstance.incrementClassInstantiation();
 					return;
 				}
 		}
@@ -78,6 +66,10 @@ public class ClassAnalysisReport {
 
 	public static List<ClassInstance> getList() {
 		return classes;
+	}
+
+	public static int getClassCount() {
+		return classes.size();
 	}
 
 	public static ClassInstance get(String className, String file) {
@@ -89,14 +81,13 @@ public class ClassAnalysisReport {
 	}
 
 	public static class ClassInstance {
+		private ClassDeclaration classDeclaration;
 		private String className;
 		private String fileName;
 		private boolean isPredefined;
 		private String classOffset;
 		private boolean hasNewExpression;
 		private boolean hasInfered;
-		private String newExpressionFile;
-		private String newExpressionOffset;
 		private int constructorLOC;
 		private int classLOC;
 		private boolean hasNamespace;
@@ -108,8 +99,9 @@ public class ClassAnalysisReport {
 		private boolean isAliased;
 		private int numberOfInstantiation;
 
-		public ClassInstance(Module module) {
+		public ClassInstance(Module module, ClassDeclaration classDeclaration) {
 			ClassAnalysisReport.checkForInitialization();
+			this.classDeclaration = classDeclaration;
 			this.fileName = module.getSourceFile().getOriginalPath();
 		}
 
@@ -153,21 +145,21 @@ public class ClassAnalysisReport {
 			this.hasInfered = hasInfered;
 		}
 
-		public String getNewExpressionFile() {
-			return newExpressionFile;
-		}
-
-		public void setNewExpressionFile(String newExpressionFile) {
-			this.newExpressionFile = newExpressionFile;
-		}
-
-		public String getNewExpressionOffset() {
-			return newExpressionOffset;
-		}
-
-		public void setNewExpressionOffset(String newExpressionOffset) {
-			this.newExpressionOffset = newExpressionOffset;
-		}
+		//		public String getNewExpressionFile() {
+		//			return newExpressionFile;
+		//		}
+		//
+		//		public void setNewExpressionFile(String newExpressionFile) {
+		//			this.newExpressionFile = newExpressionFile;
+		//		}
+		//
+		//		public String getNewExpressionOffset() {
+		//			return newExpressionOffset;
+		//		}
+		//
+		//		public void setNewExpressionOffset(String newExpressionOffset) {
+		//			this.newExpressionOffset = newExpressionOffset;
+		//		}
 
 		public int getConstructorLOC() {
 			return constructorLOC;
@@ -263,6 +255,14 @@ public class ClassAnalysisReport {
 
 		public void incrementClassInstantiation() {
 			this.numberOfInstantiation++;
+		}
+
+		public ClassDeclaration getClassDeclaration() {
+			return classDeclaration;
+		}
+
+		public void setClassDeclaration(ClassDeclaration classDeclaration) {
+			this.classDeclaration = classDeclaration;
 		}
 	}
 }

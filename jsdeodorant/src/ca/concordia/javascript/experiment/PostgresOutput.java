@@ -14,10 +14,8 @@ import java.util.Properties;
 
 import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
 import ca.concordia.javascript.analysis.abstraction.Module;
-import ca.concordia.javascript.analysis.abstraction.ModuleType;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.module.LibraryType;
-import ca.concordia.javascript.analysis.util.FileUtil;
 import ca.concordia.javascript.analysis.util.StringUtil;
 
 public class PostgresOutput {
@@ -78,7 +76,7 @@ public class PostgresOutput {
 				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getOperandOfNewName(), "", LibraryType.JS_PREDEFINED.toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");
 			} else if (creation.getClassDeclaration() != null) {
 				definitionModuleType = LibraryType.NONE;
-				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getClassDeclarationQualifiedName(), LibraryType.NONE.toString(), definitionModuleType.toString(), creation.getClassDeclaration().getKind().toString(), true, creation.getArguments().size(), creation.getClassDeclaration().getParameters().size(), LogUtil.getParametersName(creation.getClassDeclaration().getParameters()), module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), creation.getClassDeclarationModule().getCanonicalPath() + " " + creation.getClassDeclarationLocation());
+				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), creation.getClassDeclarationQualifiedName(), LibraryType.NONE.toString(), definitionModuleType.toString(), creation.getClassDeclaration().getFunctionDeclaration().getKind().toString(), true, creation.getArguments().size(), creation.getClassDeclaration().getFunctionDeclaration().getParameters().size(), LogUtil.getParametersName(creation.getClassDeclaration().getFunctionDeclaration().getParameters()), module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), creation.getClassDeclarationModule().getCanonicalPath() + " " + creation.getClassDeclarationLocation());
 			} else {
 				insertIntoModuleFunctions("CLASS", creation.getOperandOfNewName(), "", "", LibraryType.NONE.toString(), "", true, creation.getArguments().size(), 0, "", module.getCanonicalPath() + " " + creation.getObjectCreationLocation(), "");
 			}

@@ -44,7 +44,7 @@ public class CSVOutput {
 	}
 
 	public void uniqueClassDeclaration() {
-		String currentFilePath = "log/classes/" + getFileName() + ".csv";
+		String currentFilePath = "log/legacy/classes/" + getFileName() + ".csv";
 		csvWriter = new CSVFileWriter(currentFilePath);
 		String fileHeader = "Object Creation Name, Class FQN, Is Declaration Predefined?, DeclarationType, Number of Arguments, Number of Parameters, Parameter Names, Invocation Location, Declaration Location, Is invocation in a library?, Is definition in a library?";
 		csvWriter.writeToFile(fileHeader.split(","));
@@ -58,7 +58,7 @@ public class CSVOutput {
 			}
 			if (creation.getClassDeclaration() != null) {
 				if (!classes.contains(creation.getClassDeclaration())) {
-					classes.add(creation.getClassDeclaration());
+					classes.add(creation.getClassDeclaration().getFunctionDeclaration());
 					writeClassDeclarationToFile(creation);
 					//log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclaration().getFunctionDeclarationTree().location + " And the invocation is at: " + creation.getNewExpressionTree().location);
 				}
@@ -128,8 +128,8 @@ public class CSVOutput {
 			parametersName = "";
 			isDefinitionInLibrary = false;
 		} else {
-			parameterSize = objectCreation.getClassDeclaration().getParameters().size();
-			parametersName = LogUtil.getParametersName(objectCreation.getClassDeclaration().getParameters());
+			parameterSize = objectCreation.getClassDeclaration().getFunctionDeclaration().getParameters().size();
+			parametersName = LogUtil.getParametersName(objectCreation.getClassDeclaration().getFunctionDeclaration().getParameters());
 			isDefinitionInLibrary = objectCreation.getClassDeclarationModule().getLibraryType() != LibraryType.NONE;
 		}
 		lineToWrite.append(objectCreation.getOperandOfNewName().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationQualifiedName()).append(",").append(objectCreation.isClassDeclarationPredefined() ? "TRUE" : "FALSE").append(",").append(objectCreation.getClassDeclarationKind()).append(",").append(objectCreation.getArguments().size()).append(",").append(parameterSize).append(",").append(parametersName).append(",").append(objectCreation.getObjectCreationLocation().replace(",", "-")).append(",").append(objectCreation.getClassDeclarationLocation().replace(",", "-")).append(",").append(currentModule.getLibraryType()).append(",").append(isDefinitionInLibrary);
@@ -154,5 +154,20 @@ public class CSVOutput {
 		if (fileName.lastIndexOf('|') == fileName.length() - 1)
 			fileName = fileName.substring(0, fileName.length() - 1);
 		return fileName;
+	}
+
+	public void moduleReport(List<Module> modules) {
+		//		String currentFilePath = "log/classes/" + getFileName() + ".csv";
+		//		csvWriter = new CSVFileWriter(currentFilePath);
+		//		String fileHeader = "Class name, File, Is Declaration Predefined?, Location, Has Infered? , Constructor Lines of Code, Class Lines of Codes, Number of methods, Number of attributes, Number of Parameters, Is definition in a library?, Number of instantiation, Is aliased?, Has Namespace?";
+		//		csvWriter.writeToFile(fileHeader.split(","));
+		//		Set<FunctionDeclaration> classes = new HashSet<>();
+		//		boolean classExists = false;
+		//		for (ObjectCreation creation : currentModule.getProgram().getObjectCreationList()) {
+		//			if (creation.isClassDeclarationPredefined()) {
+		//				writeClassDeclarationToFile(creation);
+		//				//log.info(creation.getOperandOfNewName() + " " + creation.getClassDeclarationLocation() + " And the invocation is at: " + creation.getObjectCreationLocation());
+		//				classExists = true;
+		//			}
 	}
 }

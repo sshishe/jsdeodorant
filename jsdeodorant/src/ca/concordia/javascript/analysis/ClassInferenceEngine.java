@@ -9,7 +9,6 @@ import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
-import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
@@ -21,9 +20,9 @@ import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.decomposition.CompositeStatement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.javascript.analysis.decomposition.ObjectLiteralExpression;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
-import ca.concordia.javascript.analysis.util.StringUtil;
 
 public class ClassInferenceEngine {
 	static Logger log = Logger.getLogger(ClassInferenceEngine.class.getName());
@@ -64,7 +63,11 @@ public class ClassInferenceEngine {
 				if (left instanceof CompositeIdentifier) {
 					if (functionDeclaration.getName().equals(left.asCompositeIdentifier().getLeftPart().toString()))
 						if (((CompositeIdentifier) left).getMostRightPart().toString().contains("prototype")) {
-							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, true);
+							boolean hasNamespace = false;
+							if (functionDeclaration instanceof FunctionDeclarationExpression)
+								hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+
+							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, true, hasNamespace);
 							module.addClass(classDeclaration);
 						}
 				}
@@ -84,7 +87,12 @@ public class ClassInferenceEngine {
 								CompositeIdentifier compositeIdentifier = functionDeclaration.getRawIdentifier().asCompositeIdentifier();
 								if (Character.isUpperCase(compositeIdentifier.getMostRightPart().toString().charAt(0))) {
 									functionDeclaration.setClassDeclaration(true);
-									ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, true);
+
+									boolean hasNamespace = false;
+									if (functionDeclaration instanceof FunctionDeclarationExpression)
+										hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+
+									ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, true, hasNamespace);
 									module.addClass(classDeclaration);
 									break;
 								}
@@ -99,7 +107,12 @@ public class ClassInferenceEngine {
 											if (functionToBeMatched.getIdentifier() != null)
 												if (functionToBeMatched.getIdentifier().toString().equals(((CompositeIdentifier) identifier).getMostLeftPart().toString())) {
 													functionToBeMatched.setClassDeclaration(true);
-													ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getIdentifier(), functionToBeMatched, true);
+
+													boolean hasNamespace = false;
+													if (functionDeclaration instanceof FunctionDeclarationExpression)
+														hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+
+													ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getIdentifier(), functionToBeMatched, true, hasNamespace);
 													module.addClass(classDeclaration);
 													break;
 												}
@@ -133,7 +146,12 @@ public class ClassInferenceEngine {
 							if (functionToBeMatched.getIdentifier().toString().equals(functionDeclaration.getRawIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
 								if (checkIfFunctionNameIsCapitalize(functionDeclaration)) {
 									functionToBeMatched.setClassDeclaration(true);
-									ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getIdentifier(), functionToBeMatched, true);
+
+									boolean hasNamespace = false;
+									if (functionDeclaration instanceof FunctionDeclarationExpression)
+										hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+
+									ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getIdentifier(), functionToBeMatched, true, hasNamespace);
 									module.addClass(classDeclaration);
 									break;
 								}
@@ -145,12 +163,12 @@ public class ClassInferenceEngine {
 
 	private static boolean checkIfFunctionNameIsCapitalize(FunctionDeclaration function) {
 		return true;
-//		if (function.getIdentifier() != null)
-//			if (!StringUtil.isNullOrEmpty(function.getIdentifier().toString()))
-//				if (Character.isUpperCase(function.getIdentifier().toString().charAt(0)))
-//					return true;
-//		log.warn("The founded class is not first letter capitalized!");
-//		return false;
+		//		if (function.getIdentifier() != null)
+		//			if (!StringUtil.isNullOrEmpty(function.getIdentifier().toString()))
+		//				if (Character.isUpperCase(function.getIdentifier().toString().charAt(0)))
+		//					return true;
+		//		log.warn("The founded class is not first letter capitalized!");
+		//		return false;
 	}
 
 	public static void analyzeMethodsAndAttributes(Module module) {

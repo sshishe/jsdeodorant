@@ -130,24 +130,24 @@ public class AnalysisEngine {
 			AnalysisResult.addPackageInstance(module);
 		}
 
-		int count = 0;
 		for (Module module : modules) {
 			for (ClassDeclaration classDeclaration : module.getClasses()) {
-				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + classDeclaration.getAttributes().size() + " / methods:" + classDeclaration.getMethods().size() + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount());
+				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + classDeclaration.getAttributes().size() + " / methods:" + classDeclaration.getMethods().size() + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount() + " Has namespace:" + classDeclaration.hasNamespace());
 			}
-			count += module.getClasses().size();
 		}
 
 		ClassAnalysisReport.updateReport(modules);
 		CSVOutput experimentOutput = new CSVOutput();
 		experimentOutput.aggregateReportForModule(modules);
-		log.info("Total number of classes: " + AnalysisResult.getTotalNumberOfClasses());
-		log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
+		experimentOutput.moduleReport(modules);
+		log.info("Total number of classes: " + ClassAnalysisReport.getClassCount());
+		//log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
 		return modules;
 	}
 
 	private void prepareOutputToCSV() {
 		CSVOutput.createAndClearFolder("log/functions");
+		CSVOutput.createAndClearFolder("log/legacy/classes");
 		CSVOutput.createAndClearFolder("log/classes");
 		CSVOutput.createAndClearFolder("log/aggregate");
 	}
