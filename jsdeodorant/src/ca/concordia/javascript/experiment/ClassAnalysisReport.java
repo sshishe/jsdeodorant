@@ -54,12 +54,15 @@ public class ClassAnalysisReport {
 
 	public static void add(ClassInstance instance) {
 		for (ClassInstance classInstance : classes) {
-			if (!instance.isPredefined() && !classInstance.isPredefined())
+			if (!instance.isPredefined() && !classInstance.isPredefined()) {
 				if (classInstance.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree().equals(instance.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree())) {
 					if (classInstance.hasNewExpression)
 						classInstance.incrementClassInstantiation();
 					return;
 				}
+			} else {
+				// it's predefined
+			}
 		}
 		classes.add(instance);
 	}

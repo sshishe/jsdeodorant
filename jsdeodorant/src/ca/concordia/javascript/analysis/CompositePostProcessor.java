@@ -119,7 +119,7 @@ public class CompositePostProcessor {
 	private static boolean findPredefinedClasses(Program program, ObjectCreation objectCreation, Module module) {
 		if (PredefinedClasses.contains(objectCreation.getOperandOfNewName())) {
 			objectCreation.setClassDeclarationPredefined(true);
-			ClassAnalysisReport.addPredefinedClass(objectCreation, module);
+			//ClassAnalysisReport.addPredefinedClass(objectCreation, module);
 			return true;
 		}
 		return false;

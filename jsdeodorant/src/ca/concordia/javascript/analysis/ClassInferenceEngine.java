@@ -13,6 +13,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpression
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Module;
+import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
@@ -39,6 +40,18 @@ public class ClassInferenceEngine {
 			assignedMethodToProto(module, functionDeclaration);
 
 			assignObjectLiteralToPrototype(module, functionDeclaration);
+		}
+
+		nowSetClassesToNotFoundObjectCreations(module);
+	}
+
+	private static void nowSetClassesToNotFoundObjectCreations(Module module) {
+		for (ObjectCreation objectCreation : module.getProgram().getObjectCreationList()) {
+			if (objectCreation.getClassDeclaration() != null)
+				for (ClassDeclaration classDeclaration : module.getClasses()) {
+					if (objectCreation.getIdentifier().equals(classDeclaration.getName()))
+						objectCreation.setClassDeclaration(classDeclaration, module);
+				}
 		}
 	}
 
