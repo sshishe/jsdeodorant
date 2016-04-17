@@ -152,7 +152,7 @@ public class CompositePostProcessor {
 			boolean hasNamespace = false;
 			if (functionDeclaration instanceof FunctionDeclarationExpression)
 				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false, hasNamespace);
+			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false, hasNamespace, module.getLibraryType(), !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
 			objectCreation.setClassDeclaration(classDeclaration, module);
 			module.addClass(classDeclaration);
 			return true;
@@ -165,7 +165,7 @@ public class CompositePostProcessor {
 			boolean hasNamespace = false;
 			if (functionDeclaration instanceof FunctionDeclarationExpression)
 				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false, hasNamespace);
+			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false, hasNamespace, module.getLibraryType(), !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
 			objectCreation.setClassDeclaration(classDeclaration, module);
 			module.addClass(classDeclaration);
 			return true;

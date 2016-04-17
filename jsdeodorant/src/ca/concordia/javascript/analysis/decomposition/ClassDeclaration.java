@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
+import ca.concordia.javascript.analysis.module.LibraryType;
 
 public class ClassDeclaration {
 	private AbstractIdentifier identifier;
@@ -13,8 +14,15 @@ public class ClassDeclaration {
 	private boolean isInfered;
 	private boolean hasNamespace;
 	private int instantiationCount;
+	private LibraryType libraryType;
+	private boolean isAliased;
+	// If method defines outside of the constructor, then keep LOC
+	private int extraMethodLines;
 
-	public ClassDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, boolean isInfered, boolean hasNamespace) {
+	// After inferring the class, we try to resolve the corresponding 'new' which we were not able to matched before.
+	private boolean matchedAfterInference;
+
+	public ClassDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, boolean isInfered, boolean hasNamespace, LibraryType libraryType, boolean isAliased) {
 		this.identifier = identifier;
 		this.functionDeclaration = functionDeclaration;
 		this.attributes = new TreeMap<String, AbstractExpression>();
@@ -22,6 +30,8 @@ public class ClassDeclaration {
 		this.isInfered = isInfered;
 		this.hasNamespace = hasNamespace;
 		this.instantiationCount = 0;
+		this.libraryType = libraryType;
+		this.isAliased = isAliased;
 	}
 
 	public String getName() {
@@ -48,7 +58,8 @@ public class ClassDeclaration {
 		return methods;
 	}
 
-	public void addMethod(String name, AbstractExpression expression) {
+	public void addMethod(String name, AbstractExpression expression, int locToBeAdded) {
+		this.extraMethodLines += locToBeAdded;
 		this.methods.put(name, expression);
 	}
 
@@ -94,6 +105,41 @@ public class ClassDeclaration {
 
 	public void setHasNamespace(boolean hasNamespace) {
 		this.hasNamespace = hasNamespace;
+	}
+
+	public LibraryType getLibraryType() {
+		return libraryType;
+	}
+
+	public void setLibraryType(LibraryType libraryType) {
+		this.libraryType = libraryType;
+	}
+
+	public boolean isAliased() {
+		return isAliased;
+	}
+
+	public void setAliased(boolean isAliased) {
+		this.isAliased = isAliased;
+	}
+
+	public boolean isMatchedAfterInference() {
+		return matchedAfterInference;
+	}
+
+	public void setMatchedAfterInference(boolean matchedAfterInference) {
+		this.matchedAfterInference = matchedAfterInference;
+	}
+
+	public int getExtraMethodLines() {
+		if (extraMethodLines < 0) {
+			extraMethodLines = 0;
+		}
+		return extraMethodLines;
+	}
+
+	public void setExtraMethodLines(int extraMethodLines) {
+		this.extraMethodLines = extraMethodLines;
 	}
 
 }

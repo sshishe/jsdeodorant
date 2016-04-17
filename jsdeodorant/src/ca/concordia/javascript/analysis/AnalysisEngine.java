@@ -137,6 +137,7 @@ public class AnalysisEngine {
 		}
 
 		ClassAnalysisReport.updateReport(modules);
+		ClassAnalysisReport.writeToCSV();
 		CSVOutput experimentOutput = new CSVOutput();
 		experimentOutput.aggregateReportForModule(modules);
 		experimentOutput.moduleReport(modules);

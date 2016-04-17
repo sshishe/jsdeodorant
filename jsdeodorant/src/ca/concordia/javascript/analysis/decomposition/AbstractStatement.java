@@ -5,6 +5,7 @@ import java.util.List;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.util.DebugHelper;
+import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 

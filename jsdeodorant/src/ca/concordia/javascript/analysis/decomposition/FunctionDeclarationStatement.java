@@ -6,6 +6,7 @@ import java.util.List;
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
+import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
 import com.google.common.base.Strings;

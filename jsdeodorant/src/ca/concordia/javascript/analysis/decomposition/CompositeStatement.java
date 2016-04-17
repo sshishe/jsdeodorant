@@ -5,6 +5,7 @@ import java.util.List;
 
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.abstraction.SourceElement;
+import ca.concordia.javascript.analysis.util.ExpressionExtractor;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
@@ -17,6 +18,13 @@ public class CompositeStatement extends AbstractStatement implements SourceConta
 		super(statement, type, parent);
 		statementList = new ArrayList<>();
 		expressionList = new ArrayList<>();
+		// Following lines are experimental, should be double checked!
+		ExpressionExtractor expressionExtractor = new ExpressionExtractor();
+		processFunctionInvocations(expressionExtractor.getCallExpressions(statement));
+		processVariableDeclarations(expressionExtractor.getVariableDeclarationExpressions(statement));
+		processNewExpressions(expressionExtractor.getNewExpressions(statement));
+		processArrayLiteralExpressions(expressionExtractor.getArrayLiteralExpressions(statement));
+		processAssignmentExpressions(expressionExtractor.getBinaryOperators(statement));
 	}
 
 	@Override

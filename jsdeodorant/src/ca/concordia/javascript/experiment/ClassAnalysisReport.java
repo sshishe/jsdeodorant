@@ -8,11 +8,12 @@ import org.apache.log4j.Logger;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
 import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
+import ca.concordia.javascript.analysis.module.LibraryType;
 import ca.concordia.javascript.analysis.util.SourceLocationHelper;
 
 public class ClassAnalysisReport {
 	static Logger log = Logger.getLogger(ClassAnalysisReport.class.getName());
-	private static List<ClassInstance> classes;
+	private static List<ClassReportInstance> classes;
 
 	private static void checkForInitialization() {
 		if (classes == null)
@@ -29,19 +30,24 @@ public class ClassAnalysisReport {
 	}
 
 	public static void addClass(ClassDeclaration classDeclaration, Module module) {
-		ClassInstance classInstance = new ClassInstance(module, classDeclaration);
+		ClassReportInstance classInstance = new ClassReportInstance(module, classDeclaration);
 		classInstance.setClassName(classDeclaration.getName());
 		classInstance.setClassOffset(SourceLocationHelper.getLocation(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location));
-		classInstance.setClassLOC(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line);
+		classInstance.setConstructorLOC(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.end.line - classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line - 1);
+		classInstance.setClassLOC(classInstance.getConstructorLOC() + classDeclaration.getExtraMethodLines());
 		classInstance.setPredefined(false);
-		classInstance.setHasNewExpression(false);
-		classInstance.setHasInfered(true);
+		classInstance.setHasNewExpression(!classDeclaration.isInfered());
+		classInstance.setHasInfered(classDeclaration.isInfered());
 		classInstance.setHasNamespace(classDeclaration.hasNamespace());
+		classInstance.setNumberOfMethods(classDeclaration.getMethods().size());
+		classInstance.setNumberOfAttributes(classDeclaration.getAttributes().size());
+		classInstance.setIsDeclarationInLibrary(classDeclaration.getLibraryType() == LibraryType.EXTERNAL_LIBRARY);
+		classInstance.setAliased(classDeclaration.isAliased());
 		add(classInstance);
 	}
 
 	public static void addPredefinedClass(ObjectCreation creation, Module module) {
-		ClassInstance classInstance = new ClassInstance(module, creation.getClassDeclaration());
+		ClassReportInstance classInstance = new ClassReportInstance(module, creation.getClassDeclaration());
 		classInstance.setClassName(creation.getIdentifier().toString());
 		classInstance.setPredefined(true);
 		//		classInstance.setNewExpressionFile(module.getCanonicalPath());
@@ -52,8 +58,8 @@ public class ClassAnalysisReport {
 		add(classInstance);
 	}
 
-	public static void add(ClassInstance instance) {
-		for (ClassInstance classInstance : classes) {
+	public static void add(ClassReportInstance instance) {
+		for (ClassReportInstance classInstance : classes) {
 			if (!instance.isPredefined() && !classInstance.isPredefined()) {
 				if (classInstance.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree().equals(instance.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree())) {
 					if (classInstance.hasNewExpression)
@@ -67,7 +73,7 @@ public class ClassAnalysisReport {
 		classes.add(instance);
 	}
 
-	public static List<ClassInstance> getList() {
+	public static List<ClassReportInstance> getList() {
 		return classes;
 	}
 
@@ -75,15 +81,15 @@ public class ClassAnalysisReport {
 		return classes.size();
 	}
 
-	public static ClassInstance get(String className, String file) {
-		for (ClassInstance classInstance : classes) {
+	public static ClassReportInstance get(String className, String file) {
+		for (ClassReportInstance classInstance : classes) {
 			if (classInstance.getClassName().equals(className) && classInstance.getFileName().equals(file))
 				return classInstance;
 		}
 		return null;
 	}
 
-	public static class ClassInstance {
+	public static class ClassReportInstance {
 		private ClassDeclaration classDeclaration;
 		private String className;
 		private String fileName;
@@ -94,15 +100,14 @@ public class ClassAnalysisReport {
 		private int constructorLOC;
 		private int classLOC;
 		private boolean hasNamespace;
-		private String namespace;
 		private int numberOfMethods;
 		private int numberOfAttributes;
 		private int numberOfParameters;
-		private int isDeclarationInLibrary;
+		private boolean isDeclarationInLibrary;
 		private boolean isAliased;
 		private int numberOfInstantiation;
 
-		public ClassInstance(Module module, ClassDeclaration classDeclaration) {
+		public ClassReportInstance(Module module, ClassDeclaration classDeclaration) {
 			ClassAnalysisReport.checkForInitialization();
 			this.classDeclaration = classDeclaration;
 			this.fileName = module.getSourceFile().getOriginalPath();
@@ -129,7 +134,7 @@ public class ClassAnalysisReport {
 		}
 
 		public void setClassOffset(String classOffset) {
-			this.classOffset = classOffset;
+			this.classOffset = classOffset.replace(",", "-");
 		}
 
 		public boolean isHasNewExpression() {
@@ -168,8 +173,10 @@ public class ClassAnalysisReport {
 			return constructorLOC;
 		}
 
-		public void setConstructorLOC(int constructorLOC) {
-			this.constructorLOC = constructorLOC;
+		public void setConstructorLOC(int addMethod) {
+			if (addMethod < 0)
+				addMethod = 0;
+			this.constructorLOC = addMethod;
 		}
 
 		public int getClassLOC() {
@@ -186,14 +193,6 @@ public class ClassAnalysisReport {
 
 		public void setHasNamespace(boolean hasNamespace) {
 			this.hasNamespace = hasNamespace;
-		}
-
-		public String getNamespace() {
-			return namespace;
-		}
-
-		public void setNamespace(String namespace) {
-			this.namespace = namespace;
 		}
 
 		public int getNumberOfMethods() {
@@ -220,11 +219,11 @@ public class ClassAnalysisReport {
 			this.numberOfParameters = numberOfParameters;
 		}
 
-		public int getIsDeclarationInLibrary() {
+		public boolean getIsDeclarationInLibrary() {
 			return isDeclarationInLibrary;
 		}
 
-		public void setIsDeclarationInLibrary(int isDeclarationInLibrary) {
+		public void setIsDeclarationInLibrary(boolean isDeclarationInLibrary) {
 			this.isDeclarationInLibrary = isDeclarationInLibrary;
 		}
 
@@ -267,5 +266,17 @@ public class ClassAnalysisReport {
 		public void setClassDeclaration(ClassDeclaration classDeclaration) {
 			this.classDeclaration = classDeclaration;
 		}
+	}
+
+	public static void writeToCSV() {
+		CSVFileWriter csvWriter = new CSVFileWriter("log/classes/class-declarations.csv");
+		String fileHeader = "Class name, file, Is Predefined, Class offset, has new expression, has inferred, Constructor Lines of codes, Total class Lines of codes, Has Namespace, Number of Methods, Number of attributes, Is Declaration in library?, is Aliased?, Number of instantiation";
+		csvWriter.writeToFile(fileHeader.split(","));
+		for (ClassReportInstance classReportInstance : classes) {
+			StringBuilder lineToWrite = new StringBuilder();
+			lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.isPredefined()).append(",").append(classReportInstance.classOffset).append(",").append(classReportInstance.hasNewExpression).append(",").append(classReportInstance.hasInfered).append(",").append(classReportInstance.constructorLOC).append(",").append(classReportInstance.classLOC).append(",").append(classReportInstance.hasNamespace).append(",").append(classReportInstance.getNumberOfMethods()).append(",").append(classReportInstance.getNumberOfAttributes()).append(",").append(classReportInstance.isDeclarationInLibrary).append(",").append(classReportInstance.isAliased).append(",").append(classReportInstance.getNumberOfInstantiation());
+			csvWriter.writeToFile(lineToWrite.toString().split(","));
+		}
+
 	}
 }
