@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree.Kind;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.util.SourceRange;
 
@@ -19,10 +20,13 @@ import ca.concordia.javascript.analysis.abstraction.Program;
 import ca.concordia.javascript.analysis.abstraction.SourceContainer;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
 import ca.concordia.javascript.analysis.decomposition.AbstractFunctionFragment;
+import ca.concordia.javascript.analysis.decomposition.AbstractStatement;
 import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.decomposition.CompositeStatement;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpressionNature;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationStatement;
 import ca.concordia.javascript.analysis.decomposition.ObjectLiteralExpression;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
@@ -33,6 +37,13 @@ public class ClassInferenceEngine {
 		for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
 			if (functionDeclaration.isClassDeclaration())
 				continue;
+
+			if (functionDeclaration instanceof FunctionDeclarationExpression) {
+				FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) functionDeclaration;
+				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE)
+					continue;
+			}
+
 			// angular.scenario.MyClass = ...
 			assignedClassToACompositeNameWithPropsAndMethods(module, functionDeclaration);
 
@@ -40,10 +51,69 @@ public class ClassInferenceEngine {
 			// MockSpecRunner.prototype.run = function(spec, specDone) { ... }
 			assignedMethodToProto(module, functionDeclaration);
 
+			assignedMethodToCompositeNameOutsideBody(module, functionDeclaration);
+
 			assignObjectLiteralToPrototype(module, functionDeclaration);
 		}
 
 		nowSetClassesToNotFoundByObjectCreations(module);
+	}
+
+	private static void assignedMethodToCompositeNameOutsideBody(Module module, FunctionDeclaration functionDeclaration) {
+		String functionName = null;
+		if (functionDeclaration.getRawIdentifier() != null)
+			//			if (functionDeclaration.getRawIdentifier() instanceof CompositeIdentifier)
+			//				/functionName = functionDeclaration.getRawIdentifier().asCompositeIdentifier().getMostLeftPart().toString();
+			//			else
+			functionName = functionDeclaration.getRawIdentifier().toString();
+		else
+			functionName = functionDeclaration.getName();
+
+		List<AbstractExpression> assignments = null;
+		CompositeStatement parent = null;
+		if (functionDeclaration instanceof FunctionDeclarationStatement) {
+			AbstractStatement composite = (CompositeStatement) functionDeclaration;
+			if (composite.getParent() instanceof Program) {
+				Program program = (Program) composite.getParent();
+				assignments = program.getAssignmentExpressionList();
+			} else if (composite.getParent() instanceof CompositeStatement)
+				parent = (CompositeStatement) composite.getParent();
+			else
+				return;
+		} else if (functionDeclaration instanceof FunctionDeclarationExpression) {
+			AbstractExpression abstractExpression = (AbstractExpression) functionDeclaration;
+			if (abstractExpression.getParent() instanceof Program) {
+				Program program = (Program) abstractExpression.getParent();
+				assignments = program.getAssignmentExpressionList();
+			} else if (abstractExpression.getParent() instanceof CompositeStatement)
+				parent = (CompositeStatement) abstractExpression.getParent();
+			else
+				return;
+		}
+		if (assignments == null)
+			assignments = parent.getAssignmentExpressionList();
+
+		for (AbstractExpression assignmentExpression : assignments) {
+			if (assignmentExpression.getExpression() instanceof BinaryOperatorTree) {
+				BinaryOperatorTree binaryOperatorTree = assignmentExpression.getExpression().asBinaryOperator();
+				AbstractIdentifier left = IdentifierHelper.getIdentifier(binaryOperatorTree.left);
+
+				if (left instanceof CompositeIdentifier)
+					if (functionDeclaration instanceof AbstractFunctionFragment) {
+						if (left.asCompositeIdentifier().getMostLeftPart().toString().equals(functionName)) {
+							functionDeclaration.setClassDeclaration(true);
+							boolean hasNamespace = false;
+							if (functionDeclaration instanceof FunctionDeclarationExpression)
+								hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+
+							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+							module.addClass(classDeclaration);
+							break;
+						}
+
+					}
+			}
+		}
 	}
 
 	private static void nowSetClassesToNotFoundByObjectCreations(Module module) {
@@ -83,7 +153,7 @@ public class ClassInferenceEngine {
 							if (functionDeclaration instanceof FunctionDeclarationExpression)
 								hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
 							module.addClass(classDeclaration);
 						}
 				}
@@ -108,7 +178,7 @@ public class ClassInferenceEngine {
 									if (functionDeclaration instanceof FunctionDeclarationExpression)
 										hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-									ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+									ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
 									module.addClass(classDeclaration);
 									break;
 								}
@@ -128,7 +198,7 @@ public class ClassInferenceEngine {
 													if (functionDeclaration instanceof FunctionDeclarationExpression)
 														hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-													ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false);
+													ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false);
 													module.addClass(classDeclaration);
 													break;
 												}
@@ -136,16 +206,6 @@ public class ClassInferenceEngine {
 									}
 								}
 							}
-							//							if (abstractFunctionFragment instanceof FunctionDeclaration) {
-							//								FunctionDeclaration functionToBeMatched = (FunctionDeclaration) abstractFunctionFragment;
-							//								if (checkIfFunctionNameIsCapitalize(functionToBeMatched)) {
-							//									functionToBeMatched.setClassDeclaration(true);
-							//									ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getName(), functionToBeMatched, true);
-							//									module.addClass(classDeclaration);
-							//								}
-							//							}
-							//							if (left.toString().contains("prototype"))
-							//								log.warn(left.toString());
 						}
 					}
 			}
@@ -180,7 +240,7 @@ public class ClassInferenceEngine {
 		if (functionDeclaration instanceof FunctionDeclarationExpression)
 			hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-		ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false);
+		ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false);
 		module.addClass(classDeclaration);
 	}
 
@@ -280,12 +340,50 @@ public class ClassInferenceEngine {
 				}
 			}
 		}
-		//					if (abstractFunctionFragment instanceof FunctionDeclaration) {
-		//						FunctionDeclaration functionToBeMatched = (FunctionDeclaration) abstractFunctionFragment;
-		//						if (checkIfFunctionNameIsCapitalize(functionToBeMatched))
-		//							functionToBeMatched.setClassDeclaration(true);
-		//
-		//					}
+
+		// Lookup for attributes and methods outside function but not assigned to prototype
+
+		List<AbstractExpression> assignments = null;
+		CompositeStatement parentContainer = null;
+		if (functionDeclaration instanceof FunctionDeclarationStatement) {
+			AbstractStatement composite = (CompositeStatement) functionDeclaration;
+			if (composite.getParent() instanceof Program) {
+				Program program = (Program) composite.getParent();
+				assignments = program.getAssignmentExpressionList();
+			} else if (composite.getParent() instanceof CompositeStatement)
+				parentContainer = (CompositeStatement) composite.getParent();
+			else
+				return;
+		} else if (functionDeclaration instanceof FunctionDeclarationExpression) {
+			AbstractExpression abstractExpression = (AbstractExpression) functionDeclaration;
+			if (abstractExpression.getParent() instanceof Program) {
+				Program program = (Program) abstractExpression.getParent();
+				assignments = program.getAssignmentExpressionList();
+			} else if (abstractExpression.getParent() instanceof CompositeStatement)
+				parentContainer = (CompositeStatement) abstractExpression.getParent();
+			else
+				return;
+		}
+		if (assignments == null)
+			assignments = parentContainer.getAssignmentExpressionList();
+
+		for (AbstractExpression assignmentExpression : assignments) {
+			if (assignmentExpression.getExpression() instanceof BinaryOperatorTree) {
+				BinaryOperatorTree binaryOperatorTree = assignmentExpression.getExpression().asBinaryOperator();
+				AbstractIdentifier left = IdentifierHelper.getIdentifier(binaryOperatorTree.left);
+				if (left instanceof CompositeIdentifier) {
+					if (left.asCompositeIdentifier().getMostLeftPart().toString().equals(functionDeclaration.getName())) {
+						if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
+							// Then, it's method
+							classDeclaration.addMethod(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression, 0);
+						} else {
+							// It's attribute
+							classDeclaration.addAttribtue(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private static int calculateLinesOfCodes(SourceRange sourceRange) {

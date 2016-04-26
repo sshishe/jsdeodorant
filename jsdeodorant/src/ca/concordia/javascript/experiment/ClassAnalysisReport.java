@@ -31,7 +31,12 @@ public class ClassAnalysisReport {
 
 	public static void addClass(ClassDeclaration classDeclaration, Module module) {
 		ClassReportInstance classInstance = new ClassReportInstance(module, classDeclaration);
-		classInstance.setClassName(classDeclaration.getName());
+		
+		if (classDeclaration.getRawIdentifier() != null)
+			classInstance.setClassName(classDeclaration.getRawIdentifier().toString());
+		else
+			classInstance.setClassName(classDeclaration.getName());
+
 		classInstance.setClassOffset(SourceLocationHelper.getLocation(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location));
 		classInstance.setConstructorLOC(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.end.line - classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line - 1);
 		classInstance.setClassLOC(classInstance.getConstructorLOC() + classDeclaration.getExtraMethodLines());

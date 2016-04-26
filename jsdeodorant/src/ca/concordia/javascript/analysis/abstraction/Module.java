@@ -89,7 +89,7 @@ public class Module {
 
 	public void addClass(ClassDeclaration classDeclaration) {
 		for (ClassDeclaration existingClass : classes) {
-			if (existingClass.getFunctionDeclaration().getFunctionDeclarationTree().equals(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree())) {
+			if (existingClass.getFunctionDeclaration().getName().equals(classDeclaration.getFunctionDeclaration().getName())) {
 				if (!classDeclaration.isInfered())
 					existingClass.incrementInstantiationCount();
 				return;

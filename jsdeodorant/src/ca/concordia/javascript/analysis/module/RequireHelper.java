@@ -54,7 +54,7 @@ public class RequireHelper {
 		try {
 			List<String> files = null;
 			if (moduleFile.isDirectory()) {
-				files = FileUtil.getFilesInDirectory(moduleFile.getPath());
+				files = FileUtil.getFilesInDirectory(moduleFile.getPath(), "js");
 				for (String file : files) {
 					matchWithCanonicalPath(new File(file).getCanonicalPath());
 				}

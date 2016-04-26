@@ -31,7 +31,7 @@ public class TestRunner extends Runner {
 
 	public void setDirectoryPath(String jsDirectoryPath) {
 		try {
-			getAnalysisOptions().setJsFiles(FileUtil.getFilesInDirectory(jsDirectoryPath));
+			getAnalysisOptions().setJsFiles(FileUtil.getFilesInDirectory(jsDirectoryPath, "js"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

@@ -86,7 +86,7 @@ public abstract class Runner extends CommandLineRunner {
 			return allFiles;
 		for (String directoryPath : librariesWithPath) {
 			try {
-				allFiles.addAll(FileUtil.getFilesInDirectory(directoryPath));
+				allFiles.addAll(FileUtil.getFilesInDirectory(directoryPath, "js"));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

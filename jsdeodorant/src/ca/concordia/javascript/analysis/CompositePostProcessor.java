@@ -19,10 +19,10 @@ import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
+import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpressionNature;
 import ca.concordia.javascript.analysis.decomposition.Statement;
 import ca.concordia.javascript.analysis.module.ExportHelper;
 import ca.concordia.javascript.analysis.module.RequireHelper;
-import ca.concordia.javascript.experiment.ClassAnalysisReport;
 import ca.concordia.javascript.language.PredefinedClasses;
 import ca.concordia.javascript.language.PredefinedFunctions;
 
@@ -145,14 +145,19 @@ public class CompositePostProcessor {
 
 	private static boolean matchFunctionDeclarationAndObjectCreation(ObjectCreation objectCreation, AbstractIdentifier aliasedObjectCreation, FunctionDeclaration functionDeclaration, Module module) {
 		String functionQualifiedName = functionDeclaration.getQualifiedName();
+
+//		if (functionDeclaration instanceof FunctionDeclarationExpression) {
+//			FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) functionDeclaration;
+//			if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE)
+//				return false;
+//		}
 		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
 			functionDeclaration.setClassDeclaration(true);
 
-			//ClassAnalysisReport.addClass(objectCreation, module);
 			boolean hasNamespace = false;
 			if (functionDeclaration instanceof FunctionDeclarationExpression)
 				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false, hasNamespace, module.getLibraryType(), !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
+			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, hasNamespace, module.getLibraryType(), !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
 			objectCreation.setClassDeclaration(classDeclaration, module);
 			module.addClass(classDeclaration);
 			return true;
@@ -160,12 +165,10 @@ public class CompositePostProcessor {
 		if (functionQualifiedName.equals(objectCreation.getIdentifier().toString())) {
 			functionDeclaration.setClassDeclaration(true);
 
-			//ClassAnalysisReport.addClass(objectCreation, module);
-
 			boolean hasNamespace = false;
 			if (functionDeclaration instanceof FunctionDeclarationExpression)
 				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getIdentifier(), functionDeclaration, false, hasNamespace, module.getLibraryType(), !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
+			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, hasNamespace, module.getLibraryType(), !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
 			objectCreation.setClassDeclaration(classDeclaration, module);
 			module.addClass(classDeclaration);
 			return true;

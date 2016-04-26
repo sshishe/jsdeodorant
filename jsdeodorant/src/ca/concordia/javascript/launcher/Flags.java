@@ -128,7 +128,7 @@ public class Flags {
 	}
 
 	private List<String> getFilesInDirectory() throws FileNotFoundException {
-		return FileUtil.getFilesInDirectory(directoryPath);
+		return FileUtil.getFilesInDirectory(directoryPath, "js");
 	}
 
 	public List<String> getExterns() {

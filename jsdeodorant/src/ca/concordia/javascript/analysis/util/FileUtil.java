@@ -10,7 +10,7 @@ import com.google.common.base.Strings;
 import com.google.common.io.Files;
 
 public class FileUtil {
-	public static List<String> getFilesInDirectory(String directoryPath) throws FileNotFoundException {
+	public static List<String> getFilesInDirectory(String directoryPath, String extension) throws FileNotFoundException {
 		List<String> jsFiles = new ArrayList<>();
 		if (!Strings.isNullOrEmpty(directoryPath)) {
 			File rootDir = new File(directoryPath);
@@ -19,7 +19,7 @@ public class FileUtil {
 				throw new FileNotFoundException("The directory path is not valid");
 
 			for (File f : Files.fileTreeTraverser().preOrderTraversal(rootDir)) {
-				if (f.isFile() && Files.getFileExtension(f.toPath().toString()).toLowerCase().equals("js"))
+				if (f.isFile() && Files.getFileExtension(f.toPath().toString()).toLowerCase().equals(extension))
 					jsFiles.add(f.toPath().toString());
 			}
 			return jsFiles;
@@ -31,7 +31,7 @@ public class FileUtil {
 		File file = new File(directoryPath);
 		String[] names = file.list();
 		List<String> files = new ArrayList<>();
-		if (names==null)
+		if (names == null)
 			return null;
 		for (String name : names) {
 			File f = new File(directoryPath + File.separator + name);

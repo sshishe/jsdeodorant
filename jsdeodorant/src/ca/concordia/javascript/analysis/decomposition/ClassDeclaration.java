@@ -39,7 +39,12 @@ public class ClassDeclaration {
 		//			if (identifier.asCompositeIdentifier().getMostLeftPart().toString().equals("exports") || identifier.asCompositeIdentifier().getMostLeftPart().toString().equals("module.exports"))
 		//				return identifier.asCompositeIdentifier().getRightPart().toString();
 		//		return identifier.toString();
-		return functionDeclaration.getQualifiedName();
+		//return functionDeclaration.getRawIdentifier().toString();
+		return functionDeclaration.getName().toString();
+	}
+
+	public AbstractIdentifier getRawIdentifier() {
+		return functionDeclaration.getRawIdentifier();
 	}
 
 	public void setName(AbstractIdentifier identifier) {

@@ -48,4 +48,9 @@ public class JSONReader {
 		JSONObject object = (JSONObject) array.get(index);
 		return (String) object.get(propertyName);
 	}
+
+	public JSONObject getObjectElement(JSONArray array, int index, String propertyName) {
+		JSONObject object = (JSONObject) array.get(index);
+		return object;
+	}
 }

@@ -263,8 +263,9 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 
 	@Override
 	public AbstractIdentifier getRawIdentifier() {
-		if (leftValueExpression == null)
+		if (leftValueExpression == null){
 			return null;
+		}
 		return IdentifierHelper.getIdentifier(leftValueExpression);
 	}
 }
