@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import ca.concordia.javascript.analysis.module.PackageSystem;
+
 public class AnalysisOptions {
 	private boolean classAnalysis;
 	private boolean functionAnalysis;
@@ -26,6 +28,7 @@ public class AnalysisOptions {
 	private String psqlPassword;
 	private String name;
 	private String version;
+	private PackageSystem packageSystem;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -197,5 +200,18 @@ public class AnalysisOptions {
 
 	public void setVersion(String version) {
 		this.version = version;
+	}
+
+	public void setPackageSystem(String packageSystem) {
+		if (packageSystem.toLowerCase().equals("commonjs"))
+			this.packageSystem = PackageSystem.CommonJS;
+		else if (packageSystem.toLowerCase().equals("closurelibrary"))
+			this.packageSystem = PackageSystem.ClosureLibrary;
+		else
+			this.packageSystem = PackageSystem.CommonJS;
+	}
+
+	public PackageSystem getPackageSystem() {
+		return packageSystem;
 	}
 }

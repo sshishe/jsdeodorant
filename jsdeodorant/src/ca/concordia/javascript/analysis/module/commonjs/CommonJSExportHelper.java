@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis.module;
+package ca.concordia.javascript.analysis.module.commonjs;
 
 import java.util.List;
 
@@ -13,14 +13,15 @@ import ca.concordia.javascript.analysis.abstraction.Export;
 import ca.concordia.javascript.analysis.abstraction.Module;
 import ca.concordia.javascript.analysis.abstraction.PlainIdentifier;
 import ca.concordia.javascript.analysis.decomposition.AbstractExpression;
+import ca.concordia.javascript.analysis.module.PackageExporter;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
-public class ExportHelper {
-	static Logger log = Logger.getLogger(ExportHelper.class.getName());
+public class CommonJSExportHelper implements PackageExporter {
+	static Logger log = Logger.getLogger(CommonJSExportHelper.class.getName());
 	private Module currentModule;
 	private List<Module> modules;
 
-	public ExportHelper(Module module, List<Module> modules) {
+	public CommonJSExportHelper(Module module, List<Module> modules) {
 		this.currentModule = module;
 		this.modules = modules;
 	}
@@ -34,7 +35,6 @@ public class ExportHelper {
 					return;
 				}
 		}
-
 	}
 
 	private boolean checkIfLValueIsRequireStatement(BinaryOperatorTree binaryOperator) {
@@ -43,7 +43,7 @@ public class ExportHelper {
 			return false;
 		if (lValueIdentifier.toString().contains("module.exports") || lValueIdentifier.asCompositeIdentifier().getLeftPart().toString().contains("exports")) {
 			PlainIdentifier exportIdentifier = lValueIdentifier.asCompositeIdentifier().getMostRightPart();
-			Export export = new Export(exportIdentifier.getIdentifierName(), new AbstractExpression(binaryOperator.right));
+			Export export = new Export(exportIdentifier.getIdentifierName().replace("'", ""), new AbstractExpression(binaryOperator.right));
 			currentModule.addExport(export);
 			return true;
 		}

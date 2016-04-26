@@ -19,10 +19,14 @@ import ca.concordia.javascript.analysis.abstraction.SourceElement;
 import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpressionNature;
 import ca.concordia.javascript.analysis.decomposition.Statement;
-import ca.concordia.javascript.analysis.module.ExportHelper;
-import ca.concordia.javascript.analysis.module.RequireHelper;
+import ca.concordia.javascript.analysis.module.PackageExporter;
+import ca.concordia.javascript.analysis.module.PackageImporter;
+import ca.concordia.javascript.analysis.module.PackageSystem;
+import ca.concordia.javascript.analysis.module.closurelibrary.ClosureLibraryExportHelper;
+import ca.concordia.javascript.analysis.module.closurelibrary.ClosureLibraryImportHelper;
+import ca.concordia.javascript.analysis.module.commonjs.CommonJSExportHelper;
+import ca.concordia.javascript.analysis.module.commonjs.CommonJSRequireHelper;
 import ca.concordia.javascript.language.PredefinedClasses;
 import ca.concordia.javascript.language.PredefinedFunctions;
 
@@ -45,15 +49,28 @@ public class CompositePostProcessor {
 
 	}
 
-	public static void processModules(Module module, List<Module> modules) {
-		RequireHelper requireHelper = new RequireHelper(module, modules);
-		ExportHelper exportHelper = new ExportHelper(module, modules);
+	public static void processModules(Module module, List<Module> modules, PackageSystem packageSystem) {
+		PackageImporter packageImporter = null;
+		PackageExporter packageExporter = null;
+		switch (packageSystem) {
+		case CommonJS:
+			packageImporter = new CommonJSRequireHelper(module, modules);
+			packageExporter = new CommonJSExportHelper(module, modules);
+			break;
+		case ClosureLibrary:
+			packageImporter = new ClosureLibraryImportHelper(module, modules);
+			packageExporter = new ClosureLibraryExportHelper(module, modules);
+			break;
+		default:
+			break;
+		}
+
 		Program program = module.getProgram();
 		for (SourceElement element : program.getSourceElements()) {
 			if (element instanceof Statement) {
 				Statement statement = (Statement) element;
-				requireHelper.extract(statement.getStatement());
-				exportHelper.extract(statement.getStatement());
+				packageImporter.extract(statement.getStatement());
+				packageExporter.extract(statement.getStatement());
 			}
 		}
 	}
@@ -133,9 +150,14 @@ public class CompositePostProcessor {
 				return true;
 		}
 		for (Entry<String, Module> dependency : module.getDependencies().entries()) {
-			if (objectCreation.getIdentifier() instanceof CompositeIdentifier && objectCreation.getIdentifier().asCompositeIdentifier().getMostLeftPart().equals(dependency.getKey()))
+			if (objectCreation.getIdentifier() instanceof CompositeIdentifier && objectCreation.getIdentifier().asCompositeIdentifier().getMostLeftPart().equals(dependency.getKey()) || objectCreation.getIdentifier().toString().equals(dependency.getKey()))
 				for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
-					findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreation.getIdentifier().asCompositeIdentifier().getRightPart(), functionDeclaration, dependency.getValue());
+					AbstractIdentifier objectCreationIdentifier = null;
+					if (objectCreation.getIdentifier() instanceof CompositeIdentifier)
+						objectCreationIdentifier = objectCreation.getIdentifier().asCompositeIdentifier().getRightPart();
+					else
+						objectCreationIdentifier = objectCreation.getIdentifier();
+					findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreationIdentifier, functionDeclaration, dependency.getValue());
 					if (findMatch)
 						return true;
 				}
@@ -146,11 +168,11 @@ public class CompositePostProcessor {
 	private static boolean matchFunctionDeclarationAndObjectCreation(ObjectCreation objectCreation, AbstractIdentifier aliasedObjectCreation, FunctionDeclaration functionDeclaration, Module module) {
 		String functionQualifiedName = functionDeclaration.getQualifiedName();
 
-//		if (functionDeclaration instanceof FunctionDeclarationExpression) {
-//			FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) functionDeclaration;
-//			if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE)
-//				return false;
-//		}
+		//		if (functionDeclaration instanceof FunctionDeclarationExpression) {
+		//			FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) functionDeclaration;
+		//			if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE)
+		//				return false;
+		//		}
 		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
 			functionDeclaration.setClassDeclaration(true);
 

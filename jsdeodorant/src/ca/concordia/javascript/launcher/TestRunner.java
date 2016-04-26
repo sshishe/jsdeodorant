@@ -50,6 +50,7 @@ public class TestRunner extends Runner {
 		getAnalysisOptions().setModuleAnlysis(true);
 		getAnalysisOptions().setFunctionAnalysis(true);
 		getAnalysisOptions().setAnalyzeLibrariesForClasses(true);
+		getAnalysisOptions().setPackageSystem("CommonJS");
 		return getAnalysisOptions();
 	}
 

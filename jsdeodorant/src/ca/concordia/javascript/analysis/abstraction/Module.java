@@ -11,7 +11,6 @@ import com.google.javascript.jscomp.SourceFile;
 
 import ca.concordia.javascript.analysis.decomposition.ClassDeclaration;
 import ca.concordia.javascript.analysis.module.LibraryType;
-import ca.concordia.javascript.experiment.ClassAnalysisReport.ClassReportInstance;
 
 public class Module {
 	private List<String> messages;

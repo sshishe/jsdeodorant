@@ -90,9 +90,7 @@ public class AnalysisEngine {
 				addBuiltinDepdendencies(module, analysisOption, modules);
 			}
 			if (analysisOption.hasModuleAnalysis())
-				CompositePostProcessor.processModules(module, modules);
-			else
-				CompositePostProcessor.addDepndenciesBlindly(module, modules);
+				CompositePostProcessor.processModules(module, modules, analysisOption.getPackageSystem());
 
 			if (analysisOption.hasClassAnlysis())
 				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE)

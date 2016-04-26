@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis.module;
+package ca.concordia.javascript.analysis.module.commonjs;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,19 +15,20 @@ import com.google.javascript.jscomp.parsing.parser.trees.VariableStatementTree;
 
 import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.javascript.analysis.abstraction.Module;
+import ca.concordia.javascript.analysis.module.PackageImporter;
 import ca.concordia.javascript.analysis.util.FileUtil;
 import ca.concordia.javascript.analysis.util.IdentifierHelper;
 import ca.concordia.javascript.analysis.util.JSONReader;
 import ca.concordia.javascript.analysis.util.StringUtil;
 
-public class RequireHelper {
-	static Logger log = Logger.getLogger(RequireHelper.class.getName());
+public class CommonJSRequireHelper implements PackageImporter {
+	static Logger log = Logger.getLogger(CommonJSRequireHelper.class.getName());
 	private AbstractIdentifier requireIdentifier;
 	private File moduleFile;
 	private Module currentModule;
 	private List<Module> modules;
 
-	public RequireHelper(Module module, List<Module> modules) {
+	public CommonJSRequireHelper(Module module, List<Module> modules) {
 		this.currentModule = module;
 		this.modules = modules;
 	}

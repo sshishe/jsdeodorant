@@ -38,6 +38,9 @@ public class Flags {
 	@Option(name = "-directory_path", hidden = true, usage = "Directory path for javascript project")
 	private String directoryPath;
 
+	@Option(name = "-package-system", hidden = true, usage = "Package system including CommonJS and ClosureLibrary")
+	private String packageSystem;
+
 	@Option(name = "-disable_log", hidden = true, usage = "Enable logging mechanism")
 	private boolean disableLog = false;
 
@@ -185,5 +188,9 @@ public class Flags {
 
 	public String getVersion() {
 		return version;
+	}
+
+	public String getPackageSystem() {
+		return packageSystem;
 	}
 }

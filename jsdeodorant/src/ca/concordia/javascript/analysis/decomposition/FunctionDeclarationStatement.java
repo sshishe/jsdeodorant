@@ -3,16 +3,15 @@ package ca.concordia.javascript.analysis.decomposition;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
-import ca.concordia.javascript.analysis.abstraction.SourceContainer;
-import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
-import ca.concordia.javascript.analysis.util.ExpressionExtractor;
-import ca.concordia.javascript.analysis.util.IdentifierHelper;
-
 import com.google.common.base.Strings;
 import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+
+import ca.concordia.javascript.analysis.abstraction.AbstractIdentifier;
+import ca.concordia.javascript.analysis.abstraction.SourceContainer;
+import ca.concordia.javascript.analysis.abstraction.StatementProcessor;
+import ca.concordia.javascript.analysis.util.IdentifierHelper;
 
 public class FunctionDeclarationStatement extends CompositeStatement implements FunctionDeclaration, Identifiable {
 	private AbstractIdentifier identifier;
