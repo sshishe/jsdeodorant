@@ -11,11 +11,11 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import ca.concordia.javascript.analysis.abstraction.FunctionInvocation;
-import ca.concordia.javascript.analysis.abstraction.Module;
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclaration;
-import ca.concordia.javascript.analysis.decomposition.FunctionDeclarationExpression;
-import ca.concordia.javascript.launcher.TestRunner;
+import ca.concordia.jsdeodorant.analysis.abstraction.FunctionInvocation;
+import ca.concordia.jsdeodorant.analysis.abstraction.Module;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
+import ca.concordia.jsdeodorant.launcher.TestRunner;
 
 public class NamespaceTest {
 

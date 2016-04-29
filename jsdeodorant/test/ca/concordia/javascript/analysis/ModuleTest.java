@@ -11,10 +11,10 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import ca.concordia.javascript.analysis.abstraction.Module;
-import ca.concordia.javascript.analysis.abstraction.ObjectCreation;
-import ca.concordia.javascript.analysis.util.FileUtil;
-import ca.concordia.javascript.launcher.TestRunner;
+import ca.concordia.jsdeodorant.analysis.abstraction.Module;
+import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
+import ca.concordia.jsdeodorant.analysis.util.FileUtil;
+import ca.concordia.jsdeodorant.launcher.TestRunner;
 
 public class ModuleTest {
 	private static TestRunner testRunner;

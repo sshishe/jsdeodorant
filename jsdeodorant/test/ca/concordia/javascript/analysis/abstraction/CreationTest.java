@@ -8,7 +8,8 @@ import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
-import ca.concordia.javascript.launcher.TestRunner;
+import ca.concordia.jsdeodorant.analysis.abstraction.Module;
+import ca.concordia.jsdeodorant.launcher.TestRunner;
 
 public class CreationTest {
 	private static TestRunner testRunner;
