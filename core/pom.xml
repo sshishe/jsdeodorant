@@ -27,7 +27,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>ca.concordia.javascript.launcher.CLIRunner</mainClass>
+							<mainClass>ca.concordia.jsdeodorant.launcher.CLIRunner</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
