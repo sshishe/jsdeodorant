@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis;
+package ca.concordia.jsdeodorant.analysis;
 
 import static org.junit.Assert.assertTrue;
 

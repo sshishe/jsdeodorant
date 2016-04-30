@@ -46,8 +46,6 @@ public class TestRunner extends Runner {
 		getAnalysisOptions().setOutputToCSV(false);
 		getAnalysisOptions().setLogDisabled(true);
 		getAnalysisOptions().setOutputToDB(false);
-		getAnalysisOptions().setClassAnalysis(true);
-		getAnalysisOptions().setModuleAnlysis(true);
 		getAnalysisOptions().setFunctionAnalysis(true);
 		getAnalysisOptions().setAnalyzeLibrariesForClasses(true);
 		getAnalysisOptions().setPackageSystem("CommonJS");

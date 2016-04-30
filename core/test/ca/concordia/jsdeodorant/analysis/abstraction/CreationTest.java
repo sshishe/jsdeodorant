@@ -1,4 +1,4 @@
-package ca.concordia.javascript.analysis.abstraction;
+package ca.concordia.jsdeodorant.analysis.abstraction;
 
 import static org.junit.Assert.*;
 
