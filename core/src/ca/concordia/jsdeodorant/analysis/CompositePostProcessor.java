@@ -49,16 +49,18 @@ public class CompositePostProcessor {
 
 	}
 
-	public static void processModules(Module module, List<Module> modules, PackageSystem packageSystem) {
+	public static void processModules(Module module, List<Module> modules, PackageSystem packageSystem, boolean onlyExports) {
 		PackageImporter packageImporter = null;
 		PackageExporter packageExporter = null;
 		switch (packageSystem) {
 		case CommonJS:
-			packageImporter = new CommonJSRequireHelper(module, modules);
+			if (!onlyExports)
+				packageImporter = new CommonJSRequireHelper(module, modules);
 			packageExporter = new CommonJSExportHelper(module, modules);
 			break;
 		case ClosureLibrary:
-			packageImporter = new ClosureLibraryImportHelper(module, modules);
+			if (!onlyExports)
+				packageImporter = new ClosureLibraryImportHelper(module, modules);
 			packageExporter = new ClosureLibraryExportHelper(module, modules);
 			break;
 		default:
@@ -69,7 +71,8 @@ public class CompositePostProcessor {
 		for (SourceElement element : program.getSourceElements()) {
 			if (element instanceof Statement) {
 				Statement statement = (Statement) element;
-				packageImporter.extract(statement.getStatement());
+				if (!onlyExports)
+					packageImporter.extract(statement.getStatement());
 				packageExporter.extract(statement.getStatement());
 			}
 		}

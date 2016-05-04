@@ -77,7 +77,12 @@ public class AnalysisEngine {
 			for (ParseTree sourceElement : programTree.sourceElements) {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
-			modules.add(new Module(program, sourceFile, scriptAnalyzer.getMessages()));
+
+			Module module = new Module(program, sourceFile, scriptAnalyzer.getMessages());
+			modules.add(module);
+
+			if (analysisOption.hasModuleAnalysis())
+				CompositePostProcessor.processModules(module, modules, analysisOption.getPackageSystem(), true);
 		}
 
 		for (Module module : modules) {
@@ -90,7 +95,7 @@ public class AnalysisEngine {
 				addBuiltinDepdendencies(module, analysisOption, modules);
 			}
 			if (analysisOption.hasModuleAnalysis())
-				CompositePostProcessor.processModules(module, modules, analysisOption.getPackageSystem());
+				CompositePostProcessor.processModules(module, modules, analysisOption.getPackageSystem(), false);
 
 			if (analysisOption.hasClassAnlysis())
 				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE)

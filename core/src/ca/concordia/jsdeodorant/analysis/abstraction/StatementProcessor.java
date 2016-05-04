@@ -267,20 +267,28 @@ public class StatementProcessor {
 		else if (statement instanceof ExpressionStatementTree) {
 			ExpressionStatementTree expressionStatement = statement.asExpressionStatement();
 			FunctionDeclarationExpression functionDeclarationExpression = null;
+			ParseTree parentOperand = expressionStatement.expression;
 			ObjectLiteralExpression objectLiteralExpression = null;
-			if (expressionStatement.expression instanceof BinaryOperatorTree) {
-				BinaryOperatorTree binaryOperatorTree = expressionStatement.expression.asBinaryOperator();
-				if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
-					FunctionDeclarationTree functionDeclarationTree = binaryOperatorTree.right.asFunctionDeclaration();
+			if (parentOperand instanceof BinaryOperatorTree) {
+				BinaryOperatorTree binaryOperatorTree = parentOperand.asBinaryOperator();
+				ParseTree operand = binaryOperatorTree.right;
+				while (operand instanceof BinaryOperatorTree && operand.asBinaryOperator().right instanceof BinaryOperatorTree) {
+					operand = operand.asBinaryOperator().right.asBinaryOperator();
+				}
+				if (operand instanceof BinaryOperatorTree)
+					operand = operand.asBinaryOperator().right;
+				parentOperand = operand;
+				if (operand instanceof FunctionDeclarationTree) {
+					FunctionDeclarationTree functionDeclarationTree = operand.asFunctionDeclaration();
 					functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.BINARY_OPERATION, binaryOperatorTree.left, parent);
-				} else if (binaryOperatorTree.right instanceof ObjectLiteralExpressionTree) {
-					ObjectLiteralExpressionTree objectLiteralExpressionTree = binaryOperatorTree.right.asObjectLiteralExpression();
+				} else if (operand instanceof ObjectLiteralExpressionTree) {
+					ObjectLiteralExpressionTree objectLiteralExpressionTree = operand.asObjectLiteralExpression();
 					objectLiteralExpression = new ObjectLiteralExpression(objectLiteralExpressionTree, parent);
-				} else if (binaryOperatorTree.right instanceof CallExpressionTree) {
+				} else if (operand instanceof CallExpressionTree) {
 					// IIFE is in a function and left identifier followed by
 					// equal operator followed by function declaration
 					// expression
-					CallExpressionTree callExpressionTree = binaryOperatorTree.right.asCallExpression();
+					CallExpressionTree callExpressionTree = operand.asCallExpression();
 					if (callExpressionTree.operand instanceof ParenExpressionTree) {
 						ParenExpressionTree parenExpressionTree = callExpressionTree.operand.asParenExpression();
 						if (parenExpressionTree.expression instanceof FunctionDeclarationTree) {
@@ -288,8 +296,8 @@ public class StatementProcessor {
 							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
 						}
 					}
-				} else if (binaryOperatorTree.right instanceof ArrayLiteralExpressionTree) {
-					ArrayLiteralExpressionTree arrayLiteralExpression = binaryOperatorTree.right.asArrayLiteralExpression();
+				} else if (operand instanceof ArrayLiteralExpressionTree) {
+					ArrayLiteralExpressionTree arrayLiteralExpression = operand.asArrayLiteralExpression();
 					for (ParseTree node : arrayLiteralExpression.elements) {
 						if (node instanceof FunctionDeclarationTree) {
 							FunctionDeclarationTree functionDeclarationTree = node.asFunctionDeclaration();
@@ -297,12 +305,13 @@ public class StatementProcessor {
 						}
 					}
 				}
-			} else if (expressionStatement.expression instanceof CallExpressionTree) {
+			}
+			if (parentOperand instanceof CallExpressionTree) {
 				// if IIFE is in the root without any birnary operation.
 				// (function(){
 				// console.log('root IIFE');
 				// })();
-				CallExpressionTree callExpressionTree = expressionStatement.expression.asCallExpression();
+				CallExpressionTree callExpressionTree = parentOperand.asCallExpression();
 				if (callExpressionTree.operand instanceof ParenExpressionTree) {
 					ParenExpressionTree parenExpressionTree = callExpressionTree.operand.asParenExpression();
 					if (parenExpressionTree.expression instanceof FunctionDeclarationTree) {
@@ -325,8 +334,8 @@ public class StatementProcessor {
 						functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.PARAMETER, parent);
 					}
 				}
-			} else if (expressionStatement.expression instanceof ParenExpressionTree) {
-				ParenExpressionTree parenExpression = expressionStatement.expression.asParenExpression();
+			} else if (parentOperand instanceof ParenExpressionTree) {
+				ParenExpressionTree parenExpression = parentOperand.asParenExpression();
 				if (parenExpression.expression instanceof CallExpressionTree) {
 					CallExpressionTree callExpression = parenExpression.expression.asCallExpression();
 					if (callExpression.operand instanceof FunctionDeclarationTree) {
@@ -339,6 +348,9 @@ public class StatementProcessor {
 							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
 						}
 					}
+				} else if (parenExpression.expression instanceof FunctionDeclarationTree) {
+					FunctionDeclarationTree functionDeclarationTree = parenExpression.expression.asFunctionDeclaration();
+					functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
 				}
 			}
 			Statement child = new Statement(expressionStatement, StatementType.EXPRESSION, parent);

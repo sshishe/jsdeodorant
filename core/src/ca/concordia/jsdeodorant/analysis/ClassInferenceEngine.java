@@ -28,6 +28,7 @@ import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpres
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.ObjectLiteralExpression;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
+import ca.concordia.jsdeodorant.analysis.util.StringUtil;
 
 public class ClassInferenceEngine {
 	static Logger log = Logger.getLogger(ClassInferenceEngine.class.getName());
@@ -42,6 +43,8 @@ public class ClassInferenceEngine {
 				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE)
 					continue;
 			}
+
+			assignedMethodsOrAttributesInsideClassBody(module, functionDeclaration);
 
 			// angular.scenario.MyClass = ...
 			assignedClassToACompositeNameWithPropsAndMethods(module, functionDeclaration);
@@ -99,16 +102,17 @@ public class ClassInferenceEngine {
 
 				if (left instanceof CompositeIdentifier)
 					if (functionDeclaration instanceof AbstractFunctionFragment) {
-						if (left.asCompositeIdentifier().getMostLeftPart().toString().equals(functionName)) {
-							functionDeclaration.setClassDeclaration(true);
-							boolean hasNamespace = false;
-							if (functionDeclaration instanceof FunctionDeclarationExpression)
-								hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+						if (binaryOperatorTree.right instanceof FunctionDeclarationTree)
+							if (left.asCompositeIdentifier().getMostLeftPart().toString().equals(functionName)) {
+								functionDeclaration.setClassDeclaration(true);
+								boolean hasNamespace = false;
+								if (functionDeclaration instanceof FunctionDeclarationExpression)
+									hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
-							module.addClass(classDeclaration);
-							break;
-						}
+								ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+								module.addClass(classDeclaration);
+								break;
+							}
 
 					}
 			}
@@ -211,6 +215,29 @@ public class ClassInferenceEngine {
 		}
 	}
 
+	private static void assignedMethodsOrAttributesInsideClassBody(Module module, FunctionDeclaration functionDeclaration) {
+		for (AbstractExpression assignmentExpression : functionDeclaration.getAssignments()) {
+			if (assignmentExpression.getExpression() instanceof BinaryOperatorTree) {
+				BinaryOperatorTree binaryOperatorTree = assignmentExpression.getExpression().asBinaryOperator();
+				AbstractIdentifier left = IdentifierHelper.getIdentifier(binaryOperatorTree.left);
+				if (left instanceof CompositeIdentifier) {
+					if (left.asCompositeIdentifier().toString().contains("this.")) {
+						boolean hasNamespace = false;
+						if (functionDeclaration instanceof FunctionDeclarationExpression)
+							hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+						if (checkIfFunctionNameIsCapitalize(functionDeclaration)) {
+							//log.warn(functionDeclaration.getIdentifier());
+							functionDeclaration.setClassDeclaration(true);
+							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+							module.addClass(classDeclaration);
+						}
+					}
+				}
+			}
+		}
+
+	}
+
 	private static void assignedClassToACompositeNameWithPropsAndMethods(Module module, FunctionDeclaration functionDeclaration) {
 		if (functionDeclaration.getRawIdentifier() != null)
 			if (functionDeclaration.getRawIdentifier().toString().contains("prototype")) {
@@ -244,13 +271,14 @@ public class ClassInferenceEngine {
 	}
 
 	private static boolean checkIfFunctionNameIsCapitalize(FunctionDeclaration function) {
-		return true;
-		//		if (function.getIdentifier() != null)
-		//			if (!StringUtil.isNullOrEmpty(function.getIdentifier().toString()))
-		//				if (Character.isUpperCase(function.getIdentifier().toString().charAt(0)))
-		//					return true;
-		//		log.warn("The founded class is not first letter capitalized!");
-		//		return false;
+		if (function.getIdentifier() != null)
+			if (!StringUtil.isNullOrEmpty(function.getIdentifier().toString()))
+				if (function.getIdentifier() instanceof CompositeIdentifier) {
+					if (Character.isUpperCase(function.getIdentifier().asCompositeIdentifier().getMostRightPart().toString().charAt(0)))
+						return true;
+				} else if (Character.isUpperCase(function.getIdentifier().toString().charAt(0)))
+					return true;
+		return false;
 	}
 
 	public static void analyzeMethodsAndAttributes(Module module) {
