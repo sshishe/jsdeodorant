@@ -103,7 +103,7 @@ public class ClassInferenceEngine {
 				if (left instanceof CompositeIdentifier)
 					if (functionDeclaration instanceof AbstractFunctionFragment) {
 						if (binaryOperatorTree.right instanceof FunctionDeclarationTree)
-							if (left.asCompositeIdentifier().getMostLeftPart().toString().equals(functionName)) {
+							if (left.toString().contains(functionName+".prototype")) {
 								functionDeclaration.setClassDeclaration(true);
 								boolean hasNamespace = false;
 								if (functionDeclaration instanceof FunctionDeclarationExpression)
