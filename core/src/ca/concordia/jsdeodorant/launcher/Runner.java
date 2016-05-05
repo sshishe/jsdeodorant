@@ -74,7 +74,9 @@ public abstract class Runner extends CommandLineRunner {
 		if (jsFiles != null)
 			addInputsFromFile(jsFiles);
 		addInputsFromFile(extractFilesFromLibraries(analysisOptions.getBuiltInLibraries()));
-		addExternsFromFile(analysisOptions.getExterns());
+		List<String> optionsExterns = analysisOptions.getExterns();
+		if (optionsExterns != null)
+			addExternsFromFile(optionsExterns);
 		AnalysisEngine analysisEngine = new AnalysisEngine(createExtendedCompiler(), createOptions(), inputs.build(), externs.build());
 		log.debug("analysis starts");
 		List<Module> results = analysisEngine.run(analysisOptions);

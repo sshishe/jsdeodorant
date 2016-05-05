@@ -138,7 +138,7 @@ public class AnalysisEngine {
 				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + classDeclaration.getAttributes().size() + " / methods:" + classDeclaration.getMethods().size() + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount() + " Has namespace:" + classDeclaration.hasNamespace());
 			}
 		}
-		if (!analysisOption.isOutputToCSV()){
+		if (analysisOption.isOutputToCSV()){
 			ClassAnalysisReport.updateReport(modules);
 			ClassAnalysisReport.writeToCSV();
 			CSVOutput experimentOutput = new CSVOutput();
