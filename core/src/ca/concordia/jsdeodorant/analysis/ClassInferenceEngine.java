@@ -339,24 +339,22 @@ public class ClassInferenceEngine {
 				BinaryOperatorTree binaryOperatorTree = assignmentExpression.getExpression().asBinaryOperator();
 				AbstractIdentifier left = IdentifierHelper.getIdentifier(binaryOperatorTree.left);
 				if (left instanceof CompositeIdentifier) {
-					if (classDeclaration.getName().equals(left.asCompositeIdentifier().getMostLeftPart().toString()))
-						if (((CompositeIdentifier) left).getRightPart().toString().contains("prototype")) {
-							if (binaryOperatorTree.right instanceof ObjectLiteralExpressionTree) {
-								ObjectLiteralExpressionTree objectLiteralExpression = binaryOperatorTree.right.asObjectLiteralExpression();
-								for (ObjectLiteralExpression objExpression : objectLiteralExpressionList) {
-									if (objExpression.getExpression().equals(objectLiteralExpression)) {
-										extractMethodsFromObjectLiteral(objExpression, classDeclaration, module);
-									}
+					if (left.asCompositeIdentifier().toString().contains(functionDeclaration.getName()) && left.asCompositeIdentifier().toString().contains(".prototype")) {
+						if (binaryOperatorTree.right instanceof ObjectLiteralExpressionTree) {
+							ObjectLiteralExpressionTree objectLiteralExpression = binaryOperatorTree.right.asObjectLiteralExpression();
+							for (ObjectLiteralExpression objExpression : objectLiteralExpressionList) {
+								if (objExpression.getExpression().equals(objectLiteralExpression)) {
+									extractMethodsFromObjectLiteral(objExpression, classDeclaration, module);
 								}
 							}
-							if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
-								// Then, it's method
-								classDeclaration.addMethod(left.asCompositeIdentifier().getMostRightPart().toString(), assignmentExpression, calculateLinesOfCodes(binaryOperatorTree.right.asFunctionDeclaration().functionBody.location));
-							} else {
-								// It's attribute
-								//classDeclaration.addAttribtue(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression);
-							}
+						} else if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
+							// Then, it's method
+							classDeclaration.addMethod(left.asCompositeIdentifier().getMostRightPart().toString(), assignmentExpression, calculateLinesOfCodes(binaryOperatorTree.right.asFunctionDeclaration().functionBody.location));
+						} else {
+							// It's attribute
+							//classDeclaration.addAttribtue(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression);
 						}
+					}
 				}
 			}
 		}
