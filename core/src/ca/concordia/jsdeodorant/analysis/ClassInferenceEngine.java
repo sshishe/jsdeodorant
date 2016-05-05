@@ -109,7 +109,7 @@ public class ClassInferenceEngine {
 								if (functionDeclaration instanceof FunctionDeclarationExpression)
 									hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-								ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+								ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
 								module.addClass(classDeclaration);
 								break;
 							} else if (left.asCompositeIdentifier().getMostLeftPart().toString().contains(functionName)) {
@@ -118,7 +118,7 @@ public class ClassInferenceEngine {
 								if (functionDeclaration instanceof FunctionDeclarationExpression)
 									hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-								ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+								ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
 								module.addClass(classDeclaration);
 								break;
 							}
@@ -165,7 +165,7 @@ public class ClassInferenceEngine {
 							if (functionDeclaration instanceof FunctionDeclarationExpression)
 								hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
 							module.addClass(classDeclaration);
 						}
 				}
@@ -190,7 +190,7 @@ public class ClassInferenceEngine {
 									if (functionDeclaration instanceof FunctionDeclarationExpression)
 										hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-									ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+									ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
 									module.addClass(classDeclaration);
 									break;
 								}
@@ -210,7 +210,7 @@ public class ClassInferenceEngine {
 													if (functionDeclaration instanceof FunctionDeclarationExpression)
 														hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-													ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false);
+													ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false, module);
 													module.addClass(classDeclaration);
 													break;
 												}
@@ -237,7 +237,7 @@ public class ClassInferenceEngine {
 						if (checkIfFunctionNameIsCapitalize(functionDeclaration)) {
 							//log.warn(functionDeclaration.getIdentifier());
 							functionDeclaration.setClassDeclaration(true);
-							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
 							module.addClass(classDeclaration);
 						}
 					}
@@ -275,7 +275,7 @@ public class ClassInferenceEngine {
 		if (functionDeclaration instanceof FunctionDeclarationExpression)
 			hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 
-		ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false);
+		ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false, module);
 		module.addClass(classDeclaration);
 	}
 

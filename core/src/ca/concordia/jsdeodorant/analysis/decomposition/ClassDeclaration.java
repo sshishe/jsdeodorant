@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
+import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 
 public class ClassDeclaration {
@@ -21,10 +22,12 @@ public class ClassDeclaration {
 
 	// After inferring the class, we try to resolve the corresponding 'new' which we were not able to matched before.
 	private boolean matchedAfterInference;
+	private Module parentModule;
 
-	public ClassDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, boolean isInfered, boolean hasNamespace, LibraryType libraryType, boolean isAliased) {
+	public ClassDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, boolean isInfered, boolean hasNamespace, LibraryType libraryType, boolean isAliased, Module parentModule) {
 		this.identifier = identifier;
 		this.functionDeclaration = functionDeclaration;
+		this.setParentModule(parentModule);
 		this.attributes = new TreeMap<String, AbstractExpression>();
 		this.methods = new TreeMap<String, AbstractExpression>();
 		this.isInfered = isInfered;
@@ -145,6 +148,14 @@ public class ClassDeclaration {
 
 	public void setExtraMethodLines(int extraMethodLines) {
 		this.extraMethodLines = extraMethodLines;
+	}
+
+	public Module getParentModule() {
+		return parentModule;
+	}
+
+	public void setParentModule(Module parentModule) {
+		this.parentModule = parentModule;
 	}
 
 }

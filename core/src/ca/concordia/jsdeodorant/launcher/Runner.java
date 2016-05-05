@@ -70,7 +70,9 @@ public abstract class Runner extends CommandLineRunner {
 		externs = ImmutableList.builder();
 		if (analysisOptions.isLogDisabled())
 			LogManager.getLoggerRepository().setThreshold(Level.OFF);
-		addInputsFromFile(analysisOptions.getJsFiles());
+		List<String> jsFiles = analysisOptions.getJsFiles();
+		if (jsFiles != null)
+			addInputsFromFile(jsFiles);
 		addInputsFromFile(extractFilesFromLibraries(analysisOptions.getBuiltInLibraries()));
 		List<String> optionsExterns = analysisOptions.getExterns();
 		if (optionsExterns != null)
