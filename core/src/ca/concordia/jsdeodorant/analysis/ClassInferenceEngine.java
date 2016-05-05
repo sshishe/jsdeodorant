@@ -103,7 +103,16 @@ public class ClassInferenceEngine {
 				if (left instanceof CompositeIdentifier)
 					if (functionDeclaration instanceof AbstractFunctionFragment) {
 						if (binaryOperatorTree.right instanceof FunctionDeclarationTree)
-							if (left.toString().contains(functionName+".prototype")) {
+							if (left.toString().contains(functionName + ".prototype")) {
+								functionDeclaration.setClassDeclaration(true);
+								boolean hasNamespace = false;
+								if (functionDeclaration instanceof FunctionDeclarationExpression)
+									hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+
+								ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false);
+								module.addClass(classDeclaration);
+								break;
+							} else if (left.asCompositeIdentifier().getMostLeftPart().toString().contains(functionName)) {
 								functionDeclaration.setClassDeclaration(true);
 								boolean hasNamespace = false;
 								if (functionDeclaration instanceof FunctionDeclarationExpression)
@@ -247,9 +256,9 @@ public class ClassInferenceEngine {
 					for (FunctionDeclaration functionToBeMatched : module.getProgram().getFunctionDeclarationList()) {
 						if (functionToBeMatched.getIdentifier() != null) {
 							if (functionToBeMatched.getIdentifier().toString().equals(functionDeclaration.getRawIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
-								if (checkIfFunctionNameIsCapitalize(functionDeclaration)) {
-									closestFunctionToBeMatched = functionToBeMatched;
-								}
+								//	if (checkIfFunctionNameIsCapitalize(functionDeclaration)) {
+								closestFunctionToBeMatched = functionToBeMatched;
+								//	}
 							}
 						}
 					}

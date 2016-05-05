@@ -171,11 +171,6 @@ public class CompositePostProcessor {
 	private static boolean matchFunctionDeclarationAndObjectCreation(ObjectCreation objectCreation, AbstractIdentifier aliasedObjectCreation, FunctionDeclaration functionDeclaration, Module module) {
 		String functionQualifiedName = functionDeclaration.getQualifiedName();
 
-		//		if (functionDeclaration instanceof FunctionDeclarationExpression) {
-		//			FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) functionDeclaration;
-		//			if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE)
-		//				return false;
-		//		}
 		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
 			functionDeclaration.setClassDeclaration(true);
 
@@ -187,7 +182,7 @@ public class CompositePostProcessor {
 			module.addClass(classDeclaration);
 			return true;
 		}
-		if (functionQualifiedName.equals(objectCreation.getIdentifier().toString())) {
+		if (functionQualifiedName.equals(objectCreation.getIdentifier().toString()) || functionDeclaration.getRawIdentifier() != null && functionDeclaration.getRawIdentifier().toString().equals(objectCreation.getIdentifier().toString())) {
 			functionDeclaration.setClassDeclaration(true);
 
 			boolean hasNamespace = false;
