@@ -1,15 +1,12 @@
 package ca.concordia.jsdeodorant.analysis;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
-import com.google.common.collect.Multimap;
-
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.CompositeIdentifier;
+import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.FunctionInvocation;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
@@ -104,22 +101,22 @@ public class CompositePostProcessor {
 				if (nodeSpecificFunction(functionInvocation, module.getDependencies()))
 					continue;
 			} else
-				for (Map.Entry<String, Module> dependency : module.getDependencies().entries()) {
-					if (dependency.getKey().equals(functionInvocation.getIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
-						for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
+				for (Dependency dependency : module.getDependencies()) {
+					if (dependency.getName().equals(functionInvocation.getIdentifier().asCompositeIdentifier().getMostLeftPart().toString())) {
+						for (FunctionDeclaration functionDeclaration : dependency.getDependency().getProgram().getFunctionDeclarationList()) {
 							if (functionDeclaration.getName().contains(functionInvocation.getAliasedIdentifier().asCompositeIdentifier().getRightPart().toString()))
 								//if (functionDeclaration.getName().toLowerCase().contains(functionInvocation.getAliasedIdentifier().toString().toLowerCase()))
-								functionInvocation.setFunctionDeclaration(functionDeclaration, dependency.getValue());
+								functionInvocation.setFunctionDeclaration(functionDeclaration, dependency.getDependency());
 						}
 					}
 				}
 		}
 	}
 
-	private static boolean nodeSpecificFunction(FunctionInvocation functionInvocation, Multimap<String, Module> map) {
-		for (Map.Entry<String, Module> dependency : map.entries()) {
-			if (dependency.getKey().equals("module"))
-				if (inspectFunctions(functionInvocation, dependency.getValue()))
+	private static boolean nodeSpecificFunction(FunctionInvocation functionInvocation, List<Dependency> dependencies) {
+		for (Dependency dependency : dependencies) {
+			if (dependency.getName().equals("module"))
+				if (inspectFunctions(functionInvocation, dependency.getDependency()))
 					return true;
 		}
 		return false;
@@ -152,15 +149,15 @@ public class CompositePostProcessor {
 			if (findMatch)
 				return true;
 		}
-		for (Entry<String, Module> dependency : module.getDependencies().entries()) {
-			if (objectCreation.getIdentifier() instanceof CompositeIdentifier && objectCreation.getIdentifier().asCompositeIdentifier().getMostLeftPart().equals(dependency.getKey()) || objectCreation.getIdentifier().toString().equals(dependency.getKey()))
-				for (FunctionDeclaration functionDeclaration : dependency.getValue().getProgram().getFunctionDeclarationList()) {
+		for (Dependency dependency : module.getDependencies()) {
+			if (objectCreation.getIdentifier() instanceof CompositeIdentifier && objectCreation.getIdentifier().asCompositeIdentifier().getMostLeftPart().equals(dependency.getName()) || objectCreation.getIdentifier().toString().equals(dependency.getName()))
+				for (FunctionDeclaration functionDeclaration : dependency.getDependency().getProgram().getFunctionDeclarationList()) {
 					AbstractIdentifier objectCreationIdentifier = null;
 					if (objectCreation.getIdentifier() instanceof CompositeIdentifier)
 						objectCreationIdentifier = objectCreation.getIdentifier().asCompositeIdentifier().getRightPart();
 					else
 						objectCreationIdentifier = objectCreation.getIdentifier();
-					findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreationIdentifier, functionDeclaration, dependency.getValue());
+					findMatch = matchFunctionDeclarationAndObjectCreation(objectCreation, objectCreationIdentifier, functionDeclaration, dependency.getDependency());
 					if (findMatch)
 						return true;
 				}

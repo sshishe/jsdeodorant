@@ -9,6 +9,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.Export;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
+import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.module.PackageImporter;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 
@@ -35,7 +36,7 @@ public class ClosureLibraryImportHelper implements PackageImporter {
 							continue;
 						for (Export export : module.getExports()) {
 							if (importName.toString().replace("'", "").equals(export.getName()))
-								this.currentModule.addDependency(importName.toString().replace("'", ""), module);
+								this.currentModule.addDependency(importName.toString().replace("'", ""), module, new AbstractExpression(expressionStatement.expression));
 						}
 					}
 				}

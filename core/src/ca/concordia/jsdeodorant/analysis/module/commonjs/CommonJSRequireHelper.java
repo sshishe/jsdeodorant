@@ -15,6 +15,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.VariableStatementTree;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
+import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.module.PackageImporter;
 import ca.concordia.jsdeodorant.analysis.util.FileUtil;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
@@ -38,39 +39,39 @@ public class CommonJSRequireHelper implements PackageImporter {
 			VariableStatementTree variableStatement = expression.asVariableStatement();
 			for (VariableDeclarationTree variableDeclaration : variableStatement.declarations.declarations) {
 				if (checkIfInitializerIsRequireStatement(variableDeclaration)) {
-					matchModules();
+					matchModules(new AbstractExpression(expression));
 				}
 			}
 		} else if (expression instanceof ExpressionStatementTree) {
 			ExpressionStatementTree expressionStatement = expression.asExpressionStatement();
 			if (expressionStatement.expression instanceof BinaryOperatorTree)
 				if (checkIfRValueIsRequireStatement(expressionStatement.expression.asBinaryOperator())) {
-					matchModules();
+					matchModules(new AbstractExpression(expression));
 					return;
 				}
 		}
 	}
 
-	private void matchModules() {
+	private void matchModules(AbstractExpression abstractExpression) {
 		try {
 			List<String> files = null;
 			if (moduleFile.isDirectory()) {
 				files = FileUtil.getFilesInDirectory(moduleFile.getPath(), "js");
 				for (String file : files) {
-					matchWithCanonicalPath(new File(file).getCanonicalPath());
+					matchWithCanonicalPath(new File(file).getCanonicalPath(), abstractExpression);
 				}
 			} else
-				matchWithCanonicalPath(moduleFile.getCanonicalPath());
+				matchWithCanonicalPath(moduleFile.getCanonicalPath(), abstractExpression);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void matchWithCanonicalPath(String moduleCanonicalPath) throws IOException {
+	private void matchWithCanonicalPath(String moduleCanonicalPath, AbstractExpression abstractExpression) throws IOException {
 		for (Module module : modules) {
 			if (new File(module.getSourceFile().getOriginalPath()).getCanonicalPath().equals(moduleCanonicalPath)) {
-				currentModule.addDependency(requireIdentifier.toString(), module);
+				currentModule.addDependency(requireIdentifier.toString(), module, abstractExpression);
 				return;
 			}
 		}

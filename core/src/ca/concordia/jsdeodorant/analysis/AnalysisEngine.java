@@ -138,7 +138,7 @@ public class AnalysisEngine {
 				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + classDeclaration.getAttributes().size() + " / methods:" + classDeclaration.getMethods().size() + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount() + " Has namespace:" + classDeclaration.hasNamespace());
 			}
 		}
-		if (analysisOption.isOutputToCSV()){
+		if (analysisOption.isOutputToCSV()) {
 			ClassAnalysisReport.updateReport(modules);
 			ClassAnalysisReport.writeToCSV();
 			CSVOutput experimentOutput = new CSVOutput();
@@ -181,7 +181,7 @@ public class AnalysisEngine {
 		for (Module lbModule : modules) {
 			if (lbModule.getLibraryType() == LibraryType.BUILT_IN) {
 				String[] path = lbModule.getCanonicalPath().split("/");
-				module.addDependency(FileUtil.getElementsOf(path, path.length - 1, path.length - 1).replace(".js", ""), lbModule);
+				module.addDependency(FileUtil.getElementsOf(path, path.length - 1, path.length - 1).replace(".js", ""), lbModule, null);
 			}
 		}
 	}

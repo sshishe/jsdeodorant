@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.javascript.jscomp.SourceFile;
 
+import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 
@@ -24,7 +23,8 @@ public class Module {
 		return "Module [sourceFile=" + sourceFile + ", moduleType=" + moduleType + ", libraryType=" + libraryType + "]";
 	}
 
-	private Multimap<String, Module> dependencies;
+	private List<Dependency> dependencies;
+
 	private List<Export> exports;
 	private List<ClassDeclaration> classes;
 
@@ -33,7 +33,7 @@ public class Module {
 		this.sourceFile = sourceFile;
 		this.moduleType = ModuleType.File;
 		this.messages = messages;
-		this.dependencies = ArrayListMultimap.create();
+		this.dependencies = new ArrayList<>();
 		this.exports = new ArrayList<>();
 		this.classes = new ArrayList<>();
 		this.libraryType = LibraryType.NONE;
@@ -44,7 +44,7 @@ public class Module {
 		this.program = program;
 		this.sourceFile = sourceFile;
 		this.messages = messages;
-		this.dependencies = ArrayListMultimap.create();
+		this.dependencies = new ArrayList<>();
 		this.exports = new ArrayList<>();
 		this.classes = new ArrayList<>();
 		this.libraryType = LibraryType.NONE;
@@ -78,12 +78,14 @@ public class Module {
 		this.moduleType = packageType;
 	}
 
-	public Multimap<String, Module> getDependencies() {
+	public List<Dependency> getDependencies() {
 		return dependencies;
 	}
 
-	public void addDependency(String name, Module dependency) {
-		this.dependencies.put(name, dependency);
+	public void addDependency(String name, Module dependentModule, AbstractExpression requireExpression) {
+		Dependency dependency = new Dependency(name, requireExpression, dependentModule);
+		this.dependencies.add(dependency);
+		//this.dependencies.put(name, dependency);
 	}
 
 	public void addClass(ClassDeclaration classDeclaration) {
