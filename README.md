@@ -57,6 +57,25 @@ We ran the tool to evaluate performance of JSDeodorant (precision and recall) ar
 | Doppio (TypeScript)     | 154      |   153 | 1 | 1 | 99% | 99% |
 | Atom (CoffeScript) | 106      |    101 | 5 | 1 | 95% | 99% |
 
+##### Closure-library evaluation files
+* [Closure-library oracle]()
+* [Closure-library oracle extra found]()
+* [Closure-library comparison with js classes]()
+* [Full Atom Closure-library file]()
+
+##### Atom evaluation files
+* [Atom oracle]()
+* [Atom oracle extra found]()
+* [Atom comparison with js classes]()
+* [Full Atom analysis file]()
+
+##### Doppio evaluation files
+* [Doppio oracle]()
+* [Doppio oracle extra found]()
+* [Doppio comparison with js classes]()
+* [Full Doppio analysis file]()
+
+
 ## License
 This project is licensed under the MIT License.
 
