@@ -35,7 +35,10 @@ Here is the list of switches you can pass to the command-line runner:
 + `-psqlPassword`               : Postgres password
 + `-version`                    : Project version
 
-To be able to run the tool without eclipse, you may run `mvn clean compile assembly:single` to build the appropriate JAR file in the target folder.
+To be able to run the tool without eclipse, you may run `mvn clean compile assembly:single` in the `core` folder of JSDeodorant to build the appropriate JAR file in the target folder.
+
+The for example, you can run the tool with the following command:
+`java -jar target/jsdeodorant-0.0-SNAPSHOT-jar-with-dependencies.jar -help` to show the switches that you can pass to the tool.
 
 ## License
 This project is licensed under the MIT License.
