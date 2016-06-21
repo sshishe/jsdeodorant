@@ -1,0 +1,2 @@
+include ':jsdeodorant'
+project(':jsdeodorant').projectDir = new File(settingsDir, '../core')

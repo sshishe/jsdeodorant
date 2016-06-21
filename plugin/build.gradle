@@ -1,0 +1,6 @@
+task buildAndCopyLibs(type: Copy) {
+    into "$buildDir/../lib"
+    from "$buildDir/../../core/build/libs"
+}
+
+buildAndCopyLibs.dependsOn(":jsdeodorant:assemble")

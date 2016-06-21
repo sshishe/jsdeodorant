@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="jsdeodorant-eclipse-plugin.jsdeodorant-category"
+            class="ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView.JSDeodorantModulesView"
+            id="jsdeodorant-eclipse-plugin.JSDeodorantModulesView"
+            name="Class View"
+            restorable="true">
+      </view>
+       <view
+            category="jsdeodorant-eclipse-plugin.jsdeodorant-category"
+            class="ca.concordia.jsdeodorant.eclipseplugin.views.DependeniesView.JSDeodorantDependenciesView"
+            id="jsdeodorant-eclipse-plugin.JSDeodorantDependenciesView"
+            name="Dependencies View"
+            restorable="true">
+      </view>
+      <category
+            id="jsdeodorant-eclipse-plugin.jsdeodorant-category"
+            name="JSDeodorant">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="ca.concordia.cssanalyser.plugin.annotations.Annotation"
+            colorPreferenceKey="javascript_annotation_color"
+            colorPreferenceValue="169,229,249"
+            contributesToHeader="false"
+            highlightPreferenceKey="javascript_annotation_highlight"
+            highlightPreferenceValue="true"
+            includeOnPreferencePage="true"
+            isGoToNextNavigationTarget="true"
+            isGoToNextNavigationTargetKey="javascript_annotation_nextNavigationTarget"
+            isGoToPreviousNavigationTarget="true"
+            isGoToPreviousNavigationTargetKey="javascript_annotation_previousNavigationTarget"
+            label="JavaScript Construct"
+            overviewRulerPreferenceKey="javascript_annotation_overviewRuler"
+            overviewRulerPreferenceValue="true"
+            presentationLayer="0"
+            showInNextPrevDropdownToolbarAction="true"
+            showInNextPrevDropdownToolbarActionKey="javascript_annotation_nextPrevDropdownToolbar"
+            textPreferenceKey="javascript_annotation_text"
+            textPreferenceValue="true"
+            textStylePreferenceKey="javascript_annotation_stylePreferences"
+            textStylePreferenceValue="BOX"
+            verticalRulerPreferenceKey="javascript_annotation_verticalRuler"
+            verticalRulerPreferenceValue="false">
+      </specification>
+   </extension>
+   <extension
+	  point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+	  <hyperlinkDetector
+		id="ca.concordia.jsdeodorant.eclipseplugin.hyperlinksupport.declarationHyperlinkDetector"
+		targetId="org.eclipse.wst.jsdt.ui.javaCode"
+		class="ca.concordia.jsdeodorant.eclipseplugin.hyperlinksupport.OpenDeclarationHyperlinkDetector"
+		name="Test">
+	  </hyperlinkDetector>
+	</extension>
+   <extension
+      point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
+      <target
+         id="ca.concordia.jsdeodorant.eclipseplugin.hyperlinksupport.Editor"
+         name="JS Editor">
+         <context type="org.eclipse.ui.texteditor.ITextEditor"/>
+      </target>
+   </extension>
+</plugin>
