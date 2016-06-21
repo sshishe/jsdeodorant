@@ -11,7 +11,7 @@ Alternatively you can resolve dependencies with `mvn install` to install JAR dep
 
 This tool also comes with an Eclipse plugin, which itself is able to analyse JavaScript projects. But we will explore command-line mode to see how generate CSV outputs and console logs for experimental purpose.
 
-Here is the list of switches you can pass to the CLI runner:
+Here is the list of switches you can pass to the command-line runner:
 
 + `-class_analysis`             : Advanceed static analysis to match function definitions with function calls (call-site)
 + `-function_analysis`          : Advanceed function analysis to match class definitions with initialization (call-site)
@@ -34,6 +34,8 @@ Here is the list of switches you can pass to the CLI runner:
 + `-psqlUser`                   : Postgres user
 + `-psqlPassword`               : Postgres password
 + `-version`                    : Project version
+
+To be able to run the tool without eclipse, you may run `mvn clean compile assembly:single` to build the appropriate JAR file in the target folder.
 
 ## License
 This project is licensed under the MIT License.
