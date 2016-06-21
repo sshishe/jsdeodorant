@@ -43,7 +43,6 @@ public class CompositePostProcessor {
 
 		// Class inference
 		ClassInferenceEngine.run(module);
-
 	}
 
 	public static void processModules(Module module, List<Module> modules, PackageSystem packageSystem, boolean onlyExports) {

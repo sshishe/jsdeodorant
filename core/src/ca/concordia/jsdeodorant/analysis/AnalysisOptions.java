@@ -203,6 +203,8 @@ public class AnalysisOptions {
 	}
 
 	public void setPackageSystem(String packageSystem) {
+		if (packageSystem == null)
+			return;
 		if (packageSystem.toLowerCase().equals("commonjs"))
 			this.packageSystem = PackageSystem.CommonJS;
 		else if (packageSystem.toLowerCase().equals("closurelibrary"))

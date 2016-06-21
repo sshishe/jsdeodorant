@@ -15,7 +15,7 @@ import ca.concordia.jsdeodorant.analysis.util.FileUtil;
 
 public class Flags {
 	static Logger logger = Logger.getLogger(Flags.class.getName());
-	public CmdLineParser parser = new CmdLineParser(this);
+	private CmdLineParser parser = new CmdLineParser(this);
 
 	@Option(name = "-class_analysis", usage = "Advanceed static analysis")
 	private boolean classAnalysis = false;
@@ -29,19 +29,19 @@ public class Flags {
 	@Option(name = "-output_db", usage = "Put analysis info into a Postgres DB")
 	private boolean outputToDB = false;
 
-	@Option(name = "-calculate_cyclomatic", hidden = true, usage = "Enable calculation of cyclomatic complexity")
+	@Option(name = "-calculate_cyclomatic", usage = "Enable calculation of cyclomatic complexity")
 	private boolean calculateCyclomatic = false;
 
-	@Option(name = "-module-analysis", hidden = true, usage = "Enable module analysis for Node style packaging")
+	@Option(name = "-module-analysis", usage = "Enable module analysis for Node style packaging")
 	private boolean moduleAnalysis = false;
 
-	@Option(name = "-directory_path", hidden = true, usage = "Directory path for javascript project")
+	@Option(name = "-directory_path", usage = "Directory path for javascript project")
 	private String directoryPath;
 
-	@Option(name = "-package-system", required = true, hidden = true, usage = "Package system including CommonJS and ClosureLibrary")
+	@Option(name = "-package-system", usage = "Package system including CommonJS and ClosureLibrary")
 	private String packageSystem;
 
-	@Option(name = "-disable_log", hidden = true, usage = "Enable logging mechanism")
+	@Option(name = "-disable_log", usage = "Enable logging mechanism")
 	private boolean disableLog = false;
 
 	@Option(name = "-js", usage = "The JavaScript filenames, From Google Closure Flags class", handler = StringArrayOptionHandler.class)
@@ -62,26 +62,29 @@ public class Flags {
 	@Option(name = "-builtin-libraries", usage = "List of Node's built-in libraries such as Error or Util", handler = StringArrayOptionHandler.class)
 	private List<String> builtInLibraries = new ArrayList<>();
 
-	@Option(name = "-psqlServer", hidden = true, usage = "Postgres password")
+	@Option(name = "-psqlServer", usage = "Postgres password")
 	private String psqlServer;
 
-	@Option(name = "-psqlPort", hidden = true, usage = "Postgres port")
+	@Option(name = "-psqlPort", usage = "Postgres port")
 	private String psqlPort;
 
-	@Option(name = "-psqlDbName", hidden = true, usage = "Postgres database name")
+	@Option(name = "-psqlDbName", usage = "Postgres database name")
 	private String psqlDBName;
 
-	@Option(name = "-psqlUser", hidden = true, usage = "Postgres user")
+	@Option(name = "-psqlUser", usage = "Postgres user")
 	private String psqlUser;
 
-	@Option(name = "-psqlPassword", hidden = true, usage = "Postgres password")
+	@Option(name = "-psqlPassword", usage = "Postgres password")
 	private String psqlPassword;
 
-	@Option(name = "-name", hidden = true, usage = "Project name")
+	@Option(name = "-name", usage = "Project name")
 	private String name;
 
-	@Option(name = "-version", hidden = true, usage = "Project version")
+	@Option(name = "-version", usage = "Project version")
 	private String version;
+	
+	@Option(name = "-help", usage = "Print usages")
+	private boolean help;
 
 	public boolean classAnalysis() {
 		return classAnalysis;
@@ -159,7 +162,7 @@ public class Flags {
 	}
 
 	public void parse(String[] args) throws CmdLineException {
-		parser.parseArgument(args);
+		getParser().parseArgument(args);
 	}
 
 	public String getPsqlServerName() {
@@ -192,5 +195,17 @@ public class Flags {
 
 	public String getPackageSystem() {
 		return packageSystem;
+	}
+
+	public CmdLineParser getParser() {
+		return parser;
+	}
+
+	public void setParser(CmdLineParser parser) {
+		this.parser = parser;
+	}
+
+	public boolean getHelp() {
+		return help;
 	}
 }

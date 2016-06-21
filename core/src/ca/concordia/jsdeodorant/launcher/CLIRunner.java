@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
 import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 
 import com.google.common.base.Strings;
 
@@ -15,6 +17,7 @@ import ca.concordia.jsdeodorant.analysis.util.FileUtil;
 public class CLIRunner extends Runner {
 	private static CLIRunner runner;
 	private static Flags flags;
+	private static CmdLineParser parser;
 
 	public CLIRunner() throws IOException {
 		this(new String[0]);
@@ -25,13 +28,19 @@ public class CLIRunner extends Runner {
 	}
 
 	public static void main(String[] args) {
+		//BasicConfigurator.configure();
 		try {
 			CLIRunner.initializeCommandLine(args);
+			if (flags.getHelp()) {
+				parser.printUsage(System.err);
+				return;
+			}
 			runner = new CLIRunner();
 			runner.configureOptions();
 			runner.performActions();
 			runToolForInnerModules(runner, flags.directoryPath() + "/node_modules");
 		} catch (CmdLineException | IOException e) {
+			parser.printUsage(System.err);
 			log.error(e.getMessage(), e);
 		}
 	}
@@ -67,6 +76,7 @@ public class CLIRunner extends Runner {
 
 	public static void initializeCommandLine(String[] args) throws CmdLineException, IOException {
 		flags = new Flags();
+		parser = flags.getParser();
 		flags.parse(args);
 	}
 
