@@ -12,11 +12,9 @@ import org.eclipse.ui.IViewPart;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
-import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants.ViewID;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView.JSDeodorantModulesView;
-import javafx.scene.image.Image;
 
 @SuppressWarnings("restriction")
 public class JSDeodorantDependenciesView extends ZestFxUiView {
@@ -31,7 +29,7 @@ public class JSDeodorantDependenciesView extends ZestFxUiView {
 			for (Node node : graph.getNodes()) {
 				ZestProperties.setNodeRectCssStyle(node, "-fx-fill: #666");
 				//ZestProperties.setNodeTextCssStyle(node, "-fx-font-weight: bold; -fx-font-size: 14px; color: red");
-				ZestProperties.setIcon(node, new Image(Constants.ICON_PATH + "/" + Constants.DEPENDENCIES_ICON_IMAGE));
+				//ZestProperties.setIcon(node, new Image(Constants.ICON_PATH + "/" + Constants.DEPENDENCIES_ICON_IMAGE));
 			}
 			setGraph(graph);
 		}
