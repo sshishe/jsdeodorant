@@ -49,7 +49,7 @@ An example of a working set of switches for project **Closure Library** is:
 `
 
 ## Evaluation of the tool
-We ran the tool to evaluate and the result for precision and recall shown for three different projects written in JavaScript, CoffeeScript and TypeScript. Note that we choose these three projects because we can create an oracle based on JSDoc annotations for JavaScript project, and TypeScript and CoffeeScript **class** nodes which will be compiled to vanilla JavaScript.
+We ran the tool to evaluate performance of JSDeodorant (precision and recall) are shown for three different projects written in JavaScript, CoffeeScript and TypeScript. Note that we choose these three projects because we can create an oracle based on JSDoc annotations for JavaScript project, and TypeScript and CoffeeScript **class** nodes which will be compiled to vanilla JavaScript.
 
 | Program        | Identified Function Constructors           | TP  | FP  | FN | Precision | Recall |
 | -------------- |:------------------------------------------:| :--:| --- | --- | --------- | ------ |
