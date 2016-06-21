@@ -60,22 +60,22 @@ We ran the tool to evaluate performance of JSDeodorant (precision and recall) ar
 | Atom (CoffeScript) | 106      |    101 | 5 | 1 | 95% | 99% |
 
 ##### Closure-library evaluation files
-* [Closure-library oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/closure-oracle.htm?token=AC-lR1IPVi8VLiHRJRnztVDa_i8NjnOPks5XcqunwA%3D%3D)
-* [Closure-library oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/closure-extras.htm?token=AC-lR_1d0cGhf17ByidutToF0KWhCI_vks5XcqvKwA%3D%3D)
-* [Closure-library comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/closure-comparison.htm?token=AC-lR0RCUtibcCmalUoAgpz5XvidRMAeks5XcqvkwA%3D%3D)
-* [Full Closure-library file](https://github.com/sshishe/jsdeodorant/blob/master/evaluation/closure.xlsx)
+* [Closure-library oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/closure-oracle.htm?token=AC-lR18FZcBx_tG-CYvyAQBUGJv1d30Rks5XcwTGwA%3D%3D)
+* [Closure-library oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/closure-oracle.htm?token=AC-lR6hvZMAn7CkSkTuQ0h-33xE6NEZkks5XcwSHwA%3D%3D)
+* [Closure-library comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/closure-comparison.htm?token=AC-lR3ERR8HYpSNXFCmL8Q78kiT98Q-Eks5XcwTkwA%3D%3D)
+* [Full Closure-library file](https://github.com/sshishe/era/blob/master/evaluation/closure.xlsx)
 
 ##### Doppio evaluation files
-* [Doppio oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/doppio-oracle.htm?token=AC-lR3QIJR3A4MDiBTfdkQ39ThJbylngks5XcqwbwA%3D%3D)
-* [Doppio oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/doppio-extras.htm?token=AC-lR4D_5cD-OgxhStMQmQ8QQ7E6dPfKks5XcqwtwA%3D%3D)
-* [Doppio comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/doppio-comparison.htm?token=AC-lR7VnBYQ_QR1y50fnDnCiPnEBDJ8Kks5Xcqw_wA%3D%3D)
-* [Full Doppio analysis file](https://github.com/sshishe/jsdeodorant/blob/master/evaluation/doppio.xlsx)
+* [Doppio oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/doppio-oracle.htm?token=AC-lR92uR5yga-Neu_fzS-c2JR_2kJlsks5XcwUJwA%3D%3D)
+* [Doppio oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/doppio-extras.htm?token=AC-lR_KglMDBNKf9sQyn2doob3FDL7fOks5XcwUcwA%3D%3D)
+* [Doppio comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/doppio-comparison.htm?token=AC-lRz_OZLUFXp7gkeyaxye4yOTsqWx-ks5XcwUywA%3D%3D)
+* [Full Doppio analysis file](https://github.com/sshishe/era/blob/master/evaluation/doppio.xlsx)
 
 ##### Atom evaluation files
-* [Atom oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/atom-oracle.htm?token=AC-lRw19aCpDP3-bIdBQaJgjAE8NjgWMks5XcqsowA%3D%3D)
-* [Atom oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/atom-extra.htm?token=AC-lR3pzeQjb3_XYHmlY9OMPgt_nGw_Nks5XcqttwA%3D%3D)
-* [Atom comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant/master/evaluation/atom-comparison.htm?token=AC-lR_1oCBFeb-Rk7lyTE14n9XwONmvuks5XcqtRwA%3D%3D)
-* [Full Atom analysis file](https://github.com/sshishe/jsdeodorant/blob/master/evaluation/atom.xlsx)
+* [Atom oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/atom-oracle.htm?token=AC-lR8cta3j_f_YqbPcJsECXGk2eYXsNks5XcwVUwA%3D%3D)
+* [Atom oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/atom-extra.htm?token=AC-lR1iIc64cj4fxgSYpVKTzwErPKdqWks5XcwVmwA%3D%3D)
+* [Atom comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/atom-comparison.htm?token=AC-lR1MmYjUsGd-_j0y-dXuHGj7rrVBtks5XcwV7wA%3D%3D)
+* [Full Atom analysis file](https://github.com/sshishe/era/blob/master/evaluation/atom.xlsx)
 
 
 
