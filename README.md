@@ -61,7 +61,7 @@ We ran the tool to evaluate performance of JSDeodorant (precision and recall) ar
 * [Closure-library oracle]()
 * [Closure-library oracle extra found]()
 * [Closure-library comparison with js classes]()
-* [Full Atom Closure-library file]()
+* [Full Closure-library file]()
 
 ##### Atom evaluation files
 * [Atom oracle]()
