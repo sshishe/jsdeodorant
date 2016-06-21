@@ -40,6 +40,14 @@ To be able to run the tool without eclipse, you may run `mvn clean compile assem
 Then, you can run the tool with the following command:
 `java -jar target/jsdeodorant-0.0-SNAPSHOT-jar-with-dependencies.jar -help` to show the switches that you can pass to the tool.
 
+An example of a working set of switches for project **Closure Library** is:
+<br />
+`
+-output_csv -class_analysis -module-analysis -package-system "ClosureLibrary" -analyze-lbClasses
+-directory_path "/Users/Shahriar/Documents/workspace/era/dataset/closure-library-v20160315"
+-name "closure-library"
+`
+
 ## License
 This project is licensed under the MIT License.
 
