@@ -48,6 +48,15 @@ An example of a working set of switches for project **Closure Library** is:
 -name "closure-library"
 `
 
+## Evaluation of the tool
+We ran the tool to evaluate and the result for precision and recall shown for three different projects written in JavaScript, CoffeeScript and TypeScript. Note that we choose these three projects because we can create an oracle based on JSDoc annotations for JavaScript project, and TypeScript and CoffeeScript **class** nodes which will be compiled to vanilla JavaScript.
+
+| Program        | Identified Function Constructors           | TP  | FP  | FN | Precision | Recall |
+| -------------- |:------------------------------------------:| :--:| --- | --- | --------- | ------ |
+| Closure-library| 1008 | 907 | 101 | 39 | 90% | 96% |
+| Doppio (TypeScript)     | 154      |   153 | 1 | 1 | 99% | 99% |
+| Atom (CoffeScript) | 106      |    101 | 5 | 1 | 95% | 99% |
+
 ## License
 This project is licensed under the MIT License.
 
