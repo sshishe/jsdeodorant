@@ -25,15 +25,15 @@ Here is the list of switches you can pass to the command-line runner:
 + `-libraries`                  : List of libraries to distinguish between production/test codes.
 + `-module-analysis`            : Enable module analysis for CommonJS or Closure Library style packaging
 + `-package-system`             : Select the package system including CommonJS and Closure Library
-+ `-name`                       : Project name
 + `-output_csv`                 : Generate a CSV file containing analysis info
 + `-output_db`                  : Put analysis info into a Postgres DB
++ `-name`                       : Project name
++ `-version`                    : Project version
 + `-psqlServer`                 : Postgres password
 + `-psqlPort`                   : Postgres port
 + `-psqlDbName`                 : Postgres database name
 + `-psqlUser`                   : Postgres user
 + `-psqlPassword`               : Postgres password
-+ `-version`                    : Project version
 
 To be able to run the tool without eclipse, you may run `mvn clean compile assembly:single` in the `core` folder of JSDeodorant to build the appropriate JAR file in the target folder.
 
