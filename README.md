@@ -37,7 +37,7 @@ Here is the list of switches you can pass to the command-line runner:
 
 To be able to run the tool without eclipse, you may run `mvn clean compile assembly:single` in the `core` folder of JSDeodorant to build the appropriate JAR file in the target folder.
 
-The for example, you can run the tool with the following command:
+Then, you can run the tool with the following command:
 `java -jar target/jsdeodorant-0.0-SNAPSHOT-jar-with-dependencies.jar -help` to show the switches that you can pass to the tool.
 
 ## License
