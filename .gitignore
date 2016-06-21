@@ -48,3 +48,9 @@ RemoteSystemsTempFiles
 
 .DS_Store
 
+.gradle
+build
+core/.classpath
+core/.project
+
+
