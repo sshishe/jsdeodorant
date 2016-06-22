@@ -6,16 +6,18 @@
       <view
             category="jsdeodorant-eclipse-plugin.jsdeodorant-category"
             class="ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView.JSDeodorantModulesView"
+            icon="icons/icon.png"
             id="jsdeodorant-eclipse-plugin.JSDeodorantModulesView"
             name="Class View"
             restorable="true">
       </view>
        <view
-            category="jsdeodorant-eclipse-plugin.jsdeodorant-category"
-            class="ca.concordia.jsdeodorant.eclipseplugin.views.DependeniesView.JSDeodorantDependenciesView"
-            id="jsdeodorant-eclipse-plugin.JSDeodorantDependenciesView"
-            name="Dependencies View"
-            restorable="true">
+             category="jsdeodorant-eclipse-plugin.jsdeodorant-category"
+             class="ca.concordia.jsdeodorant.eclipseplugin.views.DependeniesView.JSDeodorantDependenciesView"
+             icon="icons/icon.png"
+             id="jsdeodorant-eclipse-plugin.JSDeodorantDependenciesView"
+             name="Dependencies View"
+             restorable="true">
       </view>
       <category
             id="jsdeodorant-eclipse-plugin.jsdeodorant-category"
