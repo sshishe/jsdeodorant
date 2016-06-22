@@ -55,7 +55,7 @@ public class JSDeodorantSelectionListener implements ISelectionListener {
 				selectedPath = "";
 			}
 			boolean projectIsJavaScript = false;
-			if (selectedProject != null) {
+			if (selectedProject != null && selectedProject.isOpen()) {
 				try {
 					for (String projectNature : selectedProject.getDescription().getNatureIds()) {
 						if (Constants.JAVASCRIPT_PROJECT_NATURE.equals(projectNature)) {
