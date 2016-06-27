@@ -9,7 +9,7 @@ It requires you have at least JDK 7 installed on your machine with an Eclipse in
 
 Alternatively you can resolve dependencies with `gradle build` to install JAR dependencies without the need for Gradle plugin on Eclsipe.
 
-This tool also comes with an Eclipse plugin, which itself is able to analyse JavaScript projects. But we will explore command-line mode to see how generate CSV outputs and console logs for experimental purpose.
+This tool also comes with an Eclipse plugin, which itself is able to analyse JavaScript projects. But we will explore command-line mode to see how to generate CSV outputs and console logs for experimental purpose.
 
 Here is the list of switches you can pass to the command-line runner:
 
@@ -51,7 +51,7 @@ An example of a working set of switches for project **Closure Library** is:
 After running this command, take a look at following paths: `log/classes` and `log/functions` folders.
 
 ## Evaluation of the tool
-We ran the tool to evaluate performance of JSDeodorant (precision and recall) are shown for three different projects written in JavaScript, CoffeeScript and TypeScript. Note that we choose these three projects because we can create an oracle based on JSDoc annotations for JavaScript project, and TypeScript and CoffeeScript **class** nodes which will be compiled to vanilla JavaScript.
+We ran the tool to evaluate performance of JSDeodorant (precision and recall) for three different projects written in JavaScript, CoffeeScript and TypeScript. Note that we choose these three projects because we can create an oracle based on JSDoc annotations for JavaScript project, and TypeScript and CoffeeScript **class** nodes which will be compiled to vanilla JavaScript.
 
 | Program        | Identified Function Constructors           | TP  | FP  | FN | Precision | Recall |
 | -------------- |:------------------------------------------:| :--:| --- | --- | --------- | ------ |
