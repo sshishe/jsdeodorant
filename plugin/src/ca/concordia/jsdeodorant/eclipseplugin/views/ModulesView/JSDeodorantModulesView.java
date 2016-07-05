@@ -2,6 +2,7 @@ package ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -11,6 +12,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -37,6 +39,7 @@ import org.eclipse.ui.part.ViewPart;
 import ca.concordia.jsdeodorant.analysis.AnalysisOptions;
 import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.module.PackageSystem;
 import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.listeners.JSDeodorantPartListener;
@@ -45,7 +48,7 @@ import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants.ViewID;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
-import ca.concordia.jsdeodorant.eclipseplugin.views.DependeniesView.JSDeodorantDependenciesView;
+import ca.concordia.jsdeodorant.eclipseplugin.views.VisualizationView.JSDeodorantVisualizationView;
 import ca.concordia.jsdeodorant.eclipseplugin.views.wizard.AnalysisOptionsWizard;
 import ca.concordia.jsdeodorant.launcher.Runner;
 
@@ -58,6 +61,7 @@ public class JSDeodorantModulesView extends ViewPart {
 	private IAction showWizardAction;
 	private IAction analyzeAction;
 	private IAction showDependenciesAction;
+	private IAction showClassVisualizationAction;
 	
 	private ISelectionListener selectionListener;
 	private IPartListener2 partListener; 
@@ -75,7 +79,6 @@ public class JSDeodorantModulesView extends ViewPart {
 		
 	    hookListeners();
 	    createTreeViewer(parent);
-	    createLegend(parent);
 	    makeActions(parent);
 	    addActionBarButtons();
 	}
@@ -152,6 +155,15 @@ public class JSDeodorantModulesView extends ViewPart {
 		showDependenciesAction.setToolTipText("Show module dependencies");
 		showDependenciesAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.DEPENDENCIES_ICON_IMAGE));
 		
+		showClassVisualizationAction = new Action() {
+			@Override
+			public void run() {
+				showClassUMLDiagram();
+			}		
+		};
+		showClassVisualizationAction.setText("Show class diagram");
+		showClassVisualizationAction.setToolTipText("Show class diagram");
+		showClassVisualizationAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.DEPENDENCIES_ICON_IMAGE));
 	}
 
 	private void addActionBarButtons() {
@@ -161,10 +173,11 @@ public class JSDeodorantModulesView extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-//		manager.add(findDuplicatedDeclarationsAction);
-//		manager.add(new Separator());
-//		manager.add(clearResultsAction);
-//		manager.add(clearAnnotationsAction);
+		manager.add(analyzeAction);
+		manager.add(showWizardAction);
+		manager.add(new Separator());
+		manager.add(clearAnnotationsAction);
+		manager.add(clearResultsAction);
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
@@ -188,22 +201,38 @@ public class JSDeodorantModulesView extends ViewPart {
 			}
 		});
 	}
-	
+
 	private void getRightClickMenu() {
+		
+		List<IAction> actionsToAdd = new ArrayList<>();
+		
+		ISelection selection = classTreeViewer.getSelection();
+		if (!selection.isEmpty()) {
+			Object firstElement = ((IStructuredSelection)selection).getFirstElement();
+			if (firstElement instanceof Module) {
+				Module selectedModule = (Module)firstElement;
+				if (!selectedModule.getDependencies().isEmpty()) {
+					actionsToAdd.add(showDependenciesAction);
+				}
+			} else if (firstElement instanceof ClassDeclaration) {
+				actionsToAdd.add(showClassVisualizationAction);				
+			}
+		}
+		
 		classTreeViewer.getTree().setMenu(null);
-		Module selectedModule = getSelectedModule();
-		if (selectedModule != null && !selectedModule.getDependencies().isEmpty()) {
+		if (!actionsToAdd.isEmpty()) {
 			MenuManager menuMgr = new MenuManager("#PopupMenu");
 			menuMgr.setRemoveAllWhenShown(true);
 			menuMgr.addMenuListener(new IMenuListener() {
 				@Override
-				public void menuAboutToShow(IMenuManager manager) { 
-					manager.add(showDependenciesAction);
+				public void menuAboutToShow(IMenuManager manager) {
+					for (IAction action : actionsToAdd) {
+						manager.add(action);
+					}
 				}
 			});
 			Menu menu = menuMgr.createContextMenu(classTreeViewer.getControl());
 			classTreeViewer.getControl().setMenu(menu);
-			//getSite().registerContextMenu(menuMgr, classTreeViewer);
 		}
 	}
 	
@@ -216,19 +245,16 @@ public class JSDeodorantModulesView extends ViewPart {
 		}
 		return null;
 	}
-
-	private void createLegend(Composite parent) {
-//		final Group legendGroup = new Group(parent, SWT.SHADOW_NONE);
-//		legendGroup.setText("Filters");
-//		GridData legendGridData = new GridData(SWT.FILL, SWT.FILL, true, false);
-//		legendGroup.setLayoutData(legendGridData);
-//		GridLayout legendLayout = new GridLayout();
-//		legendLayout.numColumns = 6;
-//		legendLayout.horizontalSpacing = 20;
-//		legendGroup.setLayout(legendLayout);
-//		
-//		Button filesContainingOnlyClasses = new Button(legendGroup, SWT.CHECK);
-//		filesContainingOnlyClasses.setText("Only files containing class declarations");
+	
+	public ClassDeclaration getSelectedClass() {
+		ISelection selection = classTreeViewer.getSelection();
+		if (!selection.isEmpty()) {
+			Object firstElement = ((IStructuredSelection)selection).getFirstElement();
+			if (firstElement instanceof ClassDeclaration) {
+				return (ClassDeclaration)firstElement;
+			}
+		}
+		return null;
 	}
 
 	private void analyze() {
@@ -290,9 +316,19 @@ public class JSDeodorantModulesView extends ViewPart {
 		Module selectedModule = getSelectedModule();
 		List<Dependency> dependencies = selectedModule.getDependencies();
 		if (!dependencies.isEmpty()) {
-			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(ViewID.DEPENDENCIES_VIEW);
+			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(ViewID.VISUALIZATION_VIEW);
 			if (dependenciesView != null) {
-				((JSDeodorantDependenciesView)dependenciesView).showDependenciesGraph(selectedModule);
+				((JSDeodorantVisualizationView)dependenciesView).showDependenciesGraph(selectedModule);
+			}
+		}
+	}
+	
+	private void showClassUMLDiagram() {
+		ClassDeclaration selectedClass = getSelectedClass();
+		if (selectedClass != null) {
+			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(ViewID.VISUALIZATION_VIEW);
+			if (dependenciesView != null) {
+				((JSDeodorantVisualizationView)dependenciesView).showUMLClassDiagram(selectedClass);
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorPart;
@@ -37,10 +38,14 @@ public class OpenAndAnnotateHelper {
 			IPath path = new Path(filePath);
 			editorPart = IDE.openEditor(page, ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path));
 			IAnnotationModel annotationModel = clearAnnotations(editorPart);
-			if (annotations != null) {
+			if (annotations != null && annotations.length > 0) {
 				for (JSAnnotation annotation : annotations) {
 					annotationModel.addAnnotation(annotation, annotation.getPosition());
 				}
+				ITextEditor iTextEditor = ((ITextEditor)editorPart);
+				iTextEditor.getSelectionProvider().
+					setSelection(new TextSelection(iTextEditor.getDocumentProvider().getDocument(iTextEditor), 
+							annotations[0].getPosition().getOffset(), 0));
 			}
 		} catch (PartInitException e) {
 			e.printStackTrace();

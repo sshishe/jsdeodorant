@@ -1,10 +1,14 @@
 package ca.concordia.jsdeodorant.eclipseplugin.util;
 
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
+
 public class Constants {
 	
 	public enum ViewID {
 		MODULES_VIEW("jsdeodorant-eclipse-plugin.JSDeodorantModulesView"),
-		DEPENDENCIES_VIEW("jsdeodorant-eclipse-plugin.JSDeodorantDependenciesView");
+		VISUALIZATION_VIEW("jsdeodorant-eclipse-plugin.JSDeodorantVisualizationView");
 		
 		private final String viewID;
 
@@ -24,4 +28,8 @@ public class Constants {
 	public static final String PACKAGE_ICON_IMAGE = "package_obj.png";
 	public static final String ICON_PATH = "icons";
 	public static final String JAVASCRIPT_PROJECT_NATURE = "org.eclipse.wst.jsdt.core.jsNature";
+	
+	public static final Color CLASS_DIAGRAM_CLASS_COLOR = new Color(Display.getCurrent(), new RGB(245, 245, 150));
+	public static final Color CLASS_DIAGRAM_MODULE_COLOR = new Color(Display.getCurrent(), new RGB(235, 235, 235));
+	public static final Color ASSOCIATION_COLOR = new Color(Display.getCurrent(), new RGB(100, 100, 100));
 }

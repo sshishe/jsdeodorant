@@ -34,6 +34,8 @@ public class MethodAttributeInfo {
 	}
 
 	public String getName() {
+		if (type == Type.METHOD)
+			return name + "()";
 		return name;
 	}
 
