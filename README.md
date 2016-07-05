@@ -29,7 +29,7 @@ Here is the list of switches you can pass to the command-line runner:
 + `-output-db`                  : Put analysis info into a Postgres DB
 + `-name`                       : Project name
 + `-version`                    : Project version
-+ `-psqlServer`                 : Postgres password
++ `-psqlServer`                 : Postgres server name
 + `-psqlPort`                   : Postgres port
 + `-psqlDbName`                 : Postgres database name
 + `-psqlUser`                   : Postgres user
