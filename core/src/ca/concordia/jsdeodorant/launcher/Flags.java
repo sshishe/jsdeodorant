@@ -17,31 +17,31 @@ public class Flags {
 	static Logger logger = Logger.getLogger(Flags.class.getName());
 	private CmdLineParser parser = new CmdLineParser(this);
 
-	@Option(name = "-class_analysis", usage = "Advanceed static analysis")
+	@Option(name = "-class-analysis", usage = "Advanceed static analysis")
 	private boolean classAnalysis = false;
 
-	@Option(name = "-function_analysis", usage = "Advanceed function analysis")
+	@Option(name = "-function-analysis", usage = "Advanceed function analysis")
 	private boolean functionAnalysis = false;
 
-	@Option(name = "-output_csv", usage = "Generate a CSV file containing analysis info")
+	@Option(name = "-output-csv", usage = "Generate a CSV file containing analysis info")
 	private boolean outputToCSV = false;
 
-	@Option(name = "-output_db", usage = "Put analysis info into a Postgres DB")
+	@Option(name = "-output-db", usage = "Put analysis info into a Postgres DB")
 	private boolean outputToDB = false;
 
-	@Option(name = "-calculate_cyclomatic", usage = "Enable calculation of cyclomatic complexity")
+	@Option(name = "-calculate-cyclomatic", usage = "Enable calculation of cyclomatic complexity")
 	private boolean calculateCyclomatic = false;
 
 	@Option(name = "-module-analysis", usage = "Enable module analysis for Node style packaging")
 	private boolean moduleAnalysis = false;
 
-	@Option(name = "-directory_path", usage = "Directory path for javascript project")
+	@Option(name = "-directory-path", usage = "Directory path for javascript project")
 	private String directoryPath;
 
 	@Option(name = "-package-system", usage = "Package system including CommonJS and ClosureLibrary")
 	private String packageSystem;
 
-	@Option(name = "-disable_log", usage = "Enable logging mechanism")
+	@Option(name = "-disable-log", usage = "Enable logging mechanism")
 	private boolean disableLog = false;
 
 	@Option(name = "-js", usage = "The JavaScript filenames, From Google Closure Flags class", handler = StringArrayOptionHandler.class)
