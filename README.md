@@ -45,8 +45,8 @@ Then, you can run the tool with the following command:
 An example of a working set of switches for project **Closure Library** is:
 <br />
 `
--output_csv -class_analysis -module-analysis -package-system "ClosureLibrary" -analyze-lbClasses
--directory_path "/Users/Shahriar/Documents/workspace/era/dataset/closure-library-v20160315"
+-output-csv -class-analysis -module-analysis -package-system "ClosureLibrary" -analyze-lbClasses
+-directory-path "/Users/Shahriar/Documents/workspace/era/dataset/closure-library-v20160315"
 -name "closure-library"
 `
 
