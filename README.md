@@ -25,8 +25,8 @@ Here is the list of switches you can pass to the command-line runner:
 + `-libraries`                  : List of libraries to distinguish between production/test codes.
 + `-module-analysis`            : Enable module analysis for CommonJS or Closure Library style packaging
 + `-package-system`             : Select the package system including CommonJS and Closure Library
-+ `-output_csv`                 : Generate a CSV file containing analysis info
-+ `-output_db`                  : Put analysis info into a Postgres DB
++ `-output-csv`                 : Generate a CSV file containing analysis info
++ `-output-db`                  : Put analysis info into a Postgres DB
 + `-name`                       : Project name
 + `-version`                    : Project version
 + `-psqlServer`                 : Postgres password
