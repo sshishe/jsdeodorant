@@ -13,14 +13,14 @@ This tool also comes with an Eclipse plugin, which itself is able to analyse Jav
 
 Here is the list of switches you can pass to the command-line runner:
 
-+ `-class_analysis`             : Advanceed static analysis to match function definitions with function calls (call-site)
-+ `-function_analysis`          : Advanceed function analysis to match class definitions with initialization (call-site)
-+ `-calculate_cyclomatic`       : Enable calculation of cyclomatic complexity
++ `-class-analysis`             : Advanceed static analysis to match function definitions with function calls (call-site)
++ `-function-analysis`          : Advanceed function analysis to match class definitions with initialization (call-site)
++ `-calculate-cyclomatic`       : Enable calculation of cyclomatic complexity
 + `-js`                         : The JavaScript filenames
-+ `-directory_path`       	     : Directory path for javascript project
++ `-directory-path`       	     : Directory path for javascript project
 + `-analyze-lbClasses`          : Analyze libraries to find class usage in them
 + `-builtin-libraries` 	    	 : List of libraries located somewhere on the system such as Node's built-in libraries i.e. Error or Util
-+ `-disable_log`                : Enable logging mechanism
++ `-disable-log`                : Enable logging mechanism
 + `-externs`          		    	 : List of externs files to use in the compilation.
 + `-libraries`                  : List of libraries to distinguish between production/test codes.
 + `-module-analysis`            : Enable module analysis for CommonJS or Closure Library style packaging
