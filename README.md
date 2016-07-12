@@ -13,8 +13,8 @@ This tool also comes with an Eclipse plugin, which itself is able to analyse Jav
 
 Here is the list of switches you can pass to the command-line runner:
 
-+ `-class-analysis`             : Advanceed static analysis to match function definitions with function calls (call-site)
-+ `-function-analysis`          : Advanceed function analysis to match class definitions with initialization (call-site)
++ `-class-analysis`             : Advanced static analysis to match function definitions with function calls (call-site)
++ `-function-analysis`          : Advanced function analysis to match class definitions with initialization (call-site)
 + `-calculate-cyclomatic`       : Enable calculation of cyclomatic complexity
 + `-js`                         : The JavaScript filenames
 + `-directory-path`       	     : Directory path for javascript project
