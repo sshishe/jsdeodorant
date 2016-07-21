@@ -13,23 +13,23 @@ This tool also comes with an Eclipse plugin, which itself is able to analyse Jav
 
 Here is the list of switches you can pass to the command-line runner:
 
-+ `-class_analysis`             : Advanceed static analysis to match function definitions with function calls (call-site)
-+ `-function_analysis`          : Advanceed function analysis to match class definitions with initialization (call-site)
-+ `-calculate_cyclomatic`       : Enable calculation of cyclomatic complexity
++ `-class-analysis`             : Advanced static analysis to match function definitions with function calls (call-site)
++ `-function-analysis`          : Advanced function analysis to match class definitions with initialization (call-site)
++ `-calculate-cyclomatic`       : Enable calculation of cyclomatic complexity
 + `-js`                         : The JavaScript filenames
-+ `-directory_path`       	     : Directory path for javascript project
++ `-directory-path`       	     : Directory path for javascript project
 + `-analyze-lbClasses`          : Analyze libraries to find class usage in them
 + `-builtin-libraries` 	    	 : List of libraries located somewhere on the system such as Node's built-in libraries i.e. Error or Util
-+ `-disable_log`                : Enable logging mechanism
++ `-disable-log`                : Enable logging mechanism
 + `-externs`          		    	 : List of externs files to use in the compilation.
 + `-libraries`                  : List of libraries to distinguish between production/test codes.
 + `-module-analysis`            : Enable module analysis for CommonJS or Closure Library style packaging
 + `-package-system`             : Select the package system including CommonJS and Closure Library
-+ `-output_csv`                 : Generate a CSV file containing analysis info
-+ `-output_db`                  : Put analysis info into a Postgres DB
++ `-output-csv`                 : Generate a CSV file containing analysis info
++ `-output-db`                  : Put analysis info into a Postgres DB
 + `-name`                       : Project name
 + `-version`                    : Project version
-+ `-psqlServer`                 : Postgres password
++ `-psqlServer`                 : Postgres server name
 + `-psqlPort`                   : Postgres port
 + `-psqlDbName`                 : Postgres database name
 + `-psqlUser`                   : Postgres user
@@ -45,8 +45,8 @@ Then, you can run the tool with the following command:
 An example of a working set of switches for project **Closure Library** is:
 <br />
 `
--output_csv -class_analysis -module-analysis -package-system "ClosureLibrary" -analyze-lbClasses
--directory_path "/Users/Shahriar/Documents/workspace/era/dataset/closure-library-v20160315"
+-output-csv -class-analysis -module-analysis -package-system "ClosureLibrary" -analyze-lbClasses
+-directory-path "/Users/Shahriar/Documents/workspace/era/dataset/closure-library-v20160315"
 -name "closure-library"
 `
 
@@ -62,22 +62,19 @@ We ran the tool to evaluate performance of JSDeodorant (precision and recall) fo
 | Atom (CoffeScript) | 106      |    101 | 5 | 1 | 95% | 99% |
 
 ##### Closure-library evaluation files
-* [Closure-library oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/closure-oracle.htm?token=AC-lR18FZcBx_tG-CYvyAQBUGJv1d30Rks5XcwTGwA%3D%3D)
-* [Closure-library oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/closure-oracle.htm?token=AC-lR6hvZMAn7CkSkTuQ0h-33xE6NEZkks5XcwSHwA%3D%3D)
-* [Closure-library comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/closure-comparison.htm?token=AC-lR3ERR8HYpSNXFCmL8Q78kiT98Q-Eks5XcwTkwA%3D%3D)
-* [Full Closure-library file](https://github.com/sshishe/era/blob/master/evaluation/closure.xlsx)
+* [Closure-library oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/closure-oracle.htm)
+* [Closure-library oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/closure-extras.htm)
+* [Closure-library comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/closure-comparison.htm)
 
 ##### Doppio evaluation files
-* [Doppio oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/doppio-oracle.htm?token=AC-lR92uR5yga-Neu_fzS-c2JR_2kJlsks5XcwUJwA%3D%3D)
-* [Doppio oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/doppio-extras.htm?token=AC-lR_KglMDBNKf9sQyn2doob3FDL7fOks5XcwUcwA%3D%3D)
-* [Doppio comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/doppio-comparison.htm?token=AC-lRz_OZLUFXp7gkeyaxye4yOTsqWx-ks5XcwUywA%3D%3D)
-* [Full Doppio analysis file](https://github.com/sshishe/era/blob/master/evaluation/doppio.xlsx)
+* [Doppio oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/doppio-oracle.htm)
+* [Doppio oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/doppio-extras.htm)
+* [Doppio comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/doppio-comparison.htm)
 
 ##### Atom evaluation files
-* [Atom oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/atom-oracle.htm?token=AC-lR8cta3j_f_YqbPcJsECXGk2eYXsNks5XcwVUwA%3D%3D)
-* [Atom oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/atom-extra.htm?token=AC-lR1iIc64cj4fxgSYpVKTzwErPKdqWks5XcwVmwA%3D%3D)
-* [Atom comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/era/master/evaluation/atom-comparison.htm?token=AC-lR1MmYjUsGd-_j0y-dXuHGj7rrVBtks5XcwV7wA%3D%3D)
-* [Full Atom analysis file](https://github.com/sshishe/era/blob/master/evaluation/atom.xlsx)
+* [Atom oracle](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/atom-oracle.htm)
+* [Atom oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/atom-extra.htm)
+* [Atom comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/atom-comparison.htm)
 
 
 
