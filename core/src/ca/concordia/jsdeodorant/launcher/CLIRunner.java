@@ -27,7 +27,6 @@ public class CLIRunner extends Runner {
 	}
 
 	public static void main(String[] args) {
-		//BasicConfigurator.configure();
 		try {
 			CLIRunner.initializeCommandLine(args);
 			if (flags.getHelp()) {

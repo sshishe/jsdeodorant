@@ -108,7 +108,7 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 
 	private boolean hasModuleInformation() {
 		if (publicIdentifier instanceof CompositeIdentifier)
-			if (publicIdentifier.asCompositeIdentifier().getMostLeftPart().equals("exports") || publicIdentifier.asCompositeIdentifier().getLeftPart().toString().contains("module.exports"))
+			if (publicIdentifier.asCompositeIdentifier().getMostLeftPart().equals("exports") || publicIdentifier.toString().contains("module.exports"))
 				return true;
 		return false;
 	}

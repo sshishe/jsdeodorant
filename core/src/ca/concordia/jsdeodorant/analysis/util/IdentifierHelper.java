@@ -164,7 +164,7 @@ public class IdentifierHelper {
 			else {
 				if (newIdentifier instanceof PlainIdentifier)
 					return new CompositeIdentifier(newIdentifier, identifier);
-				return new CompositeIdentifier(newIdentifier.asCompositeIdentifier().getLeftPart(), new CompositeIdentifier(newIdentifier.asCompositeIdentifier().getMostRightPart(), identifier));
+				return new CompositeIdentifier(newIdentifier.asCompositeIdentifier(), identifier);
 			}
 
 		CompositeIdentifier composite = identifier.asCompositeIdentifier();

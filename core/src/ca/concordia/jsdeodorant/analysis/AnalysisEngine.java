@@ -68,6 +68,7 @@ public class AnalysisEngine {
 		if (analysisOption.isOutputToDB())
 			prepareOutputToPsql(analysisOption);
 
+		int functionCounts = 0;
 		for (SourceFile sourceFile : inputs) {
 			// if (containsError(sourceFile, result))
 			// continue;
@@ -131,6 +132,7 @@ public class AnalysisEngine {
 			}
 
 			AnalysisResult.addPackageInstance(module);
+			functionCounts += module.getProgram().getFunctionDeclarationList().size();
 		}
 
 		for (Module module : modules) {
@@ -145,6 +147,7 @@ public class AnalysisEngine {
 			experimentOutput.aggregateReportForModule(modules);
 			experimentOutput.moduleReport(modules);
 			log.info("Total number of classes: " + ClassAnalysisReport.getClassCount());
+			log.info("Total number of functions: " + functionCounts);
 		}
 		//log.info("Total number of files: " + AnalysisResult.getTotalNumberOfFiles());
 		return modules;
