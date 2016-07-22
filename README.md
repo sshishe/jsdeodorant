@@ -35,7 +35,9 @@ Here is the list of switches you can pass to the command-line runner:
 + `-psqlUser`                   : Postgres user
 + `-psqlPassword`               : Postgres password
 
-To be able to run the tool without eclipse, you should run `gradle assembly` in the `core` folder of JSDeodorant to build the appropriate JAR file in the target folder.
+To be able to run the tool without eclipse, you should run `gradle assemble` in the `core` folder of JSDeodorant to build the appropriate JAR file in the target folder.
+
+To create eclipse project for the `core` you can run `gradle build eclipse`.
 
 To be able to import Eclipse Plugin into the workspace, you have to navigate to plugin root folder and run `gradle buildAndCopyLibs`. This way gradle would build JSDeodorant's core component to resolve plugin's dependency.
 
