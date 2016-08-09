@@ -78,7 +78,10 @@ We ran the tool to evaluate performance of JSDeodorant (precision and recall) fo
 * [Atom oracle extra found](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/atom-extra.htm)
 * [Atom comparison with js classes](http://htmlpreview.github.io/?https://raw.githubusercontent.com/sshishe/jsdeodorant-evaluation/master/evaluation/atom-comparison.htm)
 
+## Research
+If you are interested to learn how exactly JSDeodorant works, please have a look at the following paper:
 
+Shahriar Rostami, Laleh Eshkevari, Davood Mazinanian, and Nikolaos Tsantalis, "[Detecting Function Constructors in JavaScript](https://users.encs.concordia.ca/~nikolaos/publications/ICSME_2016.pdf)," 32nd IEEE International Conference on Software Maintenance and Evolution (ICSME'2016), ERA Track, Raleigh, North Carolina, USA, October 2-10, 2016.
 
 ## License
 This project is licensed under the MIT License.
