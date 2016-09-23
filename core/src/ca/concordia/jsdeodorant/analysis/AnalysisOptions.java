@@ -29,6 +29,7 @@ public class AnalysisOptions {
 	private String name;
 	private String version;
 	private PackageSystem packageSystem;
+	private String classAnalysisMode;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -209,8 +210,24 @@ public class AnalysisOptions {
 			this.packageSystem = PackageSystem.CommonJS;
 		else if (packageSystem.toLowerCase().equals("closurelibrary"))
 			this.packageSystem = PackageSystem.ClosureLibrary;
+		else if (packageSystem.toLowerCase().equals("helma"))
+			this.packageSystem = PackageSystem.Helma;
 		else
 			this.packageSystem = PackageSystem.CommonJS;
+	}
+	
+	public void setClassAnalysisMode(String classAnalysisMode) {
+		if (classAnalysisMode == null)
+			return;
+		if (classAnalysisMode.toLowerCase().equals("strict"))
+			this.classAnalysisMode = "strict";
+		else if (classAnalysisMode.toLowerCase().equals("nonStrict"))
+			this.classAnalysisMode = "nonStrict";
+		
+	}
+
+	public String getClassAnalysisMode() {
+		return classAnalysisMode;
 	}
 
 	public PackageSystem getPackageSystem() {

@@ -104,22 +104,10 @@ public class ClassInferenceEngine {
 					if (functionDeclaration instanceof AbstractFunctionFragment) {
 						if (binaryOperatorTree.right instanceof FunctionDeclarationTree)
 							if (left.toString().contains(functionName + ".prototype")) {
-								functionDeclaration.setClassDeclaration(true);
-								boolean hasNamespace = false;
-								if (functionDeclaration instanceof FunctionDeclarationExpression)
-									hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-
-								ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
-								module.addClass(classDeclaration);
+								module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 								break;
 							} else if (left.asCompositeIdentifier().getMostLeftPart().toString().contains(functionName)) {
-								functionDeclaration.setClassDeclaration(true);
-								boolean hasNamespace = false;
-								if (functionDeclaration instanceof FunctionDeclarationExpression)
-									hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-
-								ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
-								module.addClass(classDeclaration);
+								module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 								break;
 							}
 
@@ -161,12 +149,7 @@ public class ClassInferenceEngine {
 				if (left instanceof CompositeIdentifier) {
 					if (functionDeclaration.getName().equals(left.asCompositeIdentifier().getLeftPart().toString()))
 						if (((CompositeIdentifier) left).getMostRightPart().toString().contains("prototype")) {
-							boolean hasNamespace = false;
-							if (functionDeclaration instanceof FunctionDeclarationExpression)
-								hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-
-							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
-							module.addClass(classDeclaration);
+							module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 						}
 				}
 			}
@@ -184,14 +167,7 @@ public class ClassInferenceEngine {
 							if (functionDeclaration.getRawIdentifier() instanceof CompositeIdentifier) {
 								CompositeIdentifier compositeIdentifier = functionDeclaration.getRawIdentifier().asCompositeIdentifier();
 								if (Character.isUpperCase(compositeIdentifier.getMostRightPart().toString().charAt(0))) {
-									functionDeclaration.setClassDeclaration(true);
-
-									boolean hasNamespace = false;
-									if (functionDeclaration instanceof FunctionDeclarationExpression)
-										hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-
-									ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
-									module.addClass(classDeclaration);
+									module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 									break;
 								}
 							}
@@ -204,14 +180,7 @@ public class ClassInferenceEngine {
 										for (FunctionDeclaration functionToBeMatched : module.getProgram().getFunctionDeclarationList()) {
 											if (functionToBeMatched.getIdentifier() != null)
 												if (functionToBeMatched.getIdentifier().toString().equals(((CompositeIdentifier) identifier).getMostLeftPart().toString())) {
-													functionToBeMatched.setClassDeclaration(true);
-
-													boolean hasNamespace = false;
-													if (functionDeclaration instanceof FunctionDeclarationExpression)
-														hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-
-													ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false, module);
-													module.addClass(classDeclaration);
+													module.createClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, false);
 													break;
 												}
 										}
@@ -231,14 +200,9 @@ public class ClassInferenceEngine {
 				AbstractIdentifier left = IdentifierHelper.getIdentifier(binaryOperatorTree.left);
 				if (left instanceof CompositeIdentifier) {
 					if (left.asCompositeIdentifier().toString().contains("this.")) {
-						boolean hasNamespace = false;
-						if (functionDeclaration instanceof FunctionDeclarationExpression)
-							hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
 						if (checkIfFunctionNameIsCapitalize(functionDeclaration)) {
 							//log.warn(functionDeclaration.getIdentifier());
-							functionDeclaration.setClassDeclaration(true);
-							ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
-							module.addClass(classDeclaration);
+							module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 						}
 					}
 				}
@@ -263,20 +227,9 @@ public class ClassInferenceEngine {
 						}
 					}
 					if (closestFunctionToBeMatched != null)
-						setFunctionToBeMatchedAsAClass(closestFunctionToBeMatched, functionDeclaration, module);
+						module.createClassDeclaration(closestFunctionToBeMatched.getRawIdentifier(), closestFunctionToBeMatched, true, false);
 				}
 			}
-	}
-
-	private static void setFunctionToBeMatchedAsAClass(FunctionDeclaration functionToBeMatched, FunctionDeclaration functionDeclaration, Module module) {
-		functionToBeMatched.setClassDeclaration(true);
-
-		boolean hasNamespace = false;
-		if (functionDeclaration instanceof FunctionDeclarationExpression)
-			hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-
-		ClassDeclaration classDeclaration = new ClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, hasNamespace, module.getLibraryType(), false, module);
-		module.addClass(classDeclaration);
 	}
 
 	private static boolean checkIfFunctionNameIsCapitalize(FunctionDeclaration function) {

@@ -49,12 +49,13 @@ public class TestRunner extends Runner {
 		getAnalysisOptions().setFunctionAnalysis(true);
 		getAnalysisOptions().setAnalyzeLibrariesForClasses(true);
 		getAnalysisOptions().setPackageSystem("CommonJS");
+		getAnalysisOptions().setClassAnalysisMode("strict");
 		return getAnalysisOptions();
 	}
 
-	public Module performActionsForModule() {
+	public List<Module> performActionsForModule() {
 		try {
-			return super.performActions().get(0);
+			return super.performActions();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

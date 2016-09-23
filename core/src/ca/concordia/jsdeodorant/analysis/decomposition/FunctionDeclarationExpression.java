@@ -33,6 +33,9 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	private Token leftValueToken;
 	private FunctionDeclarationExpressionNature functionDeclarationExpressionNature;
 	private boolean isClassDeclaration = false;
+	
+	// for codes transpiled from typeScript and coffeeScript we have class and constructor
+	private boolean isConstructor = false;
 
 	private List<AbstractExpression> parameters;
 	private List<AbstractStatement> statementList;
@@ -267,5 +270,16 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 			return null;
 		}
 		return IdentifierHelper.getIdentifier(leftValueExpression);
+	}
+
+	@Override
+	public boolean isConstructor() {
+		// TODO Auto-generated method stub
+		return isConstructor;
+	}
+
+	@Override
+	public void SetIsConstructor(boolean isConstructor) {
+		this.isConstructor=isConstructor;	
 	}
 }

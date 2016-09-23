@@ -8,7 +8,11 @@ import java.util.List;
 import com.google.javascript.jscomp.SourceFile;
 
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
+import ca.concordia.jsdeodorant.analysis.decomposition.AbstractStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.CompositeStatement;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 
 public class Module {
@@ -123,5 +127,40 @@ public class Module {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public ClassDeclaration createClassDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, 
+													boolean isInfered,  boolean isAliased) {
+		
+		boolean hasNamespace = false;
+		if (functionDeclaration instanceof FunctionDeclarationExpression)
+			hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
+
+		ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, isInfered, hasNamespace, this.getLibraryType(), isAliased,this);
+		functionDeclaration.setClassDeclaration(true);
+		this.addClass(classDeclaration);
+		
+		return classDeclaration;
+	}
+	
+	public void identifyConstructorInClassBody(){
+		for(ClassDeclaration aClass: this.classes){
+			if(!aClass.hasConstructor()){
+				FunctionDeclaration fn=aClass.getFunctionDeclaration();
+				AbstractStatement body=fn.getStatements().get(0); 
+				for(AbstractStatement abstractStatement: ((CompositeStatement)body).getStatements()){
+					for(FunctionDeclaration aFunctionDeclaration: abstractStatement.getFunctionDeclarationList()){
+						if(!aFunctionDeclaration.isConstructor()){
+							if(aFunctionDeclaration.getName().contentEquals(fn.getName())){
+								aFunctionDeclaration.SetIsConstructor(true);
+								aClass.setHasConstrucotr(true);
+								aClass.getConstructors().add(aFunctionDeclaration);
+							}
+						}
+					}
+				}
+			}
+		}
+		
 	}
 }

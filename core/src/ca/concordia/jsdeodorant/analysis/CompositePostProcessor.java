@@ -12,25 +12,15 @@ import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
 import ca.concordia.jsdeodorant.analysis.abstraction.PlainIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.Program;
-import ca.concordia.jsdeodorant.analysis.abstraction.SourceElement;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
-import ca.concordia.jsdeodorant.analysis.decomposition.Statement;
-import ca.concordia.jsdeodorant.analysis.module.PackageExporter;
-import ca.concordia.jsdeodorant.analysis.module.PackageImporter;
-import ca.concordia.jsdeodorant.analysis.module.PackageSystem;
-import ca.concordia.jsdeodorant.analysis.module.closurelibrary.ClosureLibraryExportHelper;
-import ca.concordia.jsdeodorant.analysis.module.closurelibrary.ClosureLibraryImportHelper;
-import ca.concordia.jsdeodorant.analysis.module.commonjs.CommonJSExportHelper;
-import ca.concordia.jsdeodorant.analysis.module.commonjs.CommonJSRequireHelper;
 import ca.concordia.jsdeodorant.language.PredefinedClasses;
 import ca.concordia.jsdeodorant.language.PredefinedFunctions;
 
 public class CompositePostProcessor {
 	static Logger log = Logger.getLogger(CompositePostProcessor.class.getName());
 
-	public static void processFunctionDeclarationsToFindClasses(Module module) {
+	public static void processFunctionDeclarationsToFindClasses(Module module, String classInferenceMode) {
 		Program program = module.getProgram();
 		for (ObjectCreation objectCreation : program.getObjectCreationList()) {
 			if (objectCreation.getOperandOfNewName() == null || objectCreation.isFunctionObject())
@@ -42,37 +32,43 @@ public class CompositePostProcessor {
 		}
 
 		// Class inference
-		ClassInferenceEngine.run(module);
+		if(classInferenceMode.contentEquals("nonStrict"))
+			ClassInferenceEngine.run(module);
+		else if(classInferenceMode.contentEquals("strict"))
+			ClassInferenceEngineStricMode.run(module);
+		else
+			System.out.println("class Inference mode need to be set");
 	}
 
-	public static void processModules(Module module, List<Module> modules, PackageSystem packageSystem, boolean onlyExports) {
-		PackageImporter packageImporter = null;
-		PackageExporter packageExporter = null;
-		switch (packageSystem) {
-		case CommonJS:
-			if (!onlyExports)
-				packageImporter = new CommonJSRequireHelper(module, modules);
-			packageExporter = new CommonJSExportHelper(module, modules);
-			break;
-		case ClosureLibrary:
-			if (!onlyExports)
-				packageImporter = new ClosureLibraryImportHelper(module, modules);
-			packageExporter = new ClosureLibraryExportHelper(module, modules);
-			break;
-		default:
-			break;
-		}
-
-		Program program = module.getProgram();
-		for (SourceElement element : program.getSourceElements()) {
-			if (element instanceof Statement) {
-				Statement statement = (Statement) element;
-				if (!onlyExports)
-					packageImporter.extract(statement.getStatement());
-				packageExporter.extract(statement.getStatement());
-			}
-		}
-	}
+	// MOVED TO JSPRoject
+//	public static void processModules(Module module, List<Module> modules, PackageSystem packageSystem, boolean onlyExports) {
+//		PackageImporter packageImporter = null;
+//		PackageExporter packageExporter = null;
+//		switch (packageSystem) {
+//		case CommonJS:
+//			if (!onlyExports)
+//				packageImporter = new CommonJSRequireHelper(module, modules);
+//			packageExporter = new CommonJSExportHelper(module, modules);
+//			break;
+//		case ClosureLibrary:
+//			if (!onlyExports)
+//				packageImporter = new ClosureLibraryImportHelper(module, modules);
+//			packageExporter = new ClosureLibraryExportHelper(module, modules);
+//			break;
+//		default:
+//			break;
+//		}
+//
+//		Program program = module.getProgram();
+//		for (SourceElement element : program.getSourceElements()) {
+//			if (element instanceof Statement) {
+//				Statement statement = (Statement) element;
+//				if (!onlyExports)
+//					packageImporter.extract(statement.getStatement());
+//				packageExporter.extract(statement.getStatement());
+//			}
+//		}
+//	}
 
 	public static void processFunctionInvocations(Module module) {
 		Program program = module.getProgram();
@@ -168,25 +164,13 @@ public class CompositePostProcessor {
 		String functionQualifiedName = functionDeclaration.getQualifiedName();
 
 		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
-			functionDeclaration.setClassDeclaration(true);
-
-			boolean hasNamespace = false;
-			if (functionDeclaration instanceof FunctionDeclarationExpression)
-				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, hasNamespace, module.getLibraryType(), !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()), module);
+			ClassDeclaration classDeclaration=module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
 			objectCreation.setClassDeclaration(classDeclaration, module);
-			module.addClass(classDeclaration);
 			return true;
 		}
 		if (functionQualifiedName.equals(objectCreation.getIdentifier().toString()) || functionDeclaration.getRawIdentifier() != null && functionDeclaration.getRawIdentifier().toString().equals(objectCreation.getIdentifier().toString())) {
-			functionDeclaration.setClassDeclaration(true);
-
-			boolean hasNamespace = false;
-			if (functionDeclaration instanceof FunctionDeclarationExpression)
-				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, hasNamespace, module.getLibraryType(), !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()), module);
+			ClassDeclaration classDeclaration=module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
 			objectCreation.setClassDeclaration(classDeclaration, module);
-			module.addClass(classDeclaration);
 			return true;
 		}
 		return false;

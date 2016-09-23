@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.InferenceType;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.SourceLocationHelper;
 
@@ -42,7 +43,11 @@ public class ClassAnalysisReport {
 		classInstance.setClassLOC(classInstance.getConstructorLOC() + classDeclaration.getExtraMethodLines());
 		classInstance.setPredefined(false);
 		classInstance.setHasNewExpression(!classDeclaration.isInfered());
+		if(classDeclaration.isInfered()){
+			classInstance.setInferenceType(classDeclaration.getInferenceType());
+		}
 		classInstance.setHasInfered(classDeclaration.isInfered());
+		classInstance.sethasConstructor(classDeclaration.hasConstructor());
 		classInstance.setHasNamespace(classDeclaration.hasNamespace());
 		classInstance.setNumberOfMethods(classDeclaration.getMethods().size());
 		classInstance.setNumberOfAttributes(classDeclaration.getAttributes().size());
@@ -111,6 +116,9 @@ public class ClassAnalysisReport {
 		private boolean isDeclarationInLibrary;
 		private boolean isAliased;
 		private int numberOfInstantiation;
+		private InferenceType inferenceType;
+		private boolean hasConstructor;
+		
 
 		public ClassReportInstance(Module module, ClassDeclaration classDeclaration) {
 			ClassAnalysisReport.checkForInitialization();
@@ -150,12 +158,21 @@ public class ClassAnalysisReport {
 			this.hasNewExpression = hasNewExpression;
 		}
 
-		public boolean isHasInfered() {
+		public boolean isInfered() {
 			return hasInfered;
 		}
 
 		public void setHasInfered(boolean hasInfered) {
 			this.hasInfered = hasInfered;
+		}
+		
+		
+		public boolean hasConstructor() {
+			return hasConstructor;
+		}
+
+		public void sethasConstructor(boolean hasConstructor) {
+			this.hasConstructor = hasConstructor;
 		}
 
 		//		public String getNewExpressionFile() {
@@ -173,6 +190,14 @@ public class ClassAnalysisReport {
 		//		public void setNewExpressionOffset(String newExpressionOffset) {
 		//			this.newExpressionOffset = newExpressionOffset;
 		//		}
+
+		public InferenceType getInferenceType() {
+			return inferenceType;
+		}
+
+		public void setInferenceType(InferenceType inferenceType) {
+			this.inferenceType = inferenceType;
+		}
 
 		public int getConstructorLOC() {
 			return constructorLOC;
@@ -275,13 +300,30 @@ public class ClassAnalysisReport {
 
 	public static void writeToCSV() {
 		CSVFileWriter csvWriter = new CSVFileWriter("log/classes/class-declarations.csv");
-		String fileHeader = "Class name, file, Is Predefined, Class offset, has new expression, has inferred, Constructor Lines of codes, Total class Lines of codes, Has Namespace, Number of Methods, Number of attributes, Is Declaration in library?, is Aliased?, Number of instantiation";
+		String fileHeader = "Class name, file, Is Predefined, Class offset, has new expression, has inferred, Constructor Lines of codes, Total class Lines of codes, Has Namespace, Number of Methods, Number of attributes, Is Declaration in library?, is Aliased?, Number of instantiation, InferenceType, hasConstructor";
 		csvWriter.writeToFile(fileHeader.split(","));
 		for (ClassReportInstance classReportInstance : classes) {
 			StringBuilder lineToWrite = new StringBuilder();
-			lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.isPredefined()).append(",").append(classReportInstance.classOffset).append(",").append(classReportInstance.hasNewExpression).append(",").append(classReportInstance.hasInfered).append(",").append(classReportInstance.constructorLOC).append(",").append(classReportInstance.classLOC).append(",").append(classReportInstance.hasNamespace).append(",").append(classReportInstance.getNumberOfMethods()).append(",").append(classReportInstance.getNumberOfAttributes()).append(",").append(classReportInstance.isDeclarationInLibrary).append(",").append(classReportInstance.isAliased).append(",").append(classReportInstance.getNumberOfInstantiation());
+			lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.isPredefined()).append(",").append(classReportInstance.classOffset).append(",").append(classReportInstance.hasNewExpression).append(",").append(classReportInstance.hasInfered).append(",").append(classReportInstance.constructorLOC).append(",").append(classReportInstance.classLOC).append(",").append(classReportInstance.hasNamespace).append(",").append(classReportInstance.getNumberOfMethods()).append(",").append(classReportInstance.getNumberOfAttributes()).append(",").append(classReportInstance.isDeclarationInLibrary).append(",").append(classReportInstance.isAliased).append(",").append(classReportInstance.getNumberOfInstantiation()).append(",").append(classReportInstance.getInferenceType()).append(",").append(classReportInstance.hasConstructor());
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
 
+		// writing the inheritance relation
+		CSVFileWriter csvWriter1 = new CSVFileWriter("log/classes/inheritance-relations.csv");
+		String fileHeader1 = "Class name, file,  Class offset, Super-type1 , Super-type1-file , Super-type2 , Super-type2-file ,Super-type3 , Super-type3-file ,";
+		csvWriter1.writeToFile(fileHeader1.split(","));
+		for (ClassReportInstance classReportInstance : classes) {
+			if(classReportInstance.getClassDeclaration().getSuperTypes().size()>0 ){
+				StringBuilder lineToWrite = new StringBuilder();
+				StringBuilder superTypeNames = new StringBuilder();
+				for(ClassDeclaration superClass:classReportInstance.getClassDeclaration().getSuperTypes() ){
+					superTypeNames.append(superClass.getName()).append(",").append(superClass.getFunctionDeclaration().getFunctionDeclarationTree().location.start.source.name).append(",");
+				}
+				lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.classOffset).append(",").append(superTypeNames);
+				csvWriter1.writeToFile(lineToWrite.toString().split(","));
+			}
+			
+		}
+		
 	}
 }

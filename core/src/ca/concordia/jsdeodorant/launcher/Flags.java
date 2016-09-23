@@ -40,6 +40,9 @@ public class Flags {
 
 	@Option(name = "-package-system", usage = "Package system including CommonJS and ClosureLibrary")
 	private String packageSystem;
+	
+	@Option(name = "-class-analysis-mode", usage = "Class analysis mode including strict and nonStrict")
+	private String classAnalysisMode;
 
 	@Option(name = "-disable-log", usage = "Enable logging mechanism")
 	private boolean disableLog = false;
@@ -195,6 +198,10 @@ public class Flags {
 
 	public String getPackageSystem() {
 		return packageSystem;
+	}
+	
+	public String getClassAnalysisMode() {
+		return classAnalysisMode;
 	}
 
 	public CmdLineParser getParser() {

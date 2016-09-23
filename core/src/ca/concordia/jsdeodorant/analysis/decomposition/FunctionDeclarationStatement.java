@@ -19,6 +19,8 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 	private List<AbstractExpression> parameters;
 	private FunctionDeclarationTree functionDeclarationTree;
 	private boolean isClassDeclaration = false;
+	// for codes transpiled from typeScript and coffeeScript we have class and constructor
+	private boolean isConstructor = false;
 
 	public FunctionDeclarationStatement(FunctionDeclarationTree functionDeclarationTree, SourceContainer parent) {
 		super(functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
@@ -89,6 +91,15 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 	@Override
 	public AbstractIdentifier getRawIdentifier() {
 		return IdentifierHelper.getIdentifier(functionDeclarationTree);
+	}
+	
+	@Override
+	public boolean isConstructor() {
+		return isConstructor;
+	}
+	
+	public void SetIsConstructor(boolean isConstructor) {
+		this.isConstructor=isConstructor;
 	}
 
 }

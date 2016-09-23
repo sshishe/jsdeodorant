@@ -7,13 +7,13 @@ var MyClass = function(descName, parent) {
 }
 
 
-var a = new MyClass();
+var b = new MyClass();
 
 angular.mock.$Browser = function() {
   var cc = 2;
 }
 
-// var a = new angular.mock.$Browser();
+ var a = new angular.mock.$Browser();
 
 angular.mock.$Browser.prototype = {
 

@@ -27,14 +27,29 @@ public class CreationTest {
 	@Test
 	public void testArrayWithNewKeyword() {
 		testRunner.setJsFile("test/abstraction/array-creation-new-keyword.js");
-		Module result = testRunner.performActionsForModule();
-		assertTrue(result.getProgram().getArrayCreationList().size() == 1);
+		for(Module m: testRunner.performActionsForModule()){
+			if(m.getSourceFile().getName().endsWith("test/abstraction/array-creation-new-keyword.js")){
+				Module result =m;
+				assertTrue(result.getProgram().getArrayCreationList().size() == 1);
+			}
+		}
+		
+		
+		//Module result = testRunner.performActionsForModule();
+		//assertTrue(result.getProgram().getArrayCreationList().size() == 1);
 	}
 
 	@Test
 	public void testArrayLiteral() {
 		testRunner.setJsFile("test/abstraction/array-literal.js");
-		Module result = testRunner.performActionsForModule();
-		assertTrue(result.getProgram().getArrayLiteralCreationList().size() == 2);
+		
+		for(Module m: testRunner.performActionsForModule()){
+			if(m.getSourceFile().getName().endsWith("test/abstraction/array-literal.js")){
+				Module result =m;
+				assertTrue(result.getProgram().getArrayLiteralCreationList().size() == 2);
+			}
+		}
+		//Module result = testRunner.performActionsForModule();
+		//assertTrue(result.getProgram().getArrayLiteralCreationList().size() == 2);
 	}
 }

@@ -22,7 +22,9 @@ import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.Program;
 import ca.concordia.jsdeodorant.analysis.abstraction.StatementProcessor;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
+import ca.concordia.jsdeodorant.analysis.module.PackageSystem;
 import ca.concordia.jsdeodorant.analysis.util.FileUtil;
 import ca.concordia.jsdeodorant.analysis.util.JSONReader;
 import ca.concordia.jsdeodorant.analysis.util.StringUtil;
@@ -60,8 +62,7 @@ public class AnalysisEngine {
 	public List<Module> run(AnalysisOptions analysisOption) {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
-		List<Module> modules = new ArrayList<>();
-
+	
 		if (analysisOption.isOutputToCSV())
 			prepareOutputToCSV();
 
@@ -79,28 +80,32 @@ public class AnalysisEngine {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
 
-			Module module = new Module(program, sourceFile, scriptAnalyzer.getMessages());
-			modules.add(module);
-
-			if (analysisOption.hasModuleAnalysis())
-				CompositePostProcessor.processModules(module, modules, analysisOption.getPackageSystem(), true);
+			JSproject.getInstance().createModule(program, sourceFile, scriptAnalyzer.getMessages(), analysisOption.getPackageSystem(), analysisOption.hasModuleAnalysis());
 		}
-
+		
+		List<Module> modules= JSproject.getInstance().getModules();
 		for (Module module : modules) {
 			markBuiltinLibraries(module, analysisOption);
 		}
-
+		
+		InheritanceInferenceEngine.getInstance().configure(analysisOption.getPackageSystem());
+		
 		for (Module module : modules) {
+			System.out.println("analyzing module: "+ module.getSourceFile().getName());
 			if (module.getLibraryType() != LibraryType.BUILT_IN) {
 				checkForBeingLibrary(module, analysisOption);
 				addBuiltinDepdendencies(module, analysisOption, modules);
 			}
 			if (analysisOption.hasModuleAnalysis())
-				CompositePostProcessor.processModules(module, modules, analysisOption.getPackageSystem(), false);
+				JSproject.getInstance().processModules(module, analysisOption.getPackageSystem(), false);
 
-			if (analysisOption.hasClassAnlysis())
-				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE)
-					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module);
+			if (analysisOption.hasClassAnlysis()){
+				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE){
+					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module, analysisOption.getClassAnalysisMode());
+				}
+				InheritanceInferenceEngine.getInstance().run(module );
+			}
+			
 
 			if (analysisOption.hasFunctionAnlysis())
 				if (module.getLibraryType() == LibraryType.NONE)
@@ -114,15 +119,52 @@ public class AnalysisEngine {
 				}
 			}
 
-			ClassInferenceEngine.analyzeMethodsAndAttributes(module);
+			//ClassInferenceEngine.analyzeMethodsAndAttributes(module); need to be done after inheritance analysis because we may find some new classes there
 
+// Moved down after inheritance analysis
+//			if (analysisOption.isOutputToCSV()) {
+//				CSVOutput csvOutput = new CSVOutput(module);
+//				csvOutput.functionSignatures();
+//				csvOutput.functionInvocations();
+//				csvOutput.uniqueClassDeclaration();
+//			}
+//
+//			if (analysisOption.isOutputToDB()) {
+//				psqlOutput.logModuleInfo(module);
+//				if (analysisOption.hasClassAnlysis())
+//					psqlOutput.logClasses(module);
+//				if (analysisOption.hasFunctionAnlysis())
+//					psqlOutput.logFunctions(module);
+//			}
+//
+//			AnalysisResult.addPackageInstance(module);
+//			functionCounts += module.getProgram().getFunctionDeclarationList().size();
+		}
+		
+		System.out.println("analyzing inheritence: ");
+		// the inheritance analysis needs to be finished then we find method and attributes 
+		InheritanceInferenceEngine.getInstance().buildInheritenceRelation(analysisOption.getPackageSystem());
+		for (Module module : modules) {
+			module.identifyConstructorInClassBody(); // this is when the class contains a constructor too
+			if(analysisOption.getClassAnalysisMode().contentEquals("nonStrict"))
+					ClassInferenceEngine.analyzeMethodsAndAttributes(module);
+			else{
+				for(ClassDeclaration aClass: module.getClasses()){
+					aClass.identifyAttributes();
+					aClass.identifyMethodsWithinClassBody();
+					aClass.identifyMethodsAddedToClassPrototype();
+				}
+			}
+		}
+		
+		for (Module module : modules) {
 			if (analysisOption.isOutputToCSV()) {
 				CSVOutput csvOutput = new CSVOutput(module);
 				csvOutput.functionSignatures();
 				csvOutput.functionInvocations();
 				csvOutput.uniqueClassDeclaration();
 			}
-
+	
 			if (analysisOption.isOutputToDB()) {
 				psqlOutput.logModuleInfo(module);
 				if (analysisOption.hasClassAnlysis())
@@ -130,7 +172,7 @@ public class AnalysisEngine {
 				if (analysisOption.hasFunctionAnlysis())
 					psqlOutput.logFunctions(module);
 			}
-
+	
 			AnalysisResult.addPackageInstance(module);
 			functionCounts += module.getProgram().getFunctionDeclarationList().size();
 		}

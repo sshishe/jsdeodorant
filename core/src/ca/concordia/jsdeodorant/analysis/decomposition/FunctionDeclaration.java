@@ -24,6 +24,10 @@ public interface FunctionDeclaration {
 	public List<AbstractStatement> getStatements();
 
 	public boolean isClassDeclaration();
+	
+	public boolean isConstructor(); // for codes transpiled from typeScript and coffeeScript we have class and constructor
+	
+	public void SetIsConstructor(boolean isConstructor);
 
 	public void setClassDeclaration(boolean state);
 
