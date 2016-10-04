@@ -50,7 +50,7 @@ public class InheritanceInferenceEngine {
 	private Map<Module, Map<String, Set<String>>>potentialInheritenceRelations;
 	// this is for call to _extend(A,B) in angular
 	// key: module
-	// value: set of FunctionDeclaration with  __extends(A, B); as its statement
+	// value: set of ClassDeclaration with  __extends(A, B); as its statement
 	private Map<Module, Set<ClassDeclaration>> potentialSubTypes;
 	
 	private static InheritanceInferenceEngine instance=null;
@@ -325,7 +325,7 @@ public class InheritanceInferenceEngine {
 					parentClass.getConstructors().add(superClassConstructorMap.get(parent));
 					superClassConstructorMap.get(parent).SetIsConstructor(true);
 				}
-				subClass.addToSuperType(parentClass);
+				subClass.setSuperType(parentClass);
 			}
 		}
 		
@@ -360,10 +360,10 @@ public class InheritanceInferenceEngine {
 						if(!afn.isClassDeclaration()){
 							ClassDeclaration superClass=aModule.createClassDeclaration(candiadte.getIdentifier(), candiadte, true, false);
 							superClass.setInferenceType(InferenceType.Has_Subclass);
-							aSubClass.getSuperTypes().add(superClass);
+							aSubClass.setSuperType(superClass);
 						}else{
 							ClassDeclaration superClass=findClassInModule(afn, aModule);
-							aSubClass.getSuperTypes().add(superClass);
+							aSubClass.setSuperType(superClass);
 						}
 						break;
 					}
@@ -378,10 +378,10 @@ public class InheritanceInferenceEngine {
 								if(!fn.isClassDeclaration()){
 									ClassDeclaration superClass=aModule.createClassDeclaration(candiadte.getIdentifier(), candiadte, true, false);
 									superClass.setInferenceType(InferenceType.Has_Subclass);
-									aSubClass.getSuperTypes().add(superClass);
+									aSubClass.setSuperType(superClass);
 								}else{
 									ClassDeclaration superClass=findClassInModule(fn, aModule);
-									aSubClass.getSuperTypes().add(superClass);
+									aSubClass.setSuperType(superClass);
 								}
 								break;
 							}
@@ -471,7 +471,7 @@ public class InheritanceInferenceEngine {
 						childClassConstructorMap.get(child).SetIsConstructor(true);
 					}
 					if(parentClass!=null){
-						childClass.addToSuperType(parentClass);
+						childClass.setSuperType(parentClass);
 					}
 				}
 			}

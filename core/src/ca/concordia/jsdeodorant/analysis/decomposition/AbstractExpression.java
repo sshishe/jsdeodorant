@@ -25,7 +25,7 @@ import ca.concordia.jsdeodorant.analysis.util.ExpressionExtractor;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 import ca.concordia.jsdeodorant.analysis.util.ModelHelper;
 
-public class AbstractExpression extends AbstractFunctionFragment {
+public class AbstractExpression extends AbstractFunctionFragment implements CodeFragment{
 	private static final Logger log = Logger.getLogger(AbstractExpression.class.getName());
 	private ParseTree expression;
 	private Namespace namespace;

@@ -313,12 +313,10 @@ public class ClassAnalysisReport {
 		String fileHeader1 = "Class name, file,  Class offset, Super-type1 , Super-type1-file , Super-type2 , Super-type2-file ,Super-type3 , Super-type3-file ,";
 		csvWriter1.writeToFile(fileHeader1.split(","));
 		for (ClassReportInstance classReportInstance : classes) {
-			if(classReportInstance.getClassDeclaration().getSuperTypes().size()>0 ){
+			if(classReportInstance.getClassDeclaration().getSuperType() !=null ){
 				StringBuilder lineToWrite = new StringBuilder();
 				StringBuilder superTypeNames = new StringBuilder();
-				for(ClassDeclaration superClass:classReportInstance.getClassDeclaration().getSuperTypes() ){
-					superTypeNames.append(superClass.getName()).append(",").append(superClass.getFunctionDeclaration().getFunctionDeclarationTree().location.start.source.name).append(",");
-				}
+				superTypeNames.append(classReportInstance.getClassDeclaration().getSuperType().getName()).append(",").append(classReportInstance.getClassDeclaration().getSuperType().getFunctionDeclaration().getFunctionDeclarationTree().location.start.source.name).append(",");
 				lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.classOffset).append(",").append(superTypeNames);
 				csvWriter1.writeToFile(lineToWrite.toString().split(","));
 			}

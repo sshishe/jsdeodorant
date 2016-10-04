@@ -2,7 +2,6 @@ package ca.concordia.jsdeodorant.analysis;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +21,7 @@ import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.Program;
 import ca.concordia.jsdeodorant.analysis.abstraction.StatementProcessor;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
-import ca.concordia.jsdeodorant.analysis.module.PackageSystem;
 import ca.concordia.jsdeodorant.analysis.util.FileUtil;
 import ca.concordia.jsdeodorant.analysis.util.JSONReader;
 import ca.concordia.jsdeodorant.analysis.util.StringUtil;

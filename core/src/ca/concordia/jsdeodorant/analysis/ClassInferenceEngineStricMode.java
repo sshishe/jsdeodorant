@@ -45,42 +45,68 @@ public class ClassInferenceEngineStricMode {
 				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE){
 					//System.out.println("\t is a IIFE"); 
 					continue;
-				}	
+				}
 			}
-			int totalMethodsInsideClassBody=assignedMethodsInsideClassBody(module, functionDeclaration);
-			int totalAttributesInsideClassBody=assignedAttributesInsideClassBody(module, functionDeclaration);
-			int totalMethodsOutSideOutSideBody=assignedMethodToPrototypeOutSideBody_new(module, functionDeclaration);
-			int totalAttributesOutSideOutSideBody=assignedAttributesToPrototypeOutSideBody_new(module, functionDeclaration);
-			int totalObjectLiteralToPrototypeOutSideBody=assignObjectLiteralToPrototypeOutSideBody_new(module, functionDeclaration);
-			
-			SourceContainer parent = null;
-			
-			if( functionDeclaration instanceof FunctionDeclarationExpression){
-				 parent=((FunctionDeclarationExpression) functionDeclaration).getParent();
-			}else if(functionDeclaration instanceof FunctionDeclarationStatement){
-				 parent=((FunctionDeclarationStatement) functionDeclaration).getParent();
+			boolean proceed=false;
+			if(!(functionDeclaration.getQualifiedName().contains(".prototype.") ||
+					functionDeclaration.getQualifiedName().contains("this."))){
+				
+				AbstractIdentifier id=functionDeclaration.getRawIdentifier();
+				if(id !=null){
+					String rawIdentifier=null;
+					if(id instanceof PlainIdentifier){
+						rawIdentifier=id.asPlainIdentifier().toString();
+					}else if(id instanceof CompositeIdentifier){
+						rawIdentifier=id.asCompositeIdentifier().toString();
+					}
+					if(rawIdentifier!=null && 
+							!(rawIdentifier.contains(".prototype.") || rawIdentifier.contains("this.") )){
+						proceed=true;
+					}
+					
+				}else{
+					proceed=true;
+				}
+				
+				
 			}
 			
-			FunctionDeclaration parentFunction=getParentFunction(parent);
-			String parentName=null;
-			if(parentFunction!=null)
-				parentName=parentFunction.getName();
-			
-			if(totalMethodsInsideClassBody>0 || totalAttributesInsideClassBody>0){
-				//System.out.println("\t methods && attributes >0");
-				createClass(module, functionDeclaration, parentName, parentFunction,InferenceType.Constructor_Body_Analysis);
-			}else if(totalMethodsOutSideOutSideBody>0){
-				createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.Methods_Added_To_Prototype);
-			}else if(totalObjectLiteralToPrototypeOutSideBody>0){
-				//System.out.println("\t totalObjectLiteralToPrototypeOutSideBody >0");
-				createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
+			if(proceed){
+				int totalMethodsInsideClassBody=assignedMethodsInsideClassBody(module, functionDeclaration);
+				int totalAttributesInsideClassBody=assignedAttributesInsideClassBody(module, functionDeclaration);
+				int totalMethodsOutSideOutSideBody=assignedMethodToPrototypeOutSideBody_new(module, functionDeclaration);
+				int totalAttributesOutSideOutSideBody=assignedAttributesToPrototypeOutSideBody_new(module, functionDeclaration);
+				int totalObjectLiteralToPrototypeOutSideBody=assignObjectLiteralToPrototypeOutSideBody_new(module, functionDeclaration);
+				
+				SourceContainer parent = null;
+				
+				if( functionDeclaration instanceof FunctionDeclarationExpression){
+					 parent=((FunctionDeclarationExpression) functionDeclaration).getParent();
+				}else if(functionDeclaration instanceof FunctionDeclarationStatement){
+					 parent=((FunctionDeclarationStatement) functionDeclaration).getParent();
+				}
+				
+				FunctionDeclaration parentFunction=getParentFunction(parent);
+				String parentName=null;
+				if(parentFunction!=null)
+					parentName=parentFunction.getName();
+				
+				if(totalMethodsInsideClassBody>0 || totalAttributesInsideClassBody>0){
+					//System.out.println("\t methods && attributes >0");
+					createClass(module, functionDeclaration, parentName, parentFunction,InferenceType.Constructor_Body_Analysis);
+				}else if(totalMethodsOutSideOutSideBody>0){
+					createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.Methods_Added_To_Prototype);
+				}else if(totalObjectLiteralToPrototypeOutSideBody>0){
+					//System.out.println("\t totalObjectLiteralToPrototypeOutSideBody >0");
+					createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
+				}
+				nowSetClassesToNotFoundByObjectCreations(module);
 			}
-			nowSetClassesToNotFoundByObjectCreations(module);
 		}
 	}
 
 	private static void createClass(Module module, FunctionDeclaration functionDeclaration, String parentName,
-			FunctionDeclaration parentFunction, InferenceType infType) {
+		FunctionDeclaration parentFunction, InferenceType infType) {
 		if(parentName!=null && parentName.contentEquals(functionDeclaration.getName())){ // then the parentFunction is class and the current function is its constructor
 			if(parentFunction !=null){
 				ClassDeclaration aClassDeclaration=createClass(module, parentFunction, infType);

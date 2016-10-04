@@ -1,22 +1,20 @@
 package ca.concordia.jsdeodorant.analysis.decomposition;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.kohsuke.args4j.CmdLineParser;
-
 import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
+import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
-import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.CompositeIdentifier;
@@ -27,8 +25,8 @@ import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 public class ClassDeclaration {
 	private AbstractIdentifier identifier;
 	private FunctionDeclaration functionDeclaration;
-	private Map<String, AbstractExpression> methods;
-	private Map<String, AbstractExpression> attributes;
+	private Map<String, CodeFragment> methods;
+	private Map<String, CodeFragment> attributes;
 	private boolean isInfered;
 	private InferenceType inferenceType;
 	private boolean hasNamespace;
@@ -37,7 +35,15 @@ public class ClassDeclaration {
 	private boolean isAliased;
 	// If method defines outside of the constructor, then keep LOC
 	private int extraMethodLines;
-	private Set<ClassDeclaration> superTypes;
+	private ClassDeclaration superType; // Thankfully JavasScript supports single Inheritence 
+	public ClassDeclaration getSuperType() {
+		return superType;
+	}
+
+	public void setSuperType(ClassDeclaration superType) {
+		this.superType = superType;
+	}
+
 	private Set<FunctionDeclaration> constructors;// transpiled code from typeScript has constructors
 	private boolean hasConstructor;
 
@@ -49,14 +55,13 @@ public class ClassDeclaration {
 		this.identifier = identifier;
 		this.functionDeclaration = functionDeclaration;
 		this.setParentModule(parentModule);
-		this.attributes = new TreeMap<String, AbstractExpression>();
-		this.methods = new TreeMap<String, AbstractExpression>();
+		this.attributes = new TreeMap<String, CodeFragment>();
+		this.methods = new TreeMap<String, CodeFragment>();
 		this.isInfered = isInfered;
 		this.hasNamespace = hasNamespace;
 		this.instantiationCount = 0;
 		this.libraryType = libraryType;
 		this.isAliased = isAliased;
-		this.superTypes= new HashSet<ClassDeclaration>();
 		this.constructors= new HashSet<FunctionDeclaration>();
 	}
 
@@ -85,7 +90,7 @@ public class ClassDeclaration {
 		this.functionDeclaration = functionDeclaration;
 	}
 
-	public Map<String, AbstractExpression> getMethods() {
+	public Map<String, CodeFragment> getMethods() {
 		return methods;
 	}
 
@@ -94,11 +99,11 @@ public class ClassDeclaration {
 		this.methods.put(name, expression);
 	}
 
-	public void setMethods(Map<String, AbstractExpression> methods) {
+	public void setMethods(Map<String, CodeFragment> methods) {
 		this.methods = methods;
 	}
 
-	public Map<String, AbstractExpression> getAttributes() {
+	public Map<String, CodeFragment> getAttributes() {
 		return attributes;
 	}
 
@@ -106,7 +111,7 @@ public class ClassDeclaration {
 		this.attributes.put(name, expression);
 	}
 
-	public void setAttributes(Map<String, AbstractExpression> attributes) {
+	public void setAttributes(Map<String, CodeFragment> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -190,9 +195,6 @@ public class ClassDeclaration {
 		this.parentModule = parentModule;
 	}
 
-	public Set<ClassDeclaration> getSuperTypes() {
-		return superTypes;
-	}
 
 	public boolean hasConstructor() {
 		return hasConstructor;
@@ -204,18 +206,6 @@ public class ClassDeclaration {
 
 	public Set<FunctionDeclaration> getConstructors() {
 		return constructors;
-	}
-	
-	public void addToSuperType(ClassDeclaration aClassDeclaration){
-		if(this.superTypes.size()==0){
-			this.superTypes.add(aClassDeclaration);
-		}else{
-			for(ClassDeclaration c: this.superTypes){
-				if(!c.getFunctionDeclaration().equals(aClassDeclaration.getFunctionDeclaration())){
-					this.superTypes.add(aClassDeclaration);
-				}
-			}
-		}
 	}
 	
 	// it only identify attributes within the body of the constructor or class (not in the functions and methods belong to the class)
@@ -250,7 +240,7 @@ public class ClassDeclaration {
 								if(leftIdAsString.startsWith("this.")){
 									if(!(leftIdAsString.split(".").length>2)){ 
 										// more strict rules only one dot => this.SOMETHING and NOT  this.SOMETHING.OTHERTHINGS
-										//this.attributes.put(((CompositeIdentifier) leftId).getMostRightPart(), abstractStatement);
+										this.attributes.put(((CompositeIdentifier) leftId).getMostRightPart().toString(), abstractStatement);
 									}
 								}
 								
@@ -288,7 +278,12 @@ public class ClassDeclaration {
 							if(leftId instanceof CompositeIdentifier){
 								String leftIdAsString=leftId.asCompositeIdentifier().toString();
 								if(leftIdAsString.startsWith("this.") || leftIdAsString.startsWith(this.getName()+".prototype.")){
-									// found method
+									if(leftIdAsString.startsWith("this.") ){
+										this.methods.put(leftIdAsString.replace("this.", ""), abstractStatement);
+										
+									}else if(leftIdAsString.startsWith(this.getName()+".prototype.")){
+										this.methods.put(leftIdAsString.replace(this.getName()+".prototype.", ""),abstractStatement);
+									}
 								}	
 							}
 						}
@@ -298,22 +293,26 @@ public class ClassDeclaration {
 				if(!(abstractStatement.getStatement() instanceof FunctionDeclarationTree) &&  
 						!(abstractStatement.getStatement() instanceof LabelledStatementTree)){ // we don't go inside functions or object literals
 					identifyMethodsWithinClassBody(((CompositeStatement)abstractStatement).getStatements());		
-				}else if((abstractStatement.getStatement() instanceof LabelledStatementTree)){
-					LabelledStatementTree LabelledStatementTree=abstractStatement.getStatement().asLabelledStatement();
-					if(LabelledStatementTree.statement instanceof FunctionDeclarationTree){
-						// found method
-					}
 				}
+//				else if((abstractStatement.getStatement() instanceof LabelledStatementTree)){
+//					LabelledStatementTree LabelledStatementTree=abstractStatement.getStatement().asLabelledStatement();
+//					if(LabelledStatementTree.statement instanceof FunctionDeclarationTree){
+//						System.out.println("================>" + LabelledStatementTree.location.start.line+ "   "+ LabelledStatementTree.location.start.source.name);
+//						
+//						this.methods.put(LabelledStatementTree.name.value,abstractStatement);
+//					}
+//				}
 			}
 		}
 		
 	}
 	
 	public void identifyMethodsAddedToClassPrototype(){
-		if(this.parentModule.getSourceFile().getName().endsWith("/objectLiteralAsClass.js")){
-			System.out.println("\t\t\t  on place");
-		}
 		
+		// for all assignments in the module (but not in the current class-body) search for 
+		// ClassName.prototype.FunctionName = FunctionDeclarationTree or
+		// ClassName.prototype = ObjectLiteral containing function or
+		// ClassName.FunctionName= FunctionDeclarationTree => here we have static method
 		for( AbstractExpression abstractExpression :this.parentModule.getProgram().getAssignmentExpressionList()){
 			if(!this.functionDeclaration.getAssignments().contains(abstractExpression)){ // we are interested in assignment out of class body
 				if (abstractExpression.getExpression() instanceof BinaryOperatorTree) {
@@ -322,22 +321,25 @@ public class ClassDeclaration {
 					ParseTree right= binaryOperatorTree.right;
 					if(right instanceof FunctionDeclarationTree){
 						if (leftId instanceof CompositeIdentifier) {
-							if(leftId instanceof CompositeIdentifier){
-								if (leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype.") ) {
-									// found method
-								}
+							if (leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype.") ) {
+								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".prototype.", "");
+								this.methods.put(methodName, abstractExpression);
+							}else if(leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".")){ // not very good way of handling it A.foo= function(){....} foo is static method
+								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".", "");
+								this.methods.put(methodName, abstractExpression);
 							}
+						}else{
+							// we don't care then
 						}	
+					}else if(right instanceof ObjectLiteralExpressionTree){ // If Car is a class => Car.prototype = { getInfo: function () { return this.make + ', ' + this.model };};
+						for(ParseTree property: right.asObjectLiteralExpression().propertyNameAndValues){
+							if(property.asPropertyNameAssignment().value instanceof FunctionDeclarationTree){
+								Token methodName=property.asPropertyNameAssignment().name;
+								this.methods.put(methodName.toString(), abstractExpression);
+							}
+						}
 					}	
 				}
-			}
-		}
-		
-		// Now identify functions that are added to the prototype in form of objectLiteral => is it valid?
-		AbstractFunctionFragment aff=(AbstractFunctionFragment) this.functionDeclaration;
-		for (ObjectLiteralExpression objectLiteralExpression:this.parentModule.getProgram().getObjectLiteralList()){
-			if(!aff.getObjectLiteralExpressionList().contains(objectLiteralExpression)) { //we are interested in ObjectLiteral out of class body
-				objectLiteralExpression.getExpression();
 			}
 		}
 	}

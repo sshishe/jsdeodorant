@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.FunctionInvocation;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.jsdeodorant.launcher.TestRunner;
@@ -249,7 +250,7 @@ public class NamespaceTest {
 	public void testClassInferedWithMethod() {
 		try {
 			Module result = setAnalysisForNestedObjectLiterals("test/namespace/class-with-method.js");
-			//assertTrue(result.getClasses().size() == 2);
+			assertTrue(result.getClasses().size() == 2);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

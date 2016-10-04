@@ -9,7 +9,7 @@ import ca.concordia.jsdeodorant.analysis.abstraction.SourceElement;
 import ca.concordia.jsdeodorant.analysis.util.DebugHelper;
 
 public abstract class AbstractStatement extends AbstractFunctionFragment
-		implements SourceElement {
+		implements SourceElement, CodeFragment {
 	private ParseTree statement;
 	private StatementType type;
 
