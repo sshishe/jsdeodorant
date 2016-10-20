@@ -154,6 +154,16 @@ public class AnalysisEngine {
 			}
 		}
 		
+		// when all methods of classes are identified  we will  find abstract and overriden and overriding methods
+		for (Module module : modules) {
+			if(!(analysisOption.getClassAnalysisMode().contentEquals("nonStrict")))	{
+				for(ClassDeclaration aClass: module.getClasses()){
+					aClass.identifyInheritanceRelatedMethods();
+				}
+			}
+		}
+		
+		
 		for (Module module : modules) {
 			if (analysisOption.isOutputToCSV()) {
 				CSVOutput csvOutput = new CSVOutput(module);
@@ -176,7 +186,7 @@ public class AnalysisEngine {
 
 		for (Module module : modules) {
 			for (ClassDeclaration classDeclaration : module.getClasses()) {
-				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + classDeclaration.getAttributes().size() + " / methods:" + classDeclaration.getMethods().size() + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount() + " Has namespace:" + classDeclaration.hasNamespace());
+				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + classDeclaration.getAttributes().size() + " / methods:" + classDeclaration.getAllMethods().size() + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount() + " Has namespace:" + classDeclaration.hasNamespace());
 			}
 		}
 		if (analysisOption.isOutputToCSV()) {

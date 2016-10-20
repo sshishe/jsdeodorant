@@ -11,6 +11,9 @@ import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.InferenceType;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.SourceLocationHelper;
+import ca.concordia.jsdeodorant.analysis.decomposition.Method;
+import ca.concordia.jsdeodorant.analysis.decomposition.MethodType;
+
 
 public class ClassAnalysisReport {
 	static Logger log = Logger.getLogger(ClassAnalysisReport.class.getName());
@@ -49,7 +52,24 @@ public class ClassAnalysisReport {
 		classInstance.setHasInfered(classDeclaration.isInfered());
 		classInstance.sethasConstructor(classDeclaration.hasConstructor());
 		classInstance.setHasNamespace(classDeclaration.hasNamespace());
-		classInstance.setNumberOfMethods(classDeclaration.getMethods().size());
+		classInstance.setNumberOfMethods(classDeclaration.getAllMethods().size());
+		int abstractMethods=0;
+		int overridenMethod=0;
+		int overridingMethod=0;
+		for(Method m:classDeclaration.getMethods() ){
+			if(m.getKinds().contains(MethodType.abstractMethod)){
+				abstractMethods++;
+			}
+			if(m.getKinds().contains(MethodType.overriden)){
+				overridenMethod++;
+			}
+			if(m.getKinds().contains(MethodType.overriding)){
+				overridingMethod++;
+			}
+		}
+		classInstance.setNumberOfAbstractMethods(abstractMethods);
+		classInstance.setNumberOfOverridenMethods(overridenMethod);
+		classInstance.setNumberOfOverridingMethods(overridingMethod);
 		classInstance.setNumberOfAttributes(classDeclaration.getAttributes().size());
 		classInstance.setIsDeclarationInLibrary(classDeclaration.getLibraryType() == LibraryType.EXTERNAL_LIBRARY);
 		classInstance.setAliased(classDeclaration.isAliased());
@@ -111,6 +131,9 @@ public class ClassAnalysisReport {
 		private int classLOC;
 		private boolean hasNamespace;
 		private int numberOfMethods;
+		private int numberOfAbstractMethods;
+		private int numberOfOverridenMethods;
+		private int numberOfOverridingMethods;
 		private int numberOfAttributes;
 		private int numberOfParameters;
 		private boolean isDeclarationInLibrary;
@@ -233,6 +256,30 @@ public class ClassAnalysisReport {
 			this.numberOfMethods = numberOfMethods;
 		}
 
+		public int getNumberOfAbstractMethods() {
+			return numberOfAbstractMethods;
+		}
+
+		public void setNumberOfAbstractMethods(int numberOfAbstractMethods) {
+			this.numberOfAbstractMethods = numberOfAbstractMethods;
+		}
+
+		public int getNumberOfOverridenMethods() {
+			return numberOfOverridenMethods;
+		}
+
+		public void setNumberOfOverridenMethods(int numberOfOverridenMethods) {
+			this.numberOfOverridenMethods = numberOfOverridenMethods;
+		}
+
+		public int getNumberOfOverridingMethods() {
+			return numberOfOverridingMethods;
+		}
+
+		public void setNumberOfOverridingMethods(int numberOfOverridingMethods) {
+			this.numberOfOverridingMethods = numberOfOverridingMethods;
+		}
+
 		public int getNumberOfAttributes() {
 			return numberOfAttributes;
 		}
@@ -300,11 +347,11 @@ public class ClassAnalysisReport {
 
 	public static void writeToCSV() {
 		CSVFileWriter csvWriter = new CSVFileWriter("log/classes/class-declarations.csv");
-		String fileHeader = "Class name, file, Is Predefined, Class offset, has new expression, has inferred, Constructor Lines of codes, Total class Lines of codes, Has Namespace, Number of Methods, Number of attributes, Is Declaration in library?, is Aliased?, Number of instantiation, InferenceType, hasConstructor";
+		String fileHeader = "Class name, file, Is Predefined, Class offset, has new expression, has inferred, Constructor Lines of codes, Total class Lines of codes, Has Namespace, Number of Methods, Number of attributes, Is Declaration in library?, is Aliased?, Number of instantiation, InferenceType, hasConstructor, numAbstractMethods, numOverridenMethods, numOverridingMethods";
 		csvWriter.writeToFile(fileHeader.split(","));
 		for (ClassReportInstance classReportInstance : classes) {
 			StringBuilder lineToWrite = new StringBuilder();
-			lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.isPredefined()).append(",").append(classReportInstance.classOffset).append(",").append(classReportInstance.hasNewExpression).append(",").append(classReportInstance.hasInfered).append(",").append(classReportInstance.constructorLOC).append(",").append(classReportInstance.classLOC).append(",").append(classReportInstance.hasNamespace).append(",").append(classReportInstance.getNumberOfMethods()).append(",").append(classReportInstance.getNumberOfAttributes()).append(",").append(classReportInstance.isDeclarationInLibrary).append(",").append(classReportInstance.isAliased).append(",").append(classReportInstance.getNumberOfInstantiation()).append(",").append(classReportInstance.getInferenceType()).append(",").append(classReportInstance.hasConstructor());
+			lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.isPredefined()).append(",").append(classReportInstance.classOffset).append(",").append(classReportInstance.hasNewExpression).append(",").append(classReportInstance.hasInfered).append(",").append(classReportInstance.constructorLOC).append(",").append(classReportInstance.classLOC).append(",").append(classReportInstance.hasNamespace).append(",").append(classReportInstance.getNumberOfMethods()).append(",").append(classReportInstance.getNumberOfAttributes()).append(",").append(classReportInstance.isDeclarationInLibrary).append(",").append(classReportInstance.isAliased).append(",").append(classReportInstance.getNumberOfInstantiation()).append(",").append(classReportInstance.getInferenceType()).append(",").append(classReportInstance.hasConstructor()).append(",").append(classReportInstance.getNumberOfAbstractMethods()).append(",").append(classReportInstance.getNumberOfOverridenMethods()).append(",").append(classReportInstance.getNumberOfOverridingMethods());
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
 

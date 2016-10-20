@@ -1,31 +1,40 @@
 package ca.concordia.jsdeodorant.analysis.decomposition;
 
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Vector;
 
-import com.google.javascript.jscomp.parsing.parser.IdentifierToken;
 import com.google.javascript.jscomp.parsing.parser.Token;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
+import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
+import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
+import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
-import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ThrowStatementTree;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
+import ca.concordia.jsdeodorant.analysis.abstraction.PlainIdentifier;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 
 public class ClassDeclaration {
 	private AbstractIdentifier identifier;
 	private FunctionDeclaration functionDeclaration;
-	private Map<String, CodeFragment> methods;
+	private Map<String, CodeFragment> allMethods;
+	private Vector<Method> methods;
+	
 	private Map<String, CodeFragment> attributes;
 	private boolean isInfered;
 	private InferenceType inferenceType;
@@ -35,7 +44,8 @@ public class ClassDeclaration {
 	private boolean isAliased;
 	// If method defines outside of the constructor, then keep LOC
 	private int extraMethodLines;
-	private ClassDeclaration superType; // Thankfully JavasScript supports single Inheritence 
+	private ClassDeclaration superType; // Thankfully JavasScript supports single inheritance 
+	private Vector<ClassDeclaration> subTypes;
 	public ClassDeclaration getSuperType() {
 		return superType;
 	}
@@ -56,13 +66,41 @@ public class ClassDeclaration {
 		this.functionDeclaration = functionDeclaration;
 		this.setParentModule(parentModule);
 		this.attributes = new TreeMap<String, CodeFragment>();
-		this.methods = new TreeMap<String, CodeFragment>();
+		this.allMethods = new TreeMap<String, CodeFragment>();
+		this.methods= new Vector<Method>();
 		this.isInfered = isInfered;
 		this.hasNamespace = hasNamespace;
 		this.instantiationCount = 0;
 		this.libraryType = libraryType;
 		this.isAliased = isAliased;
 		this.constructors= new HashSet<FunctionDeclaration>();
+		this.superType=null;
+		this.subTypes= new Vector<ClassDeclaration>();
+	}
+
+	public Vector<ClassDeclaration> getSubTypes() {
+		return subTypes;
+	}
+	
+	public Vector<Method> getMethods() {
+		return methods;
+	}
+
+	public void addToSubTypes(ClassDeclaration aSubType) {
+		if(this.subTypes.size()==0){
+			this.subTypes.add(aSubType);
+		}else{
+			boolean exist=false;
+			for(ClassDeclaration sub: this.subTypes){
+				if(sub.getFunctionDeclaration().equals(aSubType.getFunctionDeclaration())){
+					exist=true;
+				}
+			}
+			if(!exist){
+				this.subTypes.add(aSubType);
+			}
+		}
+		
 	}
 
 	public String getName() {
@@ -90,17 +128,17 @@ public class ClassDeclaration {
 		this.functionDeclaration = functionDeclaration;
 	}
 
-	public Map<String, CodeFragment> getMethods() {
-		return methods;
+	public Map<String, CodeFragment> getAllMethods() {
+		return allMethods;
 	}
 
-	public void addMethod(String name, AbstractExpression expression, int locToBeAdded) {
+	public void addToAllMethod(String name, AbstractExpression expression, int locToBeAdded) {
 		this.extraMethodLines += locToBeAdded;
-		this.methods.put(name, expression);
+		this.allMethods.put(name, expression);
 	}
 
-	public void setMethods(Map<String, CodeFragment> methods) {
-		this.methods = methods;
+	public void setAllMethods(Map<String, CodeFragment> methods) {
+		this.allMethods = methods;
 	}
 
 	public Map<String, CodeFragment> getAttributes() {
@@ -279,11 +317,21 @@ public class ClassDeclaration {
 								String leftIdAsString=leftId.asCompositeIdentifier().toString();
 								if(leftIdAsString.startsWith("this.") || leftIdAsString.startsWith(this.getName()+".prototype.")){
 									if(leftIdAsString.startsWith("this.") ){
-										this.methods.put(leftIdAsString.replace("this.", ""), abstractStatement);
-										
+										this.allMethods.put(leftIdAsString.replace("this.", ""), abstractStatement);
+										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody);
+										Method aMethod= new Method(leftIdAsString.replace("this.", ""), right.asFunctionDeclaration(), kinds);
+										this.methods.add(aMethod);
 									}else if(leftIdAsString.startsWith(this.getName()+".prototype.")){
-										this.methods.put(leftIdAsString.replace(this.getName()+".prototype.", ""),abstractStatement);
+										this.allMethods.put(leftIdAsString.replace(this.getName()+".prototype.", ""),abstractStatement);
+										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody);
+										Method aMethod= new Method(leftIdAsString.replace(this.getName()+".prototype.", ""), right.asFunctionDeclaration(), kinds);
+										this.methods.add(aMethod);
 									}
+								}else if(leftIdAsString.startsWith(this.getName()+".")){// not very good way of handling it A.foo= function(){....} foo is static method
+									this.allMethods.put(leftIdAsString.replace(this.getName()+".", ""),abstractStatement);
+									EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody, MethodType.staticMethod);
+									Method aMethod= new Method(leftIdAsString.replace(this.getName()+".", ""), right.asFunctionDeclaration(), kinds);
+									this.methods.add(aMethod);
 								}	
 							}
 						}
@@ -323,10 +371,16 @@ public class ClassDeclaration {
 						if (leftId instanceof CompositeIdentifier) {
 							if (leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype.") ) {
 								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".prototype.", "");
-								this.methods.put(methodName, abstractExpression);
+								this.allMethods.put(methodName, abstractExpression);
+								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody);
+								Method aMethod= new Method(methodName,((FunctionDeclarationTree)right), kinds);
+								this.methods.add(aMethod);
 							}else if(leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".")){ // not very good way of handling it A.foo= function(){....} foo is static method
 								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".", "");
-								this.methods.put(methodName, abstractExpression);
+								this.allMethods.put(methodName, abstractExpression);
+								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody, MethodType.staticMethod);
+								Method aMethod= new Method(methodName, ((FunctionDeclarationTree)right), kinds);
+								this.methods.add(aMethod);
 							}
 						}else{
 							// we don't care then
@@ -334,8 +388,12 @@ public class ClassDeclaration {
 					}else if(right instanceof ObjectLiteralExpressionTree){ // If Car is a class => Car.prototype = { getInfo: function () { return this.make + ', ' + this.model };};
 						for(ParseTree property: right.asObjectLiteralExpression().propertyNameAndValues){
 							if(property.asPropertyNameAssignment().value instanceof FunctionDeclarationTree){
+								//int size=property.asPropertyNameAssignment().value.asFunctionDeclaration().functionBody.asBlock().statements.size();
 								Token methodName=property.asPropertyNameAssignment().name;
-								this.methods.put(methodName.toString(), abstractExpression);
+								this.allMethods.put(methodName.toString(), abstractExpression);
+								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody);
+								Method aMethod= new Method(methodName.toString(), property.asPropertyNameAssignment().value.asFunctionDeclaration(), kinds);
+								this.methods.add(aMethod);
 							}
 						}
 					}	
@@ -344,5 +402,63 @@ public class ClassDeclaration {
 		}
 	}
 
+	public void identifyInheritanceRelatedMethods() {
+		
+		if(this.subTypes.size()!=0){
+			Map<Method , Set<Method>> candidates= new HashMap<Method , Set<Method>>();
+			for(Method method: this.methods){
+				Set<Method> aSet= new HashSet<Method>();
+				for(ClassDeclaration sub: this.subTypes){
+					for(Method subMethod: sub.getMethods()){
+						if(method.getName().contentEquals(subMethod.getName())){
+							aSet.add(subMethod);
+							subMethod.getKinds().add(MethodType.overriding);
+							break;
+						}
+					}
+				}
+				if(aSet.size()>0){
+					candidates.put(method, aSet);
+					method.getKinds().add(MethodType.overriden);
+				}
+			}
+			for(Method methodInSuperClass: candidates.keySet()){
+				if(candidates.get(methodInSuperClass).size()==this.subTypes.size()){// all subclasses have the same method 
+					BlockTree body=methodInSuperClass.getFunctionDeclarationTree().functionBody.asBlock();
+					if(body.statements.size()==0){
+						methodInSuperClass.getKinds().add(MethodType.abstractMethod);
+					}
+					else if(body.statements.size()==1){ // if we have only one statement
+						//System.out.println( body.statements.get(0).location.start.source.name+ ", "+ body.statements.get(0).location.start.line+1+", "+body.statements.get(0).getClass());
+						if(body.statements.get(0) instanceof ThrowStatementTree){
+							ThrowStatementTree throwStatement=body.statements.get(0).asThrowStatement();
+							ParseTree value=throwStatement.value;
+							methodInSuperClass.getKinds().add(MethodType.abstractMethod);
+							
+						}if(body.statements.get(0) instanceof ExpressionStatementTree){
+							ExpressionStatementTree expressionStatementTree=body.statements.get(0).asExpressionStatement();
+							if(expressionStatementTree.expression instanceof CallExpressionTree){
+								CallExpressionTree call=expressionStatementTree.expression.asCallExpression();
+								ParseTree operand=call.operand;
+								AbstractIdentifier id=IdentifierHelper.getIdentifier(operand);
+								String name=null;
+								if(id instanceof CompositeIdentifier){
+									name=id.getIdentifierName();
+									
+								}else if(id instanceof PlainIdentifier){
+									name=id.getIdentifierName();
+								}
+								if(name !=null && (name.contentEquals("alert")|| name.contentEquals("console.log"))){
+									methodInSuperClass.getKinds().add(MethodType.abstractMethod);
+								}
+							}
+							
+						}
+					}
+				}
+			}
+			
+		}
+	}
 	
 }

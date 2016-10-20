@@ -40,7 +40,7 @@ angular.mock.$Browser.prototype = {
       return this;
     }
 
-    return this.$$url;
+    //return this.$$url;
   },
 
   cookies:  function(name, value) {

@@ -28,6 +28,7 @@ import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpres
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpressionNature;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.InferenceType;
+import ca.concordia.jsdeodorant.analysis.decomposition.ObjectLiteralExpression;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 
 public class ClassInferenceEngineStricMode {
@@ -47,6 +48,8 @@ public class ClassInferenceEngineStricMode {
 					continue;
 				}
 			}
+			// Here we check if the function is assigned to prototype or this
+			//of other object then we don't analyze the body
 			boolean proceed=false;
 			if(!(functionDeclaration.getQualifiedName().contains(".prototype.") ||
 					functionDeclaration.getQualifiedName().contains("this."))){
@@ -151,8 +154,12 @@ public class ClassInferenceEngineStricMode {
 		}else if(id instanceof PlainIdentifier){
 			qualifiedName=id.asPlainIdentifier().toString();
 		}
-
-		if(!qualifiedName.contains(".prototype.")){
+		
+		if(qualifiedName==null){
+			classDeclaration=module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+			classDeclaration.setInferenceType(infType);
+		}
+		else if(!qualifiedName.contains(".prototype.")){
 			classDeclaration=module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 			classDeclaration.setInferenceType(infType);
 		}
@@ -213,23 +220,45 @@ public class ClassInferenceEngineStricMode {
 	
 	private static int assignedMethodToPrototypeOutSideBody_new(Module module, FunctionDeclaration functionDeclaration) {
 		
-		List<AbstractExpression> assignments=module.getProgram().getAssignmentExpressionList();
+		List<AbstractExpression> assignments;// =module.getProgram().getAssignmentExpressionList();
 		int methodCounter=0;
+		SourceContainer parent;
+		if(functionDeclaration instanceof FunctionDeclarationExpression){
+			FunctionDeclarationExpression functionDeclarationExpression=(FunctionDeclarationExpression) functionDeclaration;
+			parent=functionDeclarationExpression.getParent();
+		}else{
+			FunctionDeclarationStatement FunctionDeclarationStatement=(FunctionDeclarationStatement)functionDeclaration;
+			parent=FunctionDeclarationStatement.getParent();
+		}
+		
+		if(parent instanceof CompositeStatement){
+			assignments=((CompositeStatement)parent).getAssignmentExpressionList();
+		}else if (parent instanceof FunctionDeclarationExpression){
+			assignments=((FunctionDeclarationExpression)parent).getAssignmentExpressionList();
+		}else if (parent instanceof ObjectLiteralExpression){
+			assignments=((ObjectLiteralExpression)parent).getAssignmentExpressionList();
+		}else{
+			assignments=((Program)parent).getAssignmentExpressionList();
+		}
+		
+		
 		for (AbstractExpression assignmentExpression : assignments) {
 			if (assignmentExpression.getExpression() instanceof BinaryOperatorTree) {
 				BinaryOperatorTree binaryOperatorTree = assignmentExpression.getExpression().asBinaryOperator();
 				ParseTree left=binaryOperatorTree.left;
 				ParseTree rigth=binaryOperatorTree.right;
-				int loc=binaryOperatorTree.location.start.line+1;
 				
 				// I am only interested in assignments with function declaration on right
 				if(rigth instanceof FunctionDeclarationTree){
 					AbstractIdentifier leftId=IdentifierHelper.getIdentifier(left);
 					if(leftId instanceof CompositeIdentifier){ // A.prototype.B= function
 						if(((CompositeIdentifier)leftId).toString().contains(functionDeclaration.getName()+".prototype.")){
+							// it is a naive way of checking, the better way may be is to 
+							// check if assignmentExpression.getParent() and the functionDeclaration.getParent are the same 
+							// because it could be that A.prototype.FunctionName could be for another class with same name A.
 							methodCounter++;
 						}
-					}// we don't care if not CompositeIdentifier
+					}// we don't care if it is not CompositeIdentifier
 				}
 			}
 		}
