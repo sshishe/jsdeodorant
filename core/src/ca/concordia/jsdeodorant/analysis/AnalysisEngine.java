@@ -156,7 +156,7 @@ public class AnalysisEngine {
 		
 		// when all methods of classes are identified  we will  find abstract and overriden and overriding methods
 		for (Module module : modules) {
-			if(!(analysisOption.getClassAnalysisMode() == ClassAnalysisMode.STRICT))	{
+			if(analysisOption.getClassAnalysisMode() == ClassAnalysisMode.STRICT)	{
 				for(ClassDeclaration aClass: module.getClasses()){
 					aClass.identifyInheritanceRelatedMethods();
 				}
