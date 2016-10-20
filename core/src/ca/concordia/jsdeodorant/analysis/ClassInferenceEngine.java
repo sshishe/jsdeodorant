@@ -260,10 +260,12 @@ public class ClassInferenceEngine {
 					if (left.asCompositeIdentifier().toString().contains("this.")) {
 						if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
 							// Then, it's method
-							classDeclaration.addToAllMethod(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression, 0);
+							// since we have a collection of ClassMember now
+							//classDeclaration.addToAllMethod(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression, 0);
 						} else {
 							// It's attribute
-							classDeclaration.addAttribtue(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression);
+							// since we have a collection of ClassMember now
+							//classDeclaration.addAttribtue(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression);
 						}
 					}
 				}
@@ -302,7 +304,8 @@ public class ClassInferenceEngine {
 							}
 						} else if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
 							// Then, it's method
-							classDeclaration.addToAllMethod(left.asCompositeIdentifier().getMostRightPart().toString(), assignmentExpression, calculateLinesOfCodes(binaryOperatorTree.right.asFunctionDeclaration().functionBody.location));
+							// since we have a collection of ClassMember now
+							//classDeclaration.addToAllMethod(left.asCompositeIdentifier().getMostRightPart().toString(), assignmentExpression, calculateLinesOfCodes(binaryOperatorTree.right.asFunctionDeclaration().functionBody.location));
 						} else {
 							// It's attribute
 							//classDeclaration.addAttribtue(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression);
@@ -362,10 +365,12 @@ public class ClassInferenceEngine {
 					if (left.asCompositeIdentifier().getMostLeftPart().toString().equals(functionDeclaration.getName())) {
 						if (binaryOperatorTree.right instanceof FunctionDeclarationTree) {
 							// Then, it's method
-							classDeclaration.addToAllMethod(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression, 0);
+							// since we have a collection of ClassMember now
+							//classDeclaration.addToAllMethod(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression, 0);
 						} else {
 							// It's attribute
-							classDeclaration.addAttribtue(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression);
+							// since we have a collection of ClassMember now
+							//classDeclaration.addAttribtue(left.asCompositeIdentifier().getRightPart().toString(), assignmentExpression);
 						}
 					}
 				}
@@ -384,7 +389,8 @@ public class ClassInferenceEngine {
 		for (Token key : propertyMap.keySet()) {
 			AbstractExpression value = propertyMap.get(key);
 			if (value.getExpression() instanceof FunctionDeclarationTree) {
-				classDeclaration.addToAllMethod(key.toString(), value, 0);
+				// since we have a collection of ClassMember now
+				//classDeclaration.addToAllMethod(key.toString(), value, 0);
 			}
 		}
 

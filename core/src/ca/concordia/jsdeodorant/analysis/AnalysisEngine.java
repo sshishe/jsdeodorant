@@ -21,6 +21,8 @@ import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.Program;
 import ca.concordia.jsdeodorant.analysis.abstraction.StatementProcessor;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
+import ca.concordia.jsdeodorant.analysis.decomposition.Method;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.FileUtil;
 import ca.concordia.jsdeodorant.analysis.util.JSONReader;
@@ -186,7 +188,16 @@ public class AnalysisEngine {
 
 		for (Module module : modules) {
 			for (ClassDeclaration classDeclaration : module.getClasses()) {
-				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + classDeclaration.getAttributes().size() + " / methods:" + classDeclaration.getAllMethods().size() + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount() + " Has namespace:" + classDeclaration.hasNamespace());
+				int methodCount=0;
+				int attrCount=0;
+				for(ClassMember member: classDeclaration.getClassMembers()){	
+					if(member instanceof Method){
+						methodCount++;
+					}else{
+						attrCount++;
+					}
+				}
+				log.warn("The class name is: " + classDeclaration.getName() + " / attributes: " + methodCount+ " / methods:" + attrCount + " Is infered: " + classDeclaration.isInfered() + " Instantiation count: " + classDeclaration.getInstantiationCount() + " Has namespace:" + classDeclaration.hasNamespace());
 			}
 		}
 		if (analysisOption.isOutputToCSV()) {

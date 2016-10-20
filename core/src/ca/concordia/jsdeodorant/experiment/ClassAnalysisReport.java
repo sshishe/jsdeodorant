@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.InferenceType;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.SourceLocationHelper;
@@ -52,25 +53,33 @@ public class ClassAnalysisReport {
 		classInstance.setHasInfered(classDeclaration.isInfered());
 		classInstance.sethasConstructor(classDeclaration.hasConstructor());
 		classInstance.setHasNamespace(classDeclaration.hasNamespace());
-		classInstance.setNumberOfMethods(classDeclaration.getAllMethods().size());
 		int abstractMethods=0;
-		int overridenMethod=0;
-		int overridingMethod=0;
-		for(Method m:classDeclaration.getMethods() ){
-			if(m.getKinds().contains(MethodType.abstractMethod)){
-				abstractMethods++;
+		int overridenMethods=0;
+		int overridingMethods=0;
+		int methodCount=0;
+		int attrCount=0;
+		for(ClassMember member:classDeclaration.getClassMembers() ){
+			if(member instanceof Method ){
+				methodCount++;
+				if(((Method)member).getKinds().contains(MethodType.abstractMethod)){
+					abstractMethods++;
+				}
+				if(((Method)member).getKinds().contains(MethodType.overriden)){
+					overridenMethods++;
+				}
+				if(((Method)member).getKinds().contains(MethodType.overriding)){
+					overridingMethods++;
+				}
+			}else{
+				attrCount++;
 			}
-			if(m.getKinds().contains(MethodType.overriden)){
-				overridenMethod++;
-			}
-			if(m.getKinds().contains(MethodType.overriding)){
-				overridingMethod++;
-			}
+			
 		}
+		classInstance.setNumberOfMethods(methodCount);
 		classInstance.setNumberOfAbstractMethods(abstractMethods);
-		classInstance.setNumberOfOverridenMethods(overridenMethod);
-		classInstance.setNumberOfOverridingMethods(overridingMethod);
-		classInstance.setNumberOfAttributes(classDeclaration.getAttributes().size());
+		classInstance.setNumberOfOverridenMethods(overridenMethods);
+		classInstance.setNumberOfOverridingMethods(overridingMethods);
+		classInstance.setNumberOfAttributes(attrCount);
 		classInstance.setIsDeclarationInLibrary(classDeclaration.getLibraryType() == LibraryType.EXTERNAL_LIBRARY);
 		classInstance.setAliased(classDeclaration.isAliased());
 		add(classInstance);

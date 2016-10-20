@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.Vector;
 
 import com.google.javascript.jscomp.parsing.parser.Token;
@@ -15,9 +14,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
-import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
-import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThrowStatementTree;
@@ -32,10 +29,7 @@ import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 public class ClassDeclaration {
 	private AbstractIdentifier identifier;
 	private FunctionDeclaration functionDeclaration;
-	private Map<String, CodeFragment> allMethods;
-	private Vector<Method> methods;
-	
-	private Map<String, CodeFragment> attributes;
+	private Vector<ClassMember> classMembers;
 	private boolean isInfered;
 	private InferenceType inferenceType;
 	private boolean hasNamespace;
@@ -65,9 +59,7 @@ public class ClassDeclaration {
 		this.identifier = identifier;
 		this.functionDeclaration = functionDeclaration;
 		this.setParentModule(parentModule);
-		this.attributes = new TreeMap<String, CodeFragment>();
-		this.allMethods = new TreeMap<String, CodeFragment>();
-		this.methods= new Vector<Method>();
+		this.classMembers= new Vector<ClassMember>();
 		this.isInfered = isInfered;
 		this.hasNamespace = hasNamespace;
 		this.instantiationCount = 0;
@@ -82,8 +74,8 @@ public class ClassDeclaration {
 		return subTypes;
 	}
 	
-	public Vector<Method> getMethods() {
-		return methods;
+	public Vector<ClassMember> getClassMembers() {
+		return classMembers;
 	}
 
 	public void addToSubTypes(ClassDeclaration aSubType) {
@@ -126,31 +118,6 @@ public class ClassDeclaration {
 
 	public void setFunctionDeclaration(FunctionDeclaration functionDeclaration) {
 		this.functionDeclaration = functionDeclaration;
-	}
-
-	public Map<String, CodeFragment> getAllMethods() {
-		return allMethods;
-	}
-
-	public void addToAllMethod(String name, AbstractExpression expression, int locToBeAdded) {
-		this.extraMethodLines += locToBeAdded;
-		this.allMethods.put(name, expression);
-	}
-
-	public void setAllMethods(Map<String, CodeFragment> methods) {
-		this.allMethods = methods;
-	}
-
-	public Map<String, CodeFragment> getAttributes() {
-		return attributes;
-	}
-
-	public void addAttribtue(String name, AbstractExpression expression) {
-		this.attributes.put(name, expression);
-	}
-
-	public void setAttributes(Map<String, CodeFragment> attributes) {
-		this.attributes = attributes;
 	}
 
 	public boolean isInfered() {
@@ -278,7 +245,8 @@ public class ClassDeclaration {
 								if(leftIdAsString.startsWith("this.")){
 									if(!(leftIdAsString.split(".").length>2)){ 
 										// more strict rules only one dot => this.SOMETHING and NOT  this.SOMETHING.OTHERTHINGS
-										this.attributes.put(((CompositeIdentifier) leftId).getMostRightPart().toString(), abstractStatement);
+										Attribute attr=new Attribute(((CompositeIdentifier) leftId).getMostRightPart().toString(), this,parseTree);
+										this.classMembers.addElement(attr);
 									}
 								}
 								
@@ -317,21 +285,18 @@ public class ClassDeclaration {
 								String leftIdAsString=leftId.asCompositeIdentifier().toString();
 								if(leftIdAsString.startsWith("this.") || leftIdAsString.startsWith(this.getName()+".prototype.")){
 									if(leftIdAsString.startsWith("this.") ){
-										this.allMethods.put(leftIdAsString.replace("this.", ""), abstractStatement);
 										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody);
-										Method aMethod= new Method(leftIdAsString.replace("this.", ""), right.asFunctionDeclaration(), kinds);
-										this.methods.add(aMethod);
+										Method aMethod= new Method(leftIdAsString.replace("this.", ""), this,right.asFunctionDeclaration(), kinds);
+										this.classMembers.add(aMethod);
 									}else if(leftIdAsString.startsWith(this.getName()+".prototype.")){
-										this.allMethods.put(leftIdAsString.replace(this.getName()+".prototype.", ""),abstractStatement);
 										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody);
-										Method aMethod= new Method(leftIdAsString.replace(this.getName()+".prototype.", ""), right.asFunctionDeclaration(), kinds);
-										this.methods.add(aMethod);
+										Method aMethod= new Method(leftIdAsString.replace(this.getName()+".prototype.", ""), this,right.asFunctionDeclaration(), kinds);
+										this.classMembers.add(aMethod);
 									}
 								}else if(leftIdAsString.startsWith(this.getName()+".")){// not very good way of handling it A.foo= function(){....} foo is static method
-									this.allMethods.put(leftIdAsString.replace(this.getName()+".", ""),abstractStatement);
 									EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody, MethodType.staticMethod);
-									Method aMethod= new Method(leftIdAsString.replace(this.getName()+".", ""), right.asFunctionDeclaration(), kinds);
-									this.methods.add(aMethod);
+									Method aMethod= new Method(leftIdAsString.replace(this.getName()+".", ""), this,right.asFunctionDeclaration(), kinds);
+									this.classMembers.add(aMethod);
 								}	
 							}
 						}
@@ -371,16 +336,16 @@ public class ClassDeclaration {
 						if (leftId instanceof CompositeIdentifier) {
 							if (leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype.") ) {
 								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".prototype.", "");
-								this.allMethods.put(methodName, abstractExpression);
+								//this.allMethods.put(methodName, abstractExpression);
 								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody);
-								Method aMethod= new Method(methodName,((FunctionDeclarationTree)right), kinds);
-								this.methods.add(aMethod);
+								Method aMethod= new Method(methodName,this,((FunctionDeclarationTree)right), kinds);
+								this.classMembers.add(aMethod);
 							}else if(leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".")){ // not very good way of handling it A.foo= function(){....} foo is static method
 								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".", "");
-								this.allMethods.put(methodName, abstractExpression);
+								//this.allMethods.put(methodName, abstractExpression);
 								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody, MethodType.staticMethod);
-								Method aMethod= new Method(methodName, ((FunctionDeclarationTree)right), kinds);
-								this.methods.add(aMethod);
+								Method aMethod= new Method(methodName,this, ((FunctionDeclarationTree)right), kinds);
+								this.classMembers.add(aMethod);
 							}
 						}else{
 							// we don't care then
@@ -390,10 +355,10 @@ public class ClassDeclaration {
 							if(property.asPropertyNameAssignment().value instanceof FunctionDeclarationTree){
 								//int size=property.asPropertyNameAssignment().value.asFunctionDeclaration().functionBody.asBlock().statements.size();
 								Token methodName=property.asPropertyNameAssignment().name;
-								this.allMethods.put(methodName.toString(), abstractExpression);
+								//this.allMethods.put(methodName.toString(), abstractExpression);
 								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody);
-								Method aMethod= new Method(methodName.toString(), property.asPropertyNameAssignment().value.asFunctionDeclaration(), kinds);
-								this.methods.add(aMethod);
+								Method aMethod= new Method(methodName.toString(),this, property.asPropertyNameAssignment().value.asFunctionDeclaration(), kinds);
+								this.classMembers.add(aMethod);
 							}
 						}
 					}	
@@ -406,25 +371,33 @@ public class ClassDeclaration {
 		
 		if(this.subTypes.size()!=0){
 			Map<Method , Set<Method>> candidates= new HashMap<Method , Set<Method>>();
-			for(Method method: this.methods){
-				Set<Method> aSet= new HashSet<Method>();
-				for(ClassDeclaration sub: this.subTypes){
-					for(Method subMethod: sub.getMethods()){
-						if(method.getName().contentEquals(subMethod.getName())){
-							aSet.add(subMethod);
-							subMethod.getKinds().add(MethodType.overriding);
-							break;
+			for(ClassMember memebr: this.classMembers){
+				if(memebr instanceof Method){
+					Method method=(Method) memebr;
+					Set<Method> aSet= new HashSet<Method>();
+					for(ClassDeclaration sub: this.subTypes){
+						for(ClassMember subMemebr :sub.getClassMembers()){
+							if(subMemebr instanceof Method){
+								Method subMethod=(Method) subMemebr;
+								if(method.getName().contentEquals(subMethod.getName())){
+									aSet.add(subMethod);
+									subMethod.getKinds().add(MethodType.overriding);
+									break;
+								}
+							}
+							
 						}
 					}
+					if(aSet.size()>0){
+						candidates.put(method, aSet);
+						method.getKinds().add(MethodType.overriden);
+					}
 				}
-				if(aSet.size()>0){
-					candidates.put(method, aSet);
-					method.getKinds().add(MethodType.overriden);
-				}
+				
 			}
 			for(Method methodInSuperClass: candidates.keySet()){
 				if(candidates.get(methodInSuperClass).size()==this.subTypes.size()){// all subclasses have the same method 
-					BlockTree body=methodInSuperClass.getFunctionDeclarationTree().functionBody.asBlock();
+					BlockTree body=methodInSuperClass.getParseTree().asFunctionDeclaration().functionBody.asBlock();
 					if(body.statements.size()==0){
 						methodInSuperClass.getKinds().add(MethodType.abstractMethod);
 					}
