@@ -143,7 +143,7 @@ public class AnalysisEngine {
 		InheritanceInferenceEngine.getInstance().buildInheritenceRelation(analysisOption.getPackageSystem());
 		for (Module module : modules) {
 			module.identifyConstructorInClassBody(); // this is when the class contains a constructor too
-			if(analysisOption.getClassAnalysisMode().contentEquals("nonStrict"))
+			if(analysisOption.getClassAnalysisMode() == ClassAnalysisMode.NON_STRICT)
 					ClassInferenceEngine.analyzeMethodsAndAttributes(module);
 			else{
 				for(ClassDeclaration aClass: module.getClasses()){
@@ -156,7 +156,7 @@ public class AnalysisEngine {
 		
 		// when all methods of classes are identified  we will  find abstract and overriden and overriding methods
 		for (Module module : modules) {
-			if(!(analysisOption.getClassAnalysisMode().contentEquals("nonStrict")))	{
+			if(!(analysisOption.getClassAnalysisMode() == ClassAnalysisMode.STRICT))	{
 				for(ClassDeclaration aClass: module.getClasses()){
 					aClass.identifyInheritanceRelatedMethods();
 				}

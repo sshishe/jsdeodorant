@@ -29,7 +29,7 @@ public class AnalysisOptions {
 	private String name;
 	private String version;
 	private PackageSystem packageSystem;
-	private String classAnalysisMode;
+	private ClassAnalysisMode classAnalysisMode;
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -216,17 +216,18 @@ public class AnalysisOptions {
 			this.packageSystem = PackageSystem.CommonJS;
 	}
 	
-	public void setClassAnalysisMode(String classAnalysisMode) {
-		if (classAnalysisMode == null)
-			return;
-		if (classAnalysisMode.toLowerCase().equals("strict"))
-			this.classAnalysisMode = "strict";
-		else if (classAnalysisMode.toLowerCase().equals("nonStrict"))
-			this.classAnalysisMode = "nonStrict";
-		
+	public void setClassAnalysisMode(String analysisMode) {
+		classAnalysisMode = ClassAnalysisMode.STRICT;
+		if (analysisMode != null) {
+			try {
+				classAnalysisMode = ClassAnalysisMode.valueOf(analysisMode.toUpperCase());
+			} catch (IllegalArgumentException ex) {
+
+			}
+		}
 	}
 
-	public String getClassAnalysisMode() {
+	public ClassAnalysisMode getClassAnalysisMode() {
 		return classAnalysisMode;
 	}
 

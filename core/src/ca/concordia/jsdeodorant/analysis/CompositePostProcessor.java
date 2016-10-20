@@ -20,7 +20,7 @@ import ca.concordia.jsdeodorant.language.PredefinedFunctions;
 public class CompositePostProcessor {
 	static Logger log = Logger.getLogger(CompositePostProcessor.class.getName());
 
-	public static void processFunctionDeclarationsToFindClasses(Module module, String classInferenceMode) {
+	public static void processFunctionDeclarationsToFindClasses(Module module, ClassAnalysisMode classInferenceMode) {
 		Program program = module.getProgram();
 		for (ObjectCreation objectCreation : program.getObjectCreationList()) {
 			if (objectCreation.getOperandOfNewName() == null || objectCreation.isFunctionObject())
@@ -32,9 +32,9 @@ public class CompositePostProcessor {
 		}
 
 		// Class inference
-		if(classInferenceMode.contentEquals("nonStrict"))
+		if(classInferenceMode == ClassAnalysisMode.NON_STRICT)
 			ClassInferenceEngine.run(module);
-		else if(classInferenceMode.contentEquals("strict"))
+		else if(classInferenceMode == ClassAnalysisMode.STRICT)
 			ClassInferenceEngineStricMode.run(module);
 		else
 			System.out.println("class Inference mode need to be set");
