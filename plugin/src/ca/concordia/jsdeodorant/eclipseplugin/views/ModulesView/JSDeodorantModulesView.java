@@ -63,11 +63,14 @@ public class JSDeodorantModulesView extends ViewPart {
 	private IAction analyzeAction;
 	private IAction showDependenciesAction;
 	private IAction showClassVisualizationAction;
+	private IAction typeHierarchyModeAction;
+	private IAction modulesViewModeAction;
 	
 	private ISelectionListener selectionListener;
 	private IPartListener2 partListener; 
 	
 	private AnalysisOptions analysisOptions;
+	private ModuleViewMode viewMode = ModuleViewMode.MODULE_EXPLORER;
 	
 	@Override
 	public void createPartControl(Composite parent) {
@@ -166,6 +169,33 @@ public class JSDeodorantModulesView extends ViewPart {
 		showClassVisualizationAction.setText("Show class diagram");
 		showClassVisualizationAction.setToolTipText("Show class diagram");
 		showClassVisualizationAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.DEPENDENCIES_ICON_IMAGE));
+		modulesViewModeAction = new Action() {
+			@Override
+			public void run() {
+				viewMode = ModuleViewMode.MODULE_EXPLORER;
+				modulesViewModeAction.setChecked(true);
+				typeHierarchyModeAction.setChecked(false);
+				setTreeViewerContentProviderBasedOnViewMode();
+			}
+		};
+		modulesViewModeAction.setText("Show modules");
+		modulesViewModeAction.setToolTipText("Show modules");
+		modulesViewModeAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.MODULES_VIEW_ICON));
+		modulesViewModeAction.setChecked(true);
+		
+		typeHierarchyModeAction = new Action() {
+			@Override
+			public void run() {
+				viewMode = ModuleViewMode.TYPE_HIERARCHY;
+				modulesViewModeAction.setChecked(false);
+				typeHierarchyModeAction.setChecked(true);
+				setTreeViewerContentProviderBasedOnViewMode();
+			}
+		};
+		typeHierarchyModeAction.setText("Show type hierarchies");
+		typeHierarchyModeAction.setToolTipText("Show type hierarchies");
+		typeHierarchyModeAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.TYPE_HIERARCHY_VIEW_ICON));
+		typeHierarchyModeAction.setChecked(false);
 	}
 
 	private void addActionBarButtons() {
@@ -180,9 +210,15 @@ public class JSDeodorantModulesView extends ViewPart {
 		manager.add(new Separator());
 		manager.add(clearAnnotationsAction);
 		manager.add(clearResultsAction);
+		manager.add(new Separator());
+		manager.add(typeHierarchyModeAction);
+		manager.add(modulesViewModeAction);
 	}
 
 	private void fillLocalToolBar(IToolBarManager manager) {
+		manager.add(typeHierarchyModeAction);
+		manager.add(modulesViewModeAction);
+		manager.add(new Separator());
 		manager.add(clearAnnotationsAction);
 		manager.add(clearResultsAction);
 		manager.add(showWizardAction);
@@ -275,15 +311,10 @@ public class JSDeodorantModulesView extends ViewPart {
 						runner.createAnalysisOptions();
 						List<Module> modules = runner.performActions();
 						ModulesInfo.setModuleInfo(modules);
-						Display.getDefault().asyncExec(new Runnable() {
-							@Override
-							public void run() {
-								if (modules != null) {
-									classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(modules));
-									clearResultsAction.setEnabled(true);
-								}
-							}
-						});
+						if (modules != null) {
+							setTreeViewerContentProviderBasedOnViewMode();
+							clearResultsAction.setEnabled(true);
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -335,6 +366,27 @@ public class JSDeodorantModulesView extends ViewPart {
 				((JSDeodorantVisualizationView)dependenciesView).showUMLClassDiagram(selectedClass);
 			}
 		}
+	}
+
+	protected void setTreeViewerContentProviderBasedOnViewMode() {
+		List<Module> modules = ModulesInfo.getModuleInfo();
+		if (modules != null) {
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					switch(viewMode) {
+					case MODULE_EXPLORER:
+						classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(modules));
+						break;
+					case TYPE_HIERARCHY:
+						classTreeViewer.setContentProvider(new ClassHierarchiesTreeViewerContentProvider(modules));
+						break;
+					default:
+						break;
+					}
+				}
+			});
+		}	
 	}
 	
 	@Override

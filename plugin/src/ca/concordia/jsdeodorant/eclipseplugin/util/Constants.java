@@ -39,6 +39,8 @@ public class Constants {
 	private static final String PROTOTYPE_OVERLAY = "prototype_overlay.png";
 	private static final String OVERRIDING_OVERLAY = "overriding_overlay.png";
 	private static final String OVERRIDDEN_OVERLAY = "overridden_overlay.png";
+	public static final String MODULES_VIEW_ICON = "package-explorer.gif";
+	public static final String TYPE_HIERARCHY_VIEW_ICON = "hierarchy_view.gif"; 
 	public static final String ICON_PATH = "icons";
 	public static final String JAVASCRIPT_PROJECT_NATURE = "org.eclipse.wst.jsdt.core.jsNature";
 	
