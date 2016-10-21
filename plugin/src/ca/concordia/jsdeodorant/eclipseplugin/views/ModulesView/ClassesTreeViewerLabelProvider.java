@@ -7,9 +7,10 @@ import org.eclipse.jface.viewers.ViewerCell;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
+import ca.concordia.jsdeodorant.analysis.decomposition.Method;
 import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
-import ca.concordia.jsdeodorant.eclipseplugin.util.MethodAttributeInfo;
 
 public class ClassesTreeViewerLabelProvider extends StyledCellLabelProvider {
 
@@ -23,18 +24,13 @@ public class ClassesTreeViewerLabelProvider extends StyledCellLabelProvider {
 			ClassDeclaration classDeclaration = (ClassDeclaration) element;
 			cell.setText(classDeclaration.getName());
 			cell.setImage(JSDeodorantPlugin.getImageDescriptor(Constants.CLASS_ICON_IMAGE).createImage());
-		} else if (element instanceof MethodAttributeInfo) {
-			MethodAttributeInfo methodAttributeInfo = (MethodAttributeInfo) element;
-			cell.setText(methodAttributeInfo.getName());
-			switch (methodAttributeInfo.getType()) {
-			case ATTRIBUTE:
+		} else if (element instanceof ClassMember) {
+			ClassMember classMember = (ClassMember) element;
+			cell.setText(classMember.getName());
+			if (classMember instanceof Method) {
+				cell.setImage(Constants.getMethodImage((Method)classMember));
+			} else {
 				cell.setImage(JSDeodorantPlugin.getImageDescriptor(Constants.FIELD_ICON_IMAGE).createImage());
-				break;
-			case METHOD:
-				cell.setImage(JSDeodorantPlugin.getImageDescriptor(Constants.METHOD_ICON_IMAGE).createImage());
-				break;
-			default:
-				break;
 			}
 		}
 	}

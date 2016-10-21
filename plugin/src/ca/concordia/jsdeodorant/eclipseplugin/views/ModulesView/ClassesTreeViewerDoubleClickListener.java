@@ -6,8 +6,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotation;
-import ca.concordia.jsdeodorant.eclipseplugin.util.MethodAttributeInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
 public class ClassesTreeViewerDoubleClickListener implements IDoubleClickListener {
@@ -23,9 +23,9 @@ public class ClassesTreeViewerDoubleClickListener implements IDoubleClickListene
 		} else if (firstElement instanceof ClassDeclaration) {
 			ClassDeclaration classDeclaration = (ClassDeclaration) firstElement;
 			OpenAndAnnotateHelper.openAndAnnotateClassDeclaration(classDeclaration);
-		} else if (firstElement instanceof MethodAttributeInfo) {
-			MethodAttributeInfo methodAttributeInfo = (MethodAttributeInfo) firstElement;
-			OpenAndAnnotateHelper.openAndAnnotateMethodOrAttribute(methodAttributeInfo);
+		} else if (firstElement instanceof ClassMember) {
+			ClassMember classMember = (ClassMember) firstElement;
+			OpenAndAnnotateHelper.openAndAnnotateMethodOrAttribute(classMember);
 		}
 	}
 

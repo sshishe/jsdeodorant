@@ -11,15 +11,18 @@ import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.ToolbarLayout;
 import org.eclipse.draw2d.geometry.Insets;
+import org.eclipse.swt.graphics.Image;
 
+import ca.concordia.jsdeodorant.analysis.decomposition.Attribute;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
+import ca.concordia.jsdeodorant.analysis.decomposition.Method;
 import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
-import ca.concordia.jsdeodorant.eclipseplugin.util.MethodAttributeInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
 public class CompartmentFigure extends Figure {
 	
-	public CompartmentFigure(List<MethodAttributeInfo> entities) {
+	public CompartmentFigure(List<ClassMember> entities) {
 		ToolbarLayout layout = new ToolbarLayout();
 		layout.setMinorAlignment(ToolbarLayout.ALIGN_TOPLEFT);
 		layout.setStretchMinorAxis(false);
@@ -34,22 +37,18 @@ public class CompartmentFigure extends Figure {
 			
 			@Override
 			public Insets getInsets(IFigure arg0) {
-				return new Insets(1, 0, 0, 0);
+				return new Insets(5, 0, 5, 0);
 			}
 		});
 		
-		for (MethodAttributeInfo entity : entities) {
-			String image = "";
-			switch (entity.getType()) {
-				case ATTRIBUTE:
-					image = Constants.FIELD_ICON_IMAGE;
-					break;
-				case METHOD:
-					image = Constants.METHOD_ICON_IMAGE;
-					break;
-				default:					
+		for (ClassMember entity : entities) {
+			Image image;
+			if (entity instanceof Attribute) {
+				image = JSDeodorantPlugin.getImageDescriptor(Constants.FIELD_ICON_IMAGE).createImage();
+			} else {
+				image = Constants.getMethodImage((Method)entity);
 			}
-			Label label = new Label(entity.getName(), JSDeodorantPlugin.getImageDescriptor(image).createImage());
+			Label label = new Label(entity.getName(), image);
 			add(label);
 			label.addMouseListener(new MouseListener() {
 				@Override

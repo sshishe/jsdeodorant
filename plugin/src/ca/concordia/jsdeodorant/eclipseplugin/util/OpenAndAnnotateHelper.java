@@ -23,6 +23,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import com.google.javascript.jscomp.parsing.parser.util.SourceRange;
 
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
+import ca.concordia.jsdeodorant.analysis.decomposition.Method;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotation;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotationType;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants.ViewID;
@@ -76,11 +78,12 @@ public class OpenAndAnnotateHelper {
 		openEditorAndAnnotate(filePath, annotation);
 	}
 
-	public static void openAndAnnotateMethodOrAttribute(MethodAttributeInfo methodAttributeInfo) {
-		SourceRange location = methodAttributeInfo.getAbstractExpression().getExpression().location;
+	public static void openAndAnnotateMethodOrAttribute(ClassMember classMember) {
+		SourceRange location = classMember.getParseTree().location;
 		String filePath = location.start.source.name;
 		Position postion = new Position(location.start.offset, location.end.offset - location.start.offset + 1);
-		JSAnnotation annotation = new JSAnnotation(JSAnnotationType.ANNOTATION, methodAttributeInfo.getType().toString() + " declaration", postion);
+		String annotationText = (classMember instanceof Method ? "Method" : "Attribute") + " declaration";
+		JSAnnotation annotation = new JSAnnotation(JSAnnotationType.ANNOTATION, annotationText, postion);
 		openEditorAndAnnotate(filePath, annotation);
 	}
 

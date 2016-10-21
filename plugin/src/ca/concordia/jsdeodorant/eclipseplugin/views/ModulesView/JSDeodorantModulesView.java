@@ -37,6 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ca.concordia.jsdeodorant.analysis.AnalysisOptions;
+import ca.concordia.jsdeodorant.analysis.ClassAnalysisMode;
 import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
@@ -85,9 +86,10 @@ public class JSDeodorantModulesView extends ViewPart {
 	
 	private void getDefaultAnalysisOptions() {
 		analysisOptions = new AnalysisOptions();
-		analysisOptions.setPackageSystem(PackageSystem.CommonJS.name());
+		analysisOptions.setPackageSystem(PackageSystem.ClosureLibrary.name());
 		analysisOptions.setModuleAnlysis(true);
 		analysisOptions.setClassAnalysis(true);
+		analysisOptions.setClassAnalysisMode(ClassAnalysisMode.STRICT.toString());
 		analysisOptions.setAnalyzeLibrariesForClasses(true);
 	}
 
@@ -261,7 +263,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask("JS Analysis", 1);
+					monitor.setTaskName("JSDeodorant analysis");
 					Runner runner = new Runner(new String[0]) {
 						@Override
 						public AnalysisOptions createAnalysisOptions() {
@@ -269,20 +271,22 @@ public class JSDeodorantModulesView extends ViewPart {
 							return analysisOptions;
 						}
 					};
-					runner.createAnalysisOptions();
-					Display.getDefault().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								List<Module> modules = runner.performActions();
-								ModulesInfo.setModuleInfo(modules);
-								classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(modules));
-								clearResultsAction.setEnabled(true);
-							} catch (IOException e) {
-								e.printStackTrace();
+					try {
+						runner.createAnalysisOptions();
+						List<Module> modules = runner.performActions();
+						ModulesInfo.setModuleInfo(modules);
+						Display.getDefault().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								if (modules != null) {
+									classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(modules));
+									clearResultsAction.setEnabled(true);
+								}
 							}
-						}
-					});
+						});
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					monitor.done();
 				}
 			});

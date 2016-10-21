@@ -1,17 +1,13 @@
 package ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
-import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.eclipseplugin.util.MethodAttributeInfo;
-import ca.concordia.jsdeodorant.eclipseplugin.util.MethodAttributeInfo.Type;
+import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 
 public class ClassesTreeViewerContentProvider implements ITreeContentProvider {
 
@@ -42,19 +38,7 @@ public class ClassesTreeViewerContentProvider implements ITreeContentProvider {
 			return module.getClasses().toArray();
 		} else if (parentElement instanceof ClassDeclaration) {
 			ClassDeclaration classDeclaration = (ClassDeclaration) parentElement;
-			
-			List<MethodAttributeInfo> methodAttributeInfoList = new ArrayList<>();
-			Map<String, AbstractExpression> attributes = classDeclaration.getAttributes();
-			for (String attributeName : attributes.keySet()) {
-				methodAttributeInfoList.add(new MethodAttributeInfo(attributeName, attributes.get(attributeName), classDeclaration, Type.ATTRIBUTE));
-			}
-			
-			Map<String, AbstractExpression> methods = classDeclaration.getMethods();
-			for (String methodName : methods.keySet()) {
-				methodAttributeInfoList.add(new MethodAttributeInfo(methodName, methods.get(methodName), classDeclaration, Type.METHOD));
-			}
-			
-			return methodAttributeInfoList.toArray();
+			return classDeclaration.getClassMembers().toArray();
 		}
 		return new Object[] {};
 	}
@@ -64,9 +48,9 @@ public class ClassesTreeViewerContentProvider implements ITreeContentProvider {
 		if (element instanceof ClassDeclaration) {
 			ClassDeclaration classDeclaration = (ClassDeclaration) element;
 			return classDeclaration.getParentModule();
-		} else if (element instanceof MethodAttributeInfo) {
-			MethodAttributeInfo methodAttributeInfo = (MethodAttributeInfo) element;
-			return methodAttributeInfo.getParentClassDeclaration();
+		} else if (element instanceof ClassMember) {
+			ClassMember classMember = (ClassMember) element;
+			return classMember.getOwner();
 		}
 		return null;
 	}
