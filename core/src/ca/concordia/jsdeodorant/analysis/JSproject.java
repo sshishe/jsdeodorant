@@ -24,7 +24,11 @@ public class JSproject {
 	private static JSproject instance=null;
 	
 	public static JSproject getInstance(){
-		if(instance==null){
+		return getInstance(false);
+	}
+	
+	public static JSproject getInstance(boolean forceNew){
+		if(forceNew || instance==null){
 			instance= new JSproject();
 		}
 		return instance;

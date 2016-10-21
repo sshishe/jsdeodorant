@@ -61,7 +61,7 @@ public class AnalysisEngine {
 	public List<Module> run(AnalysisOptions analysisOption) {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
-	
+		JSproject jsProjectInstance = JSproject.getInstance(true);
 		if (analysisOption.isOutputToCSV())
 			prepareOutputToCSV();
 
@@ -69,6 +69,7 @@ public class AnalysisEngine {
 			prepareOutputToPsql(analysisOption);
 
 		int functionCounts = 0;
+		
 		for (SourceFile sourceFile : inputs) {
 			// if (containsError(sourceFile, result))
 			// continue;
@@ -79,15 +80,17 @@ public class AnalysisEngine {
 				StatementProcessor.processStatement(sourceElement, program);
 			}
 
-			JSproject.getInstance().createModule(program, sourceFile, scriptAnalyzer.getMessages(), analysisOption.getPackageSystem(), analysisOption.hasModuleAnalysis());
+			jsProjectInstance.createModule(program, sourceFile, scriptAnalyzer.getMessages(), analysisOption.getPackageSystem(), analysisOption.hasModuleAnalysis());
 		}
 		
-		List<Module> modules= JSproject.getInstance().getModules();
+		List<Module> modules= jsProjectInstance.getModules();
 		for (Module module : modules) {
 			markBuiltinLibraries(module, analysisOption);
 		}
 		
-		InheritanceInferenceEngine.getInstance().configure(analysisOption.getPackageSystem());
+		InheritanceInferenceEngine inheritanceInferenceEngine = new InheritanceInferenceEngine();
+		
+		inheritanceInferenceEngine.configure(analysisOption.getPackageSystem());
 		
 		for (Module module : modules) {
 			System.out.println("analyzing module: "+ module.getSourceFile().getName());
@@ -96,13 +99,13 @@ public class AnalysisEngine {
 				addBuiltinDepdendencies(module, analysisOption, modules);
 			}
 			if (analysisOption.hasModuleAnalysis())
-				JSproject.getInstance().processModules(module, analysisOption.getPackageSystem(), false);
+				jsProjectInstance.processModules(module, analysisOption.getPackageSystem(), false);
 
 			if (analysisOption.hasClassAnlysis()){
 				if (analysisOption.analyzeLibrariesForClasses() && module.getLibraryType() == LibraryType.NONE){
 					CompositePostProcessor.processFunctionDeclarationsToFindClasses(module, analysisOption.getClassAnalysisMode());
 				}
-				InheritanceInferenceEngine.getInstance().run(module );
+				inheritanceInferenceEngine.run(module );
 			}
 			
 
@@ -142,7 +145,7 @@ public class AnalysisEngine {
 		
 		System.out.println("analyzing inheritence: ");
 		// the inheritance analysis needs to be finished then we find method and attributes 
-		InheritanceInferenceEngine.getInstance().buildInheritenceRelation(analysisOption.getPackageSystem());
+		inheritanceInferenceEngine.buildInheritenceRelation(analysisOption.getPackageSystem());
 		for (Module module : modules) {
 			module.identifyConstructorInClassBody(); // this is when the class contains a constructor too
 			if(analysisOption.getClassAnalysisMode() == ClassAnalysisMode.NON_STRICT)

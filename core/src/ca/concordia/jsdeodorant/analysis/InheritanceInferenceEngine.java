@@ -52,7 +52,6 @@ public class InheritanceInferenceEngine {
 	// value: set of ClassDeclaration with  __extends(A, B); as its statement
 	private Map<Module, Set<ClassDeclaration>> potentialSubTypes;
 	
-	private static InheritanceInferenceEngine instance=null;
 	private PackageSystem packageSystem;
 	private String inheritenceAPIMethodName;
 	private final String CALL="call";
@@ -62,15 +61,7 @@ public class InheritanceInferenceEngine {
 	// value: Name of potential superType (the body of subclass contains: Super.call(this,arg1, agr2,..) or super.apply(this,arg1, agr2,..))
 	private Map<Module, Map<ClassDeclaration, String>> potentialSuperTypes;
 	
-	
-	public static InheritanceInferenceEngine getInstance(){
-		if(instance==null){
-			instance= new InheritanceInferenceEngine();
-		}
-		return instance;
-	}
-	
-	private InheritanceInferenceEngine(){
+	public InheritanceInferenceEngine(){
 		potentialInheritenceRelations= new HashMap<Module, Set<String>>();
 		potentialSubTypes= new HashMap<Module, Set<ClassDeclaration>>();
 		potentialSuperTypes= new HashMap<Module, Map<ClassDeclaration, String>>();
