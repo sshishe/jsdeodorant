@@ -42,9 +42,10 @@ public class Constants {
 	public static final String MODULES_VIEW_ICON = "package-explorer.gif";
 	public static final String TYPE_HIERARCHY_VIEW_ICON = "hierarchy_view.gif"; 
 	public static final String ICON_PATH = "icons";
+	
 	public static final String JAVASCRIPT_PROJECT_NATURE = "org.eclipse.wst.jsdt.core.jsNature";
 	
-	public static final Color CLASS_DIAGRAM_CLASS_COLOR = new Color(Display.getCurrent(), new RGB(245, 245, 150));
+	public static final Color CLASS_DIAGRAM_CLASS_COLOR = new Color(Display.getCurrent(), new RGB(245, 245, 180));
 	public static final Color CLASS_DIAGRAM_MODULE_COLOR = new Color(Display.getCurrent(), new RGB(235, 235, 235));
 	public static final Color ASSOCIATION_COLOR = new Color(Display.getCurrent(), new RGB(100, 100, 100));
 	
