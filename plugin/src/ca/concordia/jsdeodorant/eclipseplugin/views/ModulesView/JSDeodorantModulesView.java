@@ -55,7 +55,7 @@ import ca.concordia.jsdeodorant.launcher.Runner;
 
 public class JSDeodorantModulesView extends ViewPart {
 
-	private static final String ID = "jsdeodorant-eclipse-plugin.JSDeodorantModulesView";
+	public static final String ID = "jsdeodorant-eclipse-plugin.JSDeodorantModulesView";
 
 	private TreeViewer classTreeViewer;
 
