@@ -47,7 +47,6 @@ import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.listeners.JSDeodorantPartListener;
 import ca.concordia.jsdeodorant.eclipseplugin.listeners.JSDeodorantSelectionListener;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
-import ca.concordia.jsdeodorant.eclipseplugin.util.Constants.ViewID;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.views.VisualizationView.JSDeodorantVisualizationView;
@@ -55,6 +54,8 @@ import ca.concordia.jsdeodorant.eclipseplugin.views.wizard.AnalysisOptionsWizard
 import ca.concordia.jsdeodorant.launcher.Runner;
 
 public class JSDeodorantModulesView extends ViewPart {
+
+	private static final String ID = "jsdeodorant-eclipse-plugin.JSDeodorantModulesView";
 
 	private TreeViewer classTreeViewer;
 
@@ -352,7 +353,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		Module selectedModule = getSelectedModule();
 		List<Dependency> dependencies = selectedModule.getDependencies();
 		if (!dependencies.isEmpty()) {
-			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(ViewID.VISUALIZATION_VIEW);
+			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(JSDeodorantModulesView.ID);
 			if (dependenciesView != null) {
 				((JSDeodorantVisualizationView)dependenciesView).showDependenciesGraph(selectedModule);
 			}
@@ -362,7 +363,7 @@ public class JSDeodorantModulesView extends ViewPart {
 	private void showClassUMLDiagram() {
 		ClassDeclaration selectedClass = getSelectedClass();
 		if (selectedClass != null) {
-			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(ViewID.VISUALIZATION_VIEW);
+			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(JSDeodorantVisualizationView.ID);
 			if (dependenciesView != null) {
 				((JSDeodorantVisualizationView)dependenciesView).showUMLClassDiagram(selectedClass);
 			}

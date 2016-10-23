@@ -27,7 +27,6 @@ import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotation;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotationType;
-import ca.concordia.jsdeodorant.eclipseplugin.util.Constants.ViewID;
 
 public class OpenAndAnnotateHelper {
 
@@ -98,20 +97,20 @@ public class OpenAndAnnotateHelper {
 		return null;
 	}
 	
-	public static IViewPart openView(ViewID viewID) {
+	public static IViewPart openView(String viewID) {
 		try {
-			return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewID.getViewID());
+			return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewID);
 		} catch (PartInitException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	public static IViewPart getView(ViewID viewID) {
+	public static IViewPart getView(String viewID) {
 		IViewReference viewReferences[] = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage().getViewReferences();
 		for (int i = 0; i < viewReferences.length; i++) {
-			if (viewID.getViewID().equals(viewReferences[i].getId())) {
+			if (viewID.equals(viewReferences[i].getId())) {
 				return viewReferences[i].getView(false);
 			}
 		}

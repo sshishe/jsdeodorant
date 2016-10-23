@@ -13,6 +13,8 @@ import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 
 public class JSDeodorantVisualizationView extends ViewPart {
 	
+	public static final String ID = "jsdeodorant-eclipse-plugin.JSDeodorantVisualizationView";
+	
 	private FigureCanvas figureCanvas;
 	
 	@Override
