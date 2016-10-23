@@ -23,7 +23,7 @@ import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
-public class OpenDeclarationHyperlinkDetector implements  IHyperlinkDetector  {  
+public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {  
 
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViwer, IRegion region, boolean canHaveMultiple) {
@@ -50,8 +50,8 @@ public class OpenDeclarationHyperlinkDetector implements  IHyperlinkDetector  {
 												int length = end - start + 1;
 												if (start <= region.getOffset() && end >= region.getOffset()) {
 													IRegion newRegion = new Region(start, length);
-													ClassDeclarationHyperlink classDeclarationHyperlink =
-															new ClassDeclarationHyperlink(newRegion, classDeclaration);
+													ClassInstantiationHyperlink classDeclarationHyperlink =
+															new ClassInstantiationHyperlink(newRegion, classDeclaration);
 													hyperLinks.add(classDeclarationHyperlink);
 												}
 											}
