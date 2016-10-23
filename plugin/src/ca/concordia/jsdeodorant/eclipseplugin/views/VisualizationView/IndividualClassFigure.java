@@ -19,9 +19,13 @@ import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
-public class ClassFigure extends RoundedRectangle {
+public class IndividualClassFigure extends RoundedRectangle {
 
-	public ClassFigure(ClassDeclaration classDeclaration) {
+	private final ClassDeclaration classDeclaration;
+
+	public IndividualClassFigure(ClassDeclaration classDeclaration) {
+		this.classDeclaration = classDeclaration;
+		
 		ToolbarLayout layout = new ToolbarLayout();
 		layout.setSpacing(5);
 		setLayoutManager(layout);	
@@ -69,6 +73,10 @@ public class ClassFigure extends RoundedRectangle {
 			}
 			
 		});
+	}
+
+	public ClassDeclaration getClassDeclaration() {
+		return classDeclaration;
 	}
 	
 }

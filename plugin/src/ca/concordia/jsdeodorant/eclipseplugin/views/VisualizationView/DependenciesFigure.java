@@ -12,6 +12,7 @@ import org.eclipse.draw2d.PolylineDecoration;
 import org.eclipse.draw2d.ScalableFreeformLayeredPane;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
@@ -54,6 +55,7 @@ public class DependenciesFigure extends ScalableFreeformLayeredPane {
 			y += moduleFigure.getPreferredSize().height + GAP;
 			
 			PolylineConnection connection = new PolylineConnection();
+			connection.setAntialias(SWT.ON);
 			ChopboxAnchor sourceAnchor = new ChopboxAnchor(thisModuleFigure);
 			ChopboxAnchor targetAnchor = new ChopboxAnchor(moduleFigure);
 			connection.setSourceAnchor(sourceAnchor);

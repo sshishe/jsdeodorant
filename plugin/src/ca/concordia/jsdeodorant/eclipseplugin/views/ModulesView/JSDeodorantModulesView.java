@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -175,7 +176,7 @@ public class JSDeodorantModulesView extends ViewPart {
 				viewMode = ModuleViewMode.MODULE_EXPLORER;
 				modulesViewModeAction.setChecked(true);
 				typeHierarchyModeAction.setChecked(false);
-				setTreeViewerContentProviderBasedOnViewMode();
+				setTreeViewerContentProviderBasedOnViewMode(new NullProgressMonitor());
 			}
 		};
 		modulesViewModeAction.setText("Show modules");
@@ -189,7 +190,7 @@ public class JSDeodorantModulesView extends ViewPart {
 				viewMode = ModuleViewMode.TYPE_HIERARCHY;
 				modulesViewModeAction.setChecked(false);
 				typeHierarchyModeAction.setChecked(true);
-				setTreeViewerContentProviderBasedOnViewMode();
+				setTreeViewerContentProviderBasedOnViewMode(new NullProgressMonitor());
 			}
 		};
 		typeHierarchyModeAction.setText("Show type hierarchies");
@@ -299,7 +300,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.setTaskName("JSDeodorant analysis");
+					monitor.beginTask("JSDeodorant analysis", IProgressMonitor.UNKNOWN);
 					Runner runner = new Runner(new String[0]) {
 						@Override
 						public AnalysisOptions createAnalysisOptions() {
@@ -307,12 +308,12 @@ public class JSDeodorantModulesView extends ViewPart {
 							return analysisOptions;
 						}
 					};
+					runner.createAnalysisOptions();
 					try {
-						runner.createAnalysisOptions();
 						List<Module> modules = runner.performActions();
 						ModulesInfo.setModuleInfo(modules);
-						if (modules != null) {
-							setTreeViewerContentProviderBasedOnViewMode();
+						if (modules != null && !monitor.isCanceled()) {
+							setTreeViewerContentProviderBasedOnViewMode(monitor);
 							clearResultsAction.setEnabled(true);
 						}
 					} catch (IOException e) {
@@ -368,7 +369,8 @@ public class JSDeodorantModulesView extends ViewPart {
 		}
 	}
 
-	protected void setTreeViewerContentProviderBasedOnViewMode() {
+	protected void setTreeViewerContentProviderBasedOnViewMode(IProgressMonitor monitor) {
+		monitor.setTaskName("Populating view");
 		List<Module> modules = ModulesInfo.getModuleInfo();
 		if (modules != null) {
 			Display.getDefault().asyncExec(new Runnable() {
@@ -386,7 +388,8 @@ public class JSDeodorantModulesView extends ViewPart {
 					}
 				}
 			});
-		}	
+		}
+		monitor.done();
 	}
 	
 	@Override
