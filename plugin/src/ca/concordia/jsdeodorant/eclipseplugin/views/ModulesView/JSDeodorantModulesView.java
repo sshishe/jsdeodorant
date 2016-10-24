@@ -352,7 +352,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		Module selectedModule = getSelectedModule();
 		List<Dependency> dependencies = selectedModule.getDependencies();
 		if (!dependencies.isEmpty()) {
-			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(JSDeodorantModulesView.ID);
+			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(JSDeodorantVisualizationView.ID);
 			if (dependenciesView != null) {
 				((JSDeodorantVisualizationView)dependenciesView).showDependenciesGraph(selectedModule);
 			}
