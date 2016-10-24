@@ -78,9 +78,9 @@ public class InheritanceInferenceEngine {
 
 	public void run(Module module) {
 		
+		log.debug("Identifying inheritence clues in: " + module.getSourceFile().getName());
 		List<FunctionDeclaration> functionDeclarations=module.getProgram().getFunctionDeclarationList();
 		for(FunctionDeclaration f: functionDeclarations){
-			System.out.println("analyzing the body of function: "+ f.getName());
 			//this is for call-pattern see example test/inheritance/callPattern.js
 			analyzeInvocationToApplyandCall(f,module);
 			ExtractCallToExtend(f,module);
@@ -98,7 +98,7 @@ public class InheritanceInferenceEngine {
 		}
 	}
 	
-	// call to __extend(subname, supername) in Angular, inside body of a function declaration
+	// call to __extend(subName, superName) in Angular, inside body of a function declaration
 	private void ExtractCallToExtend(FunctionDeclaration f, Module module) {
 		
 		if(f.getStatements().size()>0 && f.getParameters().size()>0) {
@@ -176,7 +176,7 @@ public class InheritanceInferenceEngine {
 
 	public void processPotentialSubTypes(){
 		Map<ClassDeclaration ,ParseTree> subTypeSuperTypeMap= new HashMap<ClassDeclaration ,ParseTree>(); // the value is of type IdentifierExpressionTree or MemberExpressionTree
-		for(Module module: this.potentialSubTypes.keySet()){
+		for(Module module: this.potentialSubTypes.keySet()){	
 			for(ClassDeclaration aClassDeclaration: this.potentialSubTypes.get(module)){
 				List<SourceElement>  elements=module.getProgram().getSourceElements();
 				for (SourceElement sourceElement : elements) {
@@ -231,8 +231,8 @@ public class InheritanceInferenceEngine {
 				
 			}
 			
-			System.out.println("subName: "+ aclassDeclaration.getName()+ " in file: "+ aclassDeclaration.getParentModule().getSourceFile().getName());
-			System.out.println("superName : "+ candidateSuperTypeName);
+//			System.out.println("subName: "+ aclassDeclaration.getName()+ " in file: "+ aclassDeclaration.getParentModule().getSourceFile().getName());
+//			System.out.println("superName : "+ candidateSuperTypeName);
 			// 1- first look in the module where the class is defined
 			Module module=aclassDeclaration.getParentModule();
 			boolean found=false;
@@ -269,45 +269,6 @@ public class InheritanceInferenceEngine {
 			}
 		}
 		
-		//now we need to filter the potentialSubSuperMap value set
-		// as some of the functions are constructors of the other functions
-//		for(ClassDeclaration subClass: potentialSubSuperMap.keySet()){
-//			for(FunctionDeclaration potentialSuper: potentialSubSuperMap.get(subClass)){
-//				AbstractStatement body=potentialSuper.getStatements().get(0); 
-//				if(((CompositeStatement)body).getStatements().size()>0){
-//					for(AbstractStatement abstractStatement: ((CompositeStatement)body).getStatements()){
-//						for(FunctionDeclaration fn: abstractStatement.getFunctionDeclarationList()){
-//							if(fn.getName().contentEquals(potentialSuper.getName())){
-//								fn.SetIsConstructor(true);
-//								if(!potentialSuper.isClassDeclaration() ){
-//									Module module=this.findModuleForFunctionDeclaration(potentialSuper);
-//									ClassDeclaration superClass=module.createClassDeclaration(potentialSuper.getRawIdentifier(), potentialSuper, true, false);
-//									superClass.setInferenceType(InferenceType.Has_Subclass);
-//									superClass.getConstructors().add(fn);
-//									subClass.addToSuperType(superClass);
-//								}else{
-//									Module module=this.findModuleForFunctionDeclaration(potentialSuper);
-//									ClassDeclaration superClass=findClassInModule(potentialSuper, module);
-//									if(superClass!=null){
-//										superClass.getConstructors().add(fn);
-//										superClass.setInferenceType(InferenceType.Has_Subclass);
-//										subClass.addToSuperType(superClass);
-//									}
-//								}
-//								
-//							}
-//						}
-//					}
-//				}else{
-//					// an empty function we don't risk
-//				}
-//			}
-//		}
-		
-		if(potentialSubSuperMap.size()==0){
-			System.out.println("");
-		}
-		
 		// why the value of potentialSubSuperMap is a set? because some are constructors of others
 		for(ClassDeclaration subClass: potentialSubSuperMap.keySet()){
 			Map<FunctionDeclaration, FunctionDeclaration> superClassConstructorMap= this.removeConstrucotrsIn((potentialSubSuperMap.get(subClass)));
@@ -329,10 +290,10 @@ public class InheritanceInferenceEngine {
 	
 	
 	public void buildInheritenceRelation(PackageSystem packageSystem){
-		
+		log.debug("Analyzing Inheritence");
 		if((packageSystem.equals(PackageSystem.ClosureLibrary) ||  packageSystem.equals(PackageSystem.Helma))
 				&& this.potentialInheritenceRelations.size()>0){
-			this.processPotentialInheritenceRelations_new();
+			this.processPotentialInheritenceRelations();
 		}else if(packageSystem.equals(PackageSystem.CommonJS) ){
 			this.processPotentialSubTypes();
 		}
@@ -396,7 +357,7 @@ public class InheritanceInferenceEngine {
 	}
 
 	
-	private void processPotentialInheritenceRelations_new(){
+	private void processPotentialInheritenceRelations(){
 		for(Module module: this.potentialInheritenceRelations.keySet()){
 			for(String detail: this.potentialInheritenceRelations.get(module)){
 				String[] parts=detail.split("#");
@@ -407,7 +368,6 @@ public class InheritanceInferenceEngine {
 				String childName=parts[3];
 				Set<FunctionDeclaration> potentialParents= new HashSet<FunctionDeclaration>();
 				Set<FunctionDeclaration> potentialChilds= new HashSet<FunctionDeclaration>();
-				System.out.println("seraching for parent: "+ parentName + "  child: "+ childName + "  in file: "+ module.getSourceFile().getName());
 				for(FunctionDeclaration fn: module.getProgram().getFunctionDeclarationList()){
 					if(fn.getName().contentEquals(parentName)){
 						potentialParents.add(fn);
@@ -516,99 +476,6 @@ public class InheritanceInferenceEngine {
 		}
 		return candidate;
 	}
-
-//	private void processPotentialInheritenceRelations(){
-//		
-//		for(Module module: this.potentialInheritenceRelations.keySet()){
-//			for(String potentialParentName: this.potentialInheritenceRelations.get(module).keySet()){
-//				List<FunctionDeclaration> potentialParents= new ArrayList<FunctionDeclaration>();
-//				module.getProgram().getFunctionDeclarationList();
-//				// here first I search in current module
-//				for(FunctionDeclaration fn: module.getProgram().getFunctionDeclarationList()){
-//					if(fn.getName().contentEquals(potentialParentName)){
-//						potentialParents.add(fn);
-//					}
-//				}
-//				
-//				// search in imported
-//				if(potentialParents.size()==0){	
-//					for(Dependency d: 	module.getDependencies()){
-//						Module importedModule=d.getDependency();
-//						for(FunctionDeclaration fn: importedModule.getProgram().getFunctionDeclarationList()){
-//							if(fn.getName().contentEquals(potentialParentName)){
-//								potentialParents.add(fn);
-//							}
-//						}
-//					}
-//				}
-//				
-//				List<FunctionDeclaration> potentialChilds= new ArrayList<FunctionDeclaration>();
-//				for(String potentialChildName: this.potentialInheritenceRelations.get(module).get(potentialParentName)){
-//					boolean found=false;
-//					for(FunctionDeclaration fn: module.getProgram().getFunctionDeclarationList()){
-//						if(fn== null || fn.getName()==null || potentialChildName==null){
-//							int i=0;
-//						}
-//						
-//						if(fn.getName().contentEquals(potentialChildName)){
-//							potentialChilds.add(fn);
-//							found=true;
-//						}
-//					}
-//					if(!found){
-//						// search in imported
-//						for(Dependency d: 	module.getDependencies()){
-//							Module importedModule=d.getDependency();
-//							for(FunctionDeclaration fn: importedModule.getProgram().getFunctionDeclarationList()){
-//								if(fn.getName().contentEquals(potentialChildName)){
-//									potentialChilds.add(fn);
-//								}
-//							}
-//						}
-//					}
-//					
-//				}
-//			
-//				
-//				Map<FunctionDeclaration, FunctionDeclaration> parentClassConstructorMap=removeConstrucotrsIn(potentialParents);
-//				ClassDeclaration parentClass=null;
-//				if(parentClassConstructorMap.keySet().size()>1){
-//					System.out.println("found more than one parent class: "+ potentialParentName + " used in modlue "+ module.getSourceFile().getName());
-//					System.exit(0);
-//				}else{
-//						if(parentClassConstructorMap.keySet().iterator().hasNext()){
-//							FunctionDeclaration parent=parentClassConstructorMap.keySet().iterator().next();
-//							Module parentModule= this.findModuleForFunctionDeclaration(parent);
-//							parentClass=parentModule.createClassDeclaration(parent.getIdentifier(), parent, true, false);
-//							parentClass.setInferenceType(InferenceType.Has_Subclass);	
-//							if(parentClassConstructorMap.get(parent)!=null){
-//								parentClass.setHasConstrucotr(true);
-//								parentClass.getConstructors().add(parentClassConstructorMap.get(parent));
-//								parentClassConstructorMap.get(parent).SetIsConstructor(true);
-//							}
-//						}
-//				}
-//								
-//				Map<FunctionDeclaration, FunctionDeclaration> childClassConstructorMap=removeConstrucotrsIn(potentialChilds);
-//				
-//				for(FunctionDeclaration child: childClassConstructorMap.keySet()){
-//					Module childModule= this.findModuleForFunctionDeclaration(child);
-//					ClassDeclaration childClass=childModule.createClassDeclaration(child.getIdentifier(), child, true, false);
-//					childClass.setInferenceType(InferenceType.Has_Superclass);
-//					if(childClassConstructorMap.get(child)!=null){
-//						childClass.setHasConstrucotr(true);
-//						childClass.getConstructors().add(childClassConstructorMap.get(child));
-//						childClassConstructorMap.get(child).SetIsConstructor(true);
-//					}
-//					if(parentClass!=null){
-//						childClass.setSuperType(parentClass);
-//						parentClass.addToSubTypes(childClass);
-//					}
-//				}
-//			}
-//		}
-//	}
-	
 	
 	// iterate over the give functions and find those that are constructor of others and
 	// build a map of class->constructor
@@ -680,8 +547,8 @@ public class InheritanceInferenceEngine {
 				childCandidateName=rawId.asCompositeIdentifier().toString();
 			
 			if (targetFunctionInvocation !=null && childCandidateName!=null && !childCandidateName.contains(".prototype.")){
-				System.out.println("in file: "+ module.getSourceFile().getName());
-				System.out.println("\t childCandidateName: "+childCandidateName);
+//				System.out.println("in file: "+ module.getSourceFile().getName());
+//				System.out.println("\t childCandidateName: "+childCandidateName);
 				
 				// extract the name
 				AbstractIdentifier identifier=targetFunctionInvocation.getIdentifier();
@@ -699,10 +566,8 @@ public class InheritanceInferenceEngine {
 				}else if(invocationAsString.endsWith(this.APPLY)){
 					potentialSuperTypeName=invocationAsString.replace(this.APPLY, "");
 				}
-				System.out.println("\t potentialSuperTypeName: "+ potentialSuperTypeName);
 				ClassDeclaration aClassDeclaration=null;			
 				if(!childCandidate.isClassDeclaration()){
-					System.out.println("\t childCandidate is not class: ");
 					FunctionDeclaration parentFunction=null;
 					SourceContainer parent = null;
 					if( childCandidate instanceof FunctionDeclarationExpression){
@@ -720,8 +585,7 @@ public class InheritanceInferenceEngine {
 					 }
 					
 					if(parentFunction!=null){
-						System.out.println("\t parent function: "+ parentFunction.getName());
-						 if(parentFunction.getName().contentEquals(childCandidate.getName())){ // then the parent is class and childCandidate is its constructor
+						if(parentFunction.getName().contentEquals(childCandidate.getName())){ // then the parent is class and childCandidate is its constructor
 							 aClassDeclaration=module.createClassDeclaration(parentFunction.getIdentifier(), parentFunction, true, false);
 							 aClassDeclaration.setInferenceType(InferenceType.Has_Superclass);
 							 aClassDeclaration.setHasConstrucotr(true);
@@ -737,7 +601,6 @@ public class InheritanceInferenceEngine {
 					 }
 				}else{
 					//childCandidate is a class
-					System.out.println("\t childCandidate is a class: "+ childCandidate.getName());
 					aClassDeclaration=findClassInModule(childCandidate, module);
 				}
 				if(!aClassDeclaration.hasConstructor()){// check to see if it has a constructor
@@ -947,8 +810,6 @@ public class InheritanceInferenceEngine {
 					aSet.add(start+"#"+end+"#"+parent+"#"+child);
 					this.potentialInheritenceRelations.put(module, aSet);
 				}
-				
-				System.out.println(functionInvocation.getCallExpressionTree().location.start.line +" child name: "+ child + "    parent name: "+ parent + " source renge:"+ start+"-"+end);	
 			}			
 		}
 	}
