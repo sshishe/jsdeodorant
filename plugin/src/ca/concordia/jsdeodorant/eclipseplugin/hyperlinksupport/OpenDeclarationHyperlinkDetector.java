@@ -53,8 +53,8 @@ public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {
 												int length = end - start + 1;
 												if (start <= region.getOffset() && end >= region.getOffset()) {
 													IRegion newRegion = new Region(start, length);
-													ClassInstantiationHyperlink classDeclarationHyperlink =
-															new ClassInstantiationHyperlink(newRegion, classDeclaration);
+													ObjectCreationHyperlink classDeclarationHyperlink =
+															new ObjectCreationHyperlink(newRegion, classDeclaration);
 													hyperLinks.add(classDeclarationHyperlink);
 												}
 											}

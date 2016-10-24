@@ -6,12 +6,12 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
-public class ClassInstantiationHyperlink implements IHyperlink {
+public class ObjectCreationHyperlink implements IHyperlink {
 
 	private final IRegion region;
 	private final ClassDeclaration classDeclaration;
 
-	public ClassInstantiationHyperlink(IRegion region, ClassDeclaration classDeclaration) {
+	public ObjectCreationHyperlink(IRegion region, ClassDeclaration classDeclaration) {
 		this.region = region;
 		this.classDeclaration = classDeclaration;
 	}
