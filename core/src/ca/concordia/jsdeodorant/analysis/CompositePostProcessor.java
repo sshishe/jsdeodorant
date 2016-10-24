@@ -22,6 +22,7 @@ public class CompositePostProcessor {
 
 	public static void processFunctionDeclarationsToFindClasses(Module module, ClassAnalysisMode classInferenceMode) {
 		Program program = module.getProgram();
+		log.debug("Analysing ObjectCreation in: " + module.getSourceFile().getName());
 		for (ObjectCreation objectCreation : program.getObjectCreationList()) {
 			if (objectCreation.getOperandOfNewName() == null || objectCreation.isFunctionObject())
 				continue;
@@ -30,14 +31,14 @@ public class CompositePostProcessor {
 				findPredefinedClasses(program, objectCreation, module);
 			}
 		}
-
+		log.debug("Performing  ClassInference analysis in: " + module.getSourceFile().getName());
 		// Class inference
 		if(classInferenceMode == ClassAnalysisMode.NON_STRICT)
 			ClassInferenceEngine.run(module);
 		else if(classInferenceMode == ClassAnalysisMode.STRICT)
 			ClassInferenceEngineStricMode.run(module);
 		else
-			System.out.println("class Inference mode need to be set");
+			System.err.println("class Inference mode need to be set");
 	}
 
 	// MOVED TO JSPRoject

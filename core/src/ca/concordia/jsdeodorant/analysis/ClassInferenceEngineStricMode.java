@@ -6,9 +6,11 @@ import java.util.List;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ReturnStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThisExpressionTree;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
@@ -29,27 +31,24 @@ import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpres
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.InferenceType;
 import ca.concordia.jsdeodorant.analysis.decomposition.ObjectLiteralExpression;
+import ca.concordia.jsdeodorant.analysis.decomposition.Statement;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 
 public class ClassInferenceEngineStricMode {
 	public static void run(Module module) {
 		for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
-			//System.out.println("analyzing function on line: "+ functionDeclaration.getFunctionDeclarationTree().location.start.line +"  name: "+ functionDeclaration.getIdentifier()+ "   in file: "+module.getSourceFile().getName());
-			System.out.println(module.getSourceFile().getName()+ ", "+functionDeclaration.getQualifiedName());
-			if (functionDeclaration.isClassDeclaration()){
-				//System.out.println("\t is a class"); 
+			if (functionDeclaration.isClassDeclaration()){ 
 				continue;
 			}
 
 			if (functionDeclaration instanceof FunctionDeclarationExpression) {
 				FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) functionDeclaration;
-				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE){
-					//System.out.println("\t is a IIFE"); 
+				if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE){ 
 					continue;
 				}
 			}
-			// Here we check if the function is assigned to prototype or this
-			//of other object then we don't analyze the body
+			// Here we check if the function is assigned to a "prototype" or "this"
+			// of other object then we don't analyze the body
 			boolean proceed=false;
 			if(!(functionDeclaration.getQualifiedName().contains(".prototype.") ||
 					functionDeclaration.getQualifiedName().contains("this."))){
@@ -74,12 +73,17 @@ public class ClassInferenceEngineStricMode {
 				
 			}
 			
+			// if the body contains returnStatement then it is not a  class
+			if(proceed && !hasReturnStatement(((CompositeStatement)(functionDeclaration.getStatements().get(0))).getStatements())){
+				proceed=true;
+			}
+			
 			if(proceed){
 				int totalMethodsInsideClassBody=assignedMethodsInsideClassBody(module, functionDeclaration);
 				int totalAttributesInsideClassBody=assignedAttributesInsideClassBody(module, functionDeclaration);
-				int totalMethodsOutSideOutSideBody=assignedMethodToPrototypeOutSideBody_new(module, functionDeclaration);
-				int totalAttributesOutSideOutSideBody=assignedAttributesToPrototypeOutSideBody_new(module, functionDeclaration);
-				int totalObjectLiteralToPrototypeOutSideBody=assignObjectLiteralToPrototypeOutSideBody_new(module, functionDeclaration);
+				int totalMethodsOutSideOutSideBody=assignedMethodToPrototypeOutSideBody(module, functionDeclaration);
+				int totalAttributesOutSideOutSideBody=assignedAttributesToPrototypeOutSideBody(module, functionDeclaration);
+				int totalObjectLiteralToPrototypeOutSideBody=assignObjectLiteralToPrototypeOutSideBody(module, functionDeclaration);
 				
 				SourceContainer parent = null;
 				
@@ -95,12 +99,10 @@ public class ClassInferenceEngineStricMode {
 					parentName=parentFunction.getName();
 				
 				if(totalMethodsInsideClassBody>0 || totalAttributesInsideClassBody>0){
-					//System.out.println("\t methods && attributes >0");
 					createClass(module, functionDeclaration, parentName, parentFunction,InferenceType.Constructor_Body_Analysis);
 				}else if(totalMethodsOutSideOutSideBody>0){
 					createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.Methods_Added_To_Prototype);
 				}else if(totalObjectLiteralToPrototypeOutSideBody>0){
-					//System.out.println("\t totalObjectLiteralToPrototypeOutSideBody >0");
 					createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
 				}
 				nowSetClassesToNotFoundByObjectCreations(module);
@@ -116,6 +118,20 @@ public class ClassInferenceEngineStricMode {
 				aClassDeclaration.setHasConstrucotr(true);
 				aClassDeclaration.getConstructors().add(functionDeclaration);
 				functionDeclaration.SetIsConstructor(true);
+				// if we already identified the  functionDeclaration as class, then we should remove it form classList
+				if(functionDeclaration.isClassDeclaration()){
+					functionDeclaration.setClassDeclaration(false);
+					ClassDeclaration toRemove=null;
+					for(ClassDeclaration aClass: module.getClasses()){
+						if(aClass.getFunctionDeclaration().equals(functionDeclaration)){
+							toRemove=aClass;
+							break;
+						}
+					}
+					if(toRemove!=null){
+						module.getClasses().remove(toRemove);
+					}
+				}
 			}
 		}else{
 			createClass(module, functionDeclaration, infType);
@@ -178,17 +194,6 @@ public class ClassInferenceEngineStricMode {
 				}
 			}
 		}
-//			boolean hasNamespace = false;
-//			if (functionDeclaration instanceof FunctionDeclarationExpression)
-//				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-//			functionDeclaration.setClassDeclaration(true);
-//			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
-//			module.addClass(classDeclaration);
-
-//		if(methodCounter>0){
-//			int loc=functionDeclaration.getFunctionDeclarationTree().location.start.line+1;
-//			System.out.println("loc:"+ loc+ "  functionName: "+ functionDeclaration.getName()+ "   #methods: "+ methodCounter);
-//		}
 		return methodCounter;
 	}
 	
@@ -203,22 +208,10 @@ public class ClassInferenceEngineStricMode {
 				}
 			}
 		}
-
-//			boolean hasNamespace = false;
-//			if (functionDeclaration instanceof FunctionDeclarationExpression)
-//				hasNamespace = ((FunctionDeclarationExpression) functionDeclaration).hasNamespace();
-//			functionDeclaration.setClassDeclaration(true);
-//			ClassDeclaration classDeclaration = new ClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, hasNamespace, module.getLibraryType(), false, module);
-//			module.addClass(classDeclaration);
-
-//		if(attrCounter>0){
-//			int loc=functionDeclaration.getFunctionDeclarationTree().location.start.line+1;
-//			System.out.println("loc:"+ loc+ "  functionName: "+ functionDeclaration.getName()+ "   #attr: "+ attrCounter);
-//		}
 		return attrCounter;
 	}
 	
-	private static int assignedMethodToPrototypeOutSideBody_new(Module module, FunctionDeclaration functionDeclaration) {
+	private static int assignedMethodToPrototypeOutSideBody(Module module, FunctionDeclaration functionDeclaration) {
 		
 		List<AbstractExpression> assignments;// =module.getProgram().getAssignmentExpressionList();
 		int methodCounter=0;
@@ -261,16 +254,11 @@ public class ClassInferenceEngineStricMode {
 					}// we don't care if it is not CompositeIdentifier
 				}
 			}
-		}
-//		if(methodCounter>0){
-//			int loc=functionDeclaration.getFunctionDeclarationTree().location.start.line+1;
-//			System.out.println("loc:"+ loc+ "  functionName: "+ functionDeclaration.getName()+ "   #methods added to prototype: "+ methodCounter);
-//		}
-				
+		}		
 		return methodCounter;
 	}
 	
-	private static int assignedAttributesToPrototypeOutSideBody_new(Module module, FunctionDeclaration functionDeclaration) {
+	private static int assignedAttributesToPrototypeOutSideBody(Module module, FunctionDeclaration functionDeclaration) {
 		
 		List<AbstractExpression> assignments=module.getProgram().getAssignmentExpressionList();
 		int attrCounter=0;
@@ -291,12 +279,7 @@ public class ClassInferenceEngineStricMode {
 					}// we don't care if not CompositeIdentifier
 				}
 			}
-		}
-//		if(attrCounter>0){
-//			int loc=functionDeclaration.getFunctionDeclarationTree().location.start.line+1;
-//			System.out.println("loc:"+ loc+ "  functionName: "+ functionDeclaration.getName()+ "   #attr: "+ attrCounter);
-//		}
-				
+		}		
 		return attrCounter;
 	}
 	
@@ -328,7 +311,7 @@ public class ClassInferenceEngineStricMode {
 		return aList;
 	}
 	
-	private static int assignObjectLiteralToPrototypeOutSideBody_new(Module module, FunctionDeclaration functionDeclaration) {
+	private static int assignObjectLiteralToPrototypeOutSideBody(Module module, FunctionDeclaration functionDeclaration) {
 		int counter=0;
 		AbstractFunctionFragment abstractFunctionFragment = (AbstractFunctionFragment) functionDeclaration;
 		SourceContainer parent = abstractFunctionFragment.getParent();
@@ -373,5 +356,24 @@ public class ClassInferenceEngineStricMode {
 		}
 	}
 	
+	private static boolean hasReturnStatement(List<AbstractStatement> abstractStatementList){
+		return false;
+			
+//		for(AbstractStatement abstractStatement:abstractStatementList){	
+//			ParseTree parseTree=abstractStatement.getStatement();
+//			
+//			if(abstractStatement instanceof Statement){
+//				if(parseTree instanceof ReturnStatementTree){
+//					return true;
+//				}
+//			}else if(abstractStatement instanceof CompositeStatement){
+//				if(!(abstractStatement.getStatement() instanceof FunctionDeclarationTree) &&  
+//						!(abstractStatement.getStatement() instanceof LabelledStatementTree)){ // we don't go inside functions or object literals		
+//					return hasReturnStatement(((CompositeStatement) abstractStatement).getStatements());
+//				}
+//		    }
+//		}
+//		return false;
+	}
 
 }

@@ -93,7 +93,6 @@ public class AnalysisEngine {
 		inheritanceInferenceEngine.configure(analysisOption.getPackageSystem());
 		
 		for (Module module : modules) {
-			System.out.println("analyzing module: "+ module.getSourceFile().getName());
 			if (module.getLibraryType() != LibraryType.BUILT_IN) {
 				checkForBeingLibrary(module, analysisOption);
 				addBuiltinDepdendencies(module, analysisOption, modules);
@@ -120,30 +119,8 @@ public class AnalysisEngine {
 					log.warn("Cyclomatic Complexity of " + entry.getKey() + " is: " + entry.getValue());
 				}
 			}
-
-			//ClassInferenceEngine.analyzeMethodsAndAttributes(module); need to be done after inheritance analysis because we may find some new classes there
-
-// Moved down after inheritance analysis
-//			if (analysisOption.isOutputToCSV()) {
-//				CSVOutput csvOutput = new CSVOutput(module);
-//				csvOutput.functionSignatures();
-//				csvOutput.functionInvocations();
-//				csvOutput.uniqueClassDeclaration();
-//			}
-//
-//			if (analysisOption.isOutputToDB()) {
-//				psqlOutput.logModuleInfo(module);
-//				if (analysisOption.hasClassAnlysis())
-//					psqlOutput.logClasses(module);
-//				if (analysisOption.hasFunctionAnlysis())
-//					psqlOutput.logFunctions(module);
-//			}
-//
-//			AnalysisResult.addPackageInstance(module);
-//			functionCounts += module.getProgram().getFunctionDeclarationList().size();
 		}
 		
-		System.out.println("analyzing inheritence: ");
 		// the inheritance analysis needs to be finished then we find method and attributes 
 		inheritanceInferenceEngine.buildInheritenceRelation(analysisOption.getPackageSystem());
 		for (Module module : modules) {

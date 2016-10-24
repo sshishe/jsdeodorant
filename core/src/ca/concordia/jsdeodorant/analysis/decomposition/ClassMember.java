@@ -26,4 +26,23 @@ public abstract class ClassMember {
 		return parseTree;
 	}
 	
+	public boolean  equals(Object o){
+		if(!(o instanceof ClassMember)){
+			return false;
+		}else{
+			if(o.hashCode()==this.hashCode()){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+	}
+	
+	public int hashCode(){
+		String id=this.name+this.owner.getName()+this.owner.getParentModule().getSourceFile().getName()+this.parseTree.location;
+		return id.hashCode();
+	}
+	
+	
 }

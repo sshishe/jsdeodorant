@@ -29,7 +29,7 @@ import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 public class ClassDeclaration {
 	private AbstractIdentifier identifier;
 	private FunctionDeclaration functionDeclaration;
-	private Vector<ClassMember> classMembers;
+	private Set<ClassMember> classMembers;
 	private boolean isInfered;
 	private InferenceType inferenceType;
 	private boolean hasNamespace;
@@ -59,7 +59,7 @@ public class ClassDeclaration {
 		this.identifier = identifier;
 		this.functionDeclaration = functionDeclaration;
 		this.setParentModule(parentModule);
-		this.classMembers= new Vector<ClassMember>();
+		this.classMembers= new HashSet<ClassMember>();
 		this.isInfered = isInfered;
 		this.hasNamespace = hasNamespace;
 		this.instantiationCount = 0;
@@ -74,7 +74,7 @@ public class ClassDeclaration {
 		return subTypes;
 	}
 	
-	public Vector<ClassMember> getClassMembers() {
+	public Set<ClassMember> getClassMembers() {
 		return classMembers;
 	}
 
@@ -213,6 +213,8 @@ public class ClassDeclaration {
 		return constructors;
 	}
 	
+	
+	
 	// it only identify attributes within the body of the constructor or class (not in the functions and methods belong to the class)
 	public void identifyAttributes(){
 		if(this.hasConstructor()){
@@ -237,7 +239,7 @@ public class ClassDeclaration {
 						ParseTree left=expressionStatementTree.expression.asBinaryOperator().left;
 						ParseTree right=expressionStatementTree.expression.asBinaryOperator().right;
 						if(right instanceof FunctionDeclarationTree){ //A=function(){}; or 
-							System.out.println("\t\t\t  right instanceof FunctionDeclarationTree");
+							//System.out.println("\t\t\t  right instanceof FunctionDeclarationTree");
 						}else{ // we are looking for attribute thus right should not be FunctionDeclarationTree
 							AbstractIdentifier leftId=IdentifierHelper.getIdentifier(left);
 							if(leftId instanceof CompositeIdentifier){
@@ -246,7 +248,7 @@ public class ClassDeclaration {
 									if(!(leftIdAsString.split(".").length>2)){ 
 										// more strict rules only one dot => this.SOMETHING and NOT  this.SOMETHING.OTHERTHINGS
 										Attribute attr=new Attribute(((CompositeIdentifier) leftId).getMostRightPart().toString(), this,parseTree);
-										this.classMembers.addElement(attr);
+										this.classMembers.add(attr);
 									}
 								}
 								
