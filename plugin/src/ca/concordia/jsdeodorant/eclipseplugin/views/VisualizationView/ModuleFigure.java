@@ -29,7 +29,7 @@ public class ModuleFigure extends Figure {
 		setOpaque(true);
 		
 		Label moduleName = new Label(getModuleName(selectedModule),
-				JSDeodorantPlugin.getImageDescriptor(Constants.PACKAGE_ICON_IMAGE).createImage());
+				JSDeodorantPlugin.getImageDescriptor(Constants.JS_FILE_ICON_IMAGE).createImage());
 		moduleName.setLabelAlignment(PositionConstants.LEFT);
 		moduleName.setToolTip(new Label(selectedModule.getSourceFile().getName()));
 		add(moduleName);
