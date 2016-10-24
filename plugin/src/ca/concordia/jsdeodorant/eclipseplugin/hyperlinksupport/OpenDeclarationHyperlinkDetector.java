@@ -20,6 +20,9 @@ import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationStatement;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
@@ -68,6 +71,25 @@ public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {
 														new ModuleDeclarationHyperlink(newRegion, dependency.getDependency());
 												hyperLinks.add(moduleDeclarationHyperlink);
 											}	
+										}
+										
+										for (ClassDeclaration classDeclaration : module.getClasses()) {
+											SourceRange location = null;
+											FunctionDeclaration functionDeclaration = classDeclaration.getFunctionDeclaration();
+											if (functionDeclaration instanceof FunctionDeclarationExpression) {
+												location = ((FunctionDeclarationExpression) functionDeclaration).getLeftValueExpression().location;
+											} else if (functionDeclaration instanceof FunctionDeclarationStatement) {
+												location = ((FunctionDeclarationStatement) functionDeclaration).getFunctionDeclarationTree().name.location;
+											}
+											int start = location.start.offset;
+											int end = location.end.offset;
+											int length = end - start + 1;
+											if (start <= region.getOffset() && end >= region.getOffset()) {
+												IRegion newRegion = new Region(start, length);
+												ClassDeclarationHyperlink classDeclarationHyperlink =
+														new ClassDeclarationHyperlink(newRegion, classDeclaration);
+												hyperLinks.add(classDeclarationHyperlink);
+											}
 										}
 										break;
 									}
