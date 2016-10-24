@@ -16,10 +16,14 @@ public class ClassesTreeViewerLabelProvider extends StyledCellLabelProvider {
 
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
-		if (element instanceof Module) {
+		if (element instanceof String) {
+			String string = (String) element;
+			cell.setText(string);
+			cell.setImage(JSDeodorantPlugin.getImageDescriptor(Constants.FOLDER_ICON_IMAGE).createImage());
+		} else if (element instanceof Module) {
 			Module module = (Module) element;
 			cell.setText((new File(module.getSourceFile().getName())).getName());
-			cell.setImage(JSDeodorantPlugin.getImageDescriptor(Constants.PACKAGE_ICON_IMAGE).createImage());
+			cell.setImage(JSDeodorantPlugin.getImageDescriptor(Constants.JS_FILE_ICON_IMAGE).createImage());
 		} else if (element instanceof ClassDeclaration) {
 			ClassDeclaration classDeclaration = (ClassDeclaration) element;
 			cell.setText(classDeclaration.getName());

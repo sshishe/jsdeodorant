@@ -20,12 +20,14 @@ public class Constants {
 	public static final String FIELD_ICON_IMAGE = "field_public_obj.png";
 	public static final String CLASS_ICON_IMAGE = "class_obj.png";
 	public static final String PACKAGE_ICON_IMAGE = "package_obj.png";
+	public static final String JS_FILE_ICON_IMAGE = "js_file.gif";
 	private static final String ABSTRACT_OVERLAY = "abstract_overlay.png";
 	private static final String PROTOTYPE_OVERLAY = "prototype_overlay.png";
 	private static final String OVERRIDING_OVERLAY = "overriding_overlay.png";
 	private static final String OVERRIDDEN_OVERLAY = "overridden_overlay.png";
 	public static final String MODULES_VIEW_ICON = "package-explorer.gif";
-	public static final String TYPE_HIERARCHY_VIEW_ICON = "hierarchy_view.gif"; 
+	public static final String TYPE_HIERARCHY_VIEW_ICON = "hierarchy_view.gif";
+	public static final String FOLDER_ICON_IMAGE = "folder_icon.png";
 	public static final String ICON_PATH = "icons";
 	
 	public static final String JAVASCRIPT_PROJECT_NATURE = "org.eclipse.wst.jsdt.core.jsNature";
