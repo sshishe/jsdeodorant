@@ -28,7 +28,7 @@ public class ClassInstantiationsTreeViewerLabelProvider extends StyledCellLabelP
 			cell.setImage(ImagesHelper.getImageDescriptor(Constants.JS_FILE_ICON_IMAGE).createImage());
 		} else if (element instanceof ObjectCreation) {
 			ObjectCreation objectCreation = (ObjectCreation) element;
-			cell.setText(objectCreation.getStatement().toString());				
+			cell.setText(objectCreation.toString());				
 		}
 		super.update(cell);
 	}
