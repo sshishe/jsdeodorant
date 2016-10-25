@@ -54,6 +54,9 @@ public class IndividualClassFigure extends RoundedRectangle {
 			CompartmentFigure methodFigure = new CompartmentFigure(methods);
 			add(methodFigure);
 		}
+		
+		IndividualClassToolsFigure toolsFigure = new IndividualClassToolsFigure(classDeclaration);
+		add(toolsFigure);
 
 		addMouseListener(new MouseListener() {
 
