@@ -4,8 +4,8 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.ViewerCell;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
-import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
+import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 
 public class ClassInstantiationsTreeViewerLabelProvider extends StyledCellLabelProvider {
@@ -25,7 +25,7 @@ public class ClassInstantiationsTreeViewerLabelProvider extends StyledCellLabelP
 					element.toString().replace(ModulesInfo.getProjectRootDirectory().replace("\\", "/"), ""),
 					length, length > 1 ? "s" : "");
 			cell.setText(cellText);
-			cell.setImage(JSDeodorantPlugin.getImageDescriptor(Constants.JS_FILE_ICON_IMAGE).createImage());
+			cell.setImage(ImagesHelper.getImageDescriptor(Constants.JS_FILE_ICON_IMAGE).createImage());
 		} else if (element instanceof ObjectCreation) {
 			ObjectCreation objectCreation = (ObjectCreation) element;
 			cell.setText(objectCreation.getStatement().toString());				

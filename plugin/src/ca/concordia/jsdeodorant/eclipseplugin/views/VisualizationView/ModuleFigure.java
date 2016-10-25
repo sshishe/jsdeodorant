@@ -13,9 +13,9 @@ import org.eclipse.draw2d.ToolbarLayout;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotation;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
+import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
 public class ModuleFigure extends Figure {
@@ -29,7 +29,7 @@ public class ModuleFigure extends Figure {
 		setOpaque(true);
 		
 		Label moduleName = new Label(getModuleName(selectedModule),
-				JSDeodorantPlugin.getImageDescriptor(Constants.JS_FILE_ICON_IMAGE).createImage());
+				ImagesHelper.getImageDescriptor(Constants.JS_FILE_ICON_IMAGE).createImage());
 		moduleName.setLabelAlignment(PositionConstants.LEFT);
 		moduleName.setToolTip(new Label(selectedModule.getSourceFile().getName()));
 		add(moduleName);

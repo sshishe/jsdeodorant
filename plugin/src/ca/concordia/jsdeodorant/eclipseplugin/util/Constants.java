@@ -11,7 +11,6 @@ import org.eclipse.swt.widgets.Display;
 
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
 import ca.concordia.jsdeodorant.analysis.decomposition.MethodType;
-import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 
 public class Constants {
 	
@@ -39,28 +38,28 @@ public class Constants {
 	
 	
 	public static Image getMethodImage(Method method) {
-		ImageDescriptor descriptor = JSDeodorantPlugin.getImageDescriptor(METHOD_ICON_IMAGE);
+		ImageDescriptor descriptor = ImagesHelper.getImageDescriptor(METHOD_ICON_IMAGE);
 		EnumSet<MethodType> kinds = method.getKinds();
 		if (kinds.contains(MethodType.abstractMethod)) {
-			ImageDescriptor overlay = JSDeodorantPlugin.getImageDescriptor(ABSTRACT_OVERLAY);
+			ImageDescriptor overlay = ImagesHelper.getImageDescriptor(ABSTRACT_OVERLAY);
 			Point overlayPosition = new Point(descriptor.getImageData().width - overlay.getImageData().width, 0);
-			descriptor = JSDeodorantPlugin.getOverlayedImagesDescriptor(descriptor, overlay, overlayPosition);
+			descriptor = ImagesHelper.getOverlayedImagesDescriptor(descriptor, overlay, overlayPosition);
 		}
 		if (kinds.contains(MethodType.declaredOutOfClassBody)) {
-			ImageDescriptor overlay = JSDeodorantPlugin.getImageDescriptor(PROTOTYPE_OVERLAY);
+			ImageDescriptor overlay = ImagesHelper.getImageDescriptor(PROTOTYPE_OVERLAY);
 			Point overlayPosition = new Point(descriptor.getImageData().width - overlay.getImageData().width, 
 					descriptor.getImageData().height - overlay.getImageData().height);
-			descriptor = JSDeodorantPlugin.getOverlayedImagesDescriptor(descriptor, overlay, overlayPosition);
+			descriptor = ImagesHelper.getOverlayedImagesDescriptor(descriptor, overlay, overlayPosition);
 		}
 		if (kinds.contains(MethodType.overriden)) {
-			ImageDescriptor overlay = JSDeodorantPlugin.getImageDescriptor(OVERRIDING_OVERLAY);
+			ImageDescriptor overlay = ImagesHelper.getImageDescriptor(OVERRIDING_OVERLAY);
 			Point overlayPosition = new Point(0, descriptor.getImageData().height - overlay.getImageData().height);
-			descriptor = JSDeodorantPlugin.getOverlayedImagesDescriptor(descriptor, overlay, overlayPosition);
+			descriptor = ImagesHelper.getOverlayedImagesDescriptor(descriptor, overlay, overlayPosition);
 		}
 		if (kinds.contains(MethodType.overriding)) {
-			ImageDescriptor overlay = JSDeodorantPlugin.getImageDescriptor(OVERRIDDEN_OVERLAY);
+			ImageDescriptor overlay = ImagesHelper.getImageDescriptor(OVERRIDDEN_OVERLAY);
 			Point overlayPosition = new Point(0, 1);
-			descriptor = JSDeodorantPlugin.getOverlayedImagesDescriptor(descriptor, overlay, overlayPosition);			
+			descriptor = ImagesHelper.getOverlayedImagesDescriptor(descriptor, overlay, overlayPosition);			
 		}
 		return descriptor.createImage();
 	}

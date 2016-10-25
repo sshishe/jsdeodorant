@@ -15,8 +15,8 @@ import ca.concordia.jsdeodorant.analysis.decomposition.Attribute;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
-import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
+import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
 public class IndividualClassFigure extends RoundedRectangle {
@@ -36,7 +36,7 @@ public class IndividualClassFigure extends RoundedRectangle {
 		setAntialias(SWT.ON);
 
 		Label className = new Label(classDeclaration.getName(), 
-				JSDeodorantPlugin.getImageDescriptor(Constants.CLASS_ICON_IMAGE).createImage());
+				ImagesHelper.getImageDescriptor(Constants.CLASS_ICON_IMAGE).createImage());
 		add(className);
 
 		List<ClassMember> attributes = classDeclaration.getClassMembers().stream()

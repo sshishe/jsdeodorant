@@ -44,10 +44,10 @@ import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.module.PackageSystem;
-import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.listeners.JSDeodorantPartListener;
 import ca.concordia.jsdeodorant.eclipseplugin.listeners.JSDeodorantSelectionListener;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
+import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.views.InstantiationsView.JSDeodorantClassInstantiationsView;
@@ -164,7 +164,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		};
 		showDependenciesAction.setText("Show module dependencies");
 		showDependenciesAction.setToolTipText("Show module dependencies");
-		showDependenciesAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.DEPENDENCIES_ICON_IMAGE));
+		showDependenciesAction.setImageDescriptor(ImagesHelper.getImageDescriptor(Constants.DEPENDENCIES_ICON_IMAGE));
 		
 		showClassVisualizationAction = new Action() {
 			@Override
@@ -174,7 +174,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		};
 		showClassVisualizationAction.setText("Show class diagram");
 		showClassVisualizationAction.setToolTipText("Show class diagram");
-		showClassVisualizationAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.DEPENDENCIES_ICON_IMAGE));
+		showClassVisualizationAction.setImageDescriptor(ImagesHelper.getImageDescriptor(Constants.DEPENDENCIES_ICON_IMAGE));
 		modulesViewModeAction = new Action() {
 			@Override
 			public void run() {
@@ -184,7 +184,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		};
 		modulesViewModeAction.setText("Show modules");
 		modulesViewModeAction.setToolTipText("Show modules");
-		modulesViewModeAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.MODULES_VIEW_ICON));
+		modulesViewModeAction.setImageDescriptor(ImagesHelper.getImageDescriptor(Constants.MODULES_VIEW_ICON));
 		modulesViewModeAction.setChecked(true);
 		
 		typeHierarchyModeAction = new Action() {
@@ -196,7 +196,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		};
 		typeHierarchyModeAction.setText("Show type hierarchies");
 		typeHierarchyModeAction.setToolTipText("Show type hierarchies");
-		typeHierarchyModeAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.TYPE_HIERARCHY_VIEW_ICON));
+		typeHierarchyModeAction.setImageDescriptor(ImagesHelper.getImageDescriptor(Constants.TYPE_HIERARCHY_VIEW_ICON));
 		typeHierarchyModeAction.setChecked(false);
 		
 		findInstantiationsAction = new Action() {
@@ -207,7 +207,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		};
 		findInstantiationsAction.setText("Find instantiations");
 		findInstantiationsAction.setToolTipText("Find instantiations");
-		findInstantiationsAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.SEARCH_FOR_REFERENCES_ICON));
+		findInstantiationsAction.setImageDescriptor(ImagesHelper.getImageDescriptor(Constants.SEARCH_FOR_REFERENCES_ICON));
 		
 		showTypeHierarchyForClassAction = new Action() {
 			@Override
@@ -217,7 +217,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		};
 		showTypeHierarchyForClassAction.setText("Show type hierarchy");
 		showTypeHierarchyForClassAction.setToolTipText("Show type hierarchy");
-		showTypeHierarchyForClassAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.TYPE_HIERARCHY_VIEW_ICON));
+		showTypeHierarchyForClassAction.setImageDescriptor(ImagesHelper.getImageDescriptor(Constants.TYPE_HIERARCHY_VIEW_ICON));
 
 	}
 

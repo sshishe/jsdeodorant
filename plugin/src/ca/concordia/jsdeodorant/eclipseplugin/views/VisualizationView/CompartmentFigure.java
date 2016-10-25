@@ -16,8 +16,8 @@ import org.eclipse.swt.graphics.Image;
 import ca.concordia.jsdeodorant.analysis.decomposition.Attribute;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
-import ca.concordia.jsdeodorant.eclipseplugin.activator.JSDeodorantPlugin;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
+import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
 public class CompartmentFigure extends Figure {
@@ -44,7 +44,7 @@ public class CompartmentFigure extends Figure {
 		for (ClassMember entity : entities) {
 			Image image;
 			if (entity instanceof Attribute) {
-				image = JSDeodorantPlugin.getImageDescriptor(Constants.FIELD_ICON_IMAGE).createImage();
+				image = ImagesHelper.getImageDescriptor(Constants.FIELD_ICON_IMAGE).createImage();
 			} else {
 				image = Constants.getMethodImage((Method)entity);
 			}
