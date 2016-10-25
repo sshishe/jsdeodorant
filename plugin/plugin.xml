@@ -8,7 +8,7 @@
             class="ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView.JSDeodorantModulesView"
             icon="icons/icon.png"
             id="jsdeodorant-eclipse-plugin.JSDeodorantModulesView"
-            name="Modules View"
+            name="JSDeodorant Modules View"
             restorable="true">
       </view>
        <view
@@ -18,6 +18,14 @@
              id="jsdeodorant-eclipse-plugin.JSDeodorantVisualizationView"
              name="JSDeodorant Visualization"
              restorable="true">
+      </view>
+      <view
+            category="jsdeodorant-eclipse-plugin.jsdeodorant-category"
+            class="ca.concordia.jsdeodorant.eclipseplugin.views.InstantiationsView.JSDeodorantClassInstantiationsView"
+            icon="icons/icon.png"
+            id="jsdeodorant-eclipse-plugin.JSDeodorantInstantiationsView"
+            name="JSDeodorant Instantiations View"
+            restorable="true">
       </view>
       <category
             id="jsdeodorant-eclipse-plugin.jsdeodorant-category"

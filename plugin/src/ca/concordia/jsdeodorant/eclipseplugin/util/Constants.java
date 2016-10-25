@@ -28,6 +28,7 @@ public class Constants {
 	public static final String MODULES_VIEW_ICON = "package-explorer.gif";
 	public static final String TYPE_HIERARCHY_VIEW_ICON = "hierarchy_view.gif";
 	public static final String FOLDER_ICON_IMAGE = "folder_icon.png";
+	public static final String SEARCH_FOR_REFERENCES_ICON = "search_ref_obj.png";
 	public static final String ICON_PATH = "icons";
 	
 	public static final String JAVASCRIPT_PROJECT_NATURE = "org.eclipse.wst.jsdt.core.jsNature";

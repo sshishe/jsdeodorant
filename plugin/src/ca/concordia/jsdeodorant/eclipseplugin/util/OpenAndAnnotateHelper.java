@@ -22,6 +22,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import com.google.javascript.jscomp.parsing.parser.util.SourceRange;
 
+import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
@@ -82,6 +83,18 @@ public class OpenAndAnnotateHelper {
 		String filePath = location.start.source.name;
 		Position postion = new Position(location.start.offset, location.end.offset - location.start.offset + 1);
 		String annotationText = (classMember instanceof Method ? "Method" : "Attribute") + " declaration";
+		JSAnnotation annotation = new JSAnnotation(JSAnnotationType.ANNOTATION, annotationText, postion);
+		openEditorAndAnnotate(filePath, annotation);
+	}
+	
+	public static void openAndAnnotateObjectCreation(ObjectCreation objectCreation) {
+		SourceRange location = objectCreation.getNewExpressionTree().location;
+		String filePath = location.start.source.name;
+		Position postion = new Position(location.start.offset, location.end.offset - location.start.offset + 1);
+		String annotationText = "Class instantiation";
+		if (objectCreation.getClassDeclaration() != null) {
+			annotationText = "Instantiation of the class " + objectCreation.getClassDeclaration().toString();
+		}
 		JSAnnotation annotation = new JSAnnotation(JSAnnotationType.ANNOTATION, annotationText, postion);
 		openEditorAndAnnotate(filePath, annotation);
 	}

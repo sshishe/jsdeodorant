@@ -14,6 +14,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.IEditorPart;
 
+import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.util.SourceRange;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
@@ -53,8 +54,8 @@ public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {
 												int length = end - start + 1;
 												if (start <= region.getOffset() && end >= region.getOffset()) {
 													IRegion newRegion = new Region(start, length);
-													ObjectCreationHyperlink classDeclarationHyperlink =
-															new ObjectCreationHyperlink(newRegion, classDeclaration);
+													ClassDeclarationHyperlink classDeclarationHyperlink =
+															new ClassDeclarationHyperlink(newRegion, classDeclaration);
 													hyperLinks.add(classDeclarationHyperlink);
 												}
 											}
@@ -77,18 +78,26 @@ public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {
 											SourceRange location = null;
 											FunctionDeclaration functionDeclaration = classDeclaration.getFunctionDeclaration();
 											if (functionDeclaration instanceof FunctionDeclarationExpression) {
-												location = ((FunctionDeclarationExpression) functionDeclaration).getLeftValueExpression().location;
+												ParseTree leftValueExpression = ((FunctionDeclarationExpression) functionDeclaration).getLeftValueExpression();
+												if (leftValueExpression != null) {
+													location = leftValueExpression.location;
+												}
 											} else if (functionDeclaration instanceof FunctionDeclarationStatement) {
 												location = ((FunctionDeclarationStatement) functionDeclaration).getFunctionDeclarationTree().name.location;
 											}
-											int start = location.start.offset;
-											int end = location.end.offset;
-											int length = end - start + 1;
-											if (start <= region.getOffset() && end >= region.getOffset()) {
-												IRegion newRegion = new Region(start, length);
-												ClassDeclarationHyperlink classDeclarationHyperlink =
-														new ClassDeclarationHyperlink(newRegion, classDeclaration);
-												hyperLinks.add(classDeclarationHyperlink);
+											if (location != null) {
+												int start = location.start.offset;
+												int end = location.end.offset;
+												int length = end - start + 1;
+												if (start <= region.getOffset() && end >= region.getOffset()) {
+													IRegion newRegion = new Region(start, length);
+													ClassInstantiationsHyperlink classDeclarationHyperlink =
+															new ClassInstantiationsHyperlink(newRegion, classDeclaration);
+													hyperLinks.add(classDeclarationHyperlink);
+													OpenTypeHierarchyHyperlink classInstantiationsHyperlink = 
+															new OpenTypeHierarchyHyperlink(newRegion, classDeclaration);
+													hyperLinks.add(classInstantiationsHyperlink);
+												}
 											}
 										}
 										break;

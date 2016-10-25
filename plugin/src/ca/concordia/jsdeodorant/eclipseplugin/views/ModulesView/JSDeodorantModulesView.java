@@ -50,6 +50,7 @@ import ca.concordia.jsdeodorant.eclipseplugin.listeners.JSDeodorantSelectionList
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
+import ca.concordia.jsdeodorant.eclipseplugin.views.InstantiationsView.JSDeodorantClassInstantiationsView;
 import ca.concordia.jsdeodorant.eclipseplugin.views.VisualizationView.JSDeodorantVisualizationView;
 import ca.concordia.jsdeodorant.eclipseplugin.views.wizard.AnalysisOptionsWizard;
 import ca.concordia.jsdeodorant.launcher.Runner;
@@ -68,6 +69,8 @@ public class JSDeodorantModulesView extends ViewPart {
 	private IAction showClassVisualizationAction;
 	private IAction typeHierarchyModeAction;
 	private IAction modulesViewModeAction;
+	private IAction findInstantiationsAction;
+	private IAction showTypeHierarchyForClassAction;
 	
 	private ISelectionListener selectionListener;
 	private IPartListener2 partListener; 
@@ -195,6 +198,27 @@ public class JSDeodorantModulesView extends ViewPart {
 		typeHierarchyModeAction.setToolTipText("Show type hierarchies");
 		typeHierarchyModeAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.TYPE_HIERARCHY_VIEW_ICON));
 		typeHierarchyModeAction.setChecked(false);
+		
+		findInstantiationsAction = new Action() {
+			@Override
+			public void run() {
+				findInstantiations();
+			}
+		};
+		findInstantiationsAction.setText("Find instantiations");
+		findInstantiationsAction.setToolTipText("Find instantiations");
+		findInstantiationsAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.SEARCH_FOR_REFERENCES_ICON));
+		
+		showTypeHierarchyForClassAction = new Action() {
+			@Override
+			public void run() {
+				showTypeHierarchyForSelectedClass();
+			}
+		};
+		showTypeHierarchyForClassAction.setText("Show type hierarchy");
+		showTypeHierarchyForClassAction.setToolTipText("Show type hierarchy");
+		showTypeHierarchyForClassAction.setImageDescriptor(JSDeodorantPlugin.getImageDescriptor(Constants.TYPE_HIERARCHY_VIEW_ICON));
+
 	}
 
 	private void addActionBarButtons() {
@@ -227,7 +251,7 @@ public class JSDeodorantModulesView extends ViewPart {
 	private void createTreeViewer(Composite parent) {
 		classTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		classTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(null, analysisOptions.getDirectoryPath()));
+		classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(null));
 		classTreeViewer.setLabelProvider(new ClassesTreeViewerLabelProvider());
 		classTreeViewer.addDoubleClickListener(new ClassesTreeViewerDoubleClickListener());
 		classTreeViewer.setInput(getViewSite());
@@ -254,7 +278,9 @@ public class JSDeodorantModulesView extends ViewPart {
 					actionsToAdd.add(showDependenciesAction);
 				}
 			} else if (firstElement instanceof ClassDeclaration) {
-				actionsToAdd.add(showClassVisualizationAction);				
+				actionsToAdd.add(showClassVisualizationAction);
+				actionsToAdd.add(findInstantiationsAction);
+				actionsToAdd.add(showTypeHierarchyForClassAction);
 			}
 		}
 		
@@ -311,7 +337,7 @@ public class JSDeodorantModulesView extends ViewPart {
 					runner.createAnalysisOptions();
 					try {
 						List<Module> modules = runner.performActions();
-						ModulesInfo.setModuleInfo(modules);
+						ModulesInfo.setModuleInfo(modules, analysisOptions.getDirectoryPath());
 						if (modules != null && !monitor.isCanceled()) {
 							setTreeViewerContentProviderBasedOnViewMode(monitor);
 							clearResultsAction.setEnabled(true);
@@ -328,7 +354,7 @@ public class JSDeodorantModulesView extends ViewPart {
 	}
 	
 	private void clearResults() {
-		classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(null, analysisOptions.getDirectoryPath()));
+		classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(null));
 		clearResultsAction.setEnabled(false);
 	}
 	
@@ -368,6 +394,22 @@ public class JSDeodorantModulesView extends ViewPart {
 			}
 		}
 	}
+	
+	private void findInstantiations() {
+		ClassDeclaration selectedClass = getSelectedClass();
+		if (selectedClass != null) {
+			JSDeodorantClassInstantiationsView instantiationsView = ((JSDeodorantClassInstantiationsView)OpenAndAnnotateHelper.openView(JSDeodorantClassInstantiationsView.ID));
+			instantiationsView.showInstantiationsFor(selectedClass);
+		}
+	}
+	
+	protected void showTypeHierarchyForSelectedClass() {
+		ClassDeclaration selectedClass = getSelectedClass();
+		if (selectedClass != null) {
+			JSDeodorantModulesView modulesView = ((JSDeodorantModulesView)OpenAndAnnotateHelper.openView(JSDeodorantModulesView.ID));
+			modulesView.showTypeHierarchyForClassDeclaration(selectedClass);
+		}
+	}
 
 	protected void setTreeViewerContentProviderBasedOnViewMode(IProgressMonitor monitor) {
 		monitor.setTaskName("Populating view");
@@ -380,7 +422,7 @@ public class JSDeodorantModulesView extends ViewPart {
 					case MODULE_EXPLORER:
 						modulesViewModeAction.setChecked(true);
 						typeHierarchyModeAction.setChecked(false);
-						classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(modules, analysisOptions.getDirectoryPath()));
+						classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(modules));
 						break;
 					case TYPE_HIERARCHY:
 						modulesViewModeAction.setChecked(false);
