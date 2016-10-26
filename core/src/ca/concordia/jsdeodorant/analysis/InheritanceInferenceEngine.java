@@ -290,7 +290,7 @@ public class InheritanceInferenceEngine {
 	
 	
 	public void buildInheritenceRelation(PackageSystem packageSystem){
-		log.debug("Analyzing Inheritence");
+		log.debug("START Analyzing Inheritence");
 		if((packageSystem.equals(PackageSystem.ClosureLibrary) ||  packageSystem.equals(PackageSystem.Helma))
 				&& this.potentialInheritenceRelations.size()>0){
 			this.processPotentialInheritenceRelations();
@@ -299,7 +299,7 @@ public class InheritanceInferenceEngine {
 		}
 		
 		this.processPotentialSuperTypes();
-		
+		log.debug("DONE Analyzing Inheritence");
 	}
 	
 

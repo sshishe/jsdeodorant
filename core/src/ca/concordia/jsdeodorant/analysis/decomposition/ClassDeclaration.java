@@ -14,9 +14,11 @@ import com.google.javascript.jscomp.parsing.parser.trees.BlockTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.trees.GetAccessorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ObjectLiteralExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
+import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThrowStatementTree;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
@@ -353,15 +355,18 @@ public class ClassDeclaration {
 							// we don't care then
 						}	
 					}else if(right instanceof ObjectLiteralExpressionTree){ // If Car is a class => Car.prototype = { getInfo: function () { return this.make + ', ' + this.model };};
-						for(ParseTree property: right.asObjectLiteralExpression().propertyNameAndValues){
-							if(property.asPropertyNameAssignment().value instanceof FunctionDeclarationTree){
-								//int size=property.asPropertyNameAssignment().value.asFunctionDeclaration().functionBody.asBlock().statements.size();
-								Token methodName=property.asPropertyNameAssignment().name;
-								//this.allMethods.put(methodName.toString(), abstractExpression);
-								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody);
-								Method aMethod= new Method(methodName.toString(),this, property.asPropertyNameAssignment().value.asFunctionDeclaration(), kinds);
-								this.classMembers.add(aMethod);
-							}
+						if (leftId instanceof CompositeIdentifier && leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype.") ) {
+							right.getClass();System.out.println(right.location.start.line);
+							for(ParseTree property: right.asObjectLiteralExpression().propertyNameAndValues){
+								if(property instanceof PropertyNameAssignmentTree){
+									if(property.asPropertyNameAssignment().value instanceof FunctionDeclarationTree){
+										Token methodName=property.asPropertyNameAssignment().name;
+										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody);
+										Method aMethod= new Method(methodName.toString(),this, property.asPropertyNameAssignment().value.asFunctionDeclaration(), kinds);
+										this.classMembers.add(aMethod);
+									}	
+								}
+							}	
 						}
 					}	
 				}

@@ -129,14 +129,16 @@ public class AnalysisEngine {
 					ClassInferenceEngine.analyzeMethodsAndAttributes(module);
 			else{
 				for(ClassDeclaration aClass: module.getClasses()){
+					log.debug("identifying methods and attributes for class: "+aClass.getName()+ ", at line: "+  aClass.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line+ ", in file: "+  aClass.getFunctionDeclaration().getFunctionDeclarationTree().location.start.source.name);
 					aClass.identifyAttributes();
 					aClass.identifyMethodsWithinClassBody();
 					aClass.identifyMethodsAddedToClassPrototype();
 				}
 			}
 		}
-		
+		log.debug("DONE identifying methods and attributes for classes");
 		// when all methods of classes are identified  we will  find abstract and overriden and overriding methods
+		log.debug("START identifying abstartc, overriden and overriding methods");
 		for (Module module : modules) {
 			if(analysisOption.getClassAnalysisMode() == ClassAnalysisMode.STRICT)	{
 				for(ClassDeclaration aClass: module.getClasses()){
@@ -144,7 +146,7 @@ public class AnalysisEngine {
 				}
 			}
 		}
-		
+		log.debug("DONE identifying abstartc, overriden and overriding methods");
 		
 		for (Module module : modules) {
 			if (analysisOption.isOutputToCSV()) {

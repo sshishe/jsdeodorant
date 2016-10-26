@@ -74,7 +74,7 @@ public class ClassInferenceEngineStricMode {
 			}
 			
 			// if the body contains returnStatement then it is not a  class
-			if(proceed && !hasReturnStatement(((CompositeStatement)(functionDeclaration.getStatements().get(0))).getStatements())){
+			if(proceed && functionDeclaration.getStatements().size() >0 && !hasReturnStatement(((CompositeStatement)(functionDeclaration.getStatements().get(0))).getStatements())){
 				proceed=true;
 			}
 			
@@ -99,11 +99,14 @@ public class ClassInferenceEngineStricMode {
 					parentName=parentFunction.getName();
 				
 				if(totalMethodsInsideClassBody>0 || totalAttributesInsideClassBody>0){
-					createClass(module, functionDeclaration, parentName, parentFunction,InferenceType.Constructor_Body_Analysis);
+					//createClass(module, functionDeclaration, parentName, parentFunction,InferenceType.Constructor_Body_Analysis);
+					createClass(module, functionDeclaration, InferenceType.Constructor_Body_Analysis);
 				}else if(totalMethodsOutSideOutSideBody>0){
-					createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.Methods_Added_To_Prototype);
+					//createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.Methods_Added_To_Prototype);
+					createClass(module, functionDeclaration, InferenceType.Methods_Added_To_Prototype);
 				}else if(totalObjectLiteralToPrototypeOutSideBody>0){
-					createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
+					//createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
+					createClass(module, functionDeclaration, InferenceType.ObjectLiteral_Added_ToPrototype);
 				}
 				nowSetClassesToNotFoundByObjectCreations(module);
 			}
