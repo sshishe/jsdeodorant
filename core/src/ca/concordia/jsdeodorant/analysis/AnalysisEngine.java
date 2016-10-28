@@ -70,6 +70,7 @@ public class AnalysisEngine {
 
 		int functionCounts = 0;
 		
+		analysisOption.notifyAnalysisObservers(AnalysisStep.BUILDING_MODEL);
 		for (SourceFile sourceFile : inputs) {
 			// if (containsError(sourceFile, result))
 			// continue;
@@ -92,6 +93,7 @@ public class AnalysisEngine {
 		
 		inheritanceInferenceEngine.configure(analysisOption.getPackageSystem());
 		
+		analysisOption.notifyAnalysisObservers(AnalysisStep.IDENTIFYING_CLASSES);
 		for (Module module : modules) {
 			if (module.getLibraryType() != LibraryType.BUILT_IN) {
 				checkForBeingLibrary(module, analysisOption);
@@ -121,6 +123,7 @@ public class AnalysisEngine {
 			}
 		}
 		
+		analysisOption.notifyAnalysisObservers(AnalysisStep.BUILDING_CLASS_HIERARCHIES);
 		// the inheritance analysis needs to be finished then we find method and attributes 
 		inheritanceInferenceEngine.buildInheritenceRelation(analysisOption.getPackageSystem());
 		for (Module module : modules) {

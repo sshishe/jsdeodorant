@@ -38,7 +38,9 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import ca.concordia.jsdeodorant.analysis.AnalysisObserver;
 import ca.concordia.jsdeodorant.analysis.AnalysisOptions;
+import ca.concordia.jsdeodorant.analysis.AnalysisStep;
 import ca.concordia.jsdeodorant.analysis.ClassAnalysisMode;
 import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
@@ -326,7 +328,15 @@ public class JSDeodorantModulesView extends ViewPart {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask("JSDeodorant analysis", IProgressMonitor.UNKNOWN);
+					analysisOptions.getAnalysisObservers().clear();
+					analysisOptions.addAnalysisObserver(new AnalysisObserver() {
+						@Override
+						public void progressed(AnalysisStep step) {
+							monitor.worked(1);
+							monitor.setTaskName(step.toString());
+						}
+					});
+					monitor.beginTask("JSDeodorant analysis", AnalysisStep.values().length);
 					Runner runner = new Runner(new String[0]) {
 						@Override
 						public AnalysisOptions createAnalysisOptions() {

@@ -1,5 +1,6 @@
 package ca.concordia.jsdeodorant.analysis;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -30,6 +31,7 @@ public class AnalysisOptions {
 	private String version;
 	private PackageSystem packageSystem;
 	private ClassAnalysisMode classAnalysisMode;
+	private List<AnalysisObserver> analysisObservers = new ArrayList<>();
 
 	public boolean hasClassAnlysis() {
 		return classAnalysis;
@@ -233,5 +235,19 @@ public class AnalysisOptions {
 
 	public PackageSystem getPackageSystem() {
 		return packageSystem;
+	}
+	
+	public void addAnalysisObserver(AnalysisObserver observer) {
+		analysisObservers.add(observer);
+	}
+	
+	public List<AnalysisObserver> getAnalysisObservers() {
+		return analysisObservers;
+	}
+
+	public void notifyAnalysisObservers(AnalysisStep step) {
+		for (AnalysisObserver observer : analysisObservers) {
+			observer.progressed(step);
+		}
 	}
 }
