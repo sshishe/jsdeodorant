@@ -3,6 +3,7 @@ package ca.concordia.jsdeodorant.eclipseplugin.views.wizard;
 import org.eclipse.jface.wizard.Wizard;
 
 import ca.concordia.jsdeodorant.analysis.AnalysisOptions;
+import ca.concordia.jsdeodorant.analysis.ClassAnalysisMode;
 
 public class AnalysisOptionsWizard extends Wizard {
 	
@@ -34,6 +35,7 @@ public class AnalysisOptionsWizard extends Wizard {
 		analysisOptions.setDirectoryPath(analysisOptionsPage.getDirectoryPath());
 		analysisOptions.setLibrariesWithPath(analysisOptionsPage.getLibraryPaths());
 		analysisOptions.setJsFiles(analysisOptionsPage.getJsFiles());
+		analysisOptions.setClassAnalysisMode(ClassAnalysisMode.STRICT.toString());
 		return analysisOptions;
 	}
 
