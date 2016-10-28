@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 
 import ca.concordia.jsdeodorant.analysis.AnalysisOptions;
 import ca.concordia.jsdeodorant.analysis.module.PackageSystem;
@@ -128,13 +129,15 @@ public class AnalysisOptionsWizardPage extends WizardPage {
 		
 		Group moduleAnalysisGroup = new Group(parent, SWT.SHADOW_NONE);
 		moduleAnalysisGroup.setText("Module analysis");
-		moduleAnalysisGroup.setLayoutData(groupGridData);
-		moduleAnalysisGroup.setLayout(groupLayout);
+		moduleAnalysisGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		moduleAnalysisGroup.setLayout(new GridLayout(3, false));
 		
 		Button analyzeModulesButton = new Button(moduleAnalysisGroup, SWT.CHECK);
 		analyzeModulesButton.setText("Analyze modules");
 		analyzeModulesButton.setSelection(isModuleAnlysisChecked);
 		
+		Label packageSystemLabel = new Label(moduleAnalysisGroup, SWT.NONE);
+		packageSystemLabel.setText("Package system:");
 		Combo packageSystemCombo = new Combo(moduleAnalysisGroup, SWT.READ_ONLY);
 		for (PackageSystem packageSystem : PackageSystem.values()) {
 			packageSystemCombo.add(packageSystem.name());
