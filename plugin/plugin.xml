@@ -77,4 +77,62 @@
          <context type="org.eclipse.ui.texteditor.ITextEditor"/>
       </target>
    </extension>
+	<extension point="org.eclipse.core.expressions.definitions">
+	  <!--definition id="ca.concordia.jsdeodorant.eclipseplugin.defenitions.JSFileDefinitiion">
+	     <iterate ifEmpty="false">
+ 			<adapt type="org.eclipse.core.resources.IFile">
+               <test property="org.eclipse.core.resources.name" 
+                     value="*.js"/>
+            </adapt>
+	     </iterate>
+	  </definition-->
+	  <definition id="ca.concordia.jsdeodorant.eclipseplugin.defenitions.JSProjectNature">
+	     <iterate ifEmpty="false">
+ 			<adapt type="org.eclipse.core.resources.IProject">
+	           <test property="org.eclipse.core.resources.projectNature"
+	                 value="org.eclipse.wst.jsdt.core.jsNature"/>
+	        </adapt>
+	     </iterate>
+	  </definition>	  
+	 </extension>
+	<extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="popup:org.eclipse.ui.popup.any">
+         <menu
+               label="JSDeodorant"
+               icon="icons/icon.png">
+            <command
+                  commandId="ca.concordia.jsdeodorant.eclipseplugin.popupmenuhandlers.JSProjectPopupMenuCommand"
+                  id="OpenModulesView"
+                  label="View JS modules"
+                  icon="icons/icon.png"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <or>
+                     <with
+                           variable="activeMenuSelection">
+                        <reference
+                              definitionId="ca.concordia.jsdeodorant.eclipseplugin.defenitions.JSProjectNature">
+                        </reference>
+                     </with>
+                     <!--with
+                           variable="activeMenuEditorInput">
+                        <reference
+                              definitionId="ca.concordia.jsdeodorant.eclipseplugin.defenitions.JSFileDefinitiion">
+                        </reference>
+                     </with-->
+                  </or>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="ca.concordia.jsdeodorant.eclipseplugin.popupmenuhandlers.JSProjectPopupMenuHandler"
+            id="ca.concordia.jsdeodorant.eclipseplugin.popupmenuhandlers.JSProjectPopupMenuCommand"
+            name="JSProjectPopupMenuCommandName">
+      </command>
+   </extension>
 </plugin>

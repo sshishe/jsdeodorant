@@ -79,6 +79,7 @@ public class JSDeodorantSelectionListener implements ISelectionListener {
 					}
 				}
 				jsModulesView.setAnalysisButtonsEnabled(projectIsJavaScript);
+				jsModulesView.setSelectedProjectName(selectedProject.getName());
 			}
 		}
 	}

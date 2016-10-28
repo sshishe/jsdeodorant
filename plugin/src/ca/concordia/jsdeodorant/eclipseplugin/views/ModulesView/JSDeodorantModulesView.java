@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -62,6 +63,7 @@ public class JSDeodorantModulesView extends ViewPart {
 	public static final String ID = "jsdeodorant-eclipse-plugin.JSDeodorantModulesView";
 
 	private TreeViewer classTreeViewer;
+	private Label projectNameLabel;
 
 	private IAction clearAnnotationsAction;
 	private IAction clearResultsAction;
@@ -90,11 +92,12 @@ public class JSDeodorantModulesView extends ViewPart {
 	    parent.setLayout(gridLayout);
 		
 	    hookListeners();
+	    createTopBar(parent);
 	    createTreeViewer(parent);
 	    makeActions(parent);
 	    addActionBarButtons();
 	}
-	
+
 	private void getDefaultAnalysisOptions() {
 		analysisOptions = new AnalysisOptions();
 		analysisOptions.setPackageSystem(PackageSystem.ClosureLibrary.name());
@@ -252,6 +255,11 @@ public class JSDeodorantModulesView extends ViewPart {
 		manager.add(clearResultsAction);
 		manager.add(showWizardAction);
 		manager.add(analyzeAction);
+	}
+	
+	private void createTopBar(Composite parent) {
+		projectNameLabel = new Label(parent, SWT.NONE);
+		projectNameLabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 	}
 
 	private void createTreeViewer(Composite parent) {
@@ -474,6 +482,14 @@ public class JSDeodorantModulesView extends ViewPart {
 
 	public void setClearAnnotationsButtonEnabled(boolean enabled) {
 		clearAnnotationsAction.setEnabled(enabled);		
+	}
+
+	public void getSelectedProject(ISelection selection) {
+		selectionListener.selectionChanged(this, selection);
+	}
+
+	public void setSelectedProjectName(String name) {
+		projectNameLabel.setText("Selected JavaScript project: " + name);
 	}
 	
 }
