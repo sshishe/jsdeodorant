@@ -103,9 +103,13 @@ public class JSDeodorantModulesView extends ViewPart {
 		analysisOptions.setClassAnalysisMode(ClassAnalysisMode.STRICT.toString());
 		analysisOptions.setAnalyzeLibrariesForClasses(true);
 	}
+	
+	public AnalysisOptions getAnalysisOptions() {
+		return analysisOptions;
+	}
 
 	private void hookListeners() {
-		selectionListener = new JSDeodorantSelectionListener(analysisOptions, this);
+		selectionListener = new JSDeodorantSelectionListener(this);
 		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(selectionListener);
 		
 		partListener = new JSDeodorantPartListener(this);

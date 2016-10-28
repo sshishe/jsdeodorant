@@ -20,11 +20,9 @@ import ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView.JSDeodorantModul
 
 public class JSDeodorantSelectionListener implements ISelectionListener {
 
-	private final AnalysisOptions analysisOptions;
 	private final JSDeodorantModulesView jsModulesView;
 
-	public JSDeodorantSelectionListener(AnalysisOptions analysisOptions, JSDeodorantModulesView view) {
-		this.analysisOptions = analysisOptions;
+	public JSDeodorantSelectionListener(JSDeodorantModulesView view) {
 		this.jsModulesView = view;
 	}
 
@@ -67,6 +65,7 @@ public class JSDeodorantSelectionListener implements ISelectionListener {
 					e.printStackTrace();
 				}
 				if (projectIsJavaScript) {
+					AnalysisOptions analysisOptions = jsModulesView.getAnalysisOptions();
 					File selectedPathFile = new File(selectedPath);
 					analysisOptions.setDirectoryPath(selectedProject.getLocation().toFile().getAbsolutePath());
 					if (selectedPathFile.isFile()) {
