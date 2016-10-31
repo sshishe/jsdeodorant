@@ -9,13 +9,15 @@ import org.eclipse.draw2d.BendpointConnectionRouter;
 import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.FanRouter;
+import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.FreeformLayout;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PolygonDecoration;
 import org.eclipse.draw2d.PolylineConnection;
 import org.eclipse.draw2d.ScalableFreeformLayeredPane;
+import org.eclipse.draw2d.XYAnchor;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
@@ -37,7 +39,7 @@ public class SingleClassFigure extends ScalableFreeformLayeredPane {
 		add(formLayer, "Primary");
 		
 		ConnectionLayer connections = new ConnectionLayer();
-		add(connections,  "Connections");
+		add(connections, "Connections");
 		AutomaticRouter router = new FanRouter();
 		router.setNextRouter(new BendpointConnectionRouter());
 		connections.setConnectionRouter(router);
@@ -60,6 +62,7 @@ public class SingleClassFigure extends ScalableFreeformLayeredPane {
 			}
 			int x = GAP_X + spaceFromLastRow / 2;
 			formLayer.add(individualClassFigure, new Rectangle(x, currentY, -1, -1));
+			formLayer.validate();
 			currentY += individualClassFigure.getPreferredSize().height() + GAP_Y;
 			if (i >= 1) {
 				IndividualClassFigure parentFigure = mainAndParentFigures.get(i - 1);
@@ -72,6 +75,7 @@ public class SingleClassFigure extends ScalableFreeformLayeredPane {
 		int currentX = GAP_X;
 		for (IndividualClassFigure subtypeIndividualClassFigure : directSubtypes) {
 			formLayer.add(subtypeIndividualClassFigure, new Rectangle(currentX, currentY, -1 , -1));
+			formLayer.validate();
 			connections.add(getInheritanceConnection(subtypeIndividualClassFigure, mainClassFigure));
 			if (subtypeIndividualClassFigure.getClassDeclaration().getSubTypes().size() > 0) {
 				Label hasChildsLabel = new Label();
@@ -79,6 +83,7 @@ public class SingleClassFigure extends ScalableFreeformLayeredPane {
 				int labelX = currentX + subtypeIndividualClassFigure.getPreferredSize().width() / 2;
 				int labelY = currentY + subtypeIndividualClassFigure.getPreferredSize().height() + GAP_Y;
 				formLayer.add(hasChildsLabel, new Rectangle(labelX, labelY, -1, -1));
+				formLayer.validate();
 				connections.add(getInheritanceConnection(hasChildsLabel, subtypeIndividualClassFigure));
 			}
 			currentX += subtypeIndividualClassFigure.getPreferredSize().width() + GAP_X;
@@ -86,10 +91,13 @@ public class SingleClassFigure extends ScalableFreeformLayeredPane {
 		
 	}
 
-	private PolylineConnection getInheritanceConnection(IFigure childCLassFigure, IFigure parentClassFigure) {
+	private PolylineConnection getInheritanceConnection(Figure childCLassFigure, Figure parentClassFigure) {
 		PolylineConnection connection = new PolylineConnection();
 		connection.setAntialias(SWT.ON);
-		ChopboxAnchor sourceAnchor = new ChopboxAnchor(childCLassFigure);
+		int x = childCLassFigure.getLocation().x() + childCLassFigure.getPreferredSize().width() / 2;
+		int y = childCLassFigure.getLocation().y();
+		XYAnchor sourceAnchor = new XYAnchor(new Point(x, y));
+		//ChopboxAnchor sourceAnchor = new ChopboxAnchor(childCLassFigure);
 		ChopboxAnchor targetAnchor = new ChopboxAnchor(parentClassFigure);
 		connection.setSourceAnchor(sourceAnchor);
 		connection.setTargetAnchor(targetAnchor);
