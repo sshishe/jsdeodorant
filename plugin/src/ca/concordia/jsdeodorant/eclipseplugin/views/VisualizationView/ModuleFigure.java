@@ -39,7 +39,7 @@ public class ModuleFigure extends Figure {
 		add(classesPart);
 		
 		for (ClassDeclaration classDeclaration : selectedModule.getClasses()) {
-			classesPart.add(new IndividualClassFigure(classDeclaration));
+			classesPart.add(new IndividualClassFigure(classDeclaration, false));
 		}
 		
 		addMouseListener(new MouseListener() {
