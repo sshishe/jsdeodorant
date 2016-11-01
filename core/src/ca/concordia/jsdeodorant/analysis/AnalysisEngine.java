@@ -204,7 +204,7 @@ public class AnalysisEngine {
 			for (TypeDeclaration classDeclaration : module.getTypes()) {
 				int methodCount=0;
 				int attrCount=0;
-				for(TypeMember member: classDeclaration.getClassMembers()){	
+				for(TypeMember member: classDeclaration.getTypeMembers()){	
 					if(member instanceof Method){
 						methodCount++;
 					}else{

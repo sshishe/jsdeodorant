@@ -21,6 +21,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 import com.google.javascript.jscomp.parsing.parser.trees.PropertyNameAssignmentTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ThrowStatementTree;
 
+import ca.concordia.jsdeodorant.analysis.ClassMemberCountTest;
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.CompositeIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
@@ -31,7 +32,7 @@ import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 public class TypeDeclaration {
 	private AbstractIdentifier identifier;
 	private FunctionDeclaration functionDeclaration;
-	private Set<TypeMember> classMembers;
+	private Set<TypeMember> typeMembers;
 	private boolean isInfered;
 	private InferenceType inferenceType;
 	private boolean hasNamespace;
@@ -54,7 +55,7 @@ public class TypeDeclaration {
 		this.identifier = identifier;
 		this.functionDeclaration = functionDeclaration;
 		this.setParentModule(parentModule);
-		this.classMembers= new HashSet<TypeMember>();
+		this.typeMembers= new HashSet<TypeMember>();
 		this.isInfered = isInfered;
 		this.hasNamespace = hasNamespace;
 		this.instantiationCount = 0;
@@ -77,8 +78,8 @@ public class TypeDeclaration {
 		return subTypes;
 	}
 	
-	public Set<TypeMember> getClassMembers() {
-		return classMembers;
+	public Set<TypeMember> getTypeMembers() {
+		return typeMembers;
 	}
 
 	public void addToSubTypes(TypeDeclaration aSubType) {
@@ -256,8 +257,20 @@ public class TypeDeclaration {
 								if(leftIdAsString.startsWith("this.")){
 									if(!(leftIdAsString.split(".").length>2)){ 
 										// more strict rules only one dot => this.SOMETHING and NOT  this.SOMETHING.OTHERTHINGS
-										Attribute attr=new Attribute(((CompositeIdentifier) leftId).getMostRightPart().toString(), this,parseTree);
-										this.classMembers.add(attr);
+										if(this.typeMembers.size()==0){
+											Attribute attr=new Attribute(((CompositeIdentifier) leftId).getMostRightPart().toString(), this,parseTree);
+											this.typeMembers.add(attr);
+										}else{
+											for(TypeMember member: this.typeMembers){
+												if(member instanceof  Attribute){
+													if(!(member.getName().contentEquals(((CompositeIdentifier) leftId).getMostRightPart().toString()))){
+														Attribute attr=new Attribute(((CompositeIdentifier) leftId).getMostRightPart().toString(), this,parseTree);
+														this.typeMembers.add(attr);
+													}
+												}
+											}
+										}
+										
 									}
 								}
 								
@@ -298,16 +311,16 @@ public class TypeDeclaration {
 									if(leftIdAsString.startsWith("this.") ){
 										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECLARED_WITHIN_CLASS_BODY);
 										Method aMethod= new Method(leftIdAsString.replace("this.", ""), this,right.asFunctionDeclaration(), kinds);
-										this.classMembers.add(aMethod);
+										this.typeMembers.add(aMethod);
 									}else if(leftIdAsString.startsWith(this.getName()+".prototype.")){
 										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECLARED_WITHIN_CLASS_BODY);
 										Method aMethod= new Method(leftIdAsString.replace(this.getName()+".prototype.", ""), this,right.asFunctionDeclaration(), kinds);
-										this.classMembers.add(aMethod);
+										this.typeMembers.add(aMethod);
 									}
 								}else if(leftIdAsString.startsWith(this.getName()+".")){// not very good way of handling it A.foo= function(){....} foo is static method
 									EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECLARED_WITHIN_CLASS_BODY, MethodType.STATIC_METHOD);
 									Method aMethod= new Method(leftIdAsString.replace(this.getName()+".", ""), this,right.asFunctionDeclaration(), kinds);
-									this.classMembers.add(aMethod);
+									this.typeMembers.add(aMethod);
 								}	
 							}
 						}
@@ -350,13 +363,13 @@ public class TypeDeclaration {
 								//this.allMethods.put(methodName, abstractExpression);
 								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECRALRED_OUTSIDE_OF_CLASS_BODY);
 								Method aMethod= new Method(methodName,this,((FunctionDeclarationTree)right), kinds);
-								this.classMembers.add(aMethod);
+								this.typeMembers.add(aMethod);
 							}else if(leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".")){ // not very good way of handling it A.foo= function(){....} foo is static method
 								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".", "");
 								//this.allMethods.put(methodName, abstractExpression);
 								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECRALRED_OUTSIDE_OF_CLASS_BODY, MethodType.STATIC_METHOD);
 								Method aMethod= new Method(methodName,this, ((FunctionDeclarationTree)right), kinds);
-								this.classMembers.add(aMethod);
+								this.typeMembers.add(aMethod);
 							}
 						}else{
 							// we don't care then
@@ -370,7 +383,7 @@ public class TypeDeclaration {
 										Token methodName=property.asPropertyNameAssignment().name;
 										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECRALRED_OUTSIDE_OF_CLASS_BODY);
 										Method aMethod= new Method(methodName.toString(),this, property.asPropertyNameAssignment().value.asFunctionDeclaration(), kinds);
-										this.classMembers.add(aMethod);
+										this.typeMembers.add(aMethod);
 									}	
 								}
 							}	
@@ -385,12 +398,12 @@ public class TypeDeclaration {
 		
 		if(this.subTypes.size()!=0){
 			Map<Method , Set<Method>> candidates= new HashMap<Method , Set<Method>>();
-			for(TypeMember member: this.classMembers){
+			for(TypeMember member: this.typeMembers){
 				if(member instanceof Method){
 					Method method=(Method) member;
 					Set<Method> aSet= new HashSet<Method>();
 					for(TypeDeclaration sub: this.subTypes){
-						for(TypeMember subMemebr :sub.getClassMembers()){
+						for(TypeMember subMemebr :sub.getTypeMembers()){
 							if(subMemebr instanceof Method){
 								Method subMethod=(Method) subMemebr;
 								if(method.getName().contentEquals(subMethod.getName())){
@@ -418,7 +431,7 @@ public class TypeDeclaration {
 			}
 		}else{ // if no subType we still need to verify the methods
 			
-			for(TypeMember member: this.classMembers){
+			for(TypeMember member: this.typeMembers){
 				if(member instanceof Method){
 					if(this.isAbstractMethod((Method) member)){
 						((Method) member).getKinds().add(MethodType.ABSTRACT_METHOD);

@@ -174,7 +174,7 @@ public class Module {
 	public boolean isInterface(TypeDeclaration aType) {
 		boolean isInterface=true;
 		if(aType.isInfered()){
-			for(TypeMember m: aType.getClassMembers()){
+			for(TypeMember m: aType.getTypeMembers()){
 				if(m instanceof Method){ // all its method should be abstract
 					if(!((Method) m).getKinds().contains(MethodType.ABSTRACT_METHOD)){
 						isInterface=false;
@@ -197,7 +197,7 @@ public class Module {
 		if(aType.getKinds()!=null && aType.getKinds().contains(TypeDeclarationKind.INTERFACE)){
 			return false;
 		}else{
-			for (TypeMember member: aType.getClassMembers()){
+			for (TypeMember member: aType.getTypeMembers()){
 				if(member instanceof Method){
 					if (((Method)member).getKinds().contains(MethodType.ABSTRACT_METHOD)){
 						isAbstarctClass=true;

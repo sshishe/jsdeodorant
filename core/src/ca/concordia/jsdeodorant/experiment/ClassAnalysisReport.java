@@ -60,7 +60,7 @@ public class ClassAnalysisReport {
 		int overridingMethods=0;
 		int methodCount=0;
 		int attrCount=0;
-		for(TypeMember member:typeDeclaration.getClassMembers() ){
+		for(TypeMember member:typeDeclaration.getTypeMembers() ){
 			if(member instanceof Method ){
 				methodCount++;
 				if(((Method)member).getKinds().contains(MethodType.ABSTRACT_METHOD)){
