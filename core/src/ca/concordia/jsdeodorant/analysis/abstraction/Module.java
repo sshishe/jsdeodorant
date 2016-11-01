@@ -5,21 +5,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.velocity.runtime.directive.Foreach;
-
 import com.google.javascript.jscomp.SourceFile;
 
-import ca.concordia.jsdeodorant.analysis.ClassMemberCountTest;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractStatement;
-import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclarationKind;
-import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.CompositeStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
 import ca.concordia.jsdeodorant.analysis.decomposition.MethodType;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclarationKind;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 
 public class Module {
