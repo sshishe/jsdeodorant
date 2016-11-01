@@ -141,7 +141,7 @@ public class Program implements SourceContainer {
 			if (sourceElement instanceof AbstractStatement) {
 				AbstractStatement statement = (AbstractStatement) sourceElement;
 				for (FunctionDeclaration functionDeclaration : statement.getFunctionDeclarationList())
-					if (functionDeclaration.isClassDeclaration())
+					if (functionDeclaration.isTypeDeclaration())
 						classDeclarations.add(functionDeclaration);
 			}
 		}

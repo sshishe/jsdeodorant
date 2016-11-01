@@ -2,6 +2,7 @@ package ca.concordia.jsdeodorant.analysis;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,11 @@ import com.google.javascript.jscomp.parsing.parser.trees.ProgramTree;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.Program;
 import ca.concordia.jsdeodorant.analysis.abstraction.StatementProcessor;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclarationKind;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
+import ca.concordia.jsdeodorant.analysis.decomposition.MethodType;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.FileUtil;
 import ca.concordia.jsdeodorant.analysis.util.JSONReader;
@@ -127,25 +130,51 @@ public class AnalysisEngine {
 		// the inheritance analysis needs to be finished then we find method and attributes 
 		inheritanceInferenceEngine.buildInheritenceRelation(analysisOption.getPackageSystem());
 		for (Module module : modules) {
-			module.identifyConstructorInClassBody(); // this is when the class contains a constructor too
+			module.identifyConstructorInTypeDeclarationBody(); // this is when the class contains a constructor too
 			if(analysisOption.getClassAnalysisMode() == ClassAnalysisMode.NON_STRICT)
 					ClassInferenceEngine.analyzeMethodsAndAttributes(module);
 			else{
-				for(ClassDeclaration aClass: module.getClasses()){
-					log.debug("identifying methods and attributes for class: "+aClass.getName()+ ", at line: "+  aClass.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line+ ", in file: "+  aClass.getFunctionDeclaration().getFunctionDeclarationTree().location.start.source.name);
-					aClass.identifyAttributes();
-					aClass.identifyMethodsWithinClassBody();
-					aClass.identifyMethodsAddedToClassPrototype();
+				for(TypeDeclaration aType: module.getTypes()){
+					log.debug("identifying methods and attributes for class/interface: "+aType.getName()+ ", at line: "+  aType.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line+ ", in file: "+  aType.getFunctionDeclaration().getFunctionDeclarationTree().location.start.source.name);
+					aType.identifyAttributes();
+					aType.identifyMethodsWithinClassBody();
+					aType.identifyMethodsAddedToClassPrototype();
 				}
 			}
 		}
-		log.debug("DONE identifying methods and attributes for classes");
+		log.debug("DONE identifying methods and attributes for classes/interfaces");
 		// when all methods of classes are identified  we will  find abstract and overriden and overriding methods
 		log.debug("START identifying abstartc, overriden and overriding methods");
 		for (Module module : modules) {
 			if(analysisOption.getClassAnalysisMode() == ClassAnalysisMode.STRICT)	{
-				for(ClassDeclaration aClass: module.getClasses()){
-					aClass.identifyInheritanceRelatedMethods();
+				for(TypeDeclaration aType: module.getTypes()){
+					aType.identifyInheritanceRelatedMethods();
+				}
+				for(TypeDeclaration aType: module.getTypes()){
+					if(module.isInterface(aType)){
+						if(aType.getKinds()!=null){
+							aType.getKinds().add(TypeDeclarationKind.INTERFACE);
+						}else{
+							EnumSet<TypeDeclarationKind> kinds=  EnumSet.of(TypeDeclarationKind.INTERFACE);
+							aType.setKinds(kinds);
+						}
+					}else{						
+						if(module.isAbstractClass(aType)){
+							if(aType.getKinds()!=null){
+								aType.getKinds().add(TypeDeclarationKind.ABSTRACT_CLASS);
+							}else{
+								EnumSet<TypeDeclarationKind> kinds=  EnumSet.of(TypeDeclarationKind.ABSTRACT_CLASS);
+								aType.setKinds(kinds);
+							}
+						}else{ // not abstarct class
+							if(aType.getKinds()!=null){
+								aType.getKinds().add(TypeDeclarationKind.CLASS);
+							}else{
+								EnumSet<TypeDeclarationKind> kinds=  EnumSet.of(TypeDeclarationKind.CLASS);
+								aType.setKinds(kinds);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -172,10 +201,10 @@ public class AnalysisEngine {
 		}
 
 		for (Module module : modules) {
-			for (ClassDeclaration classDeclaration : module.getClasses()) {
+			for (TypeDeclaration classDeclaration : module.getTypes()) {
 				int methodCount=0;
 				int attrCount=0;
-				for(ClassMember member: classDeclaration.getClassMembers()){	
+				for(TypeMember member: classDeclaration.getClassMembers()){	
 					if(member instanceof Method){
 						methodCount++;
 					}else{

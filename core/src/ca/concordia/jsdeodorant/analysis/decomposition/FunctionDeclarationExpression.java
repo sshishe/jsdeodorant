@@ -32,13 +32,14 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	// the {key/value}
 	private Token leftValueToken;
 	private FunctionDeclarationExpressionNature functionDeclarationExpressionNature;
-	private boolean isClassDeclaration = false;
+	private boolean isTypeDeclaration = false;
 	
 	// for codes transpiled from typeScript and coffeeScript we have class and constructor
 	private boolean isConstructor = false;
 
 	private List<AbstractExpression> parameters;
 	private List<AbstractStatement> statementList;
+	private boolean hasReturn;
 
 	public FunctionDeclarationExpression(FunctionDeclarationTree functionDeclarationTree, FunctionDeclarationExpressionNature functionDeclarationExpressionNature, SourceContainer parent) {
 		super(functionDeclarationTree, parent);
@@ -46,7 +47,7 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		this.functionDeclarationExpressionNature = functionDeclarationExpressionNature;
 		this.parameters = new ArrayList<>();
 		this.kind = FunctionKind.valueOf(functionDeclarationTree.kind.toString());
-
+		this.hasReturn=false;
 		if (functionDeclarationTree.formalParameterList != null) {
 			FormalParameterListTree formalParametersList = functionDeclarationTree.formalParameterList.asFormalParameterList();
 			for (ParseTree parameter : formalParametersList.parameters)
@@ -246,12 +247,12 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		return getReturnStatementListExtracted(getStatements());
 	}
 
-	public boolean isClassDeclaration() {
-		return isClassDeclaration;
+	public boolean isTypeDeclaration() {
+		return isTypeDeclaration;
 	}
 
 	public void setClassDeclaration(boolean state) {
-		this.isClassDeclaration = state;
+		this.isTypeDeclaration = state;
 	}
 
 	@Override
@@ -281,5 +282,16 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	@Override
 	public void SetIsConstructor(boolean isConstructor) {
 		this.isConstructor=isConstructor;	
+	}
+
+	@Override
+	public boolean hasReturnStatement() {
+		return this.hasReturn;
+	}
+
+	@Override
+	public void setHasReturnStatement(boolean flag) {
+		this.hasReturn=flag;
+		
 	}
 }

@@ -23,7 +23,7 @@ public interface FunctionDeclaration {
 
 	public List<AbstractStatement> getStatements();
 
-	public boolean isClassDeclaration();
+	public boolean isTypeDeclaration();
 	
 	public boolean isConstructor(); // for codes transpiled from typeScript and coffeeScript we have class and constructor
 	
@@ -34,4 +34,7 @@ public interface FunctionDeclaration {
 	public List<AbstractExpression> getAssignments();
 	
 	public AbstractIdentifier getRawIdentifier();
+	
+	public boolean hasReturnStatement();
+	public void setHasReturnStatement(boolean flag);
 }

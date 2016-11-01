@@ -21,6 +21,7 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 	private boolean isClassDeclaration = false;
 	// for codes transpiled from typeScript and coffeeScript we have class and constructor
 	private boolean isConstructor = false;
+	private boolean hasReturn;
 
 	public FunctionDeclarationStatement(FunctionDeclarationTree functionDeclarationTree, SourceContainer parent) {
 		super(functionDeclarationTree, StatementType.FUNCTION_DECLARATION, parent);
@@ -28,7 +29,7 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 		this.parameters = new ArrayList<>();
 		this.identifier = getIdentifier();
 		this.kind = FunctionKind.valueOf(functionDeclarationTree.kind.toString());
-
+		this.hasReturn=false;
 		if (functionDeclarationTree.formalParameterList != null) {
 			FormalParameterListTree formalParametersList = functionDeclarationTree.formalParameterList.asFormalParameterList();
 			for (ParseTree parameter : formalParametersList.parameters)
@@ -71,7 +72,7 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 		return (FunctionDeclarationTree) getStatement();
 	}
 
-	public boolean isClassDeclaration() {
+	public boolean isTypeDeclaration() {
 		return isClassDeclaration;
 	}
 
@@ -100,6 +101,17 @@ public class FunctionDeclarationStatement extends CompositeStatement implements 
 	
 	public void SetIsConstructor(boolean isConstructor) {
 		this.isConstructor=isConstructor;
+	}
+
+	@Override
+	public boolean hasReturnStatement() {
+		return this.hasReturn;
+	}
+
+	@Override
+	public void setHasReturnStatement(boolean flag) {
+		this.hasReturn=flag;
+		
 	}
 
 }

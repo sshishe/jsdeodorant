@@ -2,13 +2,13 @@ package ca.concordia.jsdeodorant.analysis.decomposition;
 
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
-public abstract class ClassMember {
+public abstract class TypeMember {
 	
 	private final String name;
-	private final ClassDeclaration  owner;
+	private final TypeDeclaration  owner;
 	private final ParseTree parseTree;
 	
-	public ClassMember(String name, ClassDeclaration owner, ParseTree parseTree) {
+	public TypeMember(String name, TypeDeclaration owner, ParseTree parseTree) {
 		super();
 		this.name = name;
 		this.owner = owner;
@@ -18,7 +18,7 @@ public abstract class ClassMember {
 	public String getName() {
 		return name;
 	}
-	public ClassDeclaration getOwner() {
+	public TypeDeclaration getOwner() {
 		return owner;
 	}
 	
@@ -27,7 +27,7 @@ public abstract class ClassMember {
 	}
 	
 	public boolean  equals(Object o){
-		if(!(o instanceof ClassMember)){
+		if(!(o instanceof TypeMember)){
 			return false;
 		}else{
 			if(o.hashCode()==this.hashCode()){

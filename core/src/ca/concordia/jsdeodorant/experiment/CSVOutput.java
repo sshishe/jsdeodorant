@@ -66,7 +66,7 @@ public class CSVOutput {
 			}
 		}
 		for (FunctionDeclaration functionDeclaration : currentModule.getProgram().getFunctionDeclarationList()) {
-			if (functionDeclaration.isClassDeclaration()) {
+			if (functionDeclaration.isTypeDeclaration()) {
 				//log.info("Classname is:" + functionDeclaration.getIdentifier().toString() + " " + functionDeclaration.getFunctionDeclarationTree().location);
 				classes.add(functionDeclaration);
 				classExists = true;

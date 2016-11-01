@@ -10,7 +10,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
 
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractFunctionFragment;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.analysis.util.DebugHelper;
 import ca.concordia.jsdeodorant.analysis.util.ExternalAliasHelper;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
@@ -22,7 +22,7 @@ public class ObjectCreation extends Creation {
 	private NewExpressionTree newExpressionTree;
 	// In one scope we can have two functions with exact same names. but the
 	// last one is executed in run-time because the last one is redeclared
-	private ClassDeclaration classDeclaration;
+	private TypeDeclaration classDeclaration;
 	private AbstractExpression operandOfNew;
 	private List<AbstractExpression> arguments;
 	private boolean isClassDeclarationPredefined = false;
@@ -54,11 +54,11 @@ public class ObjectCreation extends Creation {
 			setFunctionObject(true);
 	}
 
-	public ClassDeclaration getClassDeclaration() {
+	public TypeDeclaration getClassDeclaration() {
 		return classDeclaration;
 	}
 
-	public void setClassDeclaration(ClassDeclaration classDeclaration, Module module) {
+	public void setClassDeclaration(TypeDeclaration classDeclaration, Module module) {
 		this.classDeclaration = classDeclaration;
 		this.classDeclarationModule = module;
 	}

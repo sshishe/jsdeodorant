@@ -28,10 +28,10 @@ import ca.concordia.jsdeodorant.analysis.abstraction.PlainIdentifier;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 
-public class ClassDeclaration {
+public class TypeDeclaration {
 	private AbstractIdentifier identifier;
 	private FunctionDeclaration functionDeclaration;
-	private Set<ClassMember> classMembers;
+	private Set<TypeMember> classMembers;
 	private boolean isInfered;
 	private InferenceType inferenceType;
 	private boolean hasNamespace;
@@ -40,28 +40,21 @@ public class ClassDeclaration {
 	private boolean isAliased;
 	// If method defines outside of the constructor, then keep LOC
 	private int extraMethodLines;
-	private ClassDeclaration superType; // Thankfully JavasScript supports single inheritance 
-	private Vector<ClassDeclaration> subTypes;
-	public ClassDeclaration getSuperType() {
-		return superType;
-	}
-
-	public void setSuperType(ClassDeclaration superType) {
-		this.superType = superType;
-	}
-
+	private TypeDeclaration superType; // Thankfully JavasScript supports single inheritance 
+	private Vector<TypeDeclaration> subTypes;
 	private Set<FunctionDeclaration> constructors;// transpiled code from typeScript has constructors
 	private boolean hasConstructor;
+	private EnumSet<TypeDeclarationKind> kinds;
 
 	// After inferring the class, we try to resolve the corresponding 'new' which we were not able to matched before.
 	private boolean matchedAfterInference;
 	private Module parentModule;
 
-	public ClassDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, boolean isInfered, boolean hasNamespace, LibraryType libraryType, boolean isAliased, Module parentModule) {
+	public TypeDeclaration(AbstractIdentifier identifier, FunctionDeclaration functionDeclaration, boolean isInfered, boolean hasNamespace, LibraryType libraryType, boolean isAliased, Module parentModule) {
 		this.identifier = identifier;
 		this.functionDeclaration = functionDeclaration;
 		this.setParentModule(parentModule);
-		this.classMembers= new HashSet<ClassMember>();
+		this.classMembers= new HashSet<TypeMember>();
 		this.isInfered = isInfered;
 		this.hasNamespace = hasNamespace;
 		this.instantiationCount = 0;
@@ -69,23 +62,31 @@ public class ClassDeclaration {
 		this.isAliased = isAliased;
 		this.constructors= new HashSet<FunctionDeclaration>();
 		this.superType=null;
-		this.subTypes= new Vector<ClassDeclaration>();
+		this.subTypes= new Vector<TypeDeclaration>();
+	}
+	
+	public TypeDeclaration getSuperType() {
+		return superType;
 	}
 
-	public Vector<ClassDeclaration> getSubTypes() {
+	public void setSuperType(TypeDeclaration superType) {
+		this.superType = superType;
+	}
+
+	public Vector<TypeDeclaration> getSubTypes() {
 		return subTypes;
 	}
 	
-	public Set<ClassMember> getClassMembers() {
+	public Set<TypeMember> getClassMembers() {
 		return classMembers;
 	}
 
-	public void addToSubTypes(ClassDeclaration aSubType) {
+	public void addToSubTypes(TypeDeclaration aSubType) {
 		if(this.subTypes.size()==0){
 			this.subTypes.add(aSubType);
 		}else{
 			boolean exist=false;
-			for(ClassDeclaration sub: this.subTypes){
+			for(TypeDeclaration sub: this.subTypes){
 				if(sub.getFunctionDeclaration().equals(aSubType.getFunctionDeclaration())){
 					exist=true;
 				}
@@ -214,9 +215,15 @@ public class ClassDeclaration {
 	public Set<FunctionDeclaration> getConstructors() {
 		return constructors;
 	}
-	
-	
-	
+
+	public EnumSet<TypeDeclarationKind> getKinds() {
+		return this.kinds;
+	}
+
+	public void setKinds(EnumSet<TypeDeclarationKind> kinds) {
+		this.kinds = kinds;
+	}
+
 	// it only identify attributes within the body of the constructor or class (not in the functions and methods belong to the class)
 	public void identifyAttributes(){
 		if(this.hasConstructor()){
@@ -289,16 +296,16 @@ public class ClassDeclaration {
 								String leftIdAsString=leftId.asCompositeIdentifier().toString();
 								if(leftIdAsString.startsWith("this.") || leftIdAsString.startsWith(this.getName()+".prototype.")){
 									if(leftIdAsString.startsWith("this.") ){
-										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody);
+										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECLARED_WITHIN_CLASS_BODY);
 										Method aMethod= new Method(leftIdAsString.replace("this.", ""), this,right.asFunctionDeclaration(), kinds);
 										this.classMembers.add(aMethod);
 									}else if(leftIdAsString.startsWith(this.getName()+".prototype.")){
-										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody);
+										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECLARED_WITHIN_CLASS_BODY);
 										Method aMethod= new Method(leftIdAsString.replace(this.getName()+".prototype.", ""), this,right.asFunctionDeclaration(), kinds);
 										this.classMembers.add(aMethod);
 									}
 								}else if(leftIdAsString.startsWith(this.getName()+".")){// not very good way of handling it A.foo= function(){....} foo is static method
-									EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredWithinClassBody, MethodType.staticMethod);
+									EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECLARED_WITHIN_CLASS_BODY, MethodType.STATIC_METHOD);
 									Method aMethod= new Method(leftIdAsString.replace(this.getName()+".", ""), this,right.asFunctionDeclaration(), kinds);
 									this.classMembers.add(aMethod);
 								}	
@@ -341,13 +348,13 @@ public class ClassDeclaration {
 							if (leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype.") ) {
 								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".prototype.", "");
 								//this.allMethods.put(methodName, abstractExpression);
-								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody);
+								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECRALRED_OUTSIDE_OF_CLASS_BODY);
 								Method aMethod= new Method(methodName,this,((FunctionDeclarationTree)right), kinds);
 								this.classMembers.add(aMethod);
 							}else if(leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".")){ // not very good way of handling it A.foo= function(){....} foo is static method
 								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".", "");
 								//this.allMethods.put(methodName, abstractExpression);
-								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody, MethodType.staticMethod);
+								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECRALRED_OUTSIDE_OF_CLASS_BODY, MethodType.STATIC_METHOD);
 								Method aMethod= new Method(methodName,this, ((FunctionDeclarationTree)right), kinds);
 								this.classMembers.add(aMethod);
 							}
@@ -361,7 +368,7 @@ public class ClassDeclaration {
 								if(property instanceof PropertyNameAssignmentTree){
 									if(property.asPropertyNameAssignment().value instanceof FunctionDeclarationTree){
 										Token methodName=property.asPropertyNameAssignment().name;
-										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.declaredOutOfClassBody);
+										EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECRALRED_OUTSIDE_OF_CLASS_BODY);
 										Method aMethod= new Method(methodName.toString(),this, property.asPropertyNameAssignment().value.asFunctionDeclaration(), kinds);
 										this.classMembers.add(aMethod);
 									}	
@@ -378,17 +385,17 @@ public class ClassDeclaration {
 		
 		if(this.subTypes.size()!=0){
 			Map<Method , Set<Method>> candidates= new HashMap<Method , Set<Method>>();
-			for(ClassMember memebr: this.classMembers){
-				if(memebr instanceof Method){
-					Method method=(Method) memebr;
+			for(TypeMember member: this.classMembers){
+				if(member instanceof Method){
+					Method method=(Method) member;
 					Set<Method> aSet= new HashSet<Method>();
-					for(ClassDeclaration sub: this.subTypes){
-						for(ClassMember subMemebr :sub.getClassMembers()){
+					for(TypeDeclaration sub: this.subTypes){
+						for(TypeMember subMemebr :sub.getClassMembers()){
 							if(subMemebr instanceof Method){
 								Method subMethod=(Method) subMemebr;
 								if(method.getName().contentEquals(subMethod.getName())){
 									aSet.add(subMethod);
-									subMethod.getKinds().add(MethodType.overriding);
+									subMethod.getKinds().add(MethodType.OVERRIDING_METHOD);
 									break;
 								}
 							}
@@ -397,48 +404,61 @@ public class ClassDeclaration {
 					}
 					if(aSet.size()>0){
 						candidates.put(method, aSet);
-						method.getKinds().add(MethodType.overriden);
+						method.getKinds().add(MethodType.OVERRIDEN_METHOD);
 					}
 				}
 				
 			}
 			for(Method methodInSuperClass: candidates.keySet()){
 				if(candidates.get(methodInSuperClass).size()==this.subTypes.size()){// all subclasses have the same method 
-					BlockTree body=methodInSuperClass.getParseTree().asFunctionDeclaration().functionBody.asBlock();
-					if(body.statements.size()==0){
-						methodInSuperClass.getKinds().add(MethodType.abstractMethod);
-					}
-					else if(body.statements.size()==1){ // if we have only one statement
-						//System.out.println( body.statements.get(0).location.start.source.name+ ", "+ body.statements.get(0).location.start.line+1+", "+body.statements.get(0).getClass());
-						if(body.statements.get(0) instanceof ThrowStatementTree){
-							ThrowStatementTree throwStatement=body.statements.get(0).asThrowStatement();
-							ParseTree value=throwStatement.value;
-							methodInSuperClass.getKinds().add(MethodType.abstractMethod);
-							
-						}if(body.statements.get(0) instanceof ExpressionStatementTree){
-							ExpressionStatementTree expressionStatementTree=body.statements.get(0).asExpressionStatement();
-							if(expressionStatementTree.expression instanceof CallExpressionTree){
-								CallExpressionTree call=expressionStatementTree.expression.asCallExpression();
-								ParseTree operand=call.operand;
-								AbstractIdentifier id=IdentifierHelper.getIdentifier(operand);
-								String name=null;
-								if(id instanceof CompositeIdentifier){
-									name=id.getIdentifierName();
-									
-								}else if(id instanceof PlainIdentifier){
-									name=id.getIdentifierName();
-								}
-								if(name !=null && (name.contentEquals("alert")|| name.contentEquals("console.log"))){
-									methodInSuperClass.getKinds().add(MethodType.abstractMethod);
-								}
-							}
-							
-						}
+					if( isAbstractMethod( methodInSuperClass)){
+						methodInSuperClass.getKinds().add(MethodType.ABSTRACT_METHOD);
+					}	
+				}
+			}
+		}else{ // if no subType we still need to verify the methods
+			
+			for(TypeMember member: this.classMembers){
+				if(member instanceof Method){
+					if(this.isAbstractMethod((Method) member)){
+						((Method) member).getKinds().add(MethodType.ABSTRACT_METHOD);
 					}
 				}
 			}
-			
 		}
+	}
+
+	private boolean isAbstractMethod( Method aMethod) {
+		boolean isTypeAbstract=false;
+		BlockTree body=aMethod.getParseTree().asFunctionDeclaration().functionBody.asBlock();
+		if(body.statements.size()==0){
+			return true;
+		}
+		else if(body.statements.size()==1){ // if we have only one statement
+			//System.out.println( body.statements.get(0).location.start.source.name+ ", "+ body.statements.get(0).location.start.line+1+", "+body.statements.get(0).getClass());
+			if(body.statements.get(0) instanceof ThrowStatementTree){
+				//ThrowStatementTree throwStatement=body.statements.get(0).asThrowStatement();
+				return true;
+			}else if(body.statements.get(0) instanceof ExpressionStatementTree){
+				ExpressionStatementTree expressionStatementTree=body.statements.get(0).asExpressionStatement();
+				if(expressionStatementTree.expression instanceof CallExpressionTree){
+					CallExpressionTree call=expressionStatementTree.expression.asCallExpression();
+					ParseTree operand=call.operand;
+					AbstractIdentifier id=IdentifierHelper.getIdentifier(operand);
+					String name=null;
+					if(id instanceof CompositeIdentifier){
+						name=id.getIdentifierName();
+						
+					}else if(id instanceof PlainIdentifier){
+						name=id.getIdentifierName();
+					}
+					if(name !=null && (name.contentEquals("alert")|| name.contentEquals("console.log"))){
+						return true;
+					}
+				}
+			}
+		}
+		return isTypeAbstract;
 	}
 	
 }

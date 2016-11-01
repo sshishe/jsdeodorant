@@ -1,14 +1,16 @@
 package ca.concordia.jsdeodorant.experiment;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclarationKind;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.InferenceType;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.SourceLocationHelper;
@@ -28,46 +30,46 @@ public class ClassAnalysisReport {
 	public static void updateReport(List<Module> modules) {
 		checkForInitialization();
 		for (Module module : modules) {
-			for (ClassDeclaration classDeclaration : module.getClasses()) {
-				addClass(classDeclaration, module);
+			for (TypeDeclaration typeDeclaration : module.getTypes()) {
+				addClass(typeDeclaration, module);
 			}
 		}
 	}
 
-	public static void addClass(ClassDeclaration classDeclaration, Module module) {
-		ClassReportInstance classInstance = new ClassReportInstance(module, classDeclaration);
+	public static void addClass(TypeDeclaration typeDeclaration, Module module) {
+		ClassReportInstance classInstance = new ClassReportInstance(module, typeDeclaration);
 		
-		if (classDeclaration.getRawIdentifier() != null)
-			classInstance.setClassName(classDeclaration.getRawIdentifier().toString());
+		if (typeDeclaration.getRawIdentifier() != null)
+			classInstance.setClassName(typeDeclaration.getRawIdentifier().toString());
 		else
-			classInstance.setClassName(classDeclaration.getName());
+			classInstance.setClassName(typeDeclaration.getName());
 
-		classInstance.setClassOffset(SourceLocationHelper.getLocation(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location));
-		classInstance.setConstructorLOC(classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.end.line - classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line - 1);
-		classInstance.setClassLOC(classInstance.getConstructorLOC() + classDeclaration.getExtraMethodLines());
+		classInstance.setClassOffset(SourceLocationHelper.getLocation(typeDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location));
+		classInstance.setConstructorLOC(typeDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.end.line - typeDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location.start.line - 1);
+		classInstance.setClassLOC(classInstance.getConstructorLOC() + typeDeclaration.getExtraMethodLines());
 		classInstance.setPredefined(false);
-		classInstance.setHasNewExpression(!classDeclaration.isInfered());
-		if(classDeclaration.isInfered()){
-			classInstance.setInferenceType(classDeclaration.getInferenceType());
+		classInstance.setHasNewExpression(!typeDeclaration.isInfered());
+		if(typeDeclaration.isInfered()){
+			classInstance.setInferenceType(typeDeclaration.getInferenceType());
 		}
-		classInstance.setHasInfered(classDeclaration.isInfered());
-		classInstance.sethasConstructor(classDeclaration.hasConstructor());
-		classInstance.setHasNamespace(classDeclaration.hasNamespace());
+		classInstance.setHasInfered(typeDeclaration.isInfered());
+		classInstance.sethasConstructor(typeDeclaration.hasConstructor());
+		classInstance.setHasNamespace(typeDeclaration.hasNamespace());
 		int abstractMethods=0;
 		int overridenMethods=0;
 		int overridingMethods=0;
 		int methodCount=0;
 		int attrCount=0;
-		for(ClassMember member:classDeclaration.getClassMembers() ){
+		for(TypeMember member:typeDeclaration.getClassMembers() ){
 			if(member instanceof Method ){
 				methodCount++;
-				if(((Method)member).getKinds().contains(MethodType.abstractMethod)){
+				if(((Method)member).getKinds().contains(MethodType.ABSTRACT_METHOD)){
 					abstractMethods++;
 				}
-				if(((Method)member).getKinds().contains(MethodType.overriden)){
+				if(((Method)member).getKinds().contains(MethodType.OVERRIDEN_METHOD)){
 					overridenMethods++;
 				}
-				if(((Method)member).getKinds().contains(MethodType.overriding)){
+				if(((Method)member).getKinds().contains(MethodType.OVERRIDING_METHOD)){
 					overridingMethods++;
 				}
 			}else{
@@ -80,8 +82,8 @@ public class ClassAnalysisReport {
 		classInstance.setNumberOfOverridenMethods(overridenMethods);
 		classInstance.setNumberOfOverridingMethods(overridingMethods);
 		classInstance.setNumberOfAttributes(attrCount);
-		classInstance.setIsDeclarationInLibrary(classDeclaration.getLibraryType() == LibraryType.EXTERNAL_LIBRARY);
-		classInstance.setAliased(classDeclaration.isAliased());
+		classInstance.setIsDeclarationInLibrary(typeDeclaration.getLibraryType() == LibraryType.EXTERNAL_LIBRARY);
+		classInstance.setAliased(typeDeclaration.isAliased());
 		add(classInstance);
 	}
 
@@ -100,7 +102,7 @@ public class ClassAnalysisReport {
 	public static void add(ClassReportInstance instance) {
 		for (ClassReportInstance classInstance : classes) {
 			if (!instance.isPredefined() && !classInstance.isPredefined()) {
-				if (classInstance.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree().equals(instance.getClassDeclaration().getFunctionDeclaration().getFunctionDeclarationTree())) {
+				if (classInstance.getTypeDeclaration().getFunctionDeclaration().getFunctionDeclarationTree().equals(instance.getTypeDeclaration().getFunctionDeclaration().getFunctionDeclarationTree())) {
 					if (classInstance.hasNewExpression)
 						classInstance.incrementClassInstantiation();
 					return;
@@ -129,7 +131,7 @@ public class ClassAnalysisReport {
 	}
 
 	public static class ClassReportInstance {
-		private ClassDeclaration classDeclaration;
+		private TypeDeclaration classDeclaration;
 		private String className;
 		private String fileName;
 		private boolean isPredefined;
@@ -150,11 +152,10 @@ public class ClassAnalysisReport {
 		private int numberOfInstantiation;
 		private InferenceType inferenceType;
 		private boolean hasConstructor;
-		
 
-		public ClassReportInstance(Module module, ClassDeclaration classDeclaration) {
+		public ClassReportInstance(Module module, TypeDeclaration typeDeclaration) {
 			ClassAnalysisReport.checkForInitialization();
-			this.classDeclaration = classDeclaration;
+			this.classDeclaration = typeDeclaration;
 			this.fileName = module.getSourceFile().getOriginalPath();
 		}
 
@@ -207,6 +208,7 @@ public class ClassAnalysisReport {
 			this.hasConstructor = hasConstructor;
 		}
 
+		
 		//		public String getNewExpressionFile() {
 		//			return newExpressionFile;
 		//		}
@@ -345,39 +347,56 @@ public class ClassAnalysisReport {
 			this.numberOfInstantiation++;
 		}
 
-		public ClassDeclaration getClassDeclaration() {
+		public TypeDeclaration getTypeDeclaration() {
 			return classDeclaration;
 		}
 
-		public void setClassDeclaration(ClassDeclaration classDeclaration) {
+		public void setClassDeclaration(TypeDeclaration classDeclaration) {
 			this.classDeclaration = classDeclaration;
 		}
 	}
 
 	public static void writeToCSV() {
 		CSVFileWriter csvWriter = new CSVFileWriter("log/classes/class-declarations.csv");
-		String fileHeader = "Class name, file, Is Predefined, Class offset, has new expression, has inferred, Constructor Lines of codes, Total class Lines of codes, Has Namespace, Number of Methods, Number of attributes, Is Declaration in library?, is Aliased?, Number of instantiation, InferenceType, hasConstructor, numAbstractMethods, numOverridenMethods, numOverridingMethods";
+		String fileHeader = "Class name, kind,file, Is Predefined, Class offset, has new expression, has inferred, Constructor Lines of codes, Total class Lines of codes, Has Namespace, Number of Methods, Number of attributes, Is Declaration in library?, is Aliased?, Number of instantiation, InferenceType, hasConstructor, numAbstractMethods, numOverridenMethods, numOverridingMethods";
 		csvWriter.writeToFile(fileHeader.split(","));
 		for (ClassReportInstance classReportInstance : classes) {
 			StringBuilder lineToWrite = new StringBuilder();
-			lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.isPredefined()).append(",").append(classReportInstance.classOffset).append(",").append(classReportInstance.hasNewExpression).append(",").append(classReportInstance.hasInfered).append(",").append(classReportInstance.constructorLOC).append(",").append(classReportInstance.classLOC).append(",").append(classReportInstance.hasNamespace).append(",").append(classReportInstance.getNumberOfMethods()).append(",").append(classReportInstance.getNumberOfAttributes()).append(",").append(classReportInstance.isDeclarationInLibrary).append(",").append(classReportInstance.isAliased).append(",").append(classReportInstance.getNumberOfInstantiation()).append(",").append(classReportInstance.getInferenceType()).append(",").append(classReportInstance.hasConstructor()).append(",").append(classReportInstance.getNumberOfAbstractMethods()).append(",").append(classReportInstance.getNumberOfOverridenMethods()).append(",").append(classReportInstance.getNumberOfOverridingMethods());
+			String kinds=getTypeDecalationKinds(classReportInstance.getTypeDeclaration());
+			lineToWrite.append(classReportInstance.className).append(",").append(kinds).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.isPredefined()).append(",").append(classReportInstance.classOffset).append(",").append(classReportInstance.hasNewExpression).append(",").append(classReportInstance.hasInfered).append(",").append(classReportInstance.constructorLOC).append(",").append(classReportInstance.classLOC).append(",").append(classReportInstance.hasNamespace).append(",").append(classReportInstance.getNumberOfMethods()).append(",").append(classReportInstance.getNumberOfAttributes()).append(",").append(classReportInstance.isDeclarationInLibrary).append(",").append(classReportInstance.isAliased).append(",").append(classReportInstance.getNumberOfInstantiation()).append(",").append(classReportInstance.getInferenceType()).append(",").append(classReportInstance.hasConstructor()).append(",").append(classReportInstance.getNumberOfAbstractMethods()).append(",").append(classReportInstance.getNumberOfOverridenMethods()).append(",").append(classReportInstance.getNumberOfOverridingMethods());
 			csvWriter.writeToFile(lineToWrite.toString().split(","));
 		}
 
 		// writing the inheritance relation
 		CSVFileWriter csvWriter1 = new CSVFileWriter("log/classes/inheritance-relations.csv");
-		String fileHeader1 = "Class name, file,  Class offset, Super-type1 , Super-type1-file , Super-type2 , Super-type2-file ,Super-type3 , Super-type3-file ,";
+		String fileHeader1 = "Class name, kind, file,  Class offset, Super-type, Super-type-kind, Super-type1-file";
 		csvWriter1.writeToFile(fileHeader1.split(","));
 		for (ClassReportInstance classReportInstance : classes) {
-			if(classReportInstance.getClassDeclaration().getSuperType() !=null ){
+			if(classReportInstance.getTypeDeclaration().getSuperType() !=null ){
+				String kinds=getTypeDecalationKinds(classReportInstance.getTypeDeclaration());
+				String SuperTypekinds=getTypeDecalationKinds(classReportInstance.getTypeDeclaration().getSuperType());
 				StringBuilder lineToWrite = new StringBuilder();
 				StringBuilder superTypeNames = new StringBuilder();
-				superTypeNames.append(classReportInstance.getClassDeclaration().getSuperType().getName()).append(",").append(classReportInstance.getClassDeclaration().getSuperType().getFunctionDeclaration().getFunctionDeclarationTree().location.start.source.name).append(",");
-				lineToWrite.append(classReportInstance.className).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.classOffset).append(",").append(superTypeNames);
+				superTypeNames.append(classReportInstance.getTypeDeclaration().getSuperType().getName()).append(",").append(SuperTypekinds).append(",").append(classReportInstance.getTypeDeclaration().getSuperType().getFunctionDeclaration().getFunctionDeclarationTree().location.start.source.name).append(",");
+				lineToWrite.append(classReportInstance.className).append(",").append(kinds).append(",").append(classReportInstance.getFileName()).append(",").append(classReportInstance.classOffset).append(",").append(superTypeNames);
 				csvWriter1.writeToFile(lineToWrite.toString().split(","));
 			}
 			
 		}
 		
 	}
+	
+	private static String getTypeDecalationKinds(TypeDeclaration aTypeDeclaration){
+		String kinds="";
+		if(aTypeDeclaration.getKinds().size()==1){
+			kinds=aTypeDeclaration.getKinds().iterator().next().toString();
+		}else{
+			for(TypeDeclarationKind kind: aTypeDeclaration.getKinds()){
+				kinds= kinds+ "-"+kind;
+			}
+			kinds=kinds.substring(1);
+		}
+		return kinds;
+	}
 }
+

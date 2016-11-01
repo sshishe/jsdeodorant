@@ -20,7 +20,7 @@ import ca.concordia.jsdeodorant.analysis.abstraction.SourceContainer;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractStatement;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.CompositeStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
@@ -35,7 +35,7 @@ public class ClassInferenceEngine {
 
 	public static void run(Module module) {
 		for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
-			if (functionDeclaration.isClassDeclaration())
+			if (functionDeclaration.isTypeDeclaration())
 				continue;
 
 			if (functionDeclaration instanceof FunctionDeclarationExpression) {
@@ -104,10 +104,10 @@ public class ClassInferenceEngine {
 					if (functionDeclaration instanceof AbstractFunctionFragment) {
 						if (binaryOperatorTree.right instanceof FunctionDeclarationTree)
 							if (left.toString().contains(functionName + ".prototype")) {
-								module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+								module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 								break;
 							} else if (left.asCompositeIdentifier().getMostLeftPart().toString().contains(functionName)) {
-								module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+								module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 								break;
 							}
 
@@ -119,7 +119,7 @@ public class ClassInferenceEngine {
 	private static void nowSetClassesToNotFoundByObjectCreations(Module module) {
 		for (ObjectCreation objectCreation : module.getProgram().getObjectCreationList()) {
 			if (objectCreation.getClassDeclaration() != null)
-				for (ClassDeclaration classDeclaration : module.getClasses()) {
+				for (TypeDeclaration classDeclaration : module.getTypes()) {
 					if (objectCreation.getIdentifier().equals(classDeclaration.getName())) {
 						objectCreation.setClassDeclaration(classDeclaration, module);
 						classDeclaration.setMatchedAfterInference(true);
@@ -149,7 +149,7 @@ public class ClassInferenceEngine {
 				if (left instanceof CompositeIdentifier) {
 					if (functionDeclaration.getName().equals(left.asCompositeIdentifier().getLeftPart().toString()))
 						if (((CompositeIdentifier) left).getMostRightPart().toString().contains("prototype")) {
-							module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+							module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 						}
 				}
 			}
@@ -167,7 +167,7 @@ public class ClassInferenceEngine {
 							if (functionDeclaration.getRawIdentifier() instanceof CompositeIdentifier) {
 								CompositeIdentifier compositeIdentifier = functionDeclaration.getRawIdentifier().asCompositeIdentifier();
 								if (Character.isUpperCase(compositeIdentifier.getMostRightPart().toString().charAt(0))) {
-									module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+									module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 									break;
 								}
 							}
@@ -180,7 +180,7 @@ public class ClassInferenceEngine {
 										for (FunctionDeclaration functionToBeMatched : module.getProgram().getFunctionDeclarationList()) {
 											if (functionToBeMatched.getIdentifier() != null)
 												if (functionToBeMatched.getIdentifier().toString().equals(((CompositeIdentifier) identifier).getMostLeftPart().toString())) {
-													module.createClassDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, false);
+													module.createTypeDeclaration(functionToBeMatched.getRawIdentifier(), functionToBeMatched, true, false);
 													break;
 												}
 										}
@@ -202,7 +202,7 @@ public class ClassInferenceEngine {
 					if (left.asCompositeIdentifier().toString().contains("this.")) {
 						if (checkIfFunctionNameIsCapitalize(functionDeclaration)) {
 							//log.warn(functionDeclaration.getIdentifier());
-							module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+							module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 						}
 					}
 				}
@@ -227,7 +227,7 @@ public class ClassInferenceEngine {
 						}
 					}
 					if (closestFunctionToBeMatched != null)
-						module.createClassDeclaration(closestFunctionToBeMatched.getRawIdentifier(), closestFunctionToBeMatched, true, false);
+						module.createTypeDeclaration(closestFunctionToBeMatched.getRawIdentifier(), closestFunctionToBeMatched, true, false);
 				}
 			}
 	}
@@ -244,12 +244,12 @@ public class ClassInferenceEngine {
 	}
 
 	public static void analyzeMethodsAndAttributes(Module module) {
-		for (ClassDeclaration classDeclaration : module.getClasses()) {
+		for (TypeDeclaration classDeclaration : module.getTypes()) {
 			analyzeMethodsAndAttributes(classDeclaration, module);
 		}
 	}
 
-	private static void analyzeMethodsAndAttributes(ClassDeclaration classDeclaration, Module module) {
+	private static void analyzeMethodsAndAttributes(TypeDeclaration classDeclaration, Module module) {
 		FunctionDeclaration functionDeclaration = classDeclaration.getFunctionDeclaration();
 		// Lookup for attributes and methods inside function
 		for (AbstractExpression assignmentExpression : functionDeclaration.getAssignments()) {
@@ -384,7 +384,7 @@ public class ClassInferenceEngine {
 		return sourceRange.end.line - sourceRange.start.line - 1;
 	}
 
-	private static void extractMethodsFromObjectLiteral(ObjectLiteralExpression objExpression, ClassDeclaration classDeclaration, Module module) {
+	private static void extractMethodsFromObjectLiteral(ObjectLiteralExpression objExpression, TypeDeclaration classDeclaration, Module module) {
 		Map<Token, AbstractExpression> propertyMap = objExpression.getPropertyMap();
 		for (Token key : propertyMap.keySet()) {
 			AbstractExpression value = propertyMap.get(key);

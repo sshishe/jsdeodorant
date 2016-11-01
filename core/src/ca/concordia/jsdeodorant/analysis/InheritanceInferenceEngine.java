@@ -29,7 +29,7 @@ import ca.concordia.jsdeodorant.analysis.abstraction.SourceContainer;
 import ca.concordia.jsdeodorant.analysis.abstraction.SourceElement;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractStatement;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.CompositeStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
@@ -50,7 +50,7 @@ public class InheritanceInferenceEngine {
 	// this is for call to _extend(A,B) in angular
 	// key: module
 	// value: set of ClassDeclaration with  __extends(A, B); as its statement
-	private Map<Module, Set<ClassDeclaration>> potentialSubTypes;
+	private Map<Module, Set<TypeDeclaration>> potentialSubTypes;
 	
 	private PackageSystem packageSystem;
 	private String inheritenceAPIMethodName;
@@ -59,12 +59,12 @@ public class InheritanceInferenceEngine {
 	
 	//key: subclass
 	// value: Name of potential superType (the body of subclass contains: Super.call(this,arg1, agr2,..) or super.apply(this,arg1, agr2,..))
-	private Map<Module, Map<ClassDeclaration, String>> potentialSuperTypes;
+	private Map<Module, Map<TypeDeclaration, String>> potentialSuperTypes;
 	
 	public InheritanceInferenceEngine(){
 		potentialInheritenceRelations= new HashMap<Module, Set<String>>();
-		potentialSubTypes= new HashMap<Module, Set<ClassDeclaration>>();
-		potentialSuperTypes= new HashMap<Module, Map<ClassDeclaration, String>>();
+		potentialSubTypes= new HashMap<Module, Set<TypeDeclaration>>();
+		potentialSuperTypes= new HashMap<Module, Map<TypeDeclaration, String>>();
 	}
 	
 	public void configure(PackageSystem packageSystem) {
@@ -117,15 +117,15 @@ public class InheritanceInferenceEngine {
 										ParseTree arg1=invocation.getArguments().get(1).getExpression();
 										if(arg1 instanceof IdentifierExpressionTree){
 											if(arg1.asIdentifierExpression().identifierToken.value.contentEquals(fromalParamName)){
-												ClassDeclaration classDeclaration;
-												if(!f.isClassDeclaration() && !f.isConstructor()){
-													classDeclaration=module.createClassDeclaration(f.getRawIdentifier(), f, true, false);
-													classDeclaration.setInferenceType(InferenceType.Has_Superclass);
+												TypeDeclaration typeDeclaration;
+												if(!f.isTypeDeclaration() && !f.isConstructor()){
+													typeDeclaration=module.createTypeDeclaration(f.getRawIdentifier(), f, true, false);
+													typeDeclaration.setInferenceType(InferenceType.Has_SuperType);
 												}else{
-													classDeclaration=this.findClassInModule(f, module); // We knoe that current module should contains the class
+													typeDeclaration=this.findTypeDeclarationInModule(f, module); // We knoe that current module should contains the class
 												}
-												if(classDeclaration !=null){
-													this.adddToPotentialSubTypes(module, classDeclaration);
+												if(typeDeclaration !=null){
+													this.adddToPotentialSubTypes(module, typeDeclaration);
 												}
 												found=true;
 												break;
@@ -147,15 +147,15 @@ public class InheritanceInferenceEngine {
 		
 		// iterate over the potentialSubTypes.get(module), see if you can find constructor definition in classDeclaration
 		if(potentialSubTypes.containsKey(module)){
-			for(ClassDeclaration aClass: potentialSubTypes.get(module)){
-				FunctionDeclaration fn=aClass.getFunctionDeclaration();
+			for(TypeDeclaration aType: potentialSubTypes.get(module)){
+				FunctionDeclaration fn=aType.getFunctionDeclaration();
 				AbstractStatement body=fn.getStatements().get(0); 
 				for(AbstractStatement abstractStatement: ((CompositeStatement)body).getStatements()){
 					for(FunctionDeclaration aFunctionDeclaration: abstractStatement.getFunctionDeclarationList()){
 						if(aFunctionDeclaration.getName().contentEquals(fn.getName())){
 							aFunctionDeclaration.SetIsConstructor(true);
-							aClass.getConstructors().add(aFunctionDeclaration);
-							aClass.setHasConstrucotr(true);
+							aType.getConstructors().add(aFunctionDeclaration);
+							aType.setHasConstrucotr(true);
 						}
 					}
 				}
@@ -163,21 +163,21 @@ public class InheritanceInferenceEngine {
 		}
 	}
 
-	private void adddToPotentialSubTypes(Module module, ClassDeclaration c) {
+	private void adddToPotentialSubTypes(Module module, TypeDeclaration aType) {
 		if(this.potentialSubTypes.containsKey(module)){
-			potentialSubTypes.get(module).add(c);
+			potentialSubTypes.get(module).add(aType);
 		}else{
-			Set<ClassDeclaration> aSet= new HashSet<ClassDeclaration>();
-			aSet.add(c);
+			Set<TypeDeclaration> aSet= new HashSet<TypeDeclaration>();
+			aSet.add(aType);
 			this.potentialSubTypes.put(module, aSet);
 		}
 		
 	}
 
 	public void processPotentialSubTypes(){
-		Map<ClassDeclaration ,ParseTree> subTypeSuperTypeMap= new HashMap<ClassDeclaration ,ParseTree>(); // the value is of type IdentifierExpressionTree or MemberExpressionTree
+		Map<TypeDeclaration ,ParseTree> subTypeSuperTypeMap= new HashMap<TypeDeclaration ,ParseTree>(); // the value is of type IdentifierExpressionTree or MemberExpressionTree
 		for(Module module: this.potentialSubTypes.keySet()){	
-			for(ClassDeclaration aClassDeclaration: this.potentialSubTypes.get(module)){
+			for(TypeDeclaration aTypeDeclaration: this.potentialSubTypes.get(module)){
 				List<SourceElement>  elements=module.getProgram().getSourceElements();
 				for (SourceElement sourceElement : elements) {
 					if(sourceElement instanceof Statement){
@@ -187,14 +187,14 @@ public class InheritanceInferenceEngine {
 								VariableDeclarationTree var=((VariableStatementTree)statemenParseTree).declarations.declarations.get(0);
 								IdentifierExpressionTree id=(IdentifierExpressionTree) var.lvalue;
 								String name=id.identifierToken.value;
-								if(name.contentEquals(aClassDeclaration.getName())){
+								if(name.contentEquals(aTypeDeclaration.getName())){
 									ParseTree initializer=var.initializer;
 									if(initializer instanceof CallExpressionTree){
 										if(initializer.asCallExpression().arguments.arguments.size()>0){
 											ParseTree arg0=initializer.asCallExpression().arguments.arguments.get(0);
 											if(arg0 instanceof IdentifierExpressionTree){
 												//String superTypeNme=arg0.asIdentifierExpression().identifierToken.value;
-												subTypeSuperTypeMap.put(aClassDeclaration,arg0);
+												subTypeSuperTypeMap.put(aTypeDeclaration,arg0);
 												break;
 											}else if(arg0 instanceof MemberExpressionTree){
 												AbstractIdentifier abstractIdentifier=IdentifierHelper.getIdentifier(arg0);
@@ -204,7 +204,7 @@ public class InheritanceInferenceEngine {
 //												}else{
 //													superTypeNme=((PlainIdentifier) abstractIdentifier).getIdentifierName();
 //												}
-												subTypeSuperTypeMap.put(aClassDeclaration,arg0);
+												subTypeSuperTypeMap.put(aTypeDeclaration,arg0);
 												break;
 											}
 										}
@@ -217,9 +217,9 @@ public class InheritanceInferenceEngine {
 			}
 		}
 		
-		Map<ClassDeclaration ,Set<FunctionDeclaration>> potentialSubSuperMap= new HashMap<ClassDeclaration ,Set<FunctionDeclaration>>();
-		for(ClassDeclaration aclassDeclaration:subTypeSuperTypeMap.keySet()){
-			ParseTree superTypeCandiate=subTypeSuperTypeMap.get(aclassDeclaration);
+		Map<TypeDeclaration ,Set<FunctionDeclaration>> potentialSubSuperMap= new HashMap<TypeDeclaration ,Set<FunctionDeclaration>>();
+		for(TypeDeclaration aTypeDeclaration:subTypeSuperTypeMap.keySet()){
+			ParseTree superTypeCandiate=subTypeSuperTypeMap.get(aTypeDeclaration);
 			String candidateSuperTypeName;
 			AbstractIdentifier abstractIdentifier=IdentifierHelper.getIdentifier(superTypeCandiate);
 			String potentialDependencyName = null; // specific to angular 
@@ -234,16 +234,16 @@ public class InheritanceInferenceEngine {
 //			System.out.println("subName: "+ aclassDeclaration.getName()+ " in file: "+ aclassDeclaration.getParentModule().getSourceFile().getName());
 //			System.out.println("superName : "+ candidateSuperTypeName);
 			// 1- first look in the module where the class is defined
-			Module module=aclassDeclaration.getParentModule();
+			Module module=aTypeDeclaration.getParentModule();
 			boolean found=false;
 			for(FunctionDeclaration f: module.getProgram().getFunctionDeclarationList()){
 				if(f.getName().contentEquals(candidateSuperTypeName)){
-					if(potentialSubSuperMap.containsKey(aclassDeclaration)){
-						potentialSubSuperMap.get(aclassDeclaration).add(f);
+					if(potentialSubSuperMap.containsKey(aTypeDeclaration)){
+						potentialSubSuperMap.get(aTypeDeclaration).add(f);
 					}else{
 						Set<FunctionDeclaration> aSet= new HashSet<FunctionDeclaration>();
 						aSet.add(f);
-						potentialSubSuperMap.put(aclassDeclaration, aSet);
+						potentialSubSuperMap.put(aTypeDeclaration, aSet);
 					}
 					found=true;
 				}
@@ -255,12 +255,12 @@ public class InheritanceInferenceEngine {
 						Module importedModule=d.getDependency();
 						for(FunctionDeclaration fn: importedModule.getProgram().getFunctionDeclarationList()){
 							if(fn.getName().contentEquals(candidateSuperTypeName)){
-								if(potentialSubSuperMap.containsKey(aclassDeclaration)){
-									potentialSubSuperMap.get(aclassDeclaration).add(fn);
+								if(potentialSubSuperMap.containsKey(aTypeDeclaration)){
+									potentialSubSuperMap.get(aTypeDeclaration).add(fn);
 								}else{
 									Set<FunctionDeclaration> aSet= new HashSet<FunctionDeclaration>();
 									aSet.add(fn);
-									potentialSubSuperMap.put(aclassDeclaration, aSet);
+									potentialSubSuperMap.put(aTypeDeclaration, aSet);
 								}
 							}
 						}
@@ -270,19 +270,19 @@ public class InheritanceInferenceEngine {
 		}
 		
 		// why the value of potentialSubSuperMap is a set? because some are constructors of others
-		for(ClassDeclaration subClass: potentialSubSuperMap.keySet()){
-			Map<FunctionDeclaration, FunctionDeclaration> superClassConstructorMap= this.removeConstrucotrsIn((potentialSubSuperMap.get(subClass)));
+		for(TypeDeclaration subType: potentialSubSuperMap.keySet()){
+			Map<FunctionDeclaration, FunctionDeclaration> superClassConstructorMap= this.removeConstrucotrsIn((potentialSubSuperMap.get(subType)));
 			for(FunctionDeclaration parent: superClassConstructorMap.keySet()){
 				Module parentModule= this.findModuleForFunctionDeclaration(parent);
-				ClassDeclaration parentClass=parentModule.createClassDeclaration(parent.getIdentifier(), parent, true, false);
-				parentClass.setInferenceType(InferenceType.Has_Subclass);
+				TypeDeclaration superType=parentModule.createTypeDeclaration(parent.getIdentifier(), parent, true, false);
+				superType.setInferenceType(InferenceType.Has_SubType);
 				if(superClassConstructorMap.get(parent)!=null){
-					parentClass.setHasConstrucotr(true);
-					parentClass.getConstructors().add(superClassConstructorMap.get(parent));
+					superType.setHasConstrucotr(true);
+					superType.getConstructors().add(superClassConstructorMap.get(parent));
 					superClassConstructorMap.get(parent).SetIsConstructor(true);
 				}
-				subClass.setSuperType(parentClass);
-				parentClass.addToSubTypes(subClass);
+				subType.setSuperType(superType);
+				superType.addToSubTypes(subType);
 			}
 		}
 		
@@ -290,7 +290,7 @@ public class InheritanceInferenceEngine {
 	
 	
 	public void buildInheritenceRelation(PackageSystem packageSystem){
-		log.debug("START Analyzing Inheritence");
+		log.debug("START Analyzing Inheritance");
 		if((packageSystem.equals(PackageSystem.ClosureLibrary) ||  packageSystem.equals(PackageSystem.Helma))
 				&& this.potentialInheritenceRelations.size()>0){
 			this.processPotentialInheritenceRelations();
@@ -299,50 +299,50 @@ public class InheritanceInferenceEngine {
 		}
 		
 		this.processPotentialSuperTypes();
-		log.debug("DONE Analyzing Inheritence");
+		log.debug("DONE Analyzing Inheritance");
 	}
 	
 
 	private void processPotentialSuperTypes() {
 	
 		for(Module aModule: this.potentialSuperTypes.keySet()){
-			for(ClassDeclaration aSubClass: this.potentialSuperTypes.get(aModule).keySet()){
-				String potentialSuperTypeName=this.potentialSuperTypes.get(aModule).get(aSubClass);
+			for(TypeDeclaration aSubType: this.potentialSuperTypes.get(aModule).keySet()){
+				String potentialSuperTypeName=this.potentialSuperTypes.get(aModule).get(aSubType);
 				FunctionDeclaration candiadte=null;
 				boolean found=false;
 				for(FunctionDeclaration afn:aModule.getProgram().getFunctionDeclarationList()){
 					if(afn.getName().contentEquals(potentialSuperTypeName)){
 						found=true;
 						candiadte=afn;
-						if(!afn.isClassDeclaration()){
-							ClassDeclaration superClass=aModule.createClassDeclaration(candiadte.getIdentifier(), candiadte, true, false);
-							superClass.setInferenceType(InferenceType.Has_Subclass);
-							aSubClass.setSuperType(superClass);
-							superClass.addToSubTypes(aSubClass);
+						if(!afn.isTypeDeclaration()){
+							TypeDeclaration superType = aModule.createTypeDeclaration(candiadte.getIdentifier(), candiadte, true, false);
+							superType.setInferenceType(InferenceType.Has_SubType);
+							aSubType.setSuperType(superType);
+							superType.addToSubTypes(aSubType);
 						}else{
-							ClassDeclaration superClass=findClassInModule(afn, aModule);
-							aSubClass.setSuperType(superClass);
-							superClass.addToSubTypes(aSubClass);
+							TypeDeclaration superType = findTypeDeclarationInModule(afn, aModule);
+							aSubType.setSuperType(superType);
+							superType.addToSubTypes(aSubType);
 						}
 						break;
 					}
 				}
 				if(!found){
-					for(Dependency d: 	aModule.getDependencies()){
+					for(Dependency d: aModule.getDependencies()){
 						Module importedModule=d.getDependency();
 						for(FunctionDeclaration fn: importedModule.getProgram().getFunctionDeclarationList()){
 							if(fn.getName().contentEquals(potentialSuperTypeName)){
 								candiadte=fn;
 								found=true;
-								if(!fn.isClassDeclaration()){
-									ClassDeclaration superClass=importedModule.createClassDeclaration(candiadte.getIdentifier(), candiadte, true, false);
-									superClass.setInferenceType(InferenceType.Has_Subclass);
-									aSubClass.setSuperType(superClass);
-									superClass.addToSubTypes(aSubClass);
+								if(!fn.isTypeDeclaration()){
+									TypeDeclaration superType=importedModule.createTypeDeclaration(candiadte.getIdentifier(), candiadte, true, false);
+									superType.setInferenceType(InferenceType.Has_SubType);
+									aSubType.setSuperType(superType);
+									superType.addToSubTypes(aSubType);
 								}else{
-									ClassDeclaration superClass=findClassInModule(fn, importedModule);
-									aSubClass.setSuperType(superClass);
-									superClass.addToSubTypes(aSubClass);
+									TypeDeclaration superType=findTypeDeclarationInModule(fn, importedModule);
+									aSubType.setSuperType(superType);
+									superType.addToSubTypes(aSubType);
 								}
 								break;
 							}
@@ -375,13 +375,13 @@ public class InheritanceInferenceEngine {
 						potentialChilds.add(fn);
 					}
 				}
-				ClassDeclaration parent=findClassDeclaration(module, startLine, endLine, parentName, potentialParents);
-				ClassDeclaration child=findClassDeclaration(module, startLine, endLine, childName, potentialChilds);
+				TypeDeclaration parent=findTypeDeclaration(module, startLine, endLine, parentName, potentialParents);
+				TypeDeclaration child=findTypeDeclaration(module, startLine, endLine, childName, potentialChilds);
 				
 				if(parent!=null){
-					parent.setInferenceType(InferenceType.Has_Subclass);
+					parent.setInferenceType(InferenceType.Has_SubType);
 				}if(child!=null){
-					child.setInferenceType(InferenceType.Has_Superclass);
+					child.setInferenceType(InferenceType.Has_SuperType);
 				}
 				if(parent!=null &&child!=null){
 					parent.addToSubTypes(child);
@@ -392,7 +392,7 @@ public class InheritanceInferenceEngine {
 		}
 	}
 
-	private ClassDeclaration findClassDeclaration(Module module, int startLine, int endLine, String functionName,
+	private TypeDeclaration findTypeDeclaration(Module module, int startLine, int endLine, String functionName,
 			Set<FunctionDeclaration> candidates) {
 		FunctionDeclaration candidate=null;
 		FunctionDeclaration constructorOfCandidate=null;
@@ -433,23 +433,23 @@ public class InheritanceInferenceEngine {
 				 }
 			}	
 		}
-		ClassDeclaration aClass=null;
+		TypeDeclaration aType=null;
 		if(candidate!=null){
-			if(candidate.isClassDeclaration()){
-				aClass=this.findClassInModule(candidate, findModuleForFunctionDeclaration(candidate));
+			if(candidate.isTypeDeclaration()){
+				aType=this.findTypeDeclarationInModule(candidate, findModuleForFunctionDeclaration(candidate));
 			}else{
 				Module aModule=findModuleForFunctionDeclaration(candidate);
-				aClass=aModule.createClassDeclaration(candidate.getRawIdentifier(), candidate, true, false);
+				aType=aModule.createTypeDeclaration(candidate.getRawIdentifier(), candidate, true, false);
 			}
-			if(aClass !=null){
+			if(aType !=null){
 				if(constructorOfCandidate!=null){
-					aClass.setHasConstrucotr(true);
-					aClass.getConstructors().add(constructorOfCandidate);
+					aType.setHasConstrucotr(true);
+					aType.getConstructors().add(constructorOfCandidate);
 				}
 			}
 		}
 		
-		return aClass;
+		return aType;
 		
 	}
 	
@@ -508,12 +508,12 @@ public class InheritanceInferenceEngine {
 	}
 	
 
-	private ClassDeclaration findClassInModule(FunctionDeclaration aFunctionDeclaration, Module module) {
+	private TypeDeclaration findTypeDeclarationInModule(FunctionDeclaration aFunctionDeclaration, Module module) {
 	
-		ClassDeclaration target=null;
-		for(ClassDeclaration aClass: module.getClasses()){
-			if(aClass.getFunctionDeclaration().equals(aFunctionDeclaration)){
-				target=aClass;
+		TypeDeclaration target=null;
+		for(TypeDeclaration aType: module.getTypes()){
+			if(aType.getFunctionDeclaration().equals(aFunctionDeclaration)){
+				target=aType;
 				break;
 			}
 		}
@@ -566,8 +566,8 @@ public class InheritanceInferenceEngine {
 				}else if(invocationAsString.endsWith(this.APPLY)){
 					potentialSuperTypeName=invocationAsString.replace(this.APPLY, "");
 				}
-				ClassDeclaration aClassDeclaration=null;			
-				if(!childCandidate.isClassDeclaration()){
+				TypeDeclaration aTypeDeclaration=null;			
+				if(!childCandidate.isTypeDeclaration()){
 					FunctionDeclaration parentFunction=null;
 					SourceContainer parent = null;
 					if( childCandidate instanceof FunctionDeclarationExpression){
@@ -586,40 +586,40 @@ public class InheritanceInferenceEngine {
 					
 					if(parentFunction!=null){
 						if(parentFunction.getName().contentEquals(childCandidate.getName())){ // then the parent is class and childCandidate is its constructor
-							 aClassDeclaration=module.createClassDeclaration(parentFunction.getIdentifier(), parentFunction, true, false);
-							 aClassDeclaration.setInferenceType(InferenceType.Has_Superclass);
-							 aClassDeclaration.setHasConstrucotr(true);
-							 aClassDeclaration.getConstructors().add(childCandidate);
+							 aTypeDeclaration=module.createTypeDeclaration(parentFunction.getIdentifier(), parentFunction, true, false);
+							 aTypeDeclaration.setInferenceType(InferenceType.Has_SuperType);
+							 aTypeDeclaration.setHasConstrucotr(true);
+							 aTypeDeclaration.getConstructors().add(childCandidate);
 							 childCandidate.SetIsConstructor(true);
 						 }else{
-							 aClassDeclaration=module.createClassDeclaration(childCandidate.getIdentifier(), childCandidate, true, false);
-							 aClassDeclaration.setInferenceType(InferenceType.Has_Superclass); 
+							 aTypeDeclaration=module.createTypeDeclaration(childCandidate.getIdentifier(), childCandidate, true, false);
+							 aTypeDeclaration.setInferenceType(InferenceType.Has_SuperType); 
 						 }
 					 }else{
-						aClassDeclaration=module.createClassDeclaration(childCandidate.getIdentifier(), childCandidate, true, false);
-						aClassDeclaration.setInferenceType(InferenceType.Has_Superclass); 
+						aTypeDeclaration=module.createTypeDeclaration(childCandidate.getIdentifier(), childCandidate, true, false);
+						aTypeDeclaration.setInferenceType(InferenceType.Has_SuperType); 
 					 }
 				}else{
 					//childCandidate is a class
-					aClassDeclaration=findClassInModule(childCandidate, module);
+					aTypeDeclaration=findTypeDeclarationInModule(childCandidate, module);
 				}
-				if(!aClassDeclaration.hasConstructor()){// check to see if it has a constructor
-					AbstractStatement body=aClassDeclaration.getFunctionDeclaration().getStatements().get(0);
+				if(!aTypeDeclaration.hasConstructor()){// check to see if it has a constructor
+					AbstractStatement body=aTypeDeclaration.getFunctionDeclaration().getStatements().get(0);
 					for(AbstractStatement abstractStatement: ((CompositeStatement)body).getStatements()){
 						for(FunctionDeclaration aFunctionDeclaration: abstractStatement.getFunctionDeclarationList()){
-							if(aFunctionDeclaration.getName().contentEquals(aClassDeclaration.getName())){
+							if(aFunctionDeclaration.getName().contentEquals(aTypeDeclaration.getName())){
 								aFunctionDeclaration.SetIsConstructor(true);
-								aClassDeclaration.getConstructors().add(aFunctionDeclaration);
-								aClassDeclaration.setHasConstrucotr(true);
+								aTypeDeclaration.getConstructors().add(aFunctionDeclaration);
+								aTypeDeclaration.setHasConstrucotr(true);
 							}
 						}
 					}
 				}
 				if(potentialSuperTypeName!=null ){
 					if(this.potentialSuperTypes.containsKey(module)){
-						this.potentialSuperTypes.get(module).put(aClassDeclaration, potentialSuperTypeName);
+						this.potentialSuperTypes.get(module).put(aTypeDeclaration, potentialSuperTypeName);
 					}else{
-						 Map<ClassDeclaration, String> aMap= new  HashMap<ClassDeclaration, String>();
+						 Map<TypeDeclaration, String> aMap= new  HashMap<TypeDeclaration, String>();
 						this.potentialSuperTypes.put(module, aMap);
 					}
 				}

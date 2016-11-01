@@ -23,7 +23,7 @@ import ca.concordia.jsdeodorant.analysis.abstraction.SourceContainer;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractFunctionFragment;
 import ca.concordia.jsdeodorant.analysis.decomposition.AbstractStatement;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.CompositeStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
@@ -37,7 +37,7 @@ import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 public class ClassInferenceEngineStricMode {
 	public static void run(Module module) {
 		for (FunctionDeclaration functionDeclaration : module.getProgram().getFunctionDeclarationList()) {
-			if (functionDeclaration.isClassDeclaration()){ 
+			if (functionDeclaration.isTypeDeclaration()){ 
 				continue;
 			}
 
@@ -117,22 +117,22 @@ public class ClassInferenceEngineStricMode {
 		FunctionDeclaration parentFunction, InferenceType infType) {
 		if(parentName!=null && parentName.contentEquals(functionDeclaration.getName())){ // then the parentFunction is class and the current function is its constructor
 			if(parentFunction !=null){
-				ClassDeclaration aClassDeclaration=createClass(module, parentFunction, infType);
+				TypeDeclaration aClassDeclaration=createClass(module, parentFunction, infType);
 				aClassDeclaration.setHasConstrucotr(true);
 				aClassDeclaration.getConstructors().add(functionDeclaration);
 				functionDeclaration.SetIsConstructor(true);
 				// if we already identified the  functionDeclaration as class, then we should remove it form classList
-				if(functionDeclaration.isClassDeclaration()){
+				if(functionDeclaration.isTypeDeclaration()){
 					functionDeclaration.setClassDeclaration(false);
-					ClassDeclaration toRemove=null;
-					for(ClassDeclaration aClass: module.getClasses()){
+					TypeDeclaration toRemove=null;
+					for(TypeDeclaration aClass: module.getTypes()){
 						if(aClass.getFunctionDeclaration().equals(functionDeclaration)){
 							toRemove=aClass;
 							break;
 						}
 					}
 					if(toRemove!=null){
-						module.getClasses().remove(toRemove);
+						module.getTypes().remove(toRemove);
 					}
 				}
 			}
@@ -160,13 +160,13 @@ public class ClassInferenceEngineStricMode {
 		}
 	}
 	
-	private static ClassDeclaration createClass(Module module, FunctionDeclaration functionDeclaration, InferenceType infType){
+	private static TypeDeclaration createClass(Module module, FunctionDeclaration functionDeclaration, InferenceType infType){
 		
 		AbstractIdentifier id=functionDeclaration.getRawIdentifier();
 		if(id==null){
 			id=functionDeclaration.getIdentifier();
 		}
-		ClassDeclaration classDeclaration=null;
+		TypeDeclaration classDeclaration=null;
 		String qualifiedName=null;
 		if(id instanceof CompositeIdentifier){
 			qualifiedName=id.asCompositeIdentifier().toString();
@@ -175,11 +175,11 @@ public class ClassInferenceEngineStricMode {
 		}
 		
 		if(qualifiedName==null){
-			classDeclaration=module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+			classDeclaration=module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 			classDeclaration.setInferenceType(infType);
 		}
 		else if(!qualifiedName.contains(".prototype.")){
-			classDeclaration=module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+			classDeclaration=module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
 			classDeclaration.setInferenceType(infType);
 		}
 		return classDeclaration;
@@ -350,7 +350,7 @@ public class ClassInferenceEngineStricMode {
 	private static void nowSetClassesToNotFoundByObjectCreations(Module module) {
 		for (ObjectCreation objectCreation : module.getProgram().getObjectCreationList()) {
 			if (objectCreation.getClassDeclaration() != null)
-				for (ClassDeclaration classDeclaration : module.getClasses()) {
+				for (TypeDeclaration classDeclaration : module.getTypes()) {
 					if (objectCreation.getIdentifier().equals(classDeclaration.getName())) {
 						objectCreation.setClassDeclaration(classDeclaration, module);
 						classDeclaration.setMatchedAfterInference(true);

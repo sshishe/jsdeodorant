@@ -12,7 +12,7 @@ import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
 import ca.concordia.jsdeodorant.analysis.abstraction.PlainIdentifier;
 import ca.concordia.jsdeodorant.analysis.abstraction.Program;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.language.PredefinedClasses;
 import ca.concordia.jsdeodorant.language.PredefinedFunctions;
@@ -165,12 +165,12 @@ public class CompositePostProcessor {
 		String functionQualifiedName = functionDeclaration.getQualifiedName();
 
 		if (functionQualifiedName.equals(aliasedObjectCreation.toString())) {
-			ClassDeclaration classDeclaration=module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
+			TypeDeclaration classDeclaration=module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
 			objectCreation.setClassDeclaration(classDeclaration, module);
 			return true;
 		}
 		if (functionQualifiedName.equals(objectCreation.getIdentifier().toString()) || functionDeclaration.getRawIdentifier() != null && functionDeclaration.getRawIdentifier().toString().equals(objectCreation.getIdentifier().toString())) {
-			ClassDeclaration classDeclaration=module.createClassDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
+			TypeDeclaration classDeclaration=module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, false, !objectCreation.getAliasedIdentifier().equals(objectCreation.getIdentifier()));
 			objectCreation.setClassDeclaration(classDeclaration, module);
 			return true;
 		}
