@@ -261,13 +261,18 @@ public class TypeDeclaration {
 											Attribute attr=new Attribute(((CompositeIdentifier) leftId).getMostRightPart().toString(), this,parseTree);
 											this.typeMembers.add(attr);
 										}else{
+											boolean exist=false;
 											for(TypeMember member: this.typeMembers){
 												if(member instanceof  Attribute){
-													if(!(member.getName().contentEquals(((CompositeIdentifier) leftId).getMostRightPart().toString()))){
-														Attribute attr=new Attribute(((CompositeIdentifier) leftId).getMostRightPart().toString(), this,parseTree);
-														this.typeMembers.add(attr);
+													if((member.getName().contentEquals(((CompositeIdentifier) leftId).getMostRightPart().toString()))){
+														exist = true;
+														break;
 													}
 												}
+											}
+											if(!exist){
+												Attribute attr=new Attribute(((CompositeIdentifier) leftId).getMostRightPart().toString(), this,parseTree);
+												this.typeMembers.add(attr);
 											}
 										}
 										

@@ -72,15 +72,11 @@ public class ClassInferenceEngineStricMode {
 				
 				
 			}
-			
-			// if the body contains returnStatement then it is not a  class
-			if(proceed && functionDeclaration.getStatements().size() >0 && !hasReturnStatement(((CompositeStatement)(functionDeclaration.getStatements().get(0))).getStatements())){
-				proceed=true;
-			}
+
 			
 			if(proceed){
-				int totalMethodsInsideClassBody=assignedMethodsInsideClassBody(module, functionDeclaration);
-				int totalAttributesInsideClassBody=assignedAttributesInsideClassBody(module, functionDeclaration);
+				int totalMethodsInsideTypeBody=assignedMethodsInsideTypeBody(module, functionDeclaration);
+				int totalAttributesInsideTypeBody=assignedAttributesInsideTypeBody(module, functionDeclaration);
 				int totalMethodsOutSideOutSideBody=assignedMethodToPrototypeOutSideBody(module, functionDeclaration);
 				int totalAttributesOutSideOutSideBody=assignedAttributesToPrototypeOutSideBody(module, functionDeclaration);
 				int totalObjectLiteralToPrototypeOutSideBody=assignObjectLiteralToPrototypeOutSideBody(module, functionDeclaration);
@@ -98,36 +94,33 @@ public class ClassInferenceEngineStricMode {
 				if(parentFunction!=null)
 					parentName=parentFunction.getName();
 				
-				if(totalMethodsInsideClassBody>0 || totalAttributesInsideClassBody>0){
-					//createClass(module, functionDeclaration, parentName, parentFunction,InferenceType.Constructor_Body_Analysis);
-					createClass(module, functionDeclaration, InferenceType.Constructor_Body_Analysis);
+				if(totalMethodsInsideTypeBody>0 || totalAttributesInsideTypeBody>0){
+					createTypeDeclaration(module,  parentName,functionDeclaration ,parentFunction,InferenceType.Constructor_Body_Analysis);
 				}else if(totalMethodsOutSideOutSideBody>0){
-					//createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.Methods_Added_To_Prototype);
-					createClass(module, functionDeclaration, InferenceType.Methods_Added_To_Prototype);
+					createTypeDeclaration(module,  parentName,functionDeclaration ,parentFunction, InferenceType.Methods_Added_To_Prototype);
 				}else if(totalObjectLiteralToPrototypeOutSideBody>0){
-					//createClass(module, functionDeclaration, parentName, parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
-					createClass(module, functionDeclaration, InferenceType.ObjectLiteral_Added_ToPrototype);
+					createTypeDeclaration(module,  parentName,functionDeclaration ,parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
 				}
 				nowSetClassesToNotFoundByObjectCreations(module);
 			}
 		}
 	}
 
-	private static void createClass(Module module, FunctionDeclaration functionDeclaration, String parentName,
+	private static void createTypeDeclaration(Module module, String parentName, FunctionDeclaration functionDeclaration,
 		FunctionDeclaration parentFunction, InferenceType infType) {
 		if(parentName!=null && parentName.contentEquals(functionDeclaration.getName())){ // then the parentFunction is class and the current function is its constructor
 			if(parentFunction !=null){
-				TypeDeclaration aClassDeclaration=createClass(module, parentFunction, infType);
-				aClassDeclaration.setHasConstrucotr(true);
-				aClassDeclaration.getConstructors().add(functionDeclaration);
+				TypeDeclaration aTypeDeclaration=createTypeDeclaration(module, parentFunction, infType);
+				aTypeDeclaration.setHasConstrucotr(true);
+				aTypeDeclaration.getConstructors().add(functionDeclaration);
 				functionDeclaration.SetIsConstructor(true);
 				// if we already identified the  functionDeclaration as class, then we should remove it form classList
 				if(functionDeclaration.isTypeDeclaration()){
 					functionDeclaration.setClassDeclaration(false);
 					TypeDeclaration toRemove=null;
-					for(TypeDeclaration aClass: module.getTypes()){
-						if(aClass.getFunctionDeclaration().equals(functionDeclaration)){
-							toRemove=aClass;
+					for(TypeDeclaration aType: module.getTypes()){
+						if(aType.getFunctionDeclaration().equals(functionDeclaration)){
+							toRemove=aType;
 							break;
 						}
 					}
@@ -137,7 +130,7 @@ public class ClassInferenceEngineStricMode {
 				}
 			}
 		}else{
-			createClass(module, functionDeclaration, infType);
+			createTypeDeclaration(module, functionDeclaration, infType);
 		}
 	}
 	
@@ -160,13 +153,13 @@ public class ClassInferenceEngineStricMode {
 		}
 	}
 	
-	private static TypeDeclaration createClass(Module module, FunctionDeclaration functionDeclaration, InferenceType infType){
+	private static TypeDeclaration createTypeDeclaration(Module module, FunctionDeclaration functionDeclaration, InferenceType infType){
 		
 		AbstractIdentifier id=functionDeclaration.getRawIdentifier();
 		if(id==null){
 			id=functionDeclaration.getIdentifier();
 		}
-		TypeDeclaration classDeclaration=null;
+		TypeDeclaration typeDeclaration=null;
 		String qualifiedName=null;
 		if(id instanceof CompositeIdentifier){
 			qualifiedName=id.asCompositeIdentifier().toString();
@@ -175,17 +168,17 @@ public class ClassInferenceEngineStricMode {
 		}
 		
 		if(qualifiedName==null){
-			classDeclaration=module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
-			classDeclaration.setInferenceType(infType);
+			typeDeclaration=module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+			typeDeclaration.setInferenceType(infType);
 		}
 		else if(!qualifiedName.contains(".prototype.")){
-			classDeclaration=module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
-			classDeclaration.setInferenceType(infType);
+			typeDeclaration=module.createTypeDeclaration(functionDeclaration.getRawIdentifier(), functionDeclaration, true, false);
+			typeDeclaration.setInferenceType(infType);
 		}
-		return classDeclaration;
+		return typeDeclaration;
 	}
 	
-	private static int assignedMethodsInsideClassBody(Module module, FunctionDeclaration functionDeclaration) {
+	private static int assignedMethodsInsideTypeBody(Module module, FunctionDeclaration functionDeclaration) {
 
 		int methodCounter=0;
 		if(functionDeclaration.getStatements().size()>0){
@@ -200,7 +193,7 @@ public class ClassInferenceEngineStricMode {
 		return methodCounter;
 	}
 	
-	private static int assignedAttributesInsideClassBody(Module module, FunctionDeclaration functionDeclaration) {
+	private static int assignedAttributesInsideTypeBody(Module module, FunctionDeclaration functionDeclaration) {
 
 		int attrCounter=0;
 		if(functionDeclaration.getStatements().size()>0){
@@ -350,33 +343,13 @@ public class ClassInferenceEngineStricMode {
 	private static void nowSetClassesToNotFoundByObjectCreations(Module module) {
 		for (ObjectCreation objectCreation : module.getProgram().getObjectCreationList()) {
 			if (objectCreation.getClassDeclaration() != null)
-				for (TypeDeclaration classDeclaration : module.getTypes()) {
-					if (objectCreation.getIdentifier().equals(classDeclaration.getName())) {
-						objectCreation.setClassDeclaration(classDeclaration, module);
-						classDeclaration.setMatchedAfterInference(true);
+				for (TypeDeclaration typeDeclaration : module.getTypes()) {
+					if (objectCreation.getIdentifier().equals(typeDeclaration.getName())) {
+						objectCreation.setClassDeclaration(typeDeclaration, module);
+						typeDeclaration.setMatchedAfterInference(true);
 					}
 				}
 		}
-	}
-	
-	private static boolean hasReturnStatement(List<AbstractStatement> abstractStatementList){
-		return false;
-			
-//		for(AbstractStatement abstractStatement:abstractStatementList){	
-//			ParseTree parseTree=abstractStatement.getStatement();
-//			
-//			if(abstractStatement instanceof Statement){
-//				if(parseTree instanceof ReturnStatementTree){
-//					return true;
-//				}
-//			}else if(abstractStatement instanceof CompositeStatement){
-//				if(!(abstractStatement.getStatement() instanceof FunctionDeclarationTree) &&  
-//						!(abstractStatement.getStatement() instanceof LabelledStatementTree)){ // we don't go inside functions or object literals		
-//					return hasReturnStatement(((CompositeStatement) abstractStatement).getStatements());
-//				}
-//		    }
-//		}
-//		return false;
 	}
 
 }
