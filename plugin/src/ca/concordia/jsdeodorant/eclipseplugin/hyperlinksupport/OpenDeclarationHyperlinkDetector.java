@@ -20,10 +20,10 @@ import com.google.javascript.jscomp.parsing.parser.util.SourceRange;
 import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationStatement;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
@@ -46,7 +46,7 @@ public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {
 									String absolutePath = new Path(file.getRawLocation().toFile().getCanonicalFile().getAbsolutePath()).toPortableString();
 									if (module.getSourceFile().getName().equals(absolutePath)) {
 										for (ObjectCreation objectCreation : module.getProgram().getObjectCreationList()) {
-											ClassDeclaration classDeclaration = objectCreation.getClassDeclaration();
+											TypeDeclaration classDeclaration = objectCreation.getClassDeclaration();
 											if (classDeclaration != null) {
 												SourceRange location = objectCreation.getNewExpressionTree().location;
 												int start = location.start.offset;
@@ -74,9 +74,9 @@ public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {
 											}	
 										}
 										
-										for (ClassDeclaration classDeclaration : module.getClasses()) {
+										for (TypeDeclaration typeDeclaration : module.getTypes()) {
 											SourceRange location = null;
-											FunctionDeclaration functionDeclaration = classDeclaration.getFunctionDeclaration();
+											FunctionDeclaration functionDeclaration = typeDeclaration.getFunctionDeclaration();
 											if (functionDeclaration instanceof FunctionDeclarationExpression) {
 												ParseTree leftValueExpression = ((FunctionDeclarationExpression) functionDeclaration).getLeftValueExpression();
 												if (leftValueExpression != null) {
@@ -92,10 +92,10 @@ public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {
 												if (start <= region.getOffset() && end >= region.getOffset()) {
 													IRegion newRegion = new Region(start, length);
 													ClassInstantiationsHyperlink classDeclarationHyperlink =
-															new ClassInstantiationsHyperlink(newRegion, classDeclaration);
+															new ClassInstantiationsHyperlink(newRegion, typeDeclaration);
 													hyperLinks.add(classDeclarationHyperlink);
 													OpenTypeHierarchyHyperlink classInstantiationsHyperlink = 
-															new OpenTypeHierarchyHyperlink(newRegion, classDeclaration);
+															new OpenTypeHierarchyHyperlink(newRegion, typeDeclaration);
 													hyperLinks.add(classInstantiationsHyperlink);
 												}
 											}

@@ -7,7 +7,7 @@ import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
@@ -37,7 +37,7 @@ public class IndividualClassToolsFigure extends Figure {
 		
 	}
 
-	public IndividualClassToolsFigure(ClassDeclaration declaration) {
+	public IndividualClassToolsFigure(TypeDeclaration declaration) {
 		GridLayout layout = new GridLayout(3, true);
 		setLayoutManager(layout);
 		

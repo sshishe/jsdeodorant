@@ -45,7 +45,7 @@ import ca.concordia.jsdeodorant.analysis.AnalysisStep;
 import ca.concordia.jsdeodorant.analysis.ClassAnalysisMode;
 import ca.concordia.jsdeodorant.analysis.abstraction.Dependency;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.analysis.module.PackageSystem;
 import ca.concordia.jsdeodorant.eclipseplugin.listeners.JSDeodorantPartListener;
 import ca.concordia.jsdeodorant.eclipseplugin.listeners.JSDeodorantSelectionListener;
@@ -62,7 +62,7 @@ public class JSDeodorantModulesView extends ViewPart {
 
 	public static final String ID = "jsdeodorant-eclipse-plugin.JSDeodorantModulesView";
 
-	private TreeViewer classTreeViewer;
+	private TreeViewer typeTreeViewer;
 	private Label projectNameLabel;
 
 	private IAction clearAnnotationsAction;
@@ -263,15 +263,15 @@ public class JSDeodorantModulesView extends ViewPart {
 	}
 
 	private void createTreeViewer(Composite parent) {
-		classTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
-		classTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
-		classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(null));
-		classTreeViewer.setLabelProvider(new ClassesTreeViewerLabelProvider());
-		classTreeViewer.addDoubleClickListener(new ClassesTreeViewerDoubleClickListener());
-		classTreeViewer.setInput(getViewSite());
-		classTreeViewer.setComparator(new ClassesTreeViewerComparator());
+		typeTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
+		typeTreeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
+		typeTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(null));
+		typeTreeViewer.setLabelProvider(new ClassesTreeViewerLabelProvider());
+		typeTreeViewer.addDoubleClickListener(new ClassesTreeViewerDoubleClickListener());
+		typeTreeViewer.setInput(getViewSite());
+		typeTreeViewer.setComparator(new ClassesTreeViewerComparator());
 		
-		classTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		typeTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				getRightClickMenu();
@@ -283,7 +283,7 @@ public class JSDeodorantModulesView extends ViewPart {
 		
 		List<IAction> actionsToAdd = new ArrayList<>();
 		
-		ISelection selection = classTreeViewer.getSelection();
+		ISelection selection = typeTreeViewer.getSelection();
 		if (!selection.isEmpty()) {
 			Object firstElement = ((IStructuredSelection)selection).getFirstElement();
 			if (firstElement instanceof Module) {
@@ -291,14 +291,14 @@ public class JSDeodorantModulesView extends ViewPart {
 				if (!selectedModule.getDependencies().isEmpty()) {
 					actionsToAdd.add(showDependenciesAction);
 				}
-			} else if (firstElement instanceof ClassDeclaration) {
+			} else if (firstElement instanceof TypeDeclaration) {
 				actionsToAdd.add(showClassVisualizationAction);
 				actionsToAdd.add(findInstantiationsAction);
 				actionsToAdd.add(showTypeHierarchyForClassAction);
 			}
 		}
 		
-		classTreeViewer.getTree().setMenu(null);
+		typeTreeViewer.getTree().setMenu(null);
 		if (!actionsToAdd.isEmpty()) {
 			MenuManager menuMgr = new MenuManager("#PopupMenu");
 			menuMgr.setRemoveAllWhenShown(true);
@@ -310,13 +310,13 @@ public class JSDeodorantModulesView extends ViewPart {
 					}
 				}
 			});
-			Menu menu = menuMgr.createContextMenu(classTreeViewer.getControl());
-			classTreeViewer.getControl().setMenu(menu);
+			Menu menu = menuMgr.createContextMenu(typeTreeViewer.getControl());
+			typeTreeViewer.getControl().setMenu(menu);
 		}
 	}
 	
 	public Module getSelectedModule() {
-		ISelection selection = classTreeViewer.getSelection();
+		ISelection selection = typeTreeViewer.getSelection();
 		if (!selection.isEmpty()) {
 			Object firstElement = ((IStructuredSelection)selection).getFirstElement();
 			if (firstElement instanceof Module)
@@ -325,12 +325,12 @@ public class JSDeodorantModulesView extends ViewPart {
 		return null;
 	}
 	
-	public ClassDeclaration getSelectedClass() {
-		ISelection selection = classTreeViewer.getSelection();
+	public TypeDeclaration getSelectedClass() {
+		ISelection selection = typeTreeViewer.getSelection();
 		if (!selection.isEmpty()) {
 			Object firstElement = ((IStructuredSelection)selection).getFirstElement();
-			if (firstElement instanceof ClassDeclaration) {
-				return (ClassDeclaration)firstElement;
+			if (firstElement instanceof TypeDeclaration) {
+				return (TypeDeclaration)firstElement;
 			}
 		}
 		return null;
@@ -376,7 +376,7 @@ public class JSDeodorantModulesView extends ViewPart {
 	}
 	
 	private void clearResults() {
-		classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(null));
+		typeTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(null));
 		clearResultsAction.setEnabled(false);
 	}
 	
@@ -408,25 +408,25 @@ public class JSDeodorantModulesView extends ViewPart {
 	}
 	
 	private void showClassUMLDiagram() {
-		ClassDeclaration selectedClass = getSelectedClass();
-		if (selectedClass != null) {
+		TypeDeclaration selectedType = getSelectedClass();
+		if (selectedType != null) {
 			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(JSDeodorantVisualizationView.ID);
 			if (dependenciesView != null) {
-				((JSDeodorantVisualizationView)dependenciesView).showUMLClassDiagram(selectedClass);
+				((JSDeodorantVisualizationView)dependenciesView).showUMLClassDiagram(selectedType);
 			}
 		}
 	}
 	
 	private void findInstantiations() {
-		ClassDeclaration selectedClass = getSelectedClass();
-		if (selectedClass != null) {
+		TypeDeclaration selectedType = getSelectedClass();
+		if (selectedType != null) {
 			JSDeodorantClassInstantiationsView instantiationsView = ((JSDeodorantClassInstantiationsView)OpenAndAnnotateHelper.openView(JSDeodorantClassInstantiationsView.ID));
-			instantiationsView.showInstantiationsFor(selectedClass);
+			instantiationsView.showInstantiationsFor(selectedType);
 		}
 	}
 	
 	protected void showTypeHierarchyForSelectedClass() {
-		ClassDeclaration selectedClass = getSelectedClass();
+		TypeDeclaration selectedClass = getSelectedClass();
 		if (selectedClass != null) {
 			JSDeodorantModulesView modulesView = ((JSDeodorantModulesView)OpenAndAnnotateHelper.openView(JSDeodorantModulesView.ID));
 			modulesView.showTypeHierarchyForClassDeclaration(selectedClass);
@@ -444,12 +444,12 @@ public class JSDeodorantModulesView extends ViewPart {
 					case MODULE_EXPLORER:
 						modulesViewModeAction.setChecked(true);
 						typeHierarchyModeAction.setChecked(false);
-						classTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(modules));
+						typeTreeViewer.setContentProvider(new ClassesTreeViewerContentProvider(modules));
 						break;
 					case TYPE_HIERARCHY:
 						modulesViewModeAction.setChecked(false);
 						typeHierarchyModeAction.setChecked(true);
-						classTreeViewer.setContentProvider(new ClassHierarchiesTreeViewerContentProvider(modules));
+						typeTreeViewer.setContentProvider(new ClassHierarchiesTreeViewerContentProvider(modules));
 						break;
 					default:
 						break;
@@ -460,10 +460,10 @@ public class JSDeodorantModulesView extends ViewPart {
 		monitor.done();
 	}
 	
-	public void showTypeHierarchyForClassDeclaration(ClassDeclaration classDeclaration) {
+	public void showTypeHierarchyForClassDeclaration(TypeDeclaration classDeclaration) {
 		viewMode = ModuleViewMode.TYPE_HIERARCHY;
 		setTreeViewerContentProviderBasedOnViewMode(new NullProgressMonitor());
-		classTreeViewer.setSelection(new StructuredSelection(classDeclaration), true);
+		typeTreeViewer.setSelection(new StructuredSelection(classDeclaration), true);
 	}
 	
 	@Override

@@ -12,23 +12,23 @@ import org.eclipse.draw2d.ToolbarLayout;
 import org.eclipse.swt.SWT;
 
 import ca.concordia.jsdeodorant.analysis.decomposition.Attribute;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
 public class IndividualClassFigure extends RoundedRectangle {
 
-	private final ClassDeclaration classDeclaration;
+	private final TypeDeclaration typeDeclaration;
 
-	public IndividualClassFigure(ClassDeclaration classDeclaration) {
+	public IndividualClassFigure(TypeDeclaration classDeclaration) {
 		this(classDeclaration, true);
 	}
 	
-	public IndividualClassFigure(ClassDeclaration classDeclaration, boolean showClassMembers) {
-		this.classDeclaration = classDeclaration;
+	public IndividualClassFigure(TypeDeclaration typeDeclaration, boolean showClassMembers) {
+		this.typeDeclaration = typeDeclaration;
 		
 		ToolbarLayout layout = new ToolbarLayout();
 		layout.setSpacing(5);
@@ -39,15 +39,15 @@ public class IndividualClassFigure extends RoundedRectangle {
 		setOpaque(true);
 		setAntialias(SWT.ON);
 
-		Label className = new Label(classDeclaration.getName(), 
-				ImagesHelper.getImageDescriptor(Constants.CLASS_ICON_IMAGE).createImage());
+		Label className = new Label(typeDeclaration.getName(), 
+				ImagesHelper.getTypeImage(typeDeclaration));
 		add(className);
 
 		if (showClassMembers) {
-			List<ClassMember> attributes = classDeclaration.getClassMembers().stream()
+			List<TypeMember> attributes = typeDeclaration.getTypeMembers().stream()
 					.filter(member -> member instanceof Attribute).collect(Collectors.toList());
 
-			List<ClassMember> methods = classDeclaration.getClassMembers().stream()
+			List<TypeMember> methods = typeDeclaration.getTypeMembers().stream()
 					.filter(member -> member instanceof Method).collect(Collectors.toList());
 
 			if (attributes.size() > 0) {
@@ -61,14 +61,14 @@ public class IndividualClassFigure extends RoundedRectangle {
 			}
 		}
 		
-		IndividualClassToolsFigure toolsFigure = new IndividualClassToolsFigure(classDeclaration);
+		IndividualClassToolsFigure toolsFigure = new IndividualClassToolsFigure(typeDeclaration);
 		add(toolsFigure);
 
 		addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseDoubleClicked(MouseEvent me) {
-				OpenAndAnnotateHelper.openAndAnnotateClassDeclaration(classDeclaration);
+				OpenAndAnnotateHelper.openAndAnnotateClassDeclaration(typeDeclaration);
 			}
 
 			@Override
@@ -84,8 +84,8 @@ public class IndividualClassFigure extends RoundedRectangle {
 		});
 	}
 
-	public ClassDeclaration getClassDeclaration() {
-		return classDeclaration;
+	public TypeDeclaration getClassDeclaration() {
+		return typeDeclaration;
 	}
 	
 }

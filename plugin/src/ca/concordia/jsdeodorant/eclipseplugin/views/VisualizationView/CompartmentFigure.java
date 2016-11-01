@@ -14,15 +14,15 @@ import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.swt.graphics.Image;
 
 import ca.concordia.jsdeodorant.analysis.decomposition.Attribute;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
 import ca.concordia.jsdeodorant.eclipseplugin.util.OpenAndAnnotateHelper;
 
 public class CompartmentFigure extends Figure {
 	
-	public CompartmentFigure(List<ClassMember> entities) {
+	public CompartmentFigure(List<TypeMember> entities) {
 		ToolbarLayout layout = new ToolbarLayout();
 		layout.setMinorAlignment(ToolbarLayout.ALIGN_TOPLEFT);
 		layout.setStretchMinorAxis(false);
@@ -41,12 +41,12 @@ public class CompartmentFigure extends Figure {
 			}
 		});
 		
-		for (ClassMember entity : entities) {
+		for (TypeMember entity : entities) {
 			Image image;
 			if (entity instanceof Attribute) {
 				image = ImagesHelper.getImageDescriptor(Constants.FIELD_ICON_IMAGE).createImage();
 			} else {
-				image = Constants.getMethodImage((Method)entity);
+				image = ImagesHelper.getMethodImage((Method)entity);
 			}
 			Label label = new Label(entity.getName(), image);
 			add(label);

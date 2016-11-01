@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 
 public class ClassHierarchiesTreeViewerContentProvider implements ITreeContentProvider {
 
@@ -18,17 +18,17 @@ public class ClassHierarchiesTreeViewerContentProvider implements ITreeContentPr
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		List<ClassDeclaration> toReturn = new ArrayList<>();
+		List<TypeDeclaration> toReturn = new ArrayList<>();
 		for (Module module : modules) {
-			toReturn.addAll(module.getClasses());
+			toReturn.addAll(module.getTypes());
 		}
 		return toReturn.toArray();
 	}
 	
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof ClassDeclaration) {
-			ClassDeclaration classDeclaration = (ClassDeclaration) parentElement;
+		if (parentElement instanceof TypeDeclaration) {
+			TypeDeclaration classDeclaration = (TypeDeclaration) parentElement;
 			return classDeclaration.getSubTypes().toArray();
 		}
 		return new Object[] {}; 
@@ -36,8 +36,8 @@ public class ClassHierarchiesTreeViewerContentProvider implements ITreeContentPr
 
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof ClassDeclaration) {
-			ClassDeclaration classDeclaration = (ClassDeclaration) element;
+		if (element instanceof TypeDeclaration) {
+			TypeDeclaration classDeclaration = (TypeDeclaration) element;
 			return classDeclaration.getSuperType();
 		}
 		return null;
@@ -45,8 +45,8 @@ public class ClassHierarchiesTreeViewerContentProvider implements ITreeContentPr
 
 	@Override
 	public boolean hasChildren(Object element) {
-		if (element instanceof ClassDeclaration) {
-			ClassDeclaration classDeclaration = (ClassDeclaration) element;
+		if (element instanceof TypeDeclaration) {
+			TypeDeclaration classDeclaration = (TypeDeclaration) element;
 			return classDeclaration.getSubTypes().size() > 0;
 		}
 		return false;

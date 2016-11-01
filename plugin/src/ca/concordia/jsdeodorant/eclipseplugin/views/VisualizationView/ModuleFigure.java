@@ -12,7 +12,7 @@ import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.draw2d.ToolbarLayout;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotation;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ImagesHelper;
@@ -38,7 +38,7 @@ public class ModuleFigure extends Figure {
 		classesPart.setLayoutManager(new FlowLayout());
 		add(classesPart);
 		
-		for (ClassDeclaration classDeclaration : selectedModule.getClasses()) {
+		for (TypeDeclaration classDeclaration : selectedModule.getTypes()) {
 			classesPart.add(new IndividualClassFigure(classDeclaration, false));
 		}
 		

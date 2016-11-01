@@ -22,18 +22,18 @@ import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
 
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.eclipseplugin.util.Constants;
 
 public class SingleClassFigure extends ScalableFreeformLayeredPane {
 
-	private final ClassDeclaration ClassDeclaration;
+	private final TypeDeclaration typeDeclaration;
 	
 	private static final int GAP_X = 20;
 	private static final int GAP_Y = 35;
 
-	public SingleClassFigure(ClassDeclaration selectedClass) {
-		this.ClassDeclaration = selectedClass;
+	public SingleClassFigure(TypeDeclaration selectedClass) {
+		this.typeDeclaration = selectedClass;
 		FreeformLayer formLayer = new FreeformLayer();
 		formLayer.setLayoutManager(new FreeformLayout());
 		add(formLayer, "Primary");
@@ -115,32 +115,32 @@ public class SingleClassFigure extends ScalableFreeformLayeredPane {
 		return connection;
 	}
 	
-	public ClassDeclaration getClassDeclaration() {
-		return ClassDeclaration;
+	public TypeDeclaration getClassDeclaration() {
+		return typeDeclaration;
 	}
 
-	private List<IndividualClassFigure> getParentClassesFigures(ClassDeclaration selectedClass) {
+	private List<IndividualClassFigure> getParentClassesFigures(TypeDeclaration selectedClass) {
 		List<IndividualClassFigure> toReturn = new ArrayList<>();
-		for (ClassDeclaration parentClass : getParentClasses(selectedClass)) {
+		for (TypeDeclaration parentClass : getParentTypes(selectedClass)) {
 			IndividualClassFigure classFigure = new IndividualClassFigure(parentClass);
 			toReturn.add(classFigure);
 		}
 		return toReturn;
 	}
 	
-	private List<ClassDeclaration> getParentClasses(ClassDeclaration classDeclaration) {
-		List<ClassDeclaration> parents = new ArrayList<>();
+	private List<TypeDeclaration> getParentTypes(TypeDeclaration classDeclaration) {
+		List<TypeDeclaration> parents = new ArrayList<>();
 		while (classDeclaration.getSuperType() != null) {
-			ClassDeclaration parent = classDeclaration.getSuperType();
+			TypeDeclaration parent = classDeclaration.getSuperType();
 			parents.add(parent);
 			classDeclaration = parent;
 		}
 		return parents;
 	}
 	
-	private List<IndividualClassFigure> getDirectSubtypeFigures(ClassDeclaration selectedClass) {
+	private List<IndividualClassFigure> getDirectSubtypeFigures(TypeDeclaration selectedClass) {
 		List<IndividualClassFigure> toReturn = new ArrayList<>();
-		for (ClassDeclaration childClass : selectedClass.getSubTypes()) {
+		for (TypeDeclaration childClass : selectedClass.getSubTypes()) {
 			IndividualClassFigure childClassFigure = new IndividualClassFigure(childClass);
 			toReturn.add(childClassFigure);
 		}

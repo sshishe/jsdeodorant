@@ -9,8 +9,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 
 public class ClassesTreeViewerContentProvider implements ITreeContentProvider {
@@ -50,10 +50,10 @@ public class ClassesTreeViewerContentProvider implements ITreeContentProvider {
 			return parentFolders.get(parentPath).toArray();
 		} else if (parentElement instanceof Module) {
 			Module module = (Module) parentElement;
-			return module.getClasses().toArray();
-		} else if (parentElement instanceof ClassDeclaration) {
-			ClassDeclaration classDeclaration = (ClassDeclaration) parentElement;
-			return classDeclaration.getClassMembers().toArray();
+			return module.getTypes().toArray();
+		} else if (parentElement instanceof TypeDeclaration) {
+			TypeDeclaration typeDeclaration = (TypeDeclaration) parentElement;
+			return typeDeclaration.getTypeMembers().toArray();
 		}
 		return new Object[] {};
 	}
@@ -63,11 +63,11 @@ public class ClassesTreeViewerContentProvider implements ITreeContentProvider {
 		if (element instanceof Module) {
 			Module module = (Module) element;
 			return ModulesInfo.getModuleParentName(module);
-		} else if (element instanceof ClassDeclaration) {
-			ClassDeclaration classDeclaration = (ClassDeclaration) element;
+		} else if (element instanceof TypeDeclaration) {
+			TypeDeclaration classDeclaration = (TypeDeclaration) element;
 			return classDeclaration.getParentModule();
-		} else if (element instanceof ClassMember) {
-			ClassMember classMember = (ClassMember) element;
+		} else if (element instanceof TypeMember) {
+			TypeMember classMember = (TypeMember) element;
 			return classMember.getOwner();
 		}
 		return null;

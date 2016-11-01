@@ -9,7 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 
 public class JSDeodorantVisualizationView extends ViewPart {
 	
@@ -31,10 +31,10 @@ public class JSDeodorantVisualizationView extends ViewPart {
 		}
 	}
 
-	public void showUMLClassDiagram(ClassDeclaration selectedClass) {
-		if (selectedClass != null) {
+	public void showUMLClassDiagram(TypeDeclaration selectedType) {
+		if (selectedType != null) {
 			figureCanvas.setViewport(new FreeformViewport());
-			figureCanvas.setContents(new SingleClassFigure(selectedClass));
+			figureCanvas.setContents(new SingleClassFigure(selectedType));
 		}
 	}
 	

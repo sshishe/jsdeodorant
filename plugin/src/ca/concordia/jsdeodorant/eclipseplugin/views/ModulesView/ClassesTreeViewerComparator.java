@@ -6,8 +6,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 
 public class ClassesTreeViewerComparator extends ViewerComparator {
 	@Override
@@ -21,12 +21,12 @@ public class ClassesTreeViewerComparator extends ViewerComparator {
 			} else if (e1 instanceof Module) {
 				name1 = (new File(((Module) e1).getSourceFile().getName())).getName();
 				name2 = (new File(((Module) e2).getSourceFile().getName())).getName();
-			} else if (e1 instanceof ClassDeclaration) {
-				name1 = ((ClassDeclaration) e1).getName();
-				name2 = ((ClassDeclaration) e2).getName();
-			} else if (e1 instanceof ClassMember) {
-				name1 = ((ClassMember) e1).getName();
-				name2 = ((ClassMember) e2).getName();
+			} else if (e1 instanceof TypeDeclaration) {
+				name1 = ((TypeDeclaration) e1).getName();
+				name2 = ((TypeDeclaration) e2).getName();
+			} else if (e1 instanceof TypeMember) {
+				name1 = ((TypeMember) e1).getName();
+				name2 = ((TypeMember) e2).getName();
 			}
 		} else {
 			name1 = e1.toString();

@@ -23,9 +23,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import com.google.javascript.jscomp.parsing.parser.util.SourceRange;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.ObjectCreation;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassDeclaration;
-import ca.concordia.jsdeodorant.analysis.decomposition.ClassMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
+import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotation;
 import ca.concordia.jsdeodorant.eclipseplugin.annotations.JSAnnotationType;
 
@@ -70,19 +70,19 @@ public class OpenAndAnnotateHelper {
 		openEditorAndAnnotate(filePath, new JSAnnotation[] { annotation });
 	}
 
-	public static void openAndAnnotateClassDeclaration(ClassDeclaration classDeclaration) {
-		SourceRange location = classDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location;
+	public static void openAndAnnotateClassDeclaration(TypeDeclaration typeDeclaration) {
+		SourceRange location = typeDeclaration.getFunctionDeclaration().getFunctionDeclarationTree().location;
 		String filePath = location.start.source.name;
 		Position postion = new Position(location.start.offset, location.end.offset - location.start.offset + 1);
 		JSAnnotation annotation = new JSAnnotation(JSAnnotationType.ANNOTATION, "Class declaration", postion);
 		openEditorAndAnnotate(filePath, annotation);
 	}
 
-	public static void openAndAnnotateMethodOrAttribute(ClassMember classMember) {
-		SourceRange location = classMember.getParseTree().location;
+	public static void openAndAnnotateMethodOrAttribute(TypeMember typeMember) {
+		SourceRange location = typeMember.getParseTree().location;
 		String filePath = location.start.source.name;
 		Position postion = new Position(location.start.offset, location.end.offset - location.start.offset + 1);
-		String annotationText = (classMember instanceof Method ? "Method" : "Attribute") + " declaration";
+		String annotationText = (typeMember instanceof Method ? "Method" : "Attribute") + " declaration";
 		JSAnnotation annotation = new JSAnnotation(JSAnnotationType.ANNOTATION, annotationText, postion);
 		openEditorAndAnnotate(filePath, annotation);
 	}
