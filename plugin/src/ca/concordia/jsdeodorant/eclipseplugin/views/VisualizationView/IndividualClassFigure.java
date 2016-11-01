@@ -24,6 +24,10 @@ public class IndividualClassFigure extends RoundedRectangle {
 	private final ClassDeclaration classDeclaration;
 
 	public IndividualClassFigure(ClassDeclaration classDeclaration) {
+		this(classDeclaration, true);
+	}
+	
+	public IndividualClassFigure(ClassDeclaration classDeclaration, boolean showClassMembers) {
 		this.classDeclaration = classDeclaration;
 		
 		ToolbarLayout layout = new ToolbarLayout();
@@ -39,20 +43,22 @@ public class IndividualClassFigure extends RoundedRectangle {
 				ImagesHelper.getImageDescriptor(Constants.CLASS_ICON_IMAGE).createImage());
 		add(className);
 
-		List<ClassMember> attributes = classDeclaration.getClassMembers().stream()
-				.filter(member -> member instanceof Attribute).collect(Collectors.toList());
-		
-		List<ClassMember> methods = classDeclaration.getClassMembers().stream()
-			.filter(member -> member instanceof Method).collect(Collectors.toList());
-		
-		if (attributes.size() > 0) {
-			CompartmentFigure fieldFigure = new CompartmentFigure(attributes);
-			add(fieldFigure);
-		}
+		if (showClassMembers) {
+			List<ClassMember> attributes = classDeclaration.getClassMembers().stream()
+					.filter(member -> member instanceof Attribute).collect(Collectors.toList());
 
-		if (methods.size() > 0) {
-			CompartmentFigure methodFigure = new CompartmentFigure(methods);
-			add(methodFigure);
+			List<ClassMember> methods = classDeclaration.getClassMembers().stream()
+					.filter(member -> member instanceof Method).collect(Collectors.toList());
+
+			if (attributes.size() > 0) {
+				CompartmentFigure fieldFigure = new CompartmentFigure(attributes);
+				add(fieldFigure);
+			}
+
+			if (methods.size() > 0) {
+				CompartmentFigure methodFigure = new CompartmentFigure(methods);
+				add(methodFigure);
+			}
 		}
 		
 		IndividualClassToolsFigure toolsFigure = new IndividualClassToolsFigure(classDeclaration);
