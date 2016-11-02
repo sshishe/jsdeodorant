@@ -378,7 +378,7 @@ public class TypeDeclaration {
 							// we don't care then
 						}	
 					}else if(right instanceof ObjectLiteralExpressionTree){ // If Car is a class => Car.prototype = { getInfo: function () { return this.make + ', ' + this.model };};
-						if (leftId instanceof CompositeIdentifier && leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype.") ) {
+						if (leftId instanceof CompositeIdentifier && leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype") ) {
 							right.getClass();System.out.println(right.location.start.line);
 							for(ParseTree property: right.asObjectLiteralExpression().propertyNameAndValues){
 								if(property instanceof PropertyNameAssignmentTree){
