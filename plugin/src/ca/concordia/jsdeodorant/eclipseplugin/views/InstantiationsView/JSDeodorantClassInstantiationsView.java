@@ -36,7 +36,7 @@ public class JSDeodorantClassInstantiationsView extends ViewPart {
 		Composite nameLayout = new Composite(parent, SWT.NONE);
 		nameLayout.setLayout(new GridLayout(2, false));
 		Label titleLabel = new Label(nameLayout, SWT.NONE);
-		titleLabel.setText("Instantions of the class");
+		titleLabel.setText("Instantiations of the class");
 		
 		typeDeclarationNameLabel = new Label(nameLayout, SWT.NONE);
 		FontDescriptor boldDescriptor = FontDescriptor.createFrom(titleLabel.getFont()).setStyle(SWT.BOLD);
