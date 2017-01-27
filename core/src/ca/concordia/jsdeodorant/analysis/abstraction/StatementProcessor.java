@@ -24,6 +24,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.ForInStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ForOfStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ForStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IfStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.LabelledStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
@@ -51,6 +52,7 @@ import ca.concordia.jsdeodorant.analysis.decomposition.ObjectLiteralExpression;
 import ca.concordia.jsdeodorant.analysis.decomposition.Statement;
 import ca.concordia.jsdeodorant.analysis.decomposition.StatementType;
 import ca.concordia.jsdeodorant.analysis.decomposition.TryStatement;
+import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 
 public class StatementProcessor {
 	private static final Logger log = Logger.getLogger(StatementProcessor.class.getName());
@@ -292,8 +294,12 @@ public class StatementProcessor {
 					if (callExpressionTree.operand instanceof ParenExpressionTree) {
 						ParenExpressionTree parenExpressionTree = callExpressionTree.operand.asParenExpression();
 						if (parenExpressionTree.expression instanceof FunctionDeclarationTree) {
+							String firstParamName = extractFirstParam(callExpressionTree);
 							FunctionDeclarationTree functionDeclarationTree = parenExpressionTree.expression.asFunctionDeclaration();
 							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
+							if(firstParamName!=null){
+								functionDeclarationExpression.setIIFEParam(firstParamName);
+							}
 						}
 					}
 				} else if (operand instanceof ArrayLiteralExpressionTree) {
@@ -316,7 +322,11 @@ public class StatementProcessor {
 					ParenExpressionTree parenExpressionTree = callExpressionTree.operand.asParenExpression();
 					if (parenExpressionTree.expression instanceof FunctionDeclarationTree) {
 						FunctionDeclarationTree functionDeclarationTree = parenExpressionTree.expression.asFunctionDeclaration();
+						String firstParamName = extractFirstParam(callExpressionTree);
 						functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
+						if(firstParamName!=null){
+							functionDeclarationExpression.setIIFEParam(firstParamName);
+						}
 					}
 				} else if (callExpressionTree.operand instanceof MemberExpressionTree) {
 					MemberExpressionTree memberExpressionTree = callExpressionTree.operand.asMemberExpression();
@@ -324,7 +334,11 @@ public class StatementProcessor {
 						ParenExpressionTree parenExpressionTree = memberExpressionTree.operand.asParenExpression();
 						if (parenExpressionTree.expression instanceof FunctionDeclarationTree) {
 							FunctionDeclarationTree functionDeclarationTree = parenExpressionTree.expression.asFunctionDeclaration();
+							String firstParamName = extractFirstParam(callExpressionTree);
 							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
+							if(firstParamName!=null){
+								functionDeclarationExpression.setIIFEParam(firstParamName);
+							}
 						}
 					}
 				}
@@ -340,11 +354,16 @@ public class StatementProcessor {
 					CallExpressionTree callExpression = parenExpression.expression.asCallExpression();
 					if (callExpression.operand instanceof FunctionDeclarationTree) {
 						FunctionDeclarationTree functionDeclarationTree = callExpression.operand.asFunctionDeclaration();
+						String firstParamName = extractFirstParam(callExpression);
 						functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
+						if(firstParamName!=null){
+							functionDeclarationExpression.setIIFEParam(firstParamName);
+						}
 					}
 					for (ParseTree argument : callExpression.arguments.arguments) {
 						if (argument instanceof FunctionDeclarationTree) {
 							FunctionDeclarationTree functionDeclarationTree = argument.asFunctionDeclaration();
+							// not sure String firstParamName = extractFirstParam(callExpression);
 							functionDeclarationExpression = new FunctionDeclarationExpression(functionDeclarationTree, FunctionDeclarationExpressionNature.IIFE, parent);
 						}
 					}
@@ -409,6 +428,24 @@ public class StatementProcessor {
 
 	}
 
+	private static String extractFirstParam(CallExpressionTree callExpressionTree) {
+		String superTypeNme=null;
+		if(callExpressionTree.arguments.arguments.size()>0){
+			ParseTree arg0=callExpressionTree.arguments.arguments.get(0);
+			if(arg0 instanceof IdentifierExpressionTree){
+				 superTypeNme=arg0.asIdentifierExpression().identifierToken.value;
+			}else if(arg0 instanceof MemberExpressionTree){
+				AbstractIdentifier abstractIdentifier=IdentifierHelper.getIdentifier(arg0);
+				if(abstractIdentifier instanceof CompositeIdentifier){
+					superTypeNme=((CompositeIdentifier)abstractIdentifier).toString();
+				}else{
+					superTypeNme=((PlainIdentifier) abstractIdentifier).getIdentifierName();
+				}
+			}
+		}
+		return superTypeNme;
+	}
+
 	public static AbstractExpression getFunctionDeclarationExpression(VariableDeclarationTree variableDeclarationTree, SourceContainer parent) {
 		if (variableDeclarationTree.initializer instanceof FunctionDeclarationTree) {
 			FunctionDeclarationTree functionDeclarationTree = variableDeclarationTree.initializer.asFunctionDeclaration();
@@ -430,7 +467,10 @@ public class StatementProcessor {
 			CallExpressionTree callExpressionTree = variableDeclarationTree.initializer.asCallExpression();
 			if (callExpressionTree.operand instanceof ParenExpressionTree)
 				if (callExpressionTree.operand.asParenExpression().expression instanceof FunctionDeclarationTree) {
+					String firstParamName = extractFirstParam(callExpressionTree);
 					FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asParenExpression().expression.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
+					if(firstParamName!=null)
+						functionDeclarationExpression.setIIFEParam(firstParamName);
 					return functionDeclarationExpression;
 				}
 		} else if (variableDeclarationTree.initializer instanceof ParenExpressionTree) {
@@ -438,7 +478,10 @@ public class StatementProcessor {
 			if (parenExpression.expression instanceof CallExpressionTree) {
 				CallExpressionTree callExpressionTree = parenExpression.expression.asCallExpression();
 				if (callExpressionTree.operand instanceof FunctionDeclarationTree) {
+					String firstParamName = extractFirstParam(callExpressionTree);
 					FunctionDeclarationExpression functionDeclarationExpression = new FunctionDeclarationExpression(callExpressionTree.operand.asFunctionDeclaration(), FunctionDeclarationExpressionNature.IIFE, variableDeclarationTree.lvalue, parent);
+					if(firstParamName!=null)
+						functionDeclarationExpression.setIIFEParam(firstParamName);
 					return functionDeclarationExpression;
 				}
 			}

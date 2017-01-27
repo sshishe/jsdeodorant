@@ -138,8 +138,9 @@ public class IdentifierHelper {
 	public static AbstractIdentifier findLValue(AbstractStatement statement, ParseTree rightValue) {
 		if (statement.getStatement() instanceof ExpressionStatementTree) {
 			ExpressionStatementTree epxressionStatement = statement.getStatement().asExpressionStatement();
-			if (epxressionStatement.expression instanceof BinaryOperatorTree)
+			if (epxressionStatement.expression instanceof BinaryOperatorTree){
 				return getIdentifier(epxressionStatement.expression.asBinaryOperator().left);
+			}	
 			else if (epxressionStatement.expression instanceof CallExpressionTree)
 				return getIdentifier(epxressionStatement.expression.asCallExpression().operand);
 		} else if (statement.getStatement() instanceof VariableStatementTree) {

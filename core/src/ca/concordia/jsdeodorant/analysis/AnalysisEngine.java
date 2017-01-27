@@ -166,7 +166,7 @@ public class AnalysisEngine {
 								EnumSet<TypeDeclarationKind> kinds=  EnumSet.of(TypeDeclarationKind.ABSTRACT_CLASS);
 								aType.setKinds(kinds);
 							}
-						}else{ // not abstarct class
+						}else{ // not an abstract class
 							if(aType.getKinds()!=null){
 								aType.getKinds().add(TypeDeclarationKind.CLASS);
 							}else{

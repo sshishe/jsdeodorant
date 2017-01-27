@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import com.google.common.collect.ImmutableList;
 import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
+import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.MemberExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.NewExpressionTree;
@@ -33,7 +34,9 @@ import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.CompositeStatement;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpression;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationExpressionNature;
 import ca.concordia.jsdeodorant.analysis.decomposition.FunctionDeclarationStatement;
+import ca.concordia.jsdeodorant.analysis.decomposition.FunctionKind;
 import ca.concordia.jsdeodorant.analysis.decomposition.InferenceType;
 import ca.concordia.jsdeodorant.analysis.decomposition.Statement;
 import ca.concordia.jsdeodorant.analysis.module.PackageSystem;
@@ -122,7 +125,7 @@ public class InheritanceInferenceEngine {
 													typeDeclaration=module.createTypeDeclaration(f.getRawIdentifier(), f, true, false);
 													typeDeclaration.setInferenceType(InferenceType.Has_SuperType);
 												}else{
-													typeDeclaration=this.findTypeDeclarationInModule(f, module); // We knoe that current module should contains the class
+													typeDeclaration=this.findTypeDeclarationInModule(f, module); // We know that current module should contains the class
 												}
 												if(typeDeclaration !=null){
 													this.adddToPotentialSubTypes(module, typeDeclaration);
@@ -174,38 +177,62 @@ public class InheritanceInferenceEngine {
 		
 	}
 
-	public void processPotentialSubTypes(){
-		Map<TypeDeclaration ,ParseTree> subTypeSuperTypeMap= new HashMap<TypeDeclaration ,ParseTree>(); // the value is of type IdentifierExpressionTree or MemberExpressionTree
+	private void processPotentialSubTypes(){
+		Map<TypeDeclaration ,String> subTypeSuperTypeMap= new HashMap<TypeDeclaration ,String>(); // the value is of type IdentifierExpressionTree or MemberExpressionTree
 		for(Module module: this.potentialSubTypes.keySet()){	
 			for(TypeDeclaration aTypeDeclaration: this.potentialSubTypes.get(module)){
-				List<SourceElement>  elements=module.getProgram().getSourceElements();
-				for (SourceElement sourceElement : elements) {
-					if(sourceElement instanceof Statement){
-						ParseTree statemenParseTree=((Statement)sourceElement).getStatement();
-						if (statemenParseTree instanceof VariableStatementTree){
-							if(((VariableStatementTree)statemenParseTree).declarations.declarations.size()>0){
-								VariableDeclarationTree var=((VariableStatementTree)statemenParseTree).declarations.declarations.get(0);
-								IdentifierExpressionTree id=(IdentifierExpressionTree) var.lvalue;
-								String name=id.identifierToken.value;
-								if(name.contentEquals(aTypeDeclaration.getName())){
-									ParseTree initializer=var.initializer;
-									if(initializer instanceof CallExpressionTree){
-										if(initializer.asCallExpression().arguments.arguments.size()>0){
-											ParseTree arg0=initializer.asCallExpression().arguments.arguments.get(0);
-											if(arg0 instanceof IdentifierExpressionTree){
-												//String superTypeNme=arg0.asIdentifierExpression().identifierToken.value;
-												subTypeSuperTypeMap.put(aTypeDeclaration,arg0);
-												break;
-											}else if(arg0 instanceof MemberExpressionTree){
-												AbstractIdentifier abstractIdentifier=IdentifierHelper.getIdentifier(arg0);
-												//String superTypeNme;
-//												if(abstractIdentifier instanceof CompositeIdentifier){
-//													superTypeNme=((CompositeIdentifier)abstractIdentifier).toString();
-//												}else{
-//													superTypeNme=((PlainIdentifier) abstractIdentifier).getIdentifierName();
-//												}
-												subTypeSuperTypeMap.put(aTypeDeclaration,arg0);
-												break;
+				boolean proceed=true;
+				if (aTypeDeclaration.getFunctionDeclaration() instanceof FunctionDeclarationExpression) {
+					FunctionDeclarationExpression functionDeclarationExpression = (FunctionDeclarationExpression) aTypeDeclaration.getFunctionDeclaration();
+					if (functionDeclarationExpression.getFunctionDeclarationExpressionNature() == FunctionDeclarationExpressionNature.IIFE){
+						if(functionDeclarationExpression.getIIFEParam() !=null){
+							subTypeSuperTypeMap.put(aTypeDeclaration,functionDeclarationExpression.getIIFEParam());
+						}
+						proceed=false;
+					}
+						
+				}
+				if(proceed){
+					List<SourceElement>  elements=module.getProgram().getSourceElements();
+					for (SourceElement sourceElement : elements) {
+						if(sourceElement instanceof Statement){
+							ParseTree statemenParseTree=((Statement)sourceElement).getStatement();
+							statemenParseTree.getClass();
+							if (statemenParseTree instanceof VariableStatementTree){
+								if(((VariableStatementTree)statemenParseTree).declarations.declarations.size()>0){
+									VariableDeclarationTree var=((VariableStatementTree)statemenParseTree).declarations.declarations.get(0);
+									IdentifierExpressionTree id=(IdentifierExpressionTree) var.lvalue;
+									String name=id.identifierToken.value;
+									if(name.contentEquals(aTypeDeclaration.getName())){
+										ParseTree initializer=var.initializer;
+										if(initializer instanceof CallExpressionTree){
+											if(initializer.asCallExpression().arguments.arguments.size()>0){
+												ParseTree arg0=initializer.asCallExpression().arguments.arguments.get(0);
+												if(arg0 instanceof IdentifierExpressionTree){
+													//String superTypeNme=arg0.asIdentifierExpression().identifierToken.value;
+													String candidateSuperTypeName;
+													AbstractIdentifier abstractIdentifier=IdentifierHelper.getIdentifier(arg0);
+													String potentialSuperName = null; // specific to angular 
+													if(abstractIdentifier instanceof PlainIdentifier){
+														potentialSuperName=abstractIdentifier.asPlainIdentifier().toString();
+													}else{
+														potentialSuperName=abstractIdentifier.asCompositeIdentifier().toString();
+													}
+													
+													subTypeSuperTypeMap.put(aTypeDeclaration,potentialSuperName);
+													break;
+												}else if(arg0 instanceof MemberExpressionTree){
+													String candidateSuperTypeName;
+													AbstractIdentifier abstractIdentifier=IdentifierHelper.getIdentifier(arg0);
+													String potentialSuperName = null; // specific to angular 
+													if(abstractIdentifier instanceof PlainIdentifier){
+														potentialSuperName=abstractIdentifier.asPlainIdentifier().toString();
+													}else{
+														potentialSuperName=abstractIdentifier.asCompositeIdentifier().toString();
+													}
+													subTypeSuperTypeMap.put(aTypeDeclaration,potentialSuperName);
+													break;
+												}
 											}
 										}
 									}
@@ -219,16 +246,16 @@ public class InheritanceInferenceEngine {
 		
 		Map<TypeDeclaration ,Set<FunctionDeclaration>> potentialSubSuperMap= new HashMap<TypeDeclaration ,Set<FunctionDeclaration>>();
 		for(TypeDeclaration aTypeDeclaration:subTypeSuperTypeMap.keySet()){
-			ParseTree superTypeCandiate=subTypeSuperTypeMap.get(aTypeDeclaration);
+			String superTypeCandiate=subTypeSuperTypeMap.get(aTypeDeclaration);
 			String candidateSuperTypeName;
-			AbstractIdentifier abstractIdentifier=IdentifierHelper.getIdentifier(superTypeCandiate);
 			String potentialDependencyName = null; // specific to angular 
-			if(abstractIdentifier instanceof PlainIdentifier){
-				candidateSuperTypeName=abstractIdentifier.asPlainIdentifier().toString();
-			}else{
-				potentialDependencyName=abstractIdentifier.asCompositeIdentifier().getMostLeftPart().getIdentifierName();
-				candidateSuperTypeName=abstractIdentifier.asCompositeIdentifier().getRightPart().getIdentifierName();
+			if(superTypeCandiate.contains(".")){
+				potentialDependencyName=superTypeCandiate.split("\\.")[0];
+				int potentialDependencyNameLength=potentialDependencyName.length();
+				candidateSuperTypeName=superTypeCandiate.substring(potentialDependencyNameLength+1);
 				
+			}else{
+				candidateSuperTypeName=superTypeCandiate;
 			}
 			
 //			System.out.println("subName: "+ aclassDeclaration.getName()+ " in file: "+ aclassDeclaration.getParentModule().getSourceFile().getName());

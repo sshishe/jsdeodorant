@@ -11,6 +11,7 @@ import com.google.javascript.jscomp.parsing.parser.trees.BinaryOperatorTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FormalParameterListTree;
 import com.google.javascript.jscomp.parsing.parser.trees.FunctionDeclarationTree;
+import com.google.javascript.jscomp.parsing.parser.trees.IdentifierExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ParseTree;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.AbstractIdentifier;
@@ -40,6 +41,8 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 	private List<AbstractExpression> parameters;
 	private List<AbstractStatement> statementList;
 	private boolean hasReturn;
+	private String middleName=null; // when we have A=B=function(){..}
+	private String IIFE_param=null;
 
 	public FunctionDeclarationExpression(FunctionDeclarationTree functionDeclarationTree, FunctionDeclarationExpressionNature functionDeclarationExpressionNature, SourceContainer parent) {
 		super(functionDeclarationTree, parent);
@@ -71,10 +74,54 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		statementList.add(statement);
 	}
 
+	public String getMiddleName() {
+		return middleName;
+	}
+
 	public AbstractIdentifier getIdentifier() {
 		if (identifier == null)
 			identifier = buildInternalIdentifier();
+		AbstractIdentifier middelId=null;
+		//wants to check if we have this case: //A.B=C=function(){..} or A.B=C=(function (){});
+		if (middleName==null && leftValueExpression == null && getParent() instanceof CompositeStatement) {
+			CompositeStatement parent = (CompositeStatement) getParent();
+			for (AbstractStatement statement : parent.getStatements()) {
+				boolean found =false;
+				for (FunctionDeclarationExpression functionDeclarationExpression : statement.getFunctionDeclarationExpressionList()){
+					if (functionDeclarationExpression.equals(this)) {
+						middelId=getideIdentifierInMiddle(statement); // the statement is //A.B=C=function(){..} or A.B=C=(function (){});
+						found =true;
+						break;
+					}
+				}
+				if(found){
+					break;
+				}
+			}
+		}
+		if(middelId !=null){
+			return middelId;
+		}
 		return identifier;
+		
+	}
+	
+	public AbstractIdentifier getideIdentifierInMiddle(AbstractStatement statement){
+		AbstractIdentifier leftId2=null;
+		if (statement.getStatement() instanceof ExpressionStatementTree) {
+			ExpressionStatementTree epxressionStatement = statement.getStatement().asExpressionStatement();
+			if (epxressionStatement.expression instanceof BinaryOperatorTree){
+				AbstractIdentifier leftId=IdentifierHelper.getIdentifier(epxressionStatement.expression.asBinaryOperator().left);
+				if(epxressionStatement.expression.asBinaryOperator().right instanceof BinaryOperatorTree){ //A.B=C=function(){..} or A.B=C=(function (){});
+					BinaryOperatorTree right=epxressionStatement.expression.asBinaryOperator().right.asBinaryOperator(); // we have now C=function(){..} or A.B=C=(function (){});
+					if(right.left instanceof IdentifierExpressionTree){
+						IdentifierExpressionTree id=right.left.asIdentifierExpression();
+						leftId2=IdentifierHelper.getIdentifier(id);
+					}
+				}
+			}
+		}
+		return leftId2;
 	}
 
 	/**
@@ -294,4 +341,14 @@ public class FunctionDeclarationExpression extends AbstractExpression implements
 		this.hasReturn=flag;
 		
 	}
+
+	public void setIIFEParam(String param) {
+		this.IIFE_param=param;
+	}
+	
+	public String  getIIFEParam() {
+		return this.IIFE_param;
+	}
+	
+	
 }

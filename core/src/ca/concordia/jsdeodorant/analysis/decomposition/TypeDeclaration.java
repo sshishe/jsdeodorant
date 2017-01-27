@@ -368,18 +368,18 @@ public class TypeDeclaration {
 								Method aMethod= new Method(methodName,this,((FunctionDeclarationTree)right), kinds);
 								this.typeMembers.add(aMethod);
 							}else if(leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".")){ // not very good way of handling it A.foo= function(){....} foo is static method
-								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".", "");
-								//this.allMethods.put(methodName, abstractExpression);
-								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECRALRED_OUTSIDE_OF_CLASS_BODY, MethodType.STATIC_METHOD);
-								Method aMethod= new Method(methodName,this, ((FunctionDeclarationTree)right), kinds);
-								this.typeMembers.add(aMethod);
+//								String methodName=leftId.asCompositeIdentifier().toString().replace(this.functionDeclaration.getName()+".", "");
+//								//this.allMethods.put(methodName, abstractExpression);
+//								EnumSet<MethodType> kinds=  EnumSet.of(MethodType.DECRALRED_OUTSIDE_OF_CLASS_BODY, MethodType.STATIC_METHOD);
+//								Method aMethod= new Method(methodName,this, ((FunctionDeclarationTree)right), kinds);
+//								this.typeMembers.add(aMethod);
 							}
 						}else{
 							// we don't care then
 						}	
 					}else if(right instanceof ObjectLiteralExpressionTree){ // If Car is a class => Car.prototype = { getInfo: function () { return this.make + ', ' + this.model };};
 						if (leftId instanceof CompositeIdentifier && leftId.asCompositeIdentifier().toString().contains(this.functionDeclaration.getName()+".prototype") ) {
-							right.getClass();System.out.println(right.location.start.line);
+							right.getClass();
 							for(ParseTree property: right.asObjectLiteralExpression().propertyNameAndValues){
 								if(property instanceof PropertyNameAssignmentTree){
 									if(property.asPropertyNameAssignment().value instanceof FunctionDeclarationTree){

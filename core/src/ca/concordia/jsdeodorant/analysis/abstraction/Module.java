@@ -171,15 +171,20 @@ public class Module {
 	public boolean isInterface(TypeDeclaration aType) {
 		boolean isInterface=true;
 		if(aType.isInfered()){
-			for(TypeMember m: aType.getTypeMembers()){
-				if(m instanceof Method){ // all its method should be abstract
-					if(!((Method) m).getKinds().contains(MethodType.ABSTRACT_METHOD)){
+			AbstractStatement body=aType.getFunctionDeclaration().getStatements().get(0);
+			if(((CompositeStatement)body).getStatements().size()!=0){
+				isInterface=false; // has body
+			}else{ // is empty, now check the members
+				for(TypeMember m: aType.getTypeMembers()){
+					if(m instanceof Method){ // all its method should be abstract
+						if(!((Method) m).getKinds().contains(MethodType.ABSTRACT_METHOD)){
+							isInterface=false;
+							break;
+						}
+					}else{ // interface is sateless
 						isInterface=false;
 						break;
 					}
-				}else{ // interface is sateless
-					isInterface=false;
-					break;
 				}
 			}
 		}else{

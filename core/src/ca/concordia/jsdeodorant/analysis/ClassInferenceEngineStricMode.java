@@ -90,25 +90,30 @@ public class ClassInferenceEngineStricMode {
 				}
 				
 				FunctionDeclaration parentFunction=getParentFunction(parent);
-				String parentName=null;
-				if(parentFunction!=null)
-					parentName=parentFunction.getName();
 				
 				if(totalMethodsInsideTypeBody>0 || totalAttributesInsideTypeBody>0){
-					createTypeDeclaration(module,  parentName,functionDeclaration ,parentFunction,InferenceType.Constructor_Body_Analysis);
+					createTypeDeclaration(module, functionDeclaration ,parentFunction,InferenceType.Constructor_Body_Analysis);
 				}else if(totalMethodsOutSideOutSideBody>0){
-					createTypeDeclaration(module,  parentName,functionDeclaration ,parentFunction, InferenceType.Methods_Added_To_Prototype);
+					createTypeDeclaration(module, functionDeclaration ,parentFunction, InferenceType.Methods_Added_To_Prototype);
 				}else if(totalObjectLiteralToPrototypeOutSideBody>0){
-					createTypeDeclaration(module,  parentName,functionDeclaration ,parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
+					createTypeDeclaration(module, functionDeclaration ,parentFunction, InferenceType.ObjectLiteral_Added_ToPrototype);
 				}
 				nowSetClassesToNotFoundByObjectCreations(module);
 			}
 		}
 	}
 
-	private static void createTypeDeclaration(Module module, String parentName, FunctionDeclaration functionDeclaration,
+	private static void createTypeDeclaration(Module module, FunctionDeclaration functionDeclaration,
 		FunctionDeclaration parentFunction, InferenceType infType) {
-		if(parentName!=null && parentName.contentEquals(functionDeclaration.getName())){ // then the parentFunction is class and the current function is its constructor
+		String parentName=null;
+		String parentMiddleName=null; // when we have A=B=function(){...} then B is middle name
+		if(parentFunction!=null)
+			parentName=parentFunction.getName();
+		if(parentFunction instanceof FunctionDeclarationExpression){
+			parentMiddleName=((FunctionDeclarationExpression)parentFunction).getMiddleName();
+		}
+		if((parentName!=null && parentName.contentEquals(functionDeclaration.getName()))||
+				(parentMiddleName!=null && parentMiddleName.contentEquals(functionDeclaration.getName()))){ // then the parentFunction is class and the current function is its constructor
 			if(parentFunction !=null){
 				TypeDeclaration aTypeDeclaration=createTypeDeclaration(module, parentFunction, infType);
 				aTypeDeclaration.setHasConstrucotr(true);

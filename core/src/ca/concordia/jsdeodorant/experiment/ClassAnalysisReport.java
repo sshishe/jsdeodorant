@@ -388,7 +388,10 @@ public class ClassAnalysisReport {
 	
 	private static String getTypeDecalationKinds(TypeDeclaration aTypeDeclaration){
 		String kinds="";
-		if(aTypeDeclaration.getKinds().size()==1){
+		if(aTypeDeclaration.getKinds()==null){
+			kinds="DONT KNOW";
+		}
+		else if(aTypeDeclaration.getKinds().size()==1){
 			kinds=aTypeDeclaration.getKinds().iterator().next().toString();
 		}else{
 			for(TypeDeclarationKind kind: aTypeDeclaration.getKinds()){
