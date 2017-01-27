@@ -2,6 +2,7 @@ package ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
@@ -10,9 +11,9 @@ import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 
 public class ClassHierarchiesTreeViewerContentProvider implements ITreeContentProvider {
 
-	private final List<Module> modules;
+	private final Set<Module> modules;
 
-	public ClassHierarchiesTreeViewerContentProvider(List<Module> modules) {
+	public ClassHierarchiesTreeViewerContentProvider(Set<Module> modules) {
 		this.modules = modules;
 	}
 

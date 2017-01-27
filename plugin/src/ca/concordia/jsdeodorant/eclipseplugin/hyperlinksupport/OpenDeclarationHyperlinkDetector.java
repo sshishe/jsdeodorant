@@ -3,6 +3,7 @@ package ca.concordia.jsdeodorant.eclipseplugin.hyperlinksupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
@@ -31,7 +32,7 @@ public class OpenDeclarationHyperlinkDetector implements IHyperlinkDetector  {
 
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViwer, IRegion region, boolean canHaveMultiple) {
-		List<Module> modules = ModulesInfo.getModuleInfo();
+		Set<Module> modules = ModulesInfo.getModuleInfo();
 		if (region != null && modules.size() > 0) {
 			IEditorPart activeEditor = OpenAndAnnotateHelper.getActiveEditor();
 				if (activeEditor != null) {

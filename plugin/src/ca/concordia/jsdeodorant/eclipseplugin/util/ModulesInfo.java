@@ -3,27 +3,29 @@ package ca.concordia.jsdeodorant.eclipseplugin.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import ca.concordia.jsdeodorant.analysis.abstraction.Module; 
 
 public class ModulesInfo {
 	
-	private static List<Module> detectedModules;
+	private static Set<Module> detectedModules;
 	private static String rootDirectory;
 	
 	private ModulesInfo() {
 		
 	}
 	
-	public static List<Module> getModuleInfo() {
+	public static Set<Module> getModuleInfo() {
 		if (detectedModules == null) {
-			return new ArrayList<>();
+			return new LinkedHashSet<>();
 		}
 		return detectedModules;
 	}
 
-	public static void setModuleInfo(List<Module> modules, String rootDirectory) {
+	public static void setModuleInfo(Set<Module> modules, String rootDirectory) {
 		detectedModules = modules;
 		ModulesInfo.rootDirectory = rootDirectory;
 	}

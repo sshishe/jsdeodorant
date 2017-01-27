@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -358,7 +359,7 @@ public class JSDeodorantModulesView extends ViewPart {
 					};
 					runner.createAnalysisOptions();
 					try {
-						List<Module> modules = runner.performActions();
+						Set<Module> modules = runner.performActions();
 						ModulesInfo.setModuleInfo(modules, analysisOptions.getDirectoryPath());
 						if (modules != null && !monitor.isCanceled()) {
 							setTreeViewerContentProviderBasedOnViewMode(monitor);
@@ -398,7 +399,7 @@ public class JSDeodorantModulesView extends ViewPart {
 	
 	private void showDependencies() {
 		Module selectedModule = getSelectedModule();
-		List<Dependency> dependencies = selectedModule.getDependencies();
+		Set<Dependency> dependencies = selectedModule.getDependencies();
 		if (!dependencies.isEmpty()) {
 			IViewPart dependenciesView = OpenAndAnnotateHelper.openView(JSDeodorantVisualizationView.ID);
 			if (dependenciesView != null) {
@@ -435,7 +436,7 @@ public class JSDeodorantModulesView extends ViewPart {
 
 	protected void setTreeViewerContentProviderBasedOnViewMode(IProgressMonitor monitor) {
 		monitor.setTaskName("Populating view");
-		List<Module> modules = ModulesInfo.getModuleInfo();
+		Set<Module> modules = ModulesInfo.getModuleInfo();
 		if (modules != null) {
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override

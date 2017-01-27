@@ -1,6 +1,7 @@
 package ca.concordia.jsdeodorant.eclipseplugin.views.ModulesView;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -15,10 +16,10 @@ import ca.concordia.jsdeodorant.eclipseplugin.util.ModulesInfo;
 
 public class ClassesTreeViewerContentProvider implements ITreeContentProvider {
 
-	private final List<Module> modules;
+	private final Set<Module> modules;
 	private final Multimap<String, Module> parentFolders;
 	
-	public ClassesTreeViewerContentProvider(List<Module> modules) {
+	public ClassesTreeViewerContentProvider(Set<Module> modules) {
 		this.modules = modules;
 		this.parentFolders = ArrayListMultimap.create();
 		if (modules != null) {
