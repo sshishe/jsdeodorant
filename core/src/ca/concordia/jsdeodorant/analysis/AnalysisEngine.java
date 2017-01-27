@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -25,7 +26,6 @@ import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclaration;
 import ca.concordia.jsdeodorant.analysis.decomposition.TypeDeclarationKind;
 import ca.concordia.jsdeodorant.analysis.decomposition.TypeMember;
 import ca.concordia.jsdeodorant.analysis.decomposition.Method;
-import ca.concordia.jsdeodorant.analysis.decomposition.MethodType;
 import ca.concordia.jsdeodorant.analysis.module.LibraryType;
 import ca.concordia.jsdeodorant.analysis.util.FileUtil;
 import ca.concordia.jsdeodorant.analysis.util.JSONReader;
@@ -61,7 +61,7 @@ public class AnalysisEngine {
 		this.externs = externs;
 	}
 
-	public List<Module> run(AnalysisOptions analysisOption) {
+	public Set<Module> run(AnalysisOptions analysisOption) {
 		compiler.compile(externs, inputs, compilerOptions);
 		ScriptParser scriptAnalyzer = new ScriptParser(compiler);
 		JSproject jsProjectInstance = JSproject.getInstance(true);
@@ -87,7 +87,7 @@ public class AnalysisEngine {
 			jsProjectInstance.createModule(program, sourceFile, scriptAnalyzer.getMessages(), analysisOption.getPackageSystem(), analysisOption.hasModuleAnalysis());
 		}
 		
-		List<Module> modules= jsProjectInstance.getModules();
+		Set<Module> modules= jsProjectInstance.getModules();
 		for (Module module : modules) {
 			markBuiltinLibraries(module, analysisOption);
 		}
@@ -254,7 +254,7 @@ public class AnalysisEngine {
 		psqlOutput = new PostgresOutput(name, version, analysisOption.getDirectoryPath(), analysisOption.getPsqlServerName(), analysisOption.getPsqlPortNumber(), analysisOption.getPsqlDatabaseName(), analysisOption.getPsqlUser(), analysisOption.getPsqlPassword());
 	}
 
-	private void addBuiltinDepdendencies(Module module, AnalysisOptions analysisOption, List<Module> modules) {
+	private void addBuiltinDepdendencies(Module module, AnalysisOptions analysisOption, Set<Module> modules) {
 		for (Module lbModule : modules) {
 			if (lbModule.getLibraryType() == LibraryType.BUILT_IN) {
 				String[] path = lbModule.getCanonicalPath().split("/");

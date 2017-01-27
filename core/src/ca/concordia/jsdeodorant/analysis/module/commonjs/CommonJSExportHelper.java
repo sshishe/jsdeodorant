@@ -1,6 +1,7 @@
 package ca.concordia.jsdeodorant.analysis.module.commonjs;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -19,9 +20,9 @@ import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 public class CommonJSExportHelper implements PackageExporter {
 	static Logger log = Logger.getLogger(CommonJSExportHelper.class.getName());
 	private Module currentModule;
-	private List<Module> modules;
+	private Set<Module> modules;
 
-	public CommonJSExportHelper(Module module, List<Module> modules) {
+	public CommonJSExportHelper(Module module, Set<Module> modules) {
 		this.currentModule = module;
 		this.modules = modules;
 	}

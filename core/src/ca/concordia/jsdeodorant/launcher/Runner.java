@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
@@ -65,7 +66,7 @@ public abstract class Runner extends CommandLineRunner {
 		return new ExtendedCompiler(getErrorPrintStream());
 	}
 
-	public List<Module> performActions() throws IOException {
+	public Set<Module> performActions() throws IOException {
 		inputs = ImmutableList.builder();
 		externs = ImmutableList.builder();
 		if (analysisOptions.isLogDisabled())
@@ -79,7 +80,7 @@ public abstract class Runner extends CommandLineRunner {
 			addExternsFromFile(optionsExterns);
 		AnalysisEngine analysisEngine = new AnalysisEngine(createExtendedCompiler(), createOptions(), inputs.build(), externs.build());
 		log.debug("analysis starts");
-		List<Module> results = analysisEngine.run(analysisOptions);
+		Set<Module> results = analysisEngine.run(analysisOptions);
 		log.debug("analysis ends");
 		return results;
 	}

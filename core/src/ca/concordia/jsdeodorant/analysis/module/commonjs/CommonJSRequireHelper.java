@@ -3,6 +3,7 @@ package ca.concordia.jsdeodorant.analysis.module.commonjs;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -27,9 +28,9 @@ public class CommonJSRequireHelper implements PackageImporter {
 	private AbstractIdentifier requireIdentifier;
 	private File moduleFile;
 	private Module currentModule;
-	private List<Module> modules;
+	private Set<Module> modules;
 
-	public CommonJSRequireHelper(Module module, List<Module> modules) {
+	public CommonJSRequireHelper(Module module, Set<Module> modules) {
 		this.currentModule = module;
 		this.modules = modules;
 	}

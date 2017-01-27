@@ -1,7 +1,10 @@
 package ca.concordia.jsdeodorant.analysis;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.javascript.jscomp.SourceFile;
 
@@ -20,7 +23,7 @@ import ca.concordia.jsdeodorant.analysis.module.helma.HelmaRequireHelper;
 
 public class JSproject {
 	
-	private List<Module> modules;
+	private Set<Module> modules;
 	private static JSproject instance=null;
 	
 	public static JSproject getInstance(){
@@ -35,10 +38,10 @@ public class JSproject {
 	}
 	
 	private JSproject(){
-		this.modules= new ArrayList<Module>();
+		this.modules= new LinkedHashSet<Module>();
 	}
 
-	public List<Module> getModules() {
+	public Set<Module> getModules() {
 		return modules;
 	}
 	

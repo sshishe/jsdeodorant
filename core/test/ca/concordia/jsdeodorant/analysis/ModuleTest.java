@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -29,16 +30,16 @@ public class ModuleTest {
 		testRunner.inputs = ImmutableList.builder();
 	}
 
-	private List<Module> setAnalysisForCommonJSModuleTest() throws IOException {
+	private Set<Module> setAnalysisForCommonJSModuleTest() throws IOException {
 		testRunner.setDirectoryPath("test/module/CommonJS/");
-		List<Module> result = testRunner.performActionsForModules();
+		Set<Module> result = testRunner.performActionsForModules();
 		return result;
 	}
 
 	@Test
 	public void testCrossClassDetectionForCJS() {
 		try {
-			List<Module> modules = setAnalysisForCommonJSModuleTest();
+			Set<Module> modules = setAnalysisForCommonJSModuleTest();
 			for (Module module : modules) {
 				String[] fileNameParts = module.getSourceFile().getName().split("/");
 				if (FileUtil.getElementsOf(fileNameParts, fileNameParts.length - 1, fileNameParts.length - 1).equals("usage.js"))

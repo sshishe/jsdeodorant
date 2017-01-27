@@ -1,6 +1,7 @@
 package ca.concordia.jsdeodorant.analysis;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -109,7 +110,7 @@ public class CompositePostProcessor {
 		}
 	}
 
-	private static boolean nodeSpecificFunction(FunctionInvocation functionInvocation, List<Dependency> dependencies) {
+	private static boolean nodeSpecificFunction(FunctionInvocation functionInvocation, Set<Dependency> dependencies) {
 		for (Dependency dependency : dependencies) {
 			if (dependency.getName().equals("module"))
 				if (inspectFunctions(functionInvocation, dependency.getDependency()))

@@ -84,7 +84,7 @@ public class CSVOutput {
 		}
 	}
 
-	public void aggregateReportForModule(List<Module> modules) {
+	public void aggregateReportForModule(Set<Module> modules) {
 		String currentFilePath = "log/aggregate/modules.csv";
 		csvWriter = new CSVFileWriter(currentFilePath);
 		String fileHeader = "Module name, Library Type, Number of dependencies, Number of exports";
@@ -156,7 +156,7 @@ public class CSVOutput {
 		return fileName;
 	}
 
-	public void moduleReport(List<Module> modules) {
+	public void moduleReport(Set<Module> modules) {
 		//		String currentFilePath = "log/classes/" + getFileName() + ".csv";
 		//		csvWriter = new CSVFileWriter(currentFilePath);
 		//		String fileHeader = "Class name, File, Is Declaration Predefined?, Location, Has Infered? , Constructor Lines of Code, Class Lines of Codes, Number of methods, Number of attributes, Number of Parameters, Is definition in a library?, Number of instantiation, Is aliased?, Has Namespace?";

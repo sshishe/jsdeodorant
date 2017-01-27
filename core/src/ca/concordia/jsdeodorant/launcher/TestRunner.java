@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import ca.concordia.jsdeodorant.analysis.AnalysisOptions;
 import ca.concordia.jsdeodorant.analysis.abstraction.Module;
@@ -53,7 +54,7 @@ public class TestRunner extends Runner {
 		return getAnalysisOptions();
 	}
 
-	public List<Module> performActionsForModule() {
+	public Set<Module> performActionsForModule() {
 		try {
 			return super.performActions();
 		} catch (IOException e) {
@@ -63,7 +64,7 @@ public class TestRunner extends Runner {
 		return null;
 	}
 
-	public List<Module> performActionsForModules() {
+	public Set<Module> performActionsForModules() {
 		try {
 			return super.performActions();
 		} catch (IOException e) {

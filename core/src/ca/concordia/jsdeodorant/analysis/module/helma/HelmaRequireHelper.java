@@ -1,6 +1,7 @@
 package ca.concordia.jsdeodorant.analysis.module.helma;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.javascript.jscomp.parsing.parser.trees.CallExpressionTree;
 import com.google.javascript.jscomp.parsing.parser.trees.ExpressionStatementTree;
@@ -14,9 +15,9 @@ import ca.concordia.jsdeodorant.analysis.util.IdentifierHelper;
 
 public class HelmaRequireHelper implements PackageImporter {
 	private Module currentModule;
-	private List<Module> modules;
+	private Set<Module> modules;
 
-	public HelmaRequireHelper(Module module, List<Module> modules) {
+	public HelmaRequireHelper(Module module, Set<Module> modules) {
 		this.currentModule = module;
 		this.modules = modules;
 	}

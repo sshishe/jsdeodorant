@@ -3,7 +3,9 @@ package ca.concordia.jsdeodorant.analysis.abstraction;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.javascript.jscomp.SourceFile;
 
@@ -31,9 +33,9 @@ public class Module {
 		return "Module [sourceFile=" + sourceFile + ", moduleType=" + moduleType + ", libraryType=" + libraryType + "]";
 	}
 
-	private List<Dependency> dependencies;
+	private Set<Dependency> dependencies;
 
-	private List<Export> exports;
+	private Set<Export> exports;
 	private List<TypeDeclaration> types;
 
 	public Module(Program program, SourceFile sourceFile, List<String> messages) {
@@ -41,8 +43,8 @@ public class Module {
 		this.sourceFile = sourceFile;
 		this.moduleType = ModuleType.File;
 		this.messages = messages;
-		this.dependencies = new ArrayList<>();
-		this.exports = new ArrayList<>();
+		this.dependencies = new LinkedHashSet<>();
+		this.exports = new LinkedHashSet<>();
 		this.types = new ArrayList<>();
 		this.libraryType = LibraryType.NONE;
 	}
@@ -52,8 +54,8 @@ public class Module {
 		this.program = program;
 		this.sourceFile = sourceFile;
 		this.messages = messages;
-		this.dependencies = new ArrayList<>();
-		this.exports = new ArrayList<>();
+		this.dependencies = new LinkedHashSet<>();
+		this.exports = new LinkedHashSet<>();
 		this.types = new ArrayList<>();
 		this.libraryType = LibraryType.NONE;
 	}
@@ -86,7 +88,7 @@ public class Module {
 		this.moduleType = packageType;
 	}
 
-	public List<Dependency> getDependencies() {
+	public Set<Dependency> getDependencies() {
 		return dependencies;
 	}
 
@@ -107,7 +109,7 @@ public class Module {
 		this.types.add(aTypeDeclaration);
 	}
 
-	public List<Export> getExports() {
+	public Set<Export> getExports() {
 		return exports;
 	}
 
@@ -209,5 +211,23 @@ public class Module {
 			}
 			return isAbstarctClass;
 		}
+	}
+	
+	public boolean  equals(Object o){
+		if(!(o instanceof Module)){
+			return false;
+		}else{
+			if(o.hashCode()==this.hashCode()){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+	}
+	
+	public int hashCode(){
+		String id=this.getSourceFile().getName()+this.getProgram().getSourceElements().size();
+		return id.hashCode();
 	}
 }

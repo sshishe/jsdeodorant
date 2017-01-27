@@ -3,6 +3,7 @@ package ca.concordia.jsdeodorant.experiment;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -27,7 +28,7 @@ public class ClassAnalysisReport {
 			classes = new ArrayList<>();
 	}
 
-	public static void updateReport(List<Module> modules) {
+	public static void updateReport(Set<Module> modules) {
 		checkForInitialization();
 		for (Module module : modules) {
 			for (TypeDeclaration typeDeclaration : module.getTypes()) {

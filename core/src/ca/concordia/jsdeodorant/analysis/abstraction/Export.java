@@ -26,4 +26,21 @@ public class Export {
 	public void setrValue(AbstractExpression rValue) {
 		this.rValue = rValue;
 	}
+	
+	public boolean  equals(Object o){
+		if(!(o instanceof Export)){
+			return false;
+		}else{
+			if(o.hashCode()==this.hashCode()){
+				return true;
+			}else{
+				return false;
+			}
+		}
+		
+	}
+	
+	public int hashCode(){
+		return this.rValue.getExpression().hashCode();
+	}
 }
